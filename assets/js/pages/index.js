@@ -17,28 +17,27 @@ $(document).ready(function () {
             }
         },
         errorPlacement: function (error, element) {
-            if (element.hasClass('select2') || element.hasClass('modal-select2') || element.hasClass('offcanvas-select2')) {
-                error.insertAfter(element.next('.select2-container'));
-            }
-            else if (element.parent('.input-group').length) {
-                error.insertAfter(element.parent());
-            }
-            else {
-                error.insertAfter(element);
-            }
+            const isSelect2 = element.hasClass('select2') || element.hasClass('modal-select2') || element.hasClass('offcanvas-select2');
+            const insertAfterElement = isSelect2 ? element.next('.select2-container') : (element.parent('.input-group').length ? element.parent() : element);
+        
+            error.insertAfter(insertAfterElement);
         },
-        highlight: function(element) {
-            var inputElement = $(element);
-            if (inputElement.hasClass('select2-hidden-accessible')) {
+        highlight: function (element) {
+            const inputElement = $(element);
+            const isSelect2 = inputElement.hasClass('select2-hidden-accessible');
+        
+            if (isSelect2) {
                 inputElement.next().find('.select2-selection__rendered').addClass('is-invalid');
             }
             else {
                 inputElement.addClass('is-invalid');
             }
         },
-        unhighlight: function(element) {
-            var inputElement = $(element);
-            if (inputElement.hasClass('select2-hidden-accessible')) {
+        unhighlight: function (element) {
+            const inputElement = $(element);
+            const isSelect2 = inputElement.hasClass('select2-hidden-accessible');
+        
+            if (isSelect2) {
                 inputElement.next().find('.select2-selection__rendered').removeClass('is-invalid');
             }
             else {
@@ -73,12 +72,8 @@ $(document).ready(function () {
                     }
                 },
                 error: function(xhr, status, error) {
-                    var fullErrorMessage = `XHR status: ${status}, Error: ${error}`;
-                    if (xhr.responseText) {
-                        fullErrorMessage += `, Response: ${xhr.responseText}`;
-                    }
-                    
-                    showErrorDialog(fullErrorMessage);
+                    handleAuthenticationError(xhr, status, error);
+
                 },
                 complete: function() {
                     enableFormSubmitButton('signin', 'Login');
