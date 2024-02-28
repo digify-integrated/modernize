@@ -68,12 +68,11 @@ $(document).ready(function () {
                         }
                     } 
                     else {
-                        showNotification('Authentication Error', response.message, 'danger');
+                        showNotification('Authentication Error', response.message, 'error');
                     }
                 },
                 error: function(xhr, status, error) {
-                    handleAuthenticationError(xhr, status, error);
-
+                    handleSystemError(xhr, status, error);
                 },
                 complete: function() {
                     enableFormSubmitButton('signin', 'Login');

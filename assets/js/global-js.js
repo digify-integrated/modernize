@@ -19,7 +19,7 @@ function updateFormSubmitButton(buttonId, disabled, innerHTML) {
             submitButton.innerHTML = innerHTML;
         }
         else {
-            console.error(`Button with ID '${buttonId}' not found`);
+            console.error(`Button with ID '${buttonId}' not found.`);
         }
     }
     catch (error) {
@@ -35,7 +35,7 @@ function enableFormSubmitButton(buttonId, buttonText) {
     updateFormSubmitButton(buttonId, false, buttonText);
 }
 
-function handleAuthenticationError(xhr, status, error) {
+function handleSystemError(xhr, status, error) {
     let fullErrorMessage = `XHR status: ${status}, Error: ${error}`;
 
     if (xhr.responseText) {
@@ -46,18 +46,29 @@ function handleAuthenticationError(xhr, status, error) {
 }
 
 function showNotification(notificationTitle, notificationMessage, notificationType) {
-    const notificationIcons = {
-        success: './assets/images/notification/ok-48.png',
-        danger: './assets/images/notification/high_priority-48.png',
-        info: './assets/images/notification/survey-48.png',
-        warning: './assets/images/notification/medium_priority-48.png',
-        default: './assets/images/notification/clock-48.png'
+    const validNotificationTypes = ['success', 'info', 'warning', 'error'];
+
+    if (!validNotificationTypes.includes(notificationType)) {
+        console.error('Invalid notification type:', notificationType);
+        return;
+    }
+
+    const isLongDuration = ['error', 'warning'].includes(notificationType);
+    const duration = isLongDuration ? 6000 : 4000;
+
+    const toastrOptions = {
+        closeButton: true,
+        progressBar: true,
+        newestOnTop: true,
+        preventDuplicates: false,
+        positionClass: 'toast-top-right',
+        timeOut: duration,
+        showMethod: 'fadeIn',
+        hideMethod: 'fadeOut'
     };
-  
-    const icon = notificationIcons[notificationType] || notificationIcons.default;
-    const duration = (notificationType === 'danger' || notificationType === 'warning') ? 6000 : 4000;
-  
-    notifier.show(notificationTitle, notificationMessage, notificationType, icon, duration);
+
+    toastr.options = toastrOptions;
+    toastr[notificationType](notificationMessage, notificationTitle);
 }
   
 function setNotification(notificationTitle, notificationMessage, notificationType){
@@ -66,18 +77,19 @@ function setNotification(notificationTitle, notificationMessage, notificationTyp
     sessionStorage.setItem('notificationType', notificationType);
 }
   
-function checkNotification(){
+function checkNotification() {
+    const storageKeys = ['notificationTitle', 'notificationMessage', 'notificationType'];
+    
     const { 
-        'notificationTitle': notificationTitle, 
-        'notificationMessage': notificationMessage, 
-        'notificationType': notificationType 
+        notificationTitle, 
+        notificationMessage, 
+        notificationType 
     } = sessionStorage;
-      
-    if (notificationTitle && notificationMessage && notificationType) {
-        sessionStorage.removeItem('notificationTitle');
-        sessionStorage.removeItem('notificationMessage');
-        sessionStorage.removeItem('notificationType');
-  
+
+    const hasNotificationData = storageKeys.every(key => sessionStorage.hasOwnProperty(key));
+
+    if (hasNotificationData) {
+        storageKeys.forEach(key => sessionStorage.removeItem(key));
         showNotification(notificationTitle, notificationMessage, notificationType);
     }
 }
