@@ -1,8 +1,8 @@
 // Form validation rules
 $.validator.addMethod('password_strength', function(value) {
-    return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(value);
-}, 'Password must contain at least one lowercase and uppercase letter, one number, one special character, and be 8 characters or longer.');
-
+    // Password must be at least 8 characters with at least one lowercase, one uppercase, one digit, and one special character (dot or underscore)
+    return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&._])[A-Za-z\d@$!%*?&._]{8,}$/.test(value);
+}, 'Password must be at least 8 characters with at least one lowercase letter, one uppercase letter, one digit, and one special character (dot or underscore).');
 
 // Rule for legal age
 $.validator.addMethod('employee_age', function(value, element, min) {

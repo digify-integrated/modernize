@@ -1,3 +1,22 @@
+(function($) {
+    'use strict';
+
+    $(function() {
+        $(document).on('click','#copy-error-message',function() {
+            copyToClipboard("error-dialog");
+        });
+    });
+})(jQuery);
+
+function copyToClipboard(elementID) {
+    const element = document.getElementById(elementID);
+    const text = element.innerHTML;
+
+    navigator.clipboard.writeText(text)
+        .then(() => showNotification('Copy Successful', 'Text copied to clipboard', 'success'))
+        .catch((err) => showNotification('Copy Error', err, 'danger'));
+}
+
 function showErrorDialog(error){
     const errorDialogElement = document.getElementById('error-dialog');
 
@@ -7,13 +26,13 @@ function showErrorDialog(error){
     }
     else {
         console.error('Error dialog element not found.');
-    }
+    }    
 }
 
 function updateFormSubmitButton(buttonId, disabled, innerHTML) {
     try {
         const submitButton = document.querySelector(`#${buttonId}`);
-        
+    
         if (submitButton) {
             submitButton.disabled = disabled;
             submitButton.innerHTML = innerHTML;
@@ -36,12 +55,7 @@ function enableFormSubmitButton(buttonId, buttonText) {
 }
 
 function handleSystemError(xhr, status, error) {
-    let fullErrorMessage = `XHR status: ${status}, Error: ${error}`;
-
-    if (xhr.responseText) {
-        fullErrorMessage += `, Response: ${xhr.responseText}`;
-    }
-
+    let fullErrorMessage = `XHR status: ${status}, Error: ${error}${xhr.responseText ? `, Response: ${xhr.responseText}` : ''}`;
     showErrorDialog(fullErrorMessage);
 }
 
@@ -53,8 +67,7 @@ function showNotification(notificationTitle, notificationMessage, notificationTy
         return;
     }
 
-    const isLongDuration = ['error', 'warning'].includes(notificationType);
-    const duration = isLongDuration ? 6000 : 4000;
+    const duration = ['error', 'warning'].includes(notificationType) ? 6000 : 4000;
 
     const toastrOptions = {
         closeButton: true,
@@ -79,17 +92,10 @@ function setNotification(notificationTitle, notificationMessage, notificationTyp
   
 function checkNotification() {
     const storageKeys = ['notificationTitle', 'notificationMessage', 'notificationType'];
+    const { notificationTitle, notificationMessage, notificationType } = sessionStorage;
     
-    const { 
-        notificationTitle, 
-        notificationMessage, 
-        notificationType 
-    } = sessionStorage;
-
-    const hasNotificationData = storageKeys.every(key => sessionStorage.hasOwnProperty(key));
-
-    if (hasNotificationData) {
+    if (storageKeys.every(key => sessionStorage.hasOwnProperty(key))) {
         storageKeys.forEach(key => sessionStorage.removeItem(key));
-        showNotification(notificationTitle, notificationMessage, notificationType);
+        showNotification({ notificationTitle, notificationMessage, notificationType });
     }
 }

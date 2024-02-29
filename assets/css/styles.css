@@ -454,9 +454,9 @@
   --bs-btn-hover-border-color: #3cb7a0;
 }
 
-[data-bs-theme=light][data-color-theme=Purple_Theme]:root,
-[data-bs-theme=dark][data-color-theme=Purple_Theme]:root {
-  --bs-primary: #763ebd;
+[data-bs-theme=light][data-color-theme=Red_Theme]:root,
+[data-bs-theme=dark][data-color-theme=Red_Theme]:root {
+  --bs-primary: #dc2626;
   --bs-primary-rgb: 118, 62, 189;
   --bs-light-primary: rgba(118, 62, 189, 0.1);
   --bs-primary-bg-subtle: rgba(118, 62, 189, 0.1);
@@ -465,15 +465,15 @@
   --bs-light-secondary: rgba(149, 207, 213, 0.1);
   --bs-secondary-bg-subtle: rgba(149, 207, 213, 0.1);
 }
-[data-bs-theme=light][data-color-theme=Purple_Theme]:root .btn-primary,
-[data-bs-theme=dark][data-color-theme=Purple_Theme]:root .btn-primary {
-  --bs-btn-bg: #763ebd;
-  --bs-btn-border-color: #763ebd;
-  --bs-btn-hover-bg: #6435a1;
-  --bs-btn-hover-border-color: #6435a1;
+[data-bs-theme=light][data-color-theme=Red_Theme]:root .btn-primary,
+[data-bs-theme=dark][data-color-theme=Red_Theme]:root .btn-primary {
+  --bs-btn-bg: #dc2626;
+  --bs-btn-border-color: #dc2626;
+  --bs-btn-hover-bg: #b01e1e;
+  --bs-btn-hover-border-color: #b01e1e;
 }
-[data-bs-theme=light][data-color-theme=Purple_Theme]:root .btn-secondary,
-[data-bs-theme=dark][data-color-theme=Purple_Theme]:root .btn-secondary {
+[data-bs-theme=light][data-color-theme=Red_Theme]:root .btn-secondary,
+[data-bs-theme=dark][data-color-theme=Red_Theme]:root .btn-secondary {
   --bs-btn-bg: #95cfd5;
   --bs-btn-border-color: #95cfd5;
   --bs-btn-hover-bg: #7fb0b5;
@@ -567,7 +567,7 @@
 [data-bs-theme=light] {
   --bs-blue: #5d87ff;
   --bs-indigo: #6610f2;
-  --bs-purple: #6f42c1;
+  --bs-Red: #6f42c1;
   --bs-pink: #d63384;
   --bs-red: #fa896b;
   --bs-orange: #fd7e14;
@@ -16716,7 +16716,7 @@ html[data-layout=horizontal] .body-wrapper > .container-fluid, html[data-layout=
   background-color: #0074ba;
 }
 .customizer-box.color-pallete label .color-box.skin-3 {
-  background-color: #763ebd;
+  background-color: #dc2626;
 }
 .customizer-box.color-pallete label .color-box.skin-4 {
   background-color: #0a7ea4;

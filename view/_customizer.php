@@ -37,8 +37,8 @@
                     <i class="ti ti-check text-white d-flex icon fs-5"></i>
                 </div>
             </label>
-            <input type="radio" class="btn-check" name="color-theme-layout" id="Purple_Theme" autocomplete="off" />
-            <label class="btn p-9 btn-outline-primary d-flex align-items-center justify-content-center" onclick="handleColorTheme('Purple_Theme')" for="Purple_Theme" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="PURPLE_THEME">
+            <input type="radio" class="btn-check" name="color-theme-layout" id="Red_Theme" autocomplete="off" />
+            <label class="btn p-9 btn-outline-primary d-flex align-items-center justify-content-center" onclick="handleColorTheme('Red_Theme')" for="Red_Theme" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="RED_THEME">
                 <div class="color-box rounded-circle d-flex align-items-center justify-content-center skin-3">
                     <i class="ti ti-check text-white d-flex icon fs-5"></i> 
                 </div>

@@ -1,7 +1,7 @@
 $(document).ready(function () {  
     $('#signin-form').validate({
         rules: {
-            username: {
+            email: {
                 required: true,
             },
             password: {
@@ -9,8 +9,8 @@ $(document).ready(function () {
             }
         },
         messages: {
-            username: {
-                required: 'Please enter your username',
+            email: {
+                required: 'Please enter your email',
             },
             password: {
                 required: 'Please enter your password'
@@ -49,7 +49,7 @@ $(document).ready(function () {
     
             $.ajax({
                 type: 'POST',
-                url: 'controller/user-controller.php',
+                url: 'components/authentication/controller/authentication-controller.php',
                 data: $(form).serialize() + '&transaction=' + transaction,
                 dataType: 'json',
                 beforeSend: function() {
