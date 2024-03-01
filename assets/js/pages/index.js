@@ -68,7 +68,7 @@ $(document).ready(function () {
                         }
                     } 
                     else {
-                        showNotification('Authentication Error', response.message, 'error');
+                        showNotification(response.title, response.message, response.messageType);
                     }
                 },
                 error: function(xhr, status, error) {

@@ -67,15 +67,13 @@ function showNotification(notificationTitle, notificationMessage, notificationTy
         return;
     }
 
-    const duration = ['error', 'warning'].includes(notificationType) ? 6000 : 4000;
-
     const toastrOptions = {
         closeButton: true,
         progressBar: true,
         newestOnTop: true,
         preventDuplicates: false,
-        positionClass: 'toast-top-right',
-        timeOut: duration,
+        positionClass: 'toast-top-center',
+        timeOut: 3000,
         showMethod: 'fadeIn',
         hideMethod: 'fadeOut'
     };
