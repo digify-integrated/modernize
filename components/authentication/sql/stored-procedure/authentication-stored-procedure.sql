@@ -1,7 +1,5 @@
 DELIMITER //
 
-/* Login Credentials Stored Procedures */
-
 CREATE PROCEDURE checkLoginCredentialsExist(IN p_email VARCHAR(255))
 BEGIN
 	SELECT COUNT(*) AS total
@@ -29,10 +27,16 @@ BEGIN
     WHERE user_id = p_user_id;
 END //
 
-/* Security Setting Stored Procedures */
-
-CREATE PROCEDURE getSecuritySetting(IN p_security_setting_id INT)
+CREATE PROCEDURE updateOTP(IN p_user_id INT, IN p_otp VARCHAR(255), IN p_otp_expiry_date DATETIME, IN p_remember_me TINYINT(1))
 BEGIN
-	SELECT * FROM security_setting
-	WHERE security_setting_id = p_security_setting_id;
+	UPDATE users 
+    SET otp = p_otp, otp_expiry_date = p_otp_expiry_date, remember_me = p_remember_me, failed_otp_attempts = 0
+    WHERE user_id = p_user_id;
+END //
+
+CREATE PROCEDURE updateLastConnection(IN p_user_id INT, IN p_last_connection_date DATETIME)
+BEGIN
+	UPDATE users 
+    SET last_connection_date = p_last_connection_date
+    WHERE user_id = p_user_id;
 END //

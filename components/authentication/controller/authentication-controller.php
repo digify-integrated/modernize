@@ -64,8 +64,15 @@ class AuthenticationController {
                     $this->authenticate();
                     break; 
                 default:
-                    echo json_encode(['success' => false, 'message' => 'Invalid transaction.']);
-                    break;
+                    $response = [
+                        'success' => false,
+                        'title' => 'Authentication Error',
+                        'message' => 'Invalid transaction.',
+                        'messageType' => 'error'
+                    ];
+                    
+                    echo json_encode($response);
+                    exit;
             }
         }
     }
@@ -99,28 +106,42 @@ class AuthenticationController {
         $total = $checkLoginCredentialsExist['total'] ?? 0;
     
         if ($total === 0) {
-            echo json_encode(['success' => false, 'title' => 'Authentication Error' , 'message' => 'The email or password you entered is invalid. Please double-check your credentials and try again.', 'messageType' => 'error']);
+            $response = [
+                'success' => false,
+                'title' => 'Authentication Error',
+                'message' => 'The email or password you entered is invalid. Please double-check your credentials and try again.',
+                'messageType' => 'error'
+            ];
+            
+            echo json_encode($response);
             exit;
         }
 
         $loginCredentialsDetails = $this->authenticationModel->getLoginCredentials($email);
         $userID = $loginCredentialsDetails['user_id'];
+        $userPassword = $this->securityModel->decryptData($loginCredentialsDetails['password']);
         $locked = $loginCredentialsDetails['locked'];
         $failedLoginAttempts = $loginCredentialsDetails['failed_login_attempts'];
         $passwordExpiryDate = $loginCredentialsDetails['password_expiry_date'];
         $accountLockDuration = $loginCredentialsDetails['account_lock_duration'];
         $lastFailedLoginAttempt = $loginCredentialsDetails['last_failed_login_attempt'];
         $twoFactorAuth = $loginCredentialsDetails['two_factor_auth'];
-        $userPassword = $this->securityModel->decryptData($loginCredentialsDetails['password']);
-        $encryptedUserID = $this->securityModel->encryptData($userID);  
+        $encryptedUserID = $this->securityModel->encryptData($userID);
     
         if ($password !== $userPassword) {
             $this->handleInvalidCredentials($userID, $failedLoginAttempts);
             return;
         }
     
-        if (!$loginCredentialsDetails['active']) {
-            echo json_encode(['success' => false, 'title' => 'Authentication Error' , 'message' => 'Your account is currently inactive. Please contact the administrator for assistance.', 'messageType' => 'error']);
+        if ($loginCredentialsDetails['active'] === 'No') {
+            $response = [
+                'success' => false,
+                'title' => 'Authentication Error',
+                'message' => 'Your account is currently inactive. Please contact the administrator for assistance.',
+                'messageType' => 'error'
+            ];
+            
+            echo json_encode($response);
             exit;
         }
     
@@ -129,23 +150,27 @@ class AuthenticationController {
             exit;
         }
     
-        if ($locked == 'Yes') {
+        if ($locked === 'Yes') {
             $this->handleAccountLock($userID, $accountLockDuration, $lastFailedLoginAttempt);
             exit;
         }
     
         $this->authenticationModel->updateLoginAttempt($userID, 0, null);
     
-        if ($twoFactorAuth == 'Yes') {
+        if ($twoFactorAuth === 'Yes') {
             $this->handleTwoFactorAuth($userID, $email, $encryptedUserID, $rememberMe);
             exit;
         }
     
         $this->updateConnectionAndRememberToken($userID, $rememberMe);
         $_SESSION['user_id'] = $userID;
-        $_SESSION['contact_id'] = $contactID;
-    
-        echo json_encode(['success' => true, 'twoFactorAuth' => false]);
+
+        $response = [
+            'success' => true,
+            'twoFactorAuth' => false
+        ];
+        
+        echo json_encode($response);
         exit;
     }
     # -------------------------------------------------------------
@@ -171,6 +196,9 @@ class AuthenticationController {
         $securitySettingDetails = $this->securitySettingModel->getSecuritySetting(1);
         $maxFailedLoginAttempts = $securitySettingDetails['value'] ?? MAX_FAILED_LOGIN_ATTEMPTS;
 
+        $userAccountLockDurationSettingDetails = $this->securitySettingModel->getSecuritySetting(8);
+        $baseLockDuration = $userAccountLockDurationSettingDetails['value'] ?? BASE_USER_ACCOUNT_DURATION;
+
         if ($failedAttempts > $maxFailedLoginAttempts) {
             $lockDuration = pow(2, ($failedAttempts - $maxFailedLoginAttempts)) * 5;
             $this->authenticationModel->updateAccountLock($userID, 'Yes', $lockDuration);
@@ -185,15 +213,27 @@ class AuthenticationController {
             
             $message .= '.';
 
-            echo json_encode(['success' => false, 'title' => 'Authentication Error' , 'message' => $message, 'messageType' => 'error']);
+            $response = [
+                'success' => false,
+                'title' => 'Authentication Error',
+                'message' => $message, 
+                'messageType' => 'error'
+            ];
+            
+            echo json_encode($response);
             exit;
         }
         else {
-            echo json_encode(['success' => false, 'title' => 'Authentication Error' , 'message' => 'The email or password you entered is invalid. Please double-check your credentials and try again.', 'messageType' => 'error']);
+            $response = [
+                'success' => false,
+                'title' => 'Authentication Error',
+                'message' => 'The email or password you entered is invalid. Please double-check your credentials and try again.', 
+                'messageType' => 'error'
+            ];
+            
+            echo json_encode($response);
             exit;
         }
-    
-        exit;
     }
     # -------------------------------------------------------------
 
@@ -214,9 +254,25 @@ class AuthenticationController {
         $unlockTime = strtotime('+'. $accountLockDuration .' minutes', strtotime($lastFailedLoginAttempt));
     
         if (time() < $unlockTime) {
-            $remainingTime = round(($unlockTime - time()) / 60);
+            $durationParts = $this->formatDuration(round(($unlockTime - time()) / 60));
 
-            echo json_encode(['success' => false, 'title' => 'Authentication Error' , 'message' => 'Your account has been locked. Please try again in '. $remainingTime .' minutes.', 'messageType' => 'error']);
+            $message = 'Your account has been locked. Please try again in ';
+
+            if (count($durationParts) > 0) {
+                $message .= implode(', ', $durationParts);
+            }
+
+            $message .= '.';
+
+            $response = [
+                'success' => false,
+                'title' => 'Authentication Error',
+                'message' => $message, 
+                'messageType' => 'error'
+            ];
+            
+            echo json_encode($response);
+            exit;
         }
         else {
             $this->authenticationModel->updateAccountLock($userID, 'No', null);
@@ -251,7 +307,13 @@ class AuthenticationController {
         $this->authenticationModel->updateOTP($userID, $encryptedOTP, $otpExpiryDate, $rememberMe);
         $this->sendOTP($email, $otp);
     
-        echo json_encode(['success' => true, 'twoFactorAuth' => true, 'encryptedUserID' => $encryptedUserID]);
+        $response = [
+            'success' => true,
+            'twoFactorAuth' => true,
+            'encryptedUserID' => $encryptedUserID
+        ];
+        
+        echo json_encode($response);
         exit;
     }
     # -------------------------------------------------------------
@@ -265,49 +327,32 @@ class AuthenticationController {
     # Parameters: 
     # - $lockDuration (int): The duration in seconds that needs to be formatted. This value represents the total duration that you want to convert into a human-readable format.
     #
-    # Returns: Returns a formatted string representing the duration in a human-readable format. 
+    # Returns: 
+    #  Returns a formatted string representing the duration in a human-readable format. 
     #  The format includes years, months, days, hours, and minutes, as applicable. 
     #  The function constructs this string based on the provided $lockDuration parameter.
     #
     # -------------------------------------------------------------
     private function formatDuration($lockDuration) {
         $durationParts = [];
-    
-        $years = floor($lockDuration / (60 * 60 * 24 * 30 * 12));
-        $lockDuration %= (60 * 60 * 24 * 30 * 12);
-    
-        if ($years > 0) {
-            $durationParts[] = number_format($years) . ' year' . (($years > 1) ? 's' : '');
+
+        $timeUnits = [
+            ['year', 60 * 60 * 24 * 30 * 12],
+            ['month', 60 * 60 * 24 * 30],
+            ['day', 60 * 60 * 24],
+            ['hour', 60 * 60],
+            ['minute', 60]
+        ];
+
+        foreach ($timeUnits as list($unit, $seconds)) {
+            $value = floor($lockDuration / $seconds);
+            $lockDuration %= $seconds;
+
+            if ($value > 0) {
+                $durationParts[] = number_format($value) . ' ' . $unit . ($value > 1 ? 's' : '');
+            }
         }
-    
-        $months = floor($lockDuration / (60 * 60 * 24 * 30));
-        $lockDuration %= (60 * 60 * 24 * 30);
-    
-        if ($months > 0) {
-            $durationParts[] = number_format($months) . ' month' . (($months > 1) ? 's' : '');
-        }
-    
-        $days = floor($lockDuration / (60 * 60 * 24));
-        $lockDuration %= (60 * 60 * 24);
-    
-        if ($days > 0) {
-            $durationParts[] = number_format($days) . ' day' . (($days > 1) ? 's' : '');
-        }
-    
-        $hours = floor($lockDuration / (60 * 60));
-        $lockDuration %= (60 * 60);
-    
-        if ($hours > 0) {
-            $durationParts[] = number_format($hours) . ' hour' . (($hours > 1) ? 's' : '');
-        }
-    
-        $minutes = floor($lockDuration / 60);
-        $lockDuration %= 60;
-    
-        if ($minutes > 0) {
-            $durationParts[] = number_format($minutes) . ' minute' . (($minutes > 1) ? 's' : '');
-        }
-    
+
         return $durationParts;
     }
     # -------------------------------------------------------------
@@ -350,7 +395,7 @@ class AuthenticationController {
     # - $user (array): The user details.
     # - $rememberMe (bool): The remember me value.
     #
-    # Returns: Array
+    # Returns: N/A
     #
     # -------------------------------------------------------------
     private function updateConnectionAndRememberToken($userID, $rememberMe) {
@@ -381,14 +426,17 @@ class AuthenticationController {
     # - $minLength (int): The minimum length of the generated token. Default is 4.
     # - $maxLength (int): The maximum length of the generated token. Default is 4.
     #
-    # Returns: Array
+    # Returns: String
     #
     # -------------------------------------------------------------
     public function generateToken($minLength = 4, $maxLength = 4) {
         $length = mt_rand($minLength, $maxLength);
-        $otp = random_int(pow(10, $length - 1), pow(10, $length) - 1);
+        $minValue = pow(10, $length - 1);
+        $maxValue = pow(10, $length) - 1;
+    
+        $token = random_int($minValue, $maxValue);
         
-        return (string) $otp;
+        return (string) $token;
     }
     # -------------------------------------------------------------
 }

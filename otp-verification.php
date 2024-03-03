@@ -2,9 +2,7 @@
     require('components/global/config/config.php');
     require('components/global/model/database-model.php');
     
-    $databaseModel = new DatabaseModel();
-
-    $pageTitle = 'CGMI Digital Solutions';
+    $pageTitle = 'OTP Verification';
 
     require('session-check.php');
 ?>
@@ -32,25 +30,25 @@
                     <div class="col-xl-5 col-xxl-4">
                         <div class="authentication-login min-vh-100 bg-body row justify-content-center align-items-center p-0">
                             <div class="auth-max-width col-sm-8 col-md-6 col-xl-7 px-0">
-                                <h2 class="mb-1 fs-7 fw-bolder">Welcome to <span class="text-primary">CGMI Digital Solutions</span></h2>
-                                <p class="mb-7">Empowering Futures, Crafting Digital Excellence</p>
-                                <form id="signin-form" method="post" action="#">
+                                <div class="mb-5">
+                                    <h2 class="mb-1 fs-7 fw-bolder">Two Step <span class="text-primary">Verification</span></h2>
+                                    <p class="mb-7">We've sent a verification code to your email address. Please check your inbox and enter the code below.</p>
+                                    <h6 class="fw-bolder">l********o@gmail.com</h6>
+                                </div>
+                                <form id="otp-form" method="post" action="#">
                                     <div class="mb-3">
-                                        <label for="email" class="form-label">Email</label>
-                                        <input type="email" class="form-control" id="email" name="email" autocomplete="off">
-                                    </div>
-                                    <div class="mb-4">
-                                        <label for="password" class="form-label">Password</label>
-                                        <input type="password" class="form-control" id="password" name="password">
-                                    </div>
-                                    <div class="d-flex align-items-center justify-content-between mb-4">
-                                        <div class="form-check">
-                                            <input class="form-check-input primary" type="checkbox" id="remember_me" name="remember_me">
-                                            <label class="form-check-label text-dark fs-3" for="flexCheckChecked">Remember me?</label>
+                                        <label for="exampleInputEmail1" class="form-label fw-semibold">Type your 6 digits security
+                                            code</label>
+                                        <div class="d-flex align-items-center gap-2 gap-sm-3">
+                                            <input type="text" class="form-control text-center otp-input" id="otp_code_1" name="otp_code_1" autocomplete="off" maxlength="1">
+                                            <input type="text" class="form-control text-center otp-input" id="otp_code_2" name="otp_code_2" autocomplete="off" maxlength="1">
+                                            <input type="text" class="form-control text-center otp-input" id="otp_code_3" name="otp_code_3" autocomplete="off" maxlength="1">
+                                            <input type="text" class="form-control text-center otp-input" id="otp_code_4" name="otp_code_4" autocomplete="off" maxlength="1">
+                                            <input type="text" class="form-control text-center otp-input" id="otp_code_5" name="otp_code_5" autocomplete="off" maxlength="1">
+                                            <input type="text" class="form-control text-center otp-input" id="otp_code_6" name="otp_code_6" autocomplete="off" maxlength="1">
                                         </div>
-                                        <a class="text-primary fw-medium fs-3" href="forgot-password.php">Forgot Password ?</a>
                                     </div>
-                                    <button id="signin" type="submit" class="btn btn-primary w-100 py-8 mb-4 rounded-2">Login</button>
+                                    <button id="signin" type="submit" class="btn btn-primary w-100 py-8 mb-4 rounded-2">Verify</button>
                                 </form>
                             </div>
                         </div>
@@ -65,6 +63,6 @@
         include_once('view/_global_js.php');
         include_once('view/_error_modal.php');
     ?>
-    <script src="./assets/js/pages/index.js?v=<?php echo rand(); ?>"></script>
+    <script src="./assets/js/pages/otp-verification.js?v=<?php echo rand(); ?>"></script>
 </body>
 </html>

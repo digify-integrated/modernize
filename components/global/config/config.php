@@ -118,6 +118,7 @@ define('DEFAULT_PASSWORD', 'P@ssw0rd');
 
 // Maximum allowed failed login attempts
 define('MAX_FAILED_LOGIN_ATTEMPTS', 5);
+define('BASE_USER_ACCOUNT_DURATION', 1);
 
 // Maximum allowed failed OTP attempts
 define('MAX_FAILED_OTP_ATTEMPTS', 5);

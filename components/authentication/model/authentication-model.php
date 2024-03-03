@@ -59,6 +59,10 @@ class AuthenticationModel {
     # -------------------------------------------------------------
 
     # -------------------------------------------------------------
+    #   Update exist methods
+    # -------------------------------------------------------------
+
+    # -------------------------------------------------------------
     #
     # Function: updateLoginAttempt
     # Description: Updates the login attempt details for a user.
@@ -122,6 +126,26 @@ class AuthenticationModel {
         $stmt->bindValue(':p_otp', $p_otp, PDO::PARAM_STR);
         $stmt->bindValue(':p_otp_expiry_date', $p_otp_expiry_date, PDO::PARAM_STR);
         $stmt->bindValue(':p_remember_me', $p_remember_me, PDO::PARAM_INT);
+        $stmt->execute();
+    }
+    # -------------------------------------------------------------
+
+    # -------------------------------------------------------------
+    #
+    # Function: updateLastConnection
+    # Description: Updates the last connection date for a user.
+    #
+    # Parameters:
+    # - $p_user_id (int): The user ID.
+    # - $p_last_connection_date (datetime): The date and time of the last connection.
+    #
+    # Returns: None
+    #
+    # -------------------------------------------------------------
+    public function updateLastConnection($p_user_id, $p_last_connection_date) {
+        $stmt = $this->db->getConnection()->prepare('CALL updateLastConnection(:p_user_id, :p_last_connection_date)');
+        $stmt->bindValue(':p_user_id', $p_user_id, PDO::PARAM_INT);
+        $stmt->bindValue(':p_last_connection_date', $p_last_connection_date, PDO::PARAM_STR);
         $stmt->execute();
     }
     # -------------------------------------------------------------
