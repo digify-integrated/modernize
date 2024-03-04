@@ -1,8 +1,35 @@
 <?php
     require('components/global/config/config.php');
     require('components/global/model/database-model.php');
+    require('components/global/model/security-model.php');
+    require('components/authentication/model/authentication-model.php');
+
+    $databaseModel = new DatabaseModel();
+    $securityModel = new SecurityModel();
+    $authenticationModel = new AuthenticationModel($databaseModel);
     
     $pageTitle = 'OTP Verification';
+
+    if (isset($_GET['id']) && !empty($_GET['id'])) {
+        $id = $_GET['id'];
+        $userID = $securityModel->decryptData($id);
+
+        $checkLoginCredentialsExist = $authenticationModel->checkLoginCredentialsExist($userID, null);
+        $total = $checkLoginCredentialsExist['total'] ?? 0;
+
+        if($total > 0){
+            $loginCredentialsDetails = $authenticationModel->getLoginCredentials($userID, null);
+            $emailObscure = $securityModel->obscureEmail($loginCredentialsDetails['email']);
+        }
+        else{
+            header('location: 404.php');
+            exit;
+        }
+    }
+    else {
+        header('location: 404.php');
+        exit;
+    }
 
     require('session-check.php');
 ?>
@@ -33,12 +60,12 @@
                                 <div class="mb-5">
                                     <h2 class="mb-1 fs-7 fw-bolder">Two Step <span class="text-primary">Verification</span></h2>
                                     <p class="mb-7">We've sent a verification code to your email address. Please check your inbox and enter the code below.</p>
-                                    <h6 class="fw-bolder">l********o@gmail.com</h6>
+                                    <h6 class="fw-bolder"><?php echo $emailObscure; ?></h6>
                                 </div>
                                 <form id="otp-form" method="post" action="#">
+                                    <input type="hidden" id="user_id" name="user_id" value="<?php echo $userID; ?>">
                                     <div class="mb-3">
-                                        <label for="exampleInputEmail1" class="form-label fw-semibold">Type your 6 digits security
-                                            code</label>
+                                        <label class="form-label fw-semibold">Type your 6 digit security code</label>
                                         <div class="d-flex align-items-center gap-2 gap-sm-3">
                                             <input type="text" class="form-control text-center otp-input" id="otp_code_1" name="otp_code_1" autocomplete="off" maxlength="1">
                                             <input type="text" class="form-control text-center otp-input" id="otp_code_2" name="otp_code_2" autocomplete="off" maxlength="1">
@@ -50,6 +77,15 @@
                                     </div>
                                     <button id="signin" type="submit" class="btn btn-primary w-100 py-8 mb-4 rounded-2">Verify</button>
                                 </form>
+                                <div class="row">
+                                    <div class="col-6 mb-2 mb-sm-0">
+                                        <p class="text-dark">Didn't get the code?</p>
+                                    </div>
+                                    <div class="col-6 text-end">
+                                        <p id="countdown" class="d-none">Resend code in <span id="timer">60</span> seconds</p>
+                                        <a href="Javascript:void(0);" id="resend-link" class="text-primary fw-medium ms-2">Resend Code</a>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>

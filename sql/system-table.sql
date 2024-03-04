@@ -22,8 +22,6 @@ CREATE TABLE users (
     last_password_change DATETIME,
     account_lock_duration INT NOT NULL DEFAULT 0,
     last_password_reset DATETIME,
-    remember_me VARCHAR(5) NOT NULL DEFAULT 'Yes',
-    remember_token VARCHAR(255),
     multiple_session VARCHAR(5) DEFAULT 'Yes',
     session_token VARCHAR(255),
     last_log_by INT UNSIGNED NOT NULL,

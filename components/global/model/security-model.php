@@ -69,45 +69,30 @@ class SecurityModel {
 
     # -------------------------------------------------------------
     #
-    # Function: maskedEmail
-    # Description: Formats the email address by masking the username.
+    # Function: obscureEmail
+    # Description: Obscures the email address by hashing the local part.
     #
     # Parameters:
-    # - $email (string): The encrypted text to decrypt.
+    # - $email (string): The email address to obscure.
     #
     # Returns:
-    # - The formatted email address with the masked username.
+    # - The obscured email address.
     #
     # -------------------------------------------------------------
-    public function maskedEmail($email) {
-        $parts = explode('@', $email);
-        $username = $parts[0];
-        $domain = $parts[1];
-    
-        $maskedUsername = $this->maskUsername($username);
-    
-        return $maskedUsername . '@' . $domain;
-    }
-    # -------------------------------------------------------------
-    
-    # -------------------------------------------------------------
-    #
-    # Function: maskUsername
-    # Description: Masks the username by replacing all characters except the first with asterisks.
-    #
-    # Parameters:
-    # - $username (string): The username to mask.
-    #
-    # Returns:
-    # - The masked username.
-    #
-    # -------------------------------------------------------------
-    private function maskUsername($username) {
+    public function obscureEmail($email) {
+        list($username, $domain) = explode('@', $email, 2);
+
+        // Get the first and last characters of the local part
         $firstChar = substr($username, 0, 1);
-        $maskedUsername = $firstChar . str_repeat('*', strlen($username) - 1);
-        return $maskedUsername;
+        $lastChar = substr($username, -1);
+
+        // Combine the first and last characters with the original domain
+        $maskedEmail = $firstChar . str_repeat('*', max(0, strlen($username) - 2)) . $lastChar . '@' . $domain;
+
+        return $maskedEmail;
     }
     # -------------------------------------------------------------
+
 
     # -------------------------------------------------------------
     #

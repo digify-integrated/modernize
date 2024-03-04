@@ -43,11 +43,7 @@
                                         <label for="password" class="form-label">Password</label>
                                         <input type="password" class="form-control" id="password" name="password">
                                     </div>
-                                    <div class="d-flex align-items-center justify-content-between mb-4">
-                                        <div class="form-check">
-                                            <input class="form-check-input primary" type="checkbox" id="remember_me" name="remember_me">
-                                            <label class="form-check-label text-dark fs-3" for="flexCheckChecked">Remember me?</label>
-                                        </div>
+                                    <div class="text-end mb-4">
                                         <a class="text-primary fw-medium fs-3" href="forgot-password.php">Forgot Password ?</a>
                                     </div>
                                     <button id="signin" type="submit" class="btn btn-primary w-100 py-8 mb-4 rounded-2">Login</button>

@@ -18,6 +18,5 @@ INSERT INTO security_setting (security_setting_name, security_setting_descriptio
 INSERT INTO security_setting (security_setting_name, security_setting_description, value, last_log_by) VALUES ('Session Timeout Duration', 'The duration after which a user is automatically logged out (in minutes).', 240, '1');
 INSERT INTO security_setting (security_setting_name, security_setting_description, value, last_log_by) VALUES ('OTP Duration', 'The time window during which a one-time password (OTP) is valid for user authentication (in minutes).', 5, '1');
 INSERT INTO security_setting (security_setting_name, security_setting_description, value, last_log_by) VALUES ('Reset Password Token Duration', 'The time window during which a reset password token remains valid for user account recovery (in minutes).', 10, '1');
-INSERT INTO security_setting (security_setting_name, security_setting_description, value, last_log_by) VALUES ('Base User Account Lock Duration', 'The duration, in minutes, for which a user account remains locked after reaching the maximum allowed failed login attempts. This setting ensures a security measure to mitigate unauthorized access attempts.', 1, '1');
 
 /* ----------------------------------------------------------------------------------------------------------------------------- */

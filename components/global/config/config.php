@@ -122,6 +122,7 @@ define('BASE_USER_ACCOUNT_DURATION', 1);
 
 // Maximum allowed failed OTP attempts
 define('MAX_FAILED_OTP_ATTEMPTS', 5);
+define('DEFAULT_OTP_DURATION', 5);
 
 # -------------------------------------------------------------
 ?>

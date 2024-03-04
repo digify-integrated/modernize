@@ -15,6 +15,8 @@ session_start();
 class AuthenticationController {
     private $authenticationModel;
     private $securitySettingModel;
+    private $emailSettingModel;
+    private $notificationSettingModel;
     private $systemModel;
     private $securityModel;
 
@@ -28,15 +30,19 @@ class AuthenticationController {
     # Parameters:
     # - @param AuthenticationModel $authenticationModel     The authenticationModel instance for authentication related operations.
     # - @param SecuritySettingModel $securitySettingModel     The securitySettingModel instance for security setting related operations.
+    # - @param EmailSettingModel $emailSettingModel     The emailSettingModel instance for email setting related operations.
+    # - @param NotificationSettingModel $notificationSettingModel     The notificationSettingModel instance for notification setting related operations.
     # - @param SystemModel $systemModel     The SystemModel instance for user related operations.
     # - @param SecurityModel $securityModel   The SecurityModel instance for security related operations.
     #
     # Returns: None
     #
     # -------------------------------------------------------------
-    public function __construct(AuthenticationModel $authenticationModel, SecuritySettingModel $securitySettingModel, SystemModel $systemModel, SecurityModel $securityModel) {
+    public function __construct(AuthenticationModel $authenticationModel, SecuritySettingModel $securitySettingModel, EmailSettingModel $emailSettingModel, NotificationSettingModel $notificationSettingModel, SystemModel $systemModel, SecurityModel $securityModel) {
         $this->authenticationModel = $authenticationModel;
         $this->securitySettingModel = $securitySettingModel;
+        $this->emailSettingModel = $emailSettingModel;
+        $this->notificationSettingModel = $notificationSettingModel;
         $this->systemModel = $systemModel;
         $this->securityModel = $securityModel;
     }
@@ -62,6 +68,9 @@ class AuthenticationController {
             switch ($transaction) {
                 case 'authenticate':
                     $this->authenticate();
+                    break; 
+                case 'resend otp':
+                    $this->resendOTP();
                     break; 
                 default:
                     $response = [
@@ -100,9 +109,8 @@ class AuthenticationController {
     
         $email = htmlspecialchars($_POST['email'], ENT_QUOTES, 'UTF-8');
         $password = htmlspecialchars($_POST['password'], ENT_QUOTES, 'UTF-8');
-        $rememberMe = isset($_POST['remember_me']);
 
-        $checkLoginCredentialsExist = $this->authenticationModel->checkLoginCredentialsExist($email);
+        $checkLoginCredentialsExist = $this->authenticationModel->checkLoginCredentialsExist(null, $email);
         $total = $checkLoginCredentialsExist['total'] ?? 0;
     
         if ($total === 0) {
@@ -117,8 +125,9 @@ class AuthenticationController {
             exit;
         }
 
-        $loginCredentialsDetails = $this->authenticationModel->getLoginCredentials($email);
+        $loginCredentialsDetails = $this->authenticationModel->getLoginCredentials(null, $email);
         $userID = $loginCredentialsDetails['user_id'];
+        $active = $loginCredentialsDetails['active'];
         $userPassword = $this->securityModel->decryptData($loginCredentialsDetails['password']);
         $locked = $loginCredentialsDetails['locked'];
         $failedLoginAttempts = $loginCredentialsDetails['failed_login_attempts'];
@@ -133,7 +142,7 @@ class AuthenticationController {
             return;
         }
     
-        if ($loginCredentialsDetails['active'] === 'No') {
+        if ($active === 'No') {
             $response = [
                 'success' => false,
                 'title' => 'Authentication Error',
@@ -158,16 +167,95 @@ class AuthenticationController {
         $this->authenticationModel->updateLoginAttempt($userID, 0, null);
     
         if ($twoFactorAuth === 'Yes') {
-            $this->handleTwoFactorAuth($userID, $email, $encryptedUserID, $rememberMe);
+            $this->handleTwoFactorAuth($userID, $email, $encryptedUserID);
             exit;
         }
-    
-        $this->updateConnectionAndRememberToken($userID, $rememberMe);
+        
         $_SESSION['user_id'] = $userID;
 
         $response = [
             'success' => true,
             'twoFactorAuth' => false
+        ];
+        
+        echo json_encode($response);
+        exit;
+    }
+    # -------------------------------------------------------------
+
+    # -------------------------------------------------------------
+    #   Resend methods
+    # -------------------------------------------------------------
+
+    # -------------------------------------------------------------
+    #
+    # Function: resendOTP
+    # Description: 
+    # Handles the resending OTP code.
+    #
+    # Parameters: None
+    #
+    # Returns: Array
+    #
+    # -------------------------------------------------------------
+    public function resendOTP() {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            return;
+        }
+    
+        $userID = htmlspecialchars($_POST['user_id'], ENT_QUOTES, 'UTF-8');
+
+        $checkLoginCredentialsExist = $this->authenticationModel->checkLoginCredentialsExist($userID, null);
+        $total = $checkLoginCredentialsExist['total'] ?? 0;
+    
+        if ($total === 0) {
+            $response = [
+                'success' => false,
+                'notExist' => true,
+                'title' => 'Authentication Error',
+                'message' => 'The user account does not exist.',
+                'messageType' => 'error'
+            ];
+            
+            echo json_encode($response);
+            exit;
+        }
+
+        $loginCredentialsDetails = $this->authenticationModel->getLoginCredentials($userID, null);
+        $email = $loginCredentialsDetails['email'];
+        $active = $loginCredentialsDetails['active'];
+        $locked = $loginCredentialsDetails['locked'];
+    
+        if ($active === 'No') {
+            $response = [
+                'success' => false,
+                'notActive' => true,
+                'title' => 'Authentication Error',
+                'message' => 'Your account is currently inactive. Please contact the administrator for assistance.',
+                'messageType' => 'error'
+            ];
+            
+            echo json_encode($response);
+            exit;
+        }
+    
+        if ($locked === 'Yes') {
+            $response = [
+                'success' => false,
+                'locked' => true,
+                'title' => 'Authentication Error',
+                'message' => 'Your account is currently locked. Please contact the administrator for assistance.',
+                'messageType' => 'error'
+            ];
+            
+            echo json_encode($response);
+            exit;
+        }
+
+        $this->resendOTPCode($userID, $email);
+
+        $response = [
+            'success' => true
         ];
         
         echo json_encode($response);
@@ -292,19 +380,19 @@ class AuthenticationController {
     # - $userID (int): The user ID.
     # - $email (string): The email address of the user.
     # - $encryptedUserID (string): The encrypted user ID.
-    # - $rememberMe (bool): The remember me value.
     #
     # Returns: Array
     #
     # -------------------------------------------------------------
-    private function handleTwoFactorAuth($userID, $email, $encryptedUserID, $rememberMe) {
+    private function handleTwoFactorAuth($userID, $email, $encryptedUserID) {
+        $securitySettingDetails = $this->securitySettingModel->getSecuritySetting(6);
+        $otpDuration = $securitySettingDetails['value'] ?? DEFAULT_OTP_DURATION;
+
         $otp = $this->generateToken(6, 6);
         $encryptedOTP = $this->securityModel->encryptData($otp);
-        $otpExpiryDate = date('Y-m-d H:i:s', strtotime('+5 minutes'));
+        $otpExpiryDate = date('Y-m-d H:i:s', strtotime('+'. $otpDuration .' minutes'));
     
-        $rememberMe = $rememberMe ? 'Yes' : 'No';
-    
-        $this->authenticationModel->updateOTP($userID, $encryptedOTP, $otpExpiryDate, $rememberMe);
+        $this->authenticationModel->updateOTP($userID, $encryptedOTP, $otpExpiryDate);
         $this->sendOTP($email, $otp);
     
         $response = [
@@ -315,6 +403,33 @@ class AuthenticationController {
         
         echo json_encode($response);
         exit;
+    }
+    # -------------------------------------------------------------
+
+    # -------------------------------------------------------------
+    #
+    # Function: resendOTPCode
+    # Description:
+    # Generates and encrypts an OTP, sets the OTP expiry date, and sends the OTP to the user's email.
+    #
+    # Parameters: 
+    # - $userID (int): The user ID.
+    # - $email (string): The email address of the user.
+    # - $encryptedUserID (string): The encrypted user ID.
+    #
+    # Returns: Array
+    #
+    # -------------------------------------------------------------
+    private function resendOTPCode($userID, $email) {
+        $securitySettingDetails = $this->securitySettingModel->getSecuritySetting(6);
+        $otpDuration = $securitySettingDetails['value'] ?? DEFAULT_OTP_DURATION;
+
+        $otp = $this->generateToken(6, 6);
+        $encryptedOTP = $this->securityModel->encryptData($otp);
+        $otpExpiryDate = date('Y-m-d H:i:s', strtotime('+'. $otpDuration .' minutes'));
+    
+        $this->authenticationModel->updateOTP($userID, $encryptedOTP, $otpExpiryDate);
+        $this->sendOTP($email, $otp);
     }
     # -------------------------------------------------------------
 
@@ -382,37 +497,6 @@ class AuthenticationController {
     # -------------------------------------------------------------
 
     # -------------------------------------------------------------
-    #   Update methods
-    # -------------------------------------------------------------
-    
-    # -------------------------------------------------------------
-    #
-    # Function: updateConnectionAndRememberToken
-    # Description: 
-    # Updates the user's last connection timestamp and sets the remember token if "Remember Me" is selected.
-    #
-    # Parameters: 
-    # - $user (array): The user details.
-    # - $rememberMe (bool): The remember me value.
-    #
-    # Returns: N/A
-    #
-    # -------------------------------------------------------------
-    private function updateConnectionAndRememberToken($userID, $rememberMe) {
-        $connectionDate = date('Y-m-d H:i:s');
-    
-        $this->authenticationModel->updateLastConnection($userID, $connectionDate);
-    
-        if ($rememberMe) {
-            $rememberToken = bin2hex(random_bytes(16));
-            $this->authenticationModel->updateRememberToken($userID, $rememberToken);
-
-            setcookie('remember_token', $rememberToken, time() + (30 * 24 * 60 * 60), '/');
-        }
-    }
-    # -------------------------------------------------------------
-
-    # -------------------------------------------------------------
     #   Generate methods
     # -------------------------------------------------------------
 
@@ -439,6 +523,90 @@ class AuthenticationController {
         return (string) $token;
     }
     # -------------------------------------------------------------
+
+    # -------------------------------------------------------------
+    #   Send methods
+    # -------------------------------------------------------------
+
+    # -------------------------------------------------------------
+    #
+    # Function: sendOTP
+    # Description: 
+    # Sends an OTP (One-Time Password) to the user's email address.
+    #
+    # Parameters: 
+    # - $email (string): The email address of the user.
+    # - $otp (string): The OTP generated.
+    #
+    # Returns: Array
+    #
+    # -------------------------------------------------------------
+    public function sendOTP($email, $otp) {
+        $emailSetting = $this->emailSettingModel->getEmailSetting(1);
+        $mailFromName = $emailSetting['mail_from_name'] ?? null;
+        $mailFromEmail = $emailSetting['mail_from_email'] ?? null;
+
+        $notificationSettingDetails = $this->notificationSettingModel->getNotificationSetting(1);
+        $emailSubject = $notificationSettingDetails['email_notification_subject'] ?? null;
+        $emailBody = $notificationSettingDetails['email_notification_body'] ?? null;
+        $emailBody = str_replace('{OTP_CODE}', $otp, $emailBody);
+
+        $message = file_get_contents('../../notification-setting/template/default-email.html');
+        $message = str_replace('{EMAIL_SUBJECT}', $emailSubject, $message);
+        $message = str_replace('{EMAIL_CONTENT}', $emailBody, $message);
+    
+        $mailer = new PHPMailer\PHPMailer\PHPMailer();
+        $this->configureSMTP($mailer);
+        
+        $mailer->setFrom($mailFromEmail, $mailFromName);
+        $mailer->addAddress($email);
+        $mailer->Subject = $emailSubject;
+        $mailer->Body = $message;
+    
+        if ($mailer->send()) {
+            return true;
+        }
+        else {
+            return 'Failed to send OTP. Error: ' . $mailer->ErrorInfo;
+        }
+    }
+    # -------------------------------------------------------------
+
+    # -------------------------------------------------------------
+    #   Configure methods
+    # -------------------------------------------------------------
+
+    # -------------------------------------------------------------
+    #
+    # Function: configureSMTP
+    # Description: 
+    # Sets the SMTP configuration
+    #
+    # Parameters: 
+    # - $mailer (array): The PHP mailer.
+    #
+    # Returns: None
+    #
+    # -------------------------------------------------------------
+    private function configureSMTP($mailer, $isHTML = true) {
+        $emailSetting = $this->emailSettingModel->getEmailSetting(1);
+        $mailHost = $emailSetting['mail_host'] ?? MAIL_HOST;
+        $smtpAuth = empty($emailSetting['smtp_auth']) ? false : true;
+        $mailUsername = $emailSetting['mail_username'] ?? MAIL_USERNAME;
+        $mailPassword = !empty($password) ? $this->securityModel->decryptData($emailSetting['mail_password']) : MAIL_PASSWORD;
+        $mailEncryption = $emailSetting['mail_encryption'] ?? MAIL_SMTP_SECURE;
+        $port = $emailSetting['port'] ?? MAIL_PORT;
+        
+        $mailer->isSMTP();
+        $mailer->isHTML(true);
+        $mailer->Host = $mailHost;
+        $mailer->SMTPAuth = $smtpAuth;
+        $mailer->Username = $mailUsername;
+        $mailer->Password = $mailPassword;
+        $mailer->SMTPSecure = $mailEncryption;
+        $mailer->Port = $port;
+    }
+    # -------------------------------------------------------------
 }
 
 require_once '../../global/config/config.php';
@@ -446,8 +614,13 @@ require_once '../../global/model/database-model.php';
 require_once '../../global/model/security-model.php';
 require_once '../../global/model/system-model.php';
 require_once '../../authentication/model/authentication-model.php';
-require_once '../../security-settings/model/security-setting-model.php';
+require_once '../../security-setting/model/security-setting-model.php';
+require_once '../../email-setting/model/email-setting-model.php';
+require_once '../../notification-setting/model/notification-setting-model.php';
+require_once '../../../assets/libs/phpmailer/src/PHPMailer.php';
+require_once '../../../assets/libs/phpmailer/src/Exception.php';
+require_once '../../../assets/libs/phpmailer/src/SMTP.php';
 
-$controller = new AuthenticationController(new AuthenticationModel(new DatabaseModel), new SecuritySettingModel(new DatabaseModel), new SystemModel(), new SecurityModel());
+$controller = new AuthenticationController(new AuthenticationModel(new DatabaseModel), new SecuritySettingModel(new DatabaseModel), new EmailSettingModel(new DatabaseModel), new NotificationSettingModel(new DatabaseModel), new SystemModel(), new SecurityModel());
 $controller->handleRequest();
 ?>

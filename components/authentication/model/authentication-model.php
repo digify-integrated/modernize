@@ -21,14 +21,16 @@ class AuthenticationModel {
     # Description: Retrieves the details of a login credentials.
     #
     # Parameters:
+    # - $p_user_id (int): The user ID of the user.
     # - $p_email (string): The email address of the user.
     #
     # Returns:
     # - An array containing the user details.
     #
     # -------------------------------------------------------------
-    public function getLoginCredentials($p_email) {
-        $stmt = $this->db->getConnection()->prepare('CALL getLoginCredentials(:p_email)');
+    public function getLoginCredentials($p_user_id, $p_email) {
+        $stmt = $this->db->getConnection()->prepare('CALL getLoginCredentials(:p_user_id, :p_email)');
+        $stmt->bindValue(':p_user_id', $p_user_id, PDO::PARAM_INT);
         $stmt->bindValue(':p_email', $p_email, PDO::PARAM_STR);
         $stmt->execute();
         return $stmt->fetch(PDO::FETCH_ASSOC);
@@ -45,13 +47,15 @@ class AuthenticationModel {
     # Description: Checks if the login credentials exists.
     #
     # Parameters:
+    # - $p_user_id (int): The user ID of the user.
     # - $p_email (string): The email address of the user.
     #
     # Returns: The result of the query as an associative array.
     #
     # -------------------------------------------------------------
-    public function checkLoginCredentialsExist($p_email = null) {
-        $stmt = $this->db->getConnection()->prepare('CALL checkLoginCredentialsExist(:p_email)');
+    public function checkLoginCredentialsExist($p_user_id, $p_email) {
+        $stmt = $this->db->getConnection()->prepare('CALL checkLoginCredentialsExist(:p_user_id, :p_email)');
+        $stmt->bindValue(':p_user_id', $p_user_id, PDO::PARAM_INT);
         $stmt->bindValue(':p_email', $p_email, PDO::PARAM_STR);
         $stmt->execute();
         return $stmt->fetch(PDO::FETCH_ASSOC);
@@ -115,17 +119,15 @@ class AuthenticationModel {
     # - $p_user_id (int): The user ID.
     # - $p_otp (string): The new OTP.
     # - $p_otp_expiry_date (datetime): The expiry date and time of the OTP.
-    # - $p_remember_me (bool): Flag indicating whether "remember me" is enabled.
     #
     # Returns: None
     #
     # -------------------------------------------------------------
-    public function updateOTP($p_user_id, $p_otp, $p_otp_expiry_date, $p_remember_me) {
-        $stmt = $this->db->getConnection()->prepare('CALL updateOTP(:p_user_id, :p_otp, :p_otp_expiry_date, :p_remember_me)');
+    public function updateOTP($p_user_id, $p_otp, $p_otp_expiry_date) {
+        $stmt = $this->db->getConnection()->prepare('CALL updateOTP(:p_user_id, :p_otp, :p_otp_expiry_date)');
         $stmt->bindValue(':p_user_id', $p_user_id, PDO::PARAM_INT);
         $stmt->bindValue(':p_otp', $p_otp, PDO::PARAM_STR);
         $stmt->bindValue(':p_otp_expiry_date', $p_otp_expiry_date, PDO::PARAM_STR);
-        $stmt->bindValue(':p_remember_me', $p_remember_me, PDO::PARAM_INT);
         $stmt->execute();
     }
     # -------------------------------------------------------------

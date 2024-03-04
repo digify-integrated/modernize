@@ -1,16 +1,16 @@
 DELIMITER //
 
-CREATE PROCEDURE checkLoginCredentialsExist(IN p_email VARCHAR(255))
+CREATE PROCEDURE checkLoginCredentialsExist(IN p_user_id INT, IN p_email VARCHAR(255))
 BEGIN
 	SELECT COUNT(*) AS total
     FROM users
-    WHERE email = p_email;
+    WHERE user_id = p_user_id OR email = p_email;
 END //
 
-CREATE PROCEDURE getLoginCredentials(IN p_email VARCHAR(255))
+CREATE PROCEDURE getLoginCredentials(IN p_user_id INT, IN p_email VARCHAR(255))
 BEGIN
 	SELECT * FROM users
-	WHERE email = p_email;
+    WHERE user_id = p_user_id OR email = p_email;
 END //
 
 CREATE PROCEDURE updateLoginAttempt(IN p_user_id INT, IN p_failed_login_attempts INT, IN p_last_failed_login_attempt DATETIME)
@@ -27,10 +27,10 @@ BEGIN
     WHERE user_id = p_user_id;
 END //
 
-CREATE PROCEDURE updateOTP(IN p_user_id INT, IN p_otp VARCHAR(255), IN p_otp_expiry_date DATETIME, IN p_remember_me TINYINT(1))
+CREATE PROCEDURE updateOTP(IN p_user_id INT, IN p_otp VARCHAR(255), IN p_otp_expiry_date DATETIME)
 BEGIN
 	UPDATE users 
-    SET otp = p_otp, otp_expiry_date = p_otp_expiry_date, remember_me = p_remember_me, failed_otp_attempts = 0
+    SET otp = p_otp, otp_expiry_date = p_otp_expiry_date, failed_otp_attempts = 0
     WHERE user_id = p_user_id;
 END //
 
