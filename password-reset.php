@@ -1,10 +1,25 @@
 <?php
     require('components/global/config/config.php');
     require('components/global/model/database-model.php');
-    
-    $databaseModel = new DatabaseModel();
+    require('components/global/model/security-model.php');
+    require('components/authentication/model/authentication-model.php');
 
-    $pageTitle = 'CGMI Digital Solutions';
+    $databaseModel = new DatabaseModel();
+    $securityModel = new SecurityModel();
+    $authenticationModel = new AuthenticationModel($databaseModel);
+
+    $pageTitle = 'Password Reset';
+
+    if (isset($_GET['id']) && !empty($_GET['id']) && isset($_GET['token']) && !empty($_GET['token'])) {
+        $id = $_GET['id'];
+        $token = $_GET['token'];
+        $userID = $securityModel->decryptData($id);
+        $resetToken = $securityModel->decryptData($token);
+    }
+    else{
+        header('location: index.php');
+        exit;
+    }
 
     require('session-check.php');
 ?>
@@ -32,26 +47,29 @@
                     <div class="col-xl-5 col-xxl-4">
                         <div class="authentication-login min-vh-100 bg-body row justify-content-center align-items-center p-0">
                             <div class="auth-max-width col-sm-8 col-md-6 col-xl-7 px-0">
-                                <h2 class="mb-1 fs-7 fw-bolder">Welcome to <span class="text-primary">CGMI Digital Solutions</span></h2>
-                                <p class="mb-7">Empowering Futures, Crafting Digital Excellence</p>
-                                <form id="signin-form" method="post" action="#">
-                                    <div class="mb-3">
-                                        <label for="email" class="form-label">Email</label>
-                                        <input type="email" class="form-control" id="email" name="email" autocomplete="off">
-                                    </div>
+                                <h2 class="mb-1 fs-7 fw-bolder">Password <span class="text-primary">Reset</span></h2>
+                                <p class="mb-7">Enter your new password</p>
+                                <form id="password-reset-form" method="post" action="#">
+                                    <input type="hidden" id="user_id" name="user_id" value="<?php echo $userID; ?>">
                                     <div class="mb-4">
-                                        <label for="password" class="form-label">Password</label>
+                                        <label for="new_password" class="form-label">New Password</label>
                                         <div class="input-group mb-3">
-                                            <input type="password" class="form-control" id="password" name="password">
+                                            <input type="password" class="form-control" id="new_password" name="new_password">
                                             <button class="btn bg-info-subtle text-info  rounded-end d-flex align-items-center password-addon" type="button">
                                                 <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-eye" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" /><path d="M21 12c-2.4 4 -5.4 6 -9 6c-3.6 0 -6.6 -2 -9 -6c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6" /></svg>
                                             </button>
                                         </div>
                                     </div>
-                                    <div class="text-end mb-4">
-                                        <a class="text-primary fw-medium fs-3" href="forgot-password.php">Forgot Password ?</a>
+                                    <div class="mb-4">
+                                        <label for="confirm_password" class="form-label">Confirm Password</label>
+                                        <div class="input-group mb-3">
+                                            <input type="password" class="form-control" id="confirm_password" name="confirm_password">
+                                            <button class="btn bg-info-subtle text-info  rounded-end d-flex align-items-center password-addon" type="button">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-eye" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" /><path d="M21 12c-2.4 4 -5.4 6 -9 6c-3.6 0 -6.6 -2 -9 -6c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6" /></svg>
+                                            </button>
+                                        </div>
                                     </div>
-                                    <button id="signin" type="submit" class="btn btn-primary w-100 py-8 mb-4 rounded-2">Login</button>
+                                    <button id="signin" type="submit" class="btn btn-primary w-100 py-8 mb-4 rounded-2">Reset Password</button>
                                 </form>
                             </div>
                         </div>
@@ -66,6 +84,6 @@
         include_once('view/_global_js.php');
         include_once('view/_error_modal.php');
     ?>
-    <script src="./assets/js/pages/index.js?v=<?php echo rand(); ?>"></script>
+    <script src="./assets/js/pages/password-reset.js?v=<?php echo rand(); ?>"></script>
 </body>
 </html>

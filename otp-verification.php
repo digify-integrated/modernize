@@ -75,7 +75,7 @@
                                             <input type="text" class="form-control text-center otp-input" id="otp_code_6" name="otp_code_6" autocomplete="off" maxlength="1">
                                         </div>
                                     </div>
-                                    <button id="signin" type="submit" class="btn btn-primary w-100 py-8 mb-4 rounded-2">Verify</button>
+                                    <button id="verify" type="submit" class="btn btn-primary w-100 py-8 mb-4 rounded-2">Verify</button>
                                 </form>
                                 <div class="row">
                                     <div class="col-6 mb-2 mb-sm-0">

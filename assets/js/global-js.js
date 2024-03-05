@@ -5,6 +5,16 @@
         $(document).on('click','#copy-error-message',function() {
             copyToClipboard("error-dialog");
         });
+        $(document).on('click','.password-addon',function() {
+            if (0 < $(this).siblings("input").length) {
+                var inputField = $(this).siblings("input");
+                if (inputField.attr("type") === "password") {
+                    inputField.attr("type", "text");
+                } else {
+                    inputField.attr("type", "password");
+                }
+            }
+        });
     });
 })(jQuery);
 

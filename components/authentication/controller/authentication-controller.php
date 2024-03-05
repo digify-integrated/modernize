@@ -69,6 +69,15 @@ class AuthenticationController {
                 case 'authenticate':
                     $this->authenticate();
                     break; 
+                case 'otp verification':
+                    $this->verifyOTP();
+                    break;
+                case 'forgot password':
+                    $this->forgotPassword();
+                    break;
+                case 'password reset':
+                    $this->passwordReset();
+                    break;
                 case 'resend otp':
                     $this->resendOTP();
                     break; 
@@ -170,12 +179,346 @@ class AuthenticationController {
             $this->handleTwoFactorAuth($userID, $email, $encryptedUserID);
             exit;
         }
-        
+
+        $sessionToken = $this->generateToken(6, 6);
+        $encryptedSessionToken = $this->securityModel->encryptData($sessionToken);
+
+        $this->authenticationModel->updateLastConnection($userID, $encryptedSessionToken, date('Y-m-d H:i:s'));
+
         $_SESSION['user_id'] = $userID;
+        $_SESSION['session_token'] = $sessionToken;
 
         $response = [
             'success' => true,
             'twoFactorAuth' => false
+        ];
+        
+        echo json_encode($response);
+        exit;
+    }
+    # -------------------------------------------------------------
+
+    # -------------------------------------------------------------
+    #   Verify methods
+    # -------------------------------------------------------------
+
+    # -------------------------------------------------------------
+    #
+    # Function: verifyOTP
+    # Description: 
+    # Handles the verfication OTP code.
+    #
+    # Parameters: None
+    #
+    # Returns: Array
+    #
+    # -------------------------------------------------------------
+    public function verifyOTP() {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            return;
+        }
+    
+        $userID = htmlspecialchars($_POST['user_id'], ENT_QUOTES, 'UTF-8');
+        $otpCode1 = htmlspecialchars($_POST['otp_code_1'], ENT_QUOTES, 'UTF-8');
+        $otpCode2 = htmlspecialchars($_POST['otp_code_2'], ENT_QUOTES, 'UTF-8');
+        $otpCode3 = htmlspecialchars($_POST['otp_code_3'], ENT_QUOTES, 'UTF-8');
+        $otpCode4 = htmlspecialchars($_POST['otp_code_4'], ENT_QUOTES, 'UTF-8');
+        $otpCode5 = htmlspecialchars($_POST['otp_code_5'], ENT_QUOTES, 'UTF-8');
+        $otpCode6 = htmlspecialchars($_POST['otp_code_6'], ENT_QUOTES, 'UTF-8');
+        $otpVerificationCode = $otpCode1 . $otpCode2 . $otpCode3 . $otpCode4 . $otpCode5 . $otpCode6;
+
+        $checkLoginCredentialsExist = $this->authenticationModel->checkLoginCredentialsExist($userID, null);
+        $total = $checkLoginCredentialsExist['total'] ?? 0;
+    
+        if ($total === 0) {
+            $response = [
+                'success' => false,
+                'notExist' => true,
+                'title' => 'Authentication Error',
+                'message' => 'The user account does not exist.',
+                'messageType' => 'error'
+            ];
+            
+            echo json_encode($response);
+            exit;
+        }
+
+        $loginCredentialsDetails = $this->authenticationModel->getLoginCredentials($userID, null);
+        $otp = $this->securityModel->decryptData($loginCredentialsDetails['otp']);
+        $failedOTPAttempts = $loginCredentialsDetails['failed_otp_attempts'];
+        $otpExpiryDate = $loginCredentialsDetails['otp_expiry_date'];
+        $active = $loginCredentialsDetails['active'];
+        $locked = $loginCredentialsDetails['locked'];
+    
+        if ($active === 'No') {
+            $response = [
+                'success' => false,
+                'notActive' => true,
+                'title' => 'OTP Verification Error',
+                'message' => 'Your account is currently inactive. Please contact the administrator for assistance.',
+                'messageType' => 'error'
+            ];
+            
+            echo json_encode($response);
+            exit;
+        }
+    
+        if ($locked === 'Yes') {
+            $response = [
+                'success' => false,
+                'locked' => true,
+                'title' => 'OTP Verification Error',
+                'message' => 'Your account is currently locked. Please contact the administrator for assistance.',
+                'messageType' => 'error'
+            ];
+            
+            echo json_encode($response);
+            exit;
+        }
+
+        if ($otpVerificationCode !== $otp) {
+            $securitySettingDetails = $this->securitySettingModel->getSecuritySetting(2);
+            $maxFailedOTPAttempts = $securitySettingDetails['value'] ?? MAX_FAILED_OTP_ATTEMPTS;
+
+            if ($failedOTPAttempts >= $maxFailedOTPAttempts) {
+                $otpExpiryDate = date('Y-m-d H:i:s', strtotime('-1 year'));
+                $this->authenticationModel->updateOTPAsExpired($userID, $otpExpiryDate);
+
+                $response = [
+                    'success' => false,
+                    'otpMaxFailedAttempt' => true,
+                    'title' => 'OTP Verification Error',
+                    'message' => 'Invalid OTP code. Please request a new one.',
+                    'messageType' => 'error'
+                ];
+                
+                echo json_encode($response);
+                exit;
+            }
+    
+            $this->authenticationModel->updateFailedOTPAttempts($userID, $failedOTPAttempts + 1);
+
+            $response = [
+                'success' => false,
+                'incorrectOTPCode' => true,
+                'title' => 'OTP Verification Error',
+                'message' => 'The OTP code you entered is incorrect.',
+                'messageType' => 'error'
+            ];
+            
+            echo json_encode($response);
+            exit;
+        }
+
+        if (strtotime(date('Y-m-d H:i:s')) > strtotime($otpExpiryDate)) {
+            $response = [
+                'success' => false,
+                'expiredOTP' => true,
+                'title' => 'OTP Verification Error',
+                'message' => 'Expired OTP code. Please request a new one.',
+                'messageType' => 'error'
+            ];
+            
+            echo json_encode($response);
+            exit;
+        }
+
+        $sessionToken = $this->generateToken(6, 6);
+        $encryptedSessionToken = $this->securityModel->encryptData($sessionToken);
+
+        $this->authenticationModel->updateLastConnection($userID, $encryptedSessionToken, date('Y-m-d H:i:s'));
+
+        $_SESSION['user_id'] = $userID;
+        $_SESSION['session_token'] = $sessionToken;
+
+        $response = [
+            'success' => true
+        ];
+        
+        echo json_encode($response);
+        exit;
+    }
+    # -------------------------------------------------------------
+
+    # -------------------------------------------------------------
+    #   Reset methods
+    # -------------------------------------------------------------
+
+    # -------------------------------------------------------------
+    #
+    # Function: passwordReset
+    # Description: 
+    # Handles the reset password.
+    #
+    # Parameters: None
+    #
+    # Returns: Array
+    #
+    # -------------------------------------------------------------
+    public function passwordReset() {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            return;
+        }
+    
+        $userID = htmlspecialchars($_POST['user_id'], ENT_QUOTES, 'UTF-8');
+        $newPassword = htmlspecialchars($_POST['new_password'], ENT_QUOTES, 'UTF-8');
+        $encryptedPassword = $this->securityModel->encryptData($newPassword);
+
+        $checkLoginCredentialsExist = $this->authenticationModel->checkLoginCredentialsExist($userID, null);
+        $total = $checkLoginCredentialsExist['total'] ?? 0;
+    
+        if ($total === 0) {
+            $response = [
+                'success' => false,
+                'notExist' => true,
+                'title' => 'Authentication Error',
+                'message' => 'The user account does not exist.',
+                'messageType' => 'error'
+            ];
+            
+            echo json_encode($response);
+            exit;
+        }
+
+        $loginCredentialsDetails = $this->authenticationModel->getLoginCredentials($userID, null);
+        $email = $loginCredentialsDetails['email'];
+        $active = $loginCredentialsDetails['active'];
+        $locked = $loginCredentialsDetails['locked'];
+    
+        if ($active === 'No') {
+            $response = [
+                'success' => false,
+                'notActive' => true,
+                'title' => 'OTP Verification Error',
+                'message' => 'Your account is currently inactive. Please contact the administrator for assistance.',
+                'messageType' => 'error'
+            ];
+            
+            echo json_encode($response);
+            exit;
+        }
+    
+        if ($locked === 'Yes') {
+            $response = [
+                'success' => false,
+                'locked' => true,
+                'title' => 'OTP Verification Error',
+                'message' => 'Your account is currently locked. Please contact the administrator for assistance.',
+                'messageType' => 'error'
+            ];
+            
+            echo json_encode($response);
+            exit;
+        }
+
+        $checkPasswordHistory = $this->checkPasswordHistory($userID, $email, $password);
+    
+        if ($checkPasswordHistory > 0) {
+            echo json_encode(['success' => false, 'message' => 'Your new password must not match your previous one. Please choose a different password.']);
+            exit;
+        }
+
+        $securitySettingDetails = $this->securitySettingModel->getSecuritySetting(4);
+        $defaultPasswordDuration = $securitySettingDetails['value'] ?? DEFAULT_PASSWORD_DURATION;
+    
+        $passwordExpiryDate = date('Y-m-d', strtotime('+'. $defaultPasswordDuration .' days'));
+        $this->authenticationModel->updateUserPassword($userID, $email, $encryptedPassword, $passwordExpiryDate, date('Y-m-d H:i:s'));
+        $this->authenticationModel->insertPasswordHistory($userID, $email, $encryptedPassword, $lastPasswordChange);
+
+        $response = [
+            'success' => true
+        ];
+        
+        echo json_encode($response);
+        exit;
+    }
+    # -------------------------------------------------------------
+
+    # -------------------------------------------------------------
+    #   Forgot methods
+    # -------------------------------------------------------------
+
+    # -------------------------------------------------------------
+    #
+    # Function: forgotPassword
+    # Description: 
+    # Handles the forgot password.
+    #
+    # Parameters: None
+    #
+    # Returns: Array
+    #
+    # -------------------------------------------------------------
+    public function forgotPassword() {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            return;
+        }
+    
+        $email = htmlspecialchars($_POST['email'], ENT_QUOTES, 'UTF-8');
+
+        $checkLoginCredentialsExist = $this->authenticationModel->checkLoginCredentialsExist(null, $email);
+        $total = $checkLoginCredentialsExist['total'] ?? 0;
+    
+        if ($total === 0) {
+            $response = [
+                'success' => false,
+                'notExist' => true,
+                'title' => 'Authentication Error',
+                'message' => 'The user account does not exist.',
+                'messageType' => 'error'
+            ];
+            
+            echo json_encode($response);
+            exit;
+        }
+
+        $loginCredentialsDetails = $this->authenticationModel->getLoginCredentials(null, $email);
+        $userID = $loginCredentialsDetails['user_id'];
+        $active = $loginCredentialsDetails['active'];
+        $locked = $loginCredentialsDetails['locked'];
+        $encryptedUserID = $this->securityModel->encryptData($userID);
+    
+        if ($active === 'No') {
+            $response = [
+                'success' => false,
+                'notActive' => true,
+                'title' => 'OTP Verification Error',
+                'message' => 'Your account is currently inactive. Please contact the administrator for assistance.',
+                'messageType' => 'error'
+            ];
+            
+            echo json_encode($response);
+            exit;
+        }
+    
+        if ($locked === 'Yes') {
+            $response = [
+                'success' => false,
+                'locked' => true,
+                'title' => 'OTP Verification Error',
+                'message' => 'Your account is currently locked. Please contact the administrator for assistance.',
+                'messageType' => 'error'
+            ];
+            
+            echo json_encode($response);
+            exit;
+        }
+
+        $securitySettingDetails = $this->securitySettingModel->getSecuritySetting(6);
+        $resetPasswordTokenDuration = $securitySettingDetails['value'] ?? RESET_PASSWORD_TOKEN_DURATION;
+
+        $resetToken = $this->generateResetToken();
+        $encryptedResetToken = $this->securityModel->encryptData($resetToken);
+        $resetTokenExpiryDate = date('Y-m-d H:i:s', strtotime('+'. $resetPasswordTokenDuration .' minutes'));
+    
+        $this->authenticationModel->updateResetToken($userID, $encryptedResetToken, $resetTokenExpiryDate);
+        $this->sendPasswordReset($email, $encryptedUserID, $encryptedResetToken, $resetPasswordTokenDuration);
+
+        $response = [
+            'success' => true,
+            'title' => 'Password Reset Success',
+            'message' => 'The password reset link has been sent to your registered email address. Please check your inbox and follow the instructions in the email to securely reset your password. If you don’t receive the email within a few minutes, please check your spam folder as well.',
+            'messageType' => 'success'
         ];
         
         echo json_encode($response);
@@ -261,6 +604,37 @@ class AuthenticationController {
         echo json_encode($response);
         exit;
     }
+    # -------------------------------------------------------------
+
+    # -------------------------------------------------------------
+    #
+    # Function: resendOTPCode
+    # Description:
+    # Generates and encrypts an OTP, sets the OTP expiry date, and sends the OTP to the user's email.
+    #
+    # Parameters: 
+    # - $userID (int): The user ID.
+    # - $email (string): The email address of the user.
+    # - $encryptedUserID (string): The encrypted user ID.
+    #
+    # Returns: Array
+    #
+    # -------------------------------------------------------------
+    private function resendOTPCode($userID, $email) {
+        $securitySettingDetails = $this->securitySettingModel->getSecuritySetting(6);
+        $otpDuration = $securitySettingDetails['value'] ?? DEFAULT_OTP_DURATION;
+
+        $otp = $this->generateToken(6, 6);
+        $encryptedOTP = $this->securityModel->encryptData($otp);
+        $otpExpiryDate = date('Y-m-d H:i:s', strtotime('+'. $otpDuration .' minutes'));
+    
+        $this->authenticationModel->updateOTP($userID, $encryptedOTP, $otpExpiryDate);
+        $this->sendOTP($email, $otp);
+    }
+    # -------------------------------------------------------------
+
+    # -------------------------------------------------------------
+    #   Handle methods
     # -------------------------------------------------------------
 
     # -------------------------------------------------------------
@@ -408,33 +782,6 @@ class AuthenticationController {
 
     # -------------------------------------------------------------
     #
-    # Function: resendOTPCode
-    # Description:
-    # Generates and encrypts an OTP, sets the OTP expiry date, and sends the OTP to the user's email.
-    #
-    # Parameters: 
-    # - $userID (int): The user ID.
-    # - $email (string): The email address of the user.
-    # - $encryptedUserID (string): The encrypted user ID.
-    #
-    # Returns: Array
-    #
-    # -------------------------------------------------------------
-    private function resendOTPCode($userID, $email) {
-        $securitySettingDetails = $this->securitySettingModel->getSecuritySetting(6);
-        $otpDuration = $securitySettingDetails['value'] ?? DEFAULT_OTP_DURATION;
-
-        $otp = $this->generateToken(6, 6);
-        $encryptedOTP = $this->securityModel->encryptData($otp);
-        $otpExpiryDate = date('Y-m-d H:i:s', strtotime('+'. $otpDuration .' minutes'));
-    
-        $this->authenticationModel->updateOTP($userID, $encryptedOTP, $otpExpiryDate);
-        $this->sendOTP($email, $otp);
-    }
-    # -------------------------------------------------------------
-
-    # -------------------------------------------------------------
-    #
     # Function: formatDuration
     # Description:
     # Updates the failed login attempts and, if the maximum attempts are reached, locks the account.
@@ -525,6 +872,29 @@ class AuthenticationController {
     # -------------------------------------------------------------
 
     # -------------------------------------------------------------
+    #
+    # Function: generateResetToken
+    # Description: 
+    # Generates a random reset token of specified length.
+    #
+    # Parameters: 
+    # - $minLength (int): The minimum length of the generated token. Default is 10.
+    # - $maxLength (int): The maximum length of the generated token. Default is 12.
+    #
+    # Returns: Array
+    #
+    # -------------------------------------------------------------
+    public function generateResetToken($minLength = 10, $maxLength = 12) {
+        $length = mt_rand($minLength, $maxLength);
+        $characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+        
+        $resetToken = substr(str_shuffle($characters), 0, $length);
+        
+        return $resetToken;
+    }
+    # -------------------------------------------------------------
+
+    # -------------------------------------------------------------
     #   Send methods
     # -------------------------------------------------------------
 
@@ -568,6 +938,55 @@ class AuthenticationController {
         }
         else {
             return 'Failed to send OTP. Error: ' . $mailer->ErrorInfo;
+        }
+    }
+    # -------------------------------------------------------------
+
+    # -------------------------------------------------------------
+    #
+    # Function: sendPasswordReset
+    # Description: 
+    # Sends a password reset email containing a password reset link to the user's email address.
+    #
+    # Parameters: 
+    # - $email (string): The email address of the user.
+    # - $userID (int): The user ID.
+    # - $resetToken (string): The reset token generated.
+    #
+    # Returns: Array
+    #
+    # -------------------------------------------------------------
+    public function sendPasswordReset($email, $userID, $resetToken, $resetPasswordTokenDuration) {
+        $emailSetting = $this->emailSettingModel->getEmailSetting(1);
+        $mailFromName = $emailSetting['mail_from_name'];
+        $mailFromEmail = $emailSetting['mail_from_email'];
+
+        $securitySettingDetails = $this->securitySettingModel->getSecuritySetting(3);
+        $defaultForgotPasswordLink = $securitySettingDetails['value'];
+
+        $notificationSettingDetails = $this->notificationSettingModel->getNotificationSetting(2);
+        $emailSubject = $notificationSettingDetails['email_notification_subject'] ?? null;
+        $emailBody = $notificationSettingDetails['email_notification_body'] ?? null;
+        $emailBody = str_replace('{RESET_LINK}', $defaultForgotPasswordLink . $userID .'&token=' . $resetToken, $emailBody);
+        $emailBody = str_replace('{RESET_DURATION}', $resetPasswordTokenDuration, $emailBody);
+
+        $message = file_get_contents('../../notification-setting/template/default-email.html');
+        $message = str_replace('{EMAIL_SUBJECT}', $emailSubject, $message);
+        $message = str_replace('{EMAIL_CONTENT}', $emailBody, $message);
+    
+        $mailer = new PHPMailer\PHPMailer\PHPMailer();
+        $this->configureSMTP($mailer);
+        
+        $mailer->setFrom($mailFromEmail, $mailFromName);
+        $mailer->addAddress($email);
+        $mailer->Subject = $emailSubject;
+        $mailer->Body = $message;
+    
+        if ($mailer->send()) {
+            return true;
+        } 
+        else {
+            return 'Failed to send password reset email. Error: ' . $mailer->ErrorInfo;
         }
     }
     # -------------------------------------------------------------

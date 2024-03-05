@@ -134,20 +134,84 @@ class AuthenticationModel {
 
     # -------------------------------------------------------------
     #
+    # Function: updateFailedOTPAttempts
+    # Description: Updates the last connection date for a user.
+    #
+    # Parameters:
+    # - $p_user_id (int): The user ID.
+    # - $p_failed_otp_attempts (int): The failed OTP attempts.
+    #
+    # Returns: None
+    #
+    # -------------------------------------------------------------
+    public function updateFailedOTPAttempts($p_user_id, $p_failed_otp_attempts) {
+        $stmt = $this->db->getConnection()->prepare('CALL updateFailedOTPAttempts(:p_user_id, :p_failed_otp_attempts)');
+        $stmt->bindValue(':p_user_id', $p_user_id, PDO::PARAM_INT);
+        $stmt->bindValue(':p_failed_otp_attempts', $p_failed_otp_attempts, PDO::PARAM_INT);
+        $stmt->execute();
+    }
+    # -------------------------------------------------------------
+
+    # -------------------------------------------------------------
+    #
+    # Function: updateOTPAsExpired
+    # Description: Updates the last connection date for a user.
+    #
+    # Parameters:
+    # - $p_user_id (int): The user ID.
+    # - $p_otp_expiry_date (int): The OTP expiry date.
+    #
+    # Returns: None
+    #
+    # -------------------------------------------------------------
+    public function updateOTPAsExpired($p_user_id, $p_otp_expiry_date) {
+        $stmt = $this->db->getConnection()->prepare('CALL updateOTPAsExpired(:p_user_id, :p_otp_expiry_date)');
+        $stmt->bindValue(':p_user_id', $p_user_id, PDO::PARAM_INT);
+        $stmt->bindValue(':p_otp_expiry_date', $p_otp_expiry_date, PDO::PARAM_STR);
+        $stmt->execute();
+    }
+    # -------------------------------------------------------------
+
+    # -------------------------------------------------------------
+    #
     # Function: updateLastConnection
     # Description: Updates the last connection date for a user.
     #
     # Parameters:
     # - $p_user_id (int): The user ID.
+    # - $p_session_token (string): The session token.
     # - $p_last_connection_date (datetime): The date and time of the last connection.
     #
     # Returns: None
     #
     # -------------------------------------------------------------
-    public function updateLastConnection($p_user_id, $p_last_connection_date) {
-        $stmt = $this->db->getConnection()->prepare('CALL updateLastConnection(:p_user_id, :p_last_connection_date)');
+    public function updateLastConnection($p_user_id, $p_session_token, $p_last_connection_date) {
+        $stmt = $this->db->getConnection()->prepare('CALL updateLastConnection(:p_user_id, :p_session_token, :p_last_connection_date)');
         $stmt->bindValue(':p_user_id', $p_user_id, PDO::PARAM_INT);
+        $stmt->bindValue(':p_session_token', $p_session_token, PDO::PARAM_STR);
         $stmt->bindValue(':p_last_connection_date', $p_last_connection_date, PDO::PARAM_STR);
+        $stmt->execute();
+    }
+    # -------------------------------------------------------------
+
+    # -------------------------------------------------------------
+    #
+    # Function: updateResetToken
+    # Description: Updates the reset token details for a user.
+    #
+    # Parameters:
+    # - $p_user_id (int): The user ID.
+    # - $p_resetToken (string): The new reset token.
+    # - $p_resetToken_expiry_date (datetime): The expiry date and time of the reset token.
+    #
+    # Returns: None
+    #
+    # -------------------------------------------------------------
+    public function updateResetToken($p_user_id, $p_resetToken, $p_resetToken_expiry_date) {
+        $stmt = $this->db->getConnection()->prepare('CALL updateResetToken(:p_user_id, :p_resetToken, :p_resetToken_expiry_date)');
+        $stmt->bindValue(':p_user_id', $p_user_id, PDO::PARAM_INT);
+        $stmt->bindValue(':p_resetToken', $p_resetToken, PDO::PARAM_STR);
+        $stmt->bindValue(':p_resetToken_expiry_date', $p_resetToken_expiry_date, PDO::PARAM_STR);
         $stmt->execute();
     }
     # -------------------------------------------------------------
