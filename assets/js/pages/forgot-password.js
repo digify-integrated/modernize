@@ -63,7 +63,7 @@ $(document).ready(function () {
                     handleSystemError(xhr, status, error);
                 },
                 complete: function() {
-                    enableFormSubmitButton('signin', 'Login');
+                    enableFormSubmitButton('signin');
                 }
             });
     

@@ -1,8 +1,10 @@
 <?php
     require('components/global/config/config.php');
     require('components/global/model/database-model.php');
+
+    $databaseModel = new DatabaseModel();
     
-    $pageTitle = 'OTP Verification';
+    $pageTitle = 'Forgot Password';
 
     require('session-check.php');
 ?>

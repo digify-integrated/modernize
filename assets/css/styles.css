@@ -2,7 +2,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;300;400;500;600;700;800&display=swap");
 @import "../fonts/tabler-icons/tabler-icons.css";
 @import "../fonts/crypto-icons/cryptocoins.css";
-@import "../fonts/flag-icon-css/flag-icon.min.css";
 @import "../fonts/font-awesome/css/fontawesome-all.css";
 [data-bs-theme=dark] {
   --bs-heading-color: #eaeff4 !important;
@@ -457,9 +456,9 @@
 [data-bs-theme=light][data-color-theme=Red_Theme]:root,
 [data-bs-theme=dark][data-color-theme=Red_Theme]:root {
   --bs-primary: #dc2626;
-  --bs-primary-rgb: 118, 62, 189;
-  --bs-light-primary: rgba(118, 62, 189, 0.1);
-  --bs-primary-bg-subtle: rgba(118, 62, 189, 0.1);
+  --bs-primary-rgb: 220,38,38;
+  --bs-light-primary: rgba(220,38,38, 0.1);
+  --bs-primary-bg-subtle: rgba(220,38,38, 0.1);
   --bs-secondary: #95cfd5;
   --bs-secondary-rgb: 149, 207, 213;
   --bs-light-secondary: rgba(149, 207, 213, 0.1);

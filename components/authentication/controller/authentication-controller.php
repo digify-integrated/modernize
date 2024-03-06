@@ -384,12 +384,12 @@ class AuthenticationController {
         $email = $loginCredentialsDetails['email'];
         $active = $loginCredentialsDetails['active'];
         $locked = $loginCredentialsDetails['locked'];
+        $resetTokenExpiryDate = $loginCredentialsDetails['reset_token_expiry_date'];
     
         if ($active === 'No') {
             $response = [
                 'success' => false,
-                'notActive' => true,
-                'title' => 'OTP Verification Error',
+                'title' => 'Password Reset Error',
                 'message' => 'Your account is currently inactive. Please contact the administrator for assistance.',
                 'messageType' => 'error'
             ];
@@ -401,9 +401,20 @@ class AuthenticationController {
         if ($locked === 'Yes') {
             $response = [
                 'success' => false,
-                'locked' => true,
-                'title' => 'OTP Verification Error',
+                'title' => 'Password Reset Error',
                 'message' => 'Your account is currently locked. Please contact the administrator for assistance.',
+                'messageType' => 'error'
+            ];
+            
+            echo json_encode($response);
+            exit;
+        }       
+
+        if(strtotime(date('Y-m-d H:i:s')) > strtotime($resetTokenExpiryDate)){
+            $response = [
+                'success' => false,
+                'title' => 'Password Reset Error',
+                'message' => 'The password reset link has expired. Please request a new link to reset your password.',
                 'messageType' => 'error'
             ];
             
@@ -411,22 +422,38 @@ class AuthenticationController {
             exit;
         }
 
-        $checkPasswordHistory = $this->checkPasswordHistory($userID, $email, $password);
+        $checkPasswordHistory = $this->checkPasswordHistory($userID, $email, $newPassword);
     
         if ($checkPasswordHistory > 0) {
-            echo json_encode(['success' => false, 'message' => 'Your new password must not match your previous one. Please choose a different password.']);
+            $response = [
+                'success' => false,
+                'passwordExist' => true,
+                'title' => 'Password Reset Error',
+                'message' => 'Your new password cannot be the same as your previous one. Please select a different password.',
+                'messageType' => 'error'
+            ];
+            
+            echo json_encode($response);
             exit;
         }
 
         $securitySettingDetails = $this->securitySettingModel->getSecuritySetting(4);
         $defaultPasswordDuration = $securitySettingDetails['value'] ?? DEFAULT_PASSWORD_DURATION;
     
+        $lastPasswordChange = date('Y-m-d H:i:s');
         $passwordExpiryDate = date('Y-m-d', strtotime('+'. $defaultPasswordDuration .' days'));
-        $this->authenticationModel->updateUserPassword($userID, $email, $encryptedPassword, $passwordExpiryDate, date('Y-m-d H:i:s'));
+
+        $this->authenticationModel->updateUserPassword($userID, $email, $encryptedPassword, $passwordExpiryDate, $lastPasswordChange);
         $this->authenticationModel->insertPasswordHistory($userID, $email, $encryptedPassword, $lastPasswordChange);
 
+        $resetTokenExpiryDate = date('Y-m-d H:i:s', strtotime('-1 year'));
+        $this->authenticationModel->updateResetTokenAsExpired($userID, $resetTokenExpiryDate);
+
         $response = [
-            'success' => true
+            'success' => true,
+            'title' => 'Password Reset Success',
+            'message' => 'Your password has been successfully updated. For security reasons, please use your new password to log in.',
+            'messageType' => 'success'            
         ];
         
         echo json_encode($response);
@@ -840,6 +867,40 @@ class AuthenticationController {
         }
         
         return false;
+    }
+    # -------------------------------------------------------------
+
+    # -------------------------------------------------------------
+    #   Get methods
+    # -------------------------------------------------------------
+
+    # -------------------------------------------------------------
+    #
+    # Function: checkPasswordHistory
+    # Description: 
+    # Checks the password history for a given user ID and email to determine if the new password matches any previous passwords.
+    #
+    # Parameters: 
+    # - $p_user_id (array): The user ID.
+    # - $p_email (string): The email address of the user.
+    # - $p_password (string): The password of the user.
+    #
+    # Returns: Array
+    #
+    # -------------------------------------------------------------
+    private function checkPasswordHistory($p_user_id, $p_email, $p_password) {
+        $total = 0;
+        $passwordHistory = $this->authenticationModel->getPasswordHistory($p_user_id, $p_email);
+    
+        foreach ($passwordHistory as $history) {
+            $password = $this->securityModel->decryptData($history['password']);
+    
+            if ($password === $p_password) {
+                $total++;
+            }
+        }
+    
+        return $total;
     }
     # -------------------------------------------------------------
 

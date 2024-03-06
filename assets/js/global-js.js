@@ -2,21 +2,34 @@
     'use strict';
 
     $(function() {
+        checkNotification();
+        
         $(document).on('click','#copy-error-message',function() {
-            copyToClipboard("error-dialog");
+            copyToClipboard('error-dialog');
         });
+
         $(document).on('click','.password-addon',function() {
-            if (0 < $(this).siblings("input").length) {
-                var inputField = $(this).siblings("input");
-                if (inputField.attr("type") === "password") {
-                    inputField.attr("type", "text");
-                } else {
-                    inputField.attr("type", "password");
+            if (0 < $(this).siblings('input').length) {
+                var inputField = $(this).siblings('input');
+                var eyeIcon = $(this).find('i');
+        
+                if (inputField.attr('type') === 'password') {
+                    inputField.attr('type', 'text');
+                    eyeIcon.removeClass('ti-eye').addClass('ti-eye-off');
+                }
+                else {
+                    inputField.attr('type', 'password');
+                    eyeIcon.removeClass('ti-eye-off').addClass('ti-eye');
                 }
             }
         });
     });
 })(jQuery);
+
+function handleColorTheme(e) {
+    $('html').attr('data-color-theme', e);
+    $(e).prop('checked', !0);
+}
 
 function copyToClipboard(elementID) {
     const element = document.getElementById(elementID);
@@ -39,13 +52,12 @@ function showErrorDialog(error){
     }    
 }
 
-function updateFormSubmitButton(buttonId, disabled, innerHTML) {
+function updateFormSubmitButton(buttonId, disabled) {
     try {
         const submitButton = document.querySelector(`#${buttonId}`);
     
         if (submitButton) {
             submitButton.disabled = disabled;
-            submitButton.innerHTML = innerHTML;
         }
         else {
             console.error(`Button with ID '${buttonId}' not found.`);
@@ -57,11 +69,11 @@ function updateFormSubmitButton(buttonId, disabled, innerHTML) {
 }
 
 function disableFormSubmitButton(buttonId) {
-    updateFormSubmitButton(buttonId, true, '<div class="spinner-border spinner-border-sm text-light" role="status"><span class="sr-only"></span></div>');
+    updateFormSubmitButton(buttonId, true);
 }
 
-function enableFormSubmitButton(buttonId, buttonText) {
-    updateFormSubmitButton(buttonId, false, buttonText);
+function enableFormSubmitButton(buttonId) {
+    updateFormSubmitButton(buttonId, false);
 }
 
 function handleSystemError(xhr, status, error) {
@@ -83,7 +95,7 @@ function showNotification(notificationTitle, notificationMessage, notificationTy
         newestOnTop: true,
         preventDuplicates: false,
         positionClass: 'toast-top-center',
-        timeOut: 3000,
+        timeOut: 5000,
         showMethod: 'fadeIn',
         hideMethod: 'fadeOut'
     };
@@ -99,11 +111,17 @@ function setNotification(notificationTitle, notificationMessage, notificationTyp
 }
   
 function checkNotification() {
-    const storageKeys = ['notificationTitle', 'notificationMessage', 'notificationType'];
-    const { notificationTitle, notificationMessage, notificationType } = sessionStorage;
+    const { 
+        'notificationTitle': notificationTitle, 
+        'notificationMessage': notificationMessage, 
+        'notificationType': notificationType 
+    } = sessionStorage;
     
-    if (storageKeys.every(key => sessionStorage.hasOwnProperty(key))) {
-        storageKeys.forEach(key => sessionStorage.removeItem(key));
-        showNotification({ notificationTitle, notificationMessage, notificationType });
+    if (notificationTitle && notificationMessage && notificationType) {
+        sessionStorage.removeItem('notificationTitle');
+        sessionStorage.removeItem('notificationMessage');
+        sessionStorage.removeItem('notificationType');
+
+        showNotification(notificationTitle, notificationMessage, notificationType);
     }
 }

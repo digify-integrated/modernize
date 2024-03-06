@@ -85,8 +85,8 @@ function otpForm(){
                             showNotification(response.title, response.message, response.messageType);
                         }
                         else{
-                            window.location.href = 'index.php';
                             setNotification(response.title, response.message, response.messageType);
+                            window.location.href = 'index.php';
                         }
                     }
                 },
@@ -94,7 +94,7 @@ function otpForm(){
                     handleSystemError(xhr, status, error);
                 },
                 complete: function() {
-                    enableFormSubmitButton('verify', 'Verify');
+                    enableFormSubmitButton('verify');
                 }
             });
     

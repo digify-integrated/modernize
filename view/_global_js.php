@@ -12,6 +12,5 @@
 <script src="./assets/libs/jquery-validation/validation/form-validation-rules.js?v=<?php echo rand(); ?>"></script>
 
 <script src="./assets/js/plugins/toastr-init.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/iconify-icon@1.0.8/dist/iconify-icon.min.js"></script>
 
 <script src="./assets/js/global-js.js?v=<?php echo rand(); ?>"></script>

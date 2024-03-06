@@ -38,6 +38,28 @@ class AuthenticationModel {
     # -------------------------------------------------------------
 
     # -------------------------------------------------------------
+    #
+    # Function: getPasswordHistory
+    # Description: Retrieves the password history of a user based on their user ID and email.
+    #
+    # Parameters:
+    # - $p_user_id (int): The user ID.
+    # - $p_email (string): The email address of the user.
+    #
+    # Returns:
+    # - An array containing the password history details.
+    #
+    # -------------------------------------------------------------
+    public function getPasswordHistory($p_user_id, $p_email) {
+        $stmt = $this->db->getConnection()->prepare('CALL getPasswordHistory(:p_user_id, :p_email)');
+        $stmt->bindValue(':p_user_id', $p_user_id, PDO::PARAM_INT);
+        $stmt->bindValue(':p_email', $p_email, PDO::PARAM_STR);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+    # -------------------------------------------------------------
+
+    # -------------------------------------------------------------
     #   Check exist methods
     # -------------------------------------------------------------
 
@@ -174,6 +196,26 @@ class AuthenticationModel {
 
     # -------------------------------------------------------------
     #
+    # Function: updateResetTokenAsExpired
+    # Description: Updates the last connection date for a user.
+    #
+    # Parameters:
+    # - $p_user_id (int): The user ID.
+    # - $p_reset_token_expiry_date (int): The reset token expiry date.
+    #
+    # Returns: None
+    #
+    # -------------------------------------------------------------
+    public function updateResetTokenAsExpired($p_user_id, $p_reset_token_expiry_date) {
+        $stmt = $this->db->getConnection()->prepare('CALL updateResetTokenAsExpired(:p_user_id, :p_reset_token_expiry_date)');
+        $stmt->bindValue(':p_user_id', $p_user_id, PDO::PARAM_INT);
+        $stmt->bindValue(':p_reset_token_expiry_date', $p_reset_token_expiry_date, PDO::PARAM_STR);
+        $stmt->execute();
+    }
+    # -------------------------------------------------------------
+
+    # -------------------------------------------------------------
+    #
     # Function: updateLastConnection
     # Description: Updates the last connection date for a user.
     #
@@ -212,6 +254,60 @@ class AuthenticationModel {
         $stmt->bindValue(':p_user_id', $p_user_id, PDO::PARAM_INT);
         $stmt->bindValue(':p_resetToken', $p_resetToken, PDO::PARAM_STR);
         $stmt->bindValue(':p_resetToken_expiry_date', $p_resetToken_expiry_date, PDO::PARAM_STR);
+        $stmt->execute();
+    }
+    # -------------------------------------------------------------
+
+    # -------------------------------------------------------------
+    #
+    # Function: updateUserPassword
+    # Description: Updates the password details for a user.
+    #
+    # Parameters:
+    # - $p_user_id (int): The user ID.
+    # - $p_email (string): The email address of the user.
+    # - $p_password (string): The new password.
+    # - $p_password_expiry_date (date): The expiry date of the password.
+    # - $p_last_password_change (datetime): The date and time of the last password change.
+    #
+    # Returns: None
+    #
+    # -------------------------------------------------------------
+    public function updateUserPassword($p_user_id, $p_email, $p_password, $p_password_expiry_date, $p_last_password_change) {
+        $stmt = $this->db->getConnection()->prepare('CALL updateUserPassword(:p_user_id, :p_email, :p_password, :p_password_expiry_date, :p_last_password_change)');
+        $stmt->bindValue(':p_user_id', $p_user_id, PDO::PARAM_INT);
+        $stmt->bindValue(':p_email', $p_email, PDO::PARAM_STR);
+        $stmt->bindValue(':p_password', $p_password, PDO::PARAM_STR);
+        $stmt->bindValue(':p_password_expiry_date', $p_password_expiry_date, PDO::PARAM_STR);
+        $stmt->bindValue(':p_last_password_change', $p_last_password_change, PDO::PARAM_STR);
+        $stmt->execute();
+    }
+    # -------------------------------------------------------------
+
+    # -------------------------------------------------------------
+    #   Inser exist methods
+    # -------------------------------------------------------------
+
+    # -------------------------------------------------------------
+    #
+    # Function: insertPasswordHistory
+    # Description: Inserts a new record in the password history for a user.
+    #
+    # Parameters:
+    # - $p_user_id (int): The user ID.
+    # - $p_email (string): The email address of the user.
+    # - $p_password (string): The password to be stored in the history.
+    # - $p_last_password_change (datetime): The date and time of the last password change.
+    #
+    # Returns: None
+    #
+    # -------------------------------------------------------------
+    public function insertPasswordHistory($p_user_id, $p_email, $p_password, $p_last_password_change) {
+        $stmt = $this->db->getConnection()->prepare('CALL insertPasswordHistory(:p_user_id, :p_email, :p_password, :p_last_password_change)');
+        $stmt->bindValue(':p_user_id', $p_user_id, PDO::PARAM_INT);
+        $stmt->bindValue(':p_email', $p_email, PDO::PARAM_STR);
+        $stmt->bindValue(':p_password', $p_password, PDO::PARAM_STR);
+        $stmt->bindValue(':p_last_password_change', $p_last_password_change, PDO::PARAM_STR);
         $stmt->execute();
     }
     # -------------------------------------------------------------

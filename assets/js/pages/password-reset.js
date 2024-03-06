@@ -65,14 +65,20 @@ $(document).ready(function () {
                         window.location.href = 'index.php';
                     } 
                     else {
-                        showNotification(response.title, response.message, response.messageType);
+                        if (response.passwordExist) {
+                            showNotification(response.title, response.message, response.messageType);
+                        }
+                        else{
+                            setNotification(response.title, response.message, response.messageType);
+                            window.location.href = 'index.php';
+                        }
                     }
                 },
                 error: function(xhr, status, error) {
                     handleSystemError(xhr, status, error);
                 },
                 complete: function() {
-                    enableFormSubmitButton('signin', 'Login');
+                    enableFormSubmitButton('signin');
                 }
             });
     

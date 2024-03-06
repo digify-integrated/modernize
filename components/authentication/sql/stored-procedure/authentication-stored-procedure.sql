@@ -65,12 +65,25 @@ END //
 CREATE PROCEDURE updateUserPassword(IN p_user_id INT, IN p_email VARCHAR(255), IN p_password VARCHAR(255), IN p_password_expiry_date DATE, IN p_last_password_change DATETIME)
 BEGIN
 	UPDATE users 
-    SET password = p_password, password_expiry_date = p_password_expiry_date, last_password_change = p_last_password_change, is_locked = 0, failed_login_attempts = 0, account_lock_duration = 0
+    SET password = p_password, password_expiry_date = p_password_expiry_date, last_password_change = p_last_password_change, locked = 'No', failed_login_attempts = 0, account_lock_duration = 0
     WHERE p_user_id = user_id OR email = BINARY p_email;
+END //
+
+CREATE PROCEDURE updateResetTokenAsExpired(IN p_user_id INT, IN p_reset_token_expiry_date DATETIME)
+BEGIN
+	UPDATE users 
+    SET reset_token_expiry_date = p_reset_token_expiry_date
+    WHERE user_id = p_user_id;
 END //
 
 CREATE PROCEDURE insertPasswordHistory(IN p_user_id INT, IN p_email VARCHAR(255), IN p_password VARCHAR(255), IN p_last_password_change DATETIME)
 BEGIN
     INSERT INTO password_history (user_id, email, password, password_change_date) 
     VALUES (p_user_id, p_email, p_password, p_last_password_change);
+END //
+
+CREATE PROCEDURE getPasswordHistory(IN p_user_id INT, IN p_email VARCHAR(255))
+BEGIN
+	SELECT * FROM password_history
+	WHERE user_id = p_user_id OR email = BINARY p_email;
 END //

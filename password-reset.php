@@ -14,7 +14,16 @@
         $id = $_GET['id'];
         $token = $_GET['token'];
         $userID = $securityModel->decryptData($id);
-        $resetToken = $securityModel->decryptData($token);
+        $token = $securityModel->decryptData($token);
+
+        $loginCredentialsDetails = $authenticationModel->getLoginCredentials($userID, null);
+        $resetToken =  $securityModel->decryptData($loginCredentialsDetails['reset_token']);
+        $resetTokenExpiryDate = $loginCredentialsDetails['reset_token_expiry_date'];
+
+        if($token != $resetToken || strtotime(date('Y-m-d H:i:s')) > strtotime($resetTokenExpiryDate)){
+            header('location: 404.php');
+            exit;
+        }
     }
     else{
         header('location: index.php');
@@ -56,7 +65,7 @@
                                         <div class="input-group mb-3">
                                             <input type="password" class="form-control" id="new_password" name="new_password">
                                             <button class="btn bg-info-subtle text-info  rounded-end d-flex align-items-center password-addon" type="button">
-                                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-eye" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" /><path d="M21 12c-2.4 4 -5.4 6 -9 6c-3.6 0 -6.6 -2 -9 -6c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6" /></svg>
+                                                <i class="ti ti-eye"></i>
                                             </button>
                                         </div>
                                     </div>
@@ -65,7 +74,7 @@
                                         <div class="input-group mb-3">
                                             <input type="password" class="form-control" id="confirm_password" name="confirm_password">
                                             <button class="btn bg-info-subtle text-info  rounded-end d-flex align-items-center password-addon" type="button">
-                                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-eye" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" /><path d="M21 12c-2.4 4 -5.4 6 -9 6c-3.6 0 -6.6 -2 -9 -6c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6" /></svg>
+                                                <i class="ti ti-eye"></i>
                                             </button>
                                         </div>
                                     </div>
