@@ -1,5 +1,6 @@
 <?php
     require('view/_required_php_files.php');
+    require('view/_check_user_status.php');
 
     $pageTitle = 'Dashboard';
 ?>
@@ -23,13 +24,11 @@
             </div>
         </div>
         <div class="dark-transparent sidebartoggler"></div>
-        <script>
-        </script>
         <?php 
             include_once('view/_customizer.php');
             include_once('view/_global_js.php');
             include_once('view/_error_modal.php');
+            include_once('view/_required_js_files.php');
         ?>
-        <script src="./assets/js/pages/index.js?v=<?php echo rand(); ?>"></script>
     </body>
 </html>

@@ -15,14 +15,6 @@
             <input type="radio" class="btn-check dark-layout" name="theme-layout" id="dark-layout" autocomplete="off" />
             <label class="btn p-9 btn-outline-primary rounded-2" for="dark-layout"><i class="icon ti ti-moon fs-7 me-2"></i>Dark</label>
         </div>
-
-        <h6 class="mt-5 fw-semibold fs-4 mb-2">Theme Direction</h6>
-        <div class="d-flex flex-row gap-3 customizer-box" role="group">
-            <input type="radio" class="btn-check" name="direction-l" id="ltr-layout" autocomplete="off" />
-            <label class="btn p-9 btn-outline-primary" for="ltr-layout"><i class="icon ti ti-text-direction-ltr fs-7 me-2"></i>LTR</label>
-            <input type="radio" class="btn-check" name="direction-l" id="rtl-layout" autocomplete="off" />
-            <label class="btn p-9 btn-outline-primary" for="rtl-layout"><i class="icon ti ti-text-direction-rtl fs-7 me-2"></i>RTL</label>
-        </div>
         <h6 class="mt-5 fw-semibold fs-4 mb-2">Theme Colors</h6>
         <div class="d-flex flex-row flex-wrap gap-3 customizer-box color-pallete" role="group">
             <input type="radio" class="btn-check" name="color-theme-layout" id="Blue_Theme" autocomplete="off" />
@@ -61,17 +53,6 @@
                     <i class="ti ti-check text-white d-flex icon fs-5"></i>
                 </div>
             </label>
-        </div>
-        <h6 class="mt-5 fw-semibold fs-4 mb-2">Layout Type</h6>
-        <div class="d-flex flex-row gap-3 customizer-box" role="group">
-            <div>
-                <input type="radio" class="btn-check" name="page-layout" id="vertical-layout" autocomplete="off" />
-                <label class="btn p-9 btn-outline-primary" for="vertical-layout"><i class="icon ti ti-layout-sidebar-right fs-7 me-2"></i>Vertical</label>
-            </div>
-            <div>
-                <input type="radio" class="btn-check" name="page-layout" id="horizontal-layout" autocomplete="off" />
-                <label class="btn p-9 btn-outline-primary" for="horizontal-layout"><i class="icon ti ti-layout-navbar fs-7 me-2"></i>Horizontal</label>
-            </div>
         </div>
         <h6 class="mt-5 fw-semibold fs-4 mb-2">Container Option</h6>
         <div class="d-flex flex-row gap-3 customizer-box" role="group">

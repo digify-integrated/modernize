@@ -1,0 +1,1 @@
+<link rel="stylesheet" href="./assets/libs/sweetalert2/dist/sweetalert2.min.css">
