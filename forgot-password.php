@@ -41,7 +41,7 @@
                                         <label for="email" class="form-label">Email</label>
                                         <input type="email" class="form-control" id="email" name="email" autocomplete="off">
                                     </div>
-                                    <button id="signin" type="submit" class="btn btn-primary w-100 py-8 mb-4 rounded-2">Forgot Password</button>
+                                    <button id="forgot-password" type="submit" class="btn btn-primary w-100 py-8 mb-4 rounded-2">Forgot Password</button>
                                     <a href="index.php" class="btn bg-primary-subtle text-primary w-100 py-8">Back to Login</a>
                                 </form>
                             </div>
@@ -57,6 +57,6 @@
         include_once('view/_global_js.php');
         include_once('view/_error_modal.php');
     ?>
-    <script src="./assets/js/pages/forgot-password.js?v=<?php echo rand(); ?>"></script>
+    <script src="./components/authentication/js/forgot-password.js?v=<?php echo rand(); ?>"></script>
 </body>
 </html>

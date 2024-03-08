@@ -47,7 +47,7 @@ $(document).ready(function () {
                 data: $(form).serialize() + '&transaction=' + transaction,
                 dataType: 'json',
                 beforeSend: function() {
-                    disableFormSubmitButton('signin');
+                    disableFormSubmitButton('forgot-password');
                 },
                 success: function(response) {
                     if (response.success) {
@@ -63,7 +63,7 @@ $(document).ready(function () {
                     handleSystemError(xhr, status, error);
                 },
                 complete: function() {
-                    enableFormSubmitButton('signin');
+                    enableFormSubmitButton('forgot-password');
                 }
             });
     

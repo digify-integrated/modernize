@@ -84,19 +84,21 @@
             include_once('view/_error_modal.php');
             include_once('view/_required_js_files.php');
         ?>
+        
         <script src="./assets/libs/max-length/bootstrap-maxlength.min.js"></script>
+
         <?php 
             if($newRecord){
-                $scriptLink = ('./components/menu-group/js/menu-group-new.js');
+                $scriptLink = 'menu-group-new.js';
             }
             else if(!empty($menuGroupID)){
-                $scriptLink = ('./components/menu-group/js/menu-group-details.js');
+                $scriptLink = 'menu-group-details.js';
             }
             else{
-                $scriptLink = ('./components/menu-group/js/menu-group.js');
+                $scriptLink = 'menu-group.js';
             }
 
-            echo '<script src="'. $scriptLink .'"></script>';
+            echo '<script src="./components/menu-group/js/'. $scriptLink .'?v=' . rand() .'"></script>';
         ?>
     </body>
 </html>

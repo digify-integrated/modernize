@@ -40,11 +40,9 @@
 })(jQuery);
 
 function discardCreate(windows_location){
-    var SweetAlert = function () { };
-    
     Swal.fire({
         title: 'Discard Changes Confirmation',
-        text: 'Are you sure you want to discard the changes you have made? Any unsaved changes will be lost permanently.',
+        text: 'You are about to discard your changes. Proceeding will permanently erase any unsaved modifications. Are you sure you want to continue?',
         icon: 'warning',
         showCancelButton: true,
         confirmButtonText: 'Discard',

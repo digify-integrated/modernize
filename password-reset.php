@@ -78,7 +78,7 @@
                                             </button>
                                         </div>
                                     </div>
-                                    <button id="signin" type="submit" class="btn btn-primary w-100 py-8 mb-4 rounded-2">Reset Password</button>
+                                    <button id="reset" type="submit" class="btn btn-primary w-100 py-8 mb-4 rounded-2">Reset Password</button>
                                 </form>
                             </div>
                         </div>
@@ -93,6 +93,6 @@
         include_once('view/_global_js.php');
         include_once('view/_error_modal.php');
     ?>
-    <script src="./assets/js/pages/password-reset.js?v=<?php echo rand(); ?>"></script>
+    <script src="./components/authentication/js/password-reset.js?v=<?php echo rand(); ?>"></script>
 </body>
 </html>

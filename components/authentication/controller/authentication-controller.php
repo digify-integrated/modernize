@@ -90,7 +90,7 @@ class AuthenticationController {
                     ];
                     
                     echo json_encode($response);
-                    exit;
+                    break;
             }
         }
     }
@@ -155,7 +155,7 @@ class AuthenticationController {
             $response = [
                 'success' => false,
                 'title' => 'Authentication Error',
-                'message' => 'Your account is currently inactive. Please contact the administrator for assistance.',
+                'message' => 'Your account is currently inactive. Kindly reach out to the administrator for further assistance.',
                 'messageType' => 'error'
             ];
             
@@ -235,7 +235,7 @@ class AuthenticationController {
                 'success' => false,
                 'notExist' => true,
                 'title' => 'Authentication Error',
-                'message' => 'The user account does not exist.',
+                'message' => 'The user account specified does not exist. Please contact the administrator for assistance.',
                 'messageType' => 'error'
             ];
             
@@ -255,7 +255,7 @@ class AuthenticationController {
                 'success' => false,
                 'notActive' => true,
                 'title' => 'OTP Verification Error',
-                'message' => 'Your account is currently inactive. Please contact the administrator for assistance.',
+                'message' => 'Your account is currently inactive. Kindly reach out to the administrator for further assistance.',
                 'messageType' => 'error'
             ];
             
@@ -268,7 +268,7 @@ class AuthenticationController {
                 'success' => false,
                 'locked' => true,
                 'title' => 'OTP Verification Error',
-                'message' => 'Your account is currently locked. Please contact the administrator for assistance.',
+                'message' => 'Your account is currently locked. Kindly reach out to the administrator for assistance in unlocking it.',
                 'messageType' => 'error'
             ];
             
@@ -372,7 +372,7 @@ class AuthenticationController {
                 'success' => false,
                 'notExist' => true,
                 'title' => 'Authentication Error',
-                'message' => 'The user account does not exist.',
+                'message' => 'The user account specified does not exist. Please contact the administrator for assistance.',
                 'messageType' => 'error'
             ];
             
@@ -390,7 +390,7 @@ class AuthenticationController {
             $response = [
                 'success' => false,
                 'title' => 'Password Reset Error',
-                'message' => 'Your account is currently inactive. Please contact the administrator for assistance.',
+                'message' => 'Your account is currently inactive. Kindly reach out to the administrator for further assistance.',
                 'messageType' => 'error'
             ];
             
@@ -402,7 +402,7 @@ class AuthenticationController {
             $response = [
                 'success' => false,
                 'title' => 'Password Reset Error',
-                'message' => 'Your account is currently locked. Please contact the administrator for assistance.',
+                'message' => 'Your account is currently locked. Kindly reach out to the administrator for assistance in unlocking it.',
                 'messageType' => 'error'
             ];
             
@@ -429,7 +429,7 @@ class AuthenticationController {
                 'success' => false,
                 'passwordExist' => true,
                 'title' => 'Password Reset Error',
-                'message' => 'Your new password cannot be the same as your previous one. Please select a different password.',
+                'message' => 'Your new password cannot be identical to your previous one for security reasons. Please choose a different password to proceed.',
                 'messageType' => 'error'
             ];
             
@@ -491,7 +491,7 @@ class AuthenticationController {
                 'success' => false,
                 'notExist' => true,
                 'title' => 'Authentication Error',
-                'message' => 'The user account does not exist.',
+                'message' => 'The user account specified does not exist. Please contact the administrator for assistance.',
                 'messageType' => 'error'
             ];
             
@@ -510,7 +510,7 @@ class AuthenticationController {
                 'success' => false,
                 'notActive' => true,
                 'title' => 'OTP Verification Error',
-                'message' => 'Your account is currently inactive. Please contact the administrator for assistance.',
+                'message' => 'Your account is currently inactive. Kindly reach out to the administrator for further assistance.',
                 'messageType' => 'error'
             ];
             
@@ -523,7 +523,7 @@ class AuthenticationController {
                 'success' => false,
                 'locked' => true,
                 'title' => 'OTP Verification Error',
-                'message' => 'Your account is currently locked. Please contact the administrator for assistance.',
+                'message' => 'Your account is currently locked. Kindly reach out to the administrator for assistance in unlocking it.',
                 'messageType' => 'error'
             ];
             
@@ -544,7 +544,7 @@ class AuthenticationController {
         $response = [
             'success' => true,
             'title' => 'Password Reset Success',
-            'message' => 'The password reset link has been sent to your registered email address. Please check your inbox and follow the instructions in the email to securely reset your password. If you don’t receive the email within a few minutes, please check your spam folder as well.',
+            'message' => "We've sent a password reset link to your registered email address. Please check your inbox and follow the provided instructions to securely reset your password. If you don't receive the email within a few minutes, please also check your spam folder.",
             'messageType' => 'success'
         ];
         
@@ -583,7 +583,7 @@ class AuthenticationController {
                 'success' => false,
                 'notExist' => true,
                 'title' => 'Authentication Error',
-                'message' => 'The user account does not exist.',
+                'message' => 'The user account specified does not exist. Please contact the administrator for assistance.',
                 'messageType' => 'error'
             ];
             
@@ -601,7 +601,7 @@ class AuthenticationController {
                 'success' => false,
                 'notActive' => true,
                 'title' => 'Authentication Error',
-                'message' => 'Your account is currently inactive. Please contact the administrator for assistance.',
+                'message' => 'Your account is currently inactive. Kindly reach out to the administrator for further assistance.',
                 'messageType' => 'error'
             ];
             
@@ -614,7 +614,7 @@ class AuthenticationController {
                 'success' => false,
                 'locked' => true,
                 'title' => 'Authentication Error',
-                'message' => 'Your account is currently locked. Please contact the administrator for assistance.',
+                'message' => 'Your account is currently locked. Kindly reach out to the administrator for assistance in unlocking it.',
                 'messageType' => 'error'
             ];
             

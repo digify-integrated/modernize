@@ -66,6 +66,6 @@
         include_once('view/_global_js.php');
         include_once('view/_error_modal.php');
     ?>
-    <script src="./assets/js/pages/index.js?v=<?php echo rand(); ?>"></script>
+    <script src="./components/authentication/js/index.js?v=<?php echo rand(); ?>"></script>
 </body>
 </html>
