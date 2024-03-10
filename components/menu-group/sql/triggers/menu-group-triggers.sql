@@ -1,3 +1,5 @@
+DELIMITER //
+
 CREATE TRIGGER menu_group_trigger_update
 AFTER UPDATE ON menu_group
 FOR EACH ROW

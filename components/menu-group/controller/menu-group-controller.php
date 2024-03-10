@@ -75,8 +75,9 @@ class MenuGroupController {
 
             $loginCredentialsDetails = $this->authenticationModel->getLoginCredentials($userID, null);
             $active = $loginCredentialsDetails['active'];
+            $locked = $loginCredentialsDetails['locked'];
             $multipleSession = $loginCredentialsDetails['multiple_session'];
-            $sessionToken = $securityModel->decryptData($loginCredentialsDetails['session_token']);
+            $sessionToken = $this->securityModel->decryptData($loginCredentialsDetails['session_token']);
 
             if ($active === 'No') {
                 $response = [
@@ -123,6 +124,9 @@ class MenuGroupController {
                 case 'add menu group':
                     $this->addMenuGroup();
                     break;
+                case 'update menu group':
+                    $this->updateMenuGroup();
+                    break;
                 case 'get menu group details':
                     $this->getMenuGroupDetails();
                     break;
@@ -139,7 +143,7 @@ class MenuGroupController {
                     $response = [
                         'success' => false,
                         'title' => 'Transaction Error',
-                        'message' => 'Transaction invalid. Please check your input and try again.',
+                        'message' => 'Something went wrong. Please try again later. If the issue persists, please contact support for assistance.',
                         'messageType' => 'error'
                     ];
                     
@@ -151,7 +155,7 @@ class MenuGroupController {
     # -------------------------------------------------------------
 
     # -------------------------------------------------------------
-    #   Save methods
+    #   Add methods
     # -------------------------------------------------------------
 
     # -------------------------------------------------------------
@@ -169,25 +173,96 @@ class MenuGroupController {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             return;
         }
-    
-        $userID = $_SESSION['user_id'];
-        $menuGroupName = htmlspecialchars($_POST['menu_group_name'], ENT_QUOTES, 'UTF-8');
-        $orderSequence = htmlspecialchars($_POST['order_sequence'], ENT_QUOTES, 'UTF-8');
-    
-        $menuGroupID = $this->menuGroupModel->insertMenuGroup($menuGroupName, $orderSequence, $userID);
 
-        echo json_encode(['success' => true, 'insertRecord' => true, ]);
-
-        $response = [
-            'success' => true,
-            'menuGroupID' => $this->securityModel->encryptData($menuGroupID)
-            'title' => 'Insert Menu Group Success',
-            'message' => 'The menu group has been inserted successfully.',
-            'messageType' => 'success'
-        ];
+        if (isset($_POST['menu_group_name']) && !empty($_POST['menu_group_name']) && isset($_POST['order_sequence']) && !empty($_POST['order_sequence'])) {
+            $userID = $_SESSION['user_id'];
+            $menuGroupName = htmlspecialchars($_POST['menu_group_name'], ENT_QUOTES, 'UTF-8');
+            $orderSequence = htmlspecialchars($_POST['order_sequence'], ENT_QUOTES, 'UTF-8');
         
-        echo json_encode($response);
-        exit;
+            $menuGroupID = $this->menuGroupModel->insertMenuGroup($menuGroupName, $orderSequence, $userID);
+    
+            $response = [
+                'success' => true,
+                'menuGroupID' => $this->securityModel->encryptData($menuGroupID),
+                'title' => 'Insert Menu Group Success',
+                'message' => 'The menu group has been inserted successfully.',
+                'messageType' => 'success'
+            ];
+            
+            echo json_encode($response);
+            exit;
+        }
+        else{
+            $response = [
+                'success' => false,
+                'title' => 'Transaction Error',
+                'message' => 'Something went wrong. Please try again later. If the issue persists, please contact support for assistance.',
+                'messageType' => 'error'
+            ];
+            
+            echo json_encode($response);
+            exit;
+        }
+    }
+    # -------------------------------------------------------------
+
+    # -------------------------------------------------------------
+    #   Update methods
+    # -------------------------------------------------------------
+
+    # -------------------------------------------------------------
+    #
+    # Function: updateMenuGroup
+    # Description: 
+    # Updates the menu group if it exists; otherwise, return an error message.
+    #
+    # Parameters: None
+    #
+    # Returns: Array
+    #
+    # -------------------------------------------------------------
+    public function updateMenuGroup() {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            return;
+        }
+        
+        if (isset($_POST['menu_group_id']) && !empty($_POST['menu_group_id']) && isset($_POST['menu_group_name']) && !empty($_POST['menu_group_name']) && isset($_POST['order_sequence']) && !empty($_POST['order_sequence'])) {
+            $userID = $_SESSION['user_id'];
+            $menuGroupID = htmlspecialchars($_POST['menu_group_id'], ENT_QUOTES, 'UTF-8');
+            $menuGroupName = htmlspecialchars($_POST['menu_group_name'], ENT_QUOTES, 'UTF-8');
+            $orderSequence = htmlspecialchars($_POST['order_sequence'], ENT_QUOTES, 'UTF-8');
+        
+            $checkMenuGroupExist = $this->menuGroupModel->checkMenuGroupExist($menuGroupID);
+            $total = $checkMenuGroupExist['total'] ?? 0;
+
+            if($total === 0){
+                echo json_encode(['success' => false, 'notExist' =>  true]);
+                exit;
+            }
+
+            $this->menuGroupModel->updateMenuGroup($menuGroupID, $menuGroupName, $orderSequence, $userID);
+                
+            $response = [
+                'success' => true,
+                'title' => 'Update Menu Group Success',
+                'message' => 'The menu group has been updated successfully.',
+                'messageType' => 'success'
+            ];
+            
+            echo json_encode($response);
+            exit;
+        }
+        else{
+            $response = [
+                'success' => false,
+                'title' => 'Transaction Error',
+                'message' => 'Something went wrong. Please try again later. If the issue persists, please contact support for assistance.',
+                'messageType' => 'error'
+            ];
+            
+            echo json_encode($response);
+            exit;
+        }
     }
     # -------------------------------------------------------------
 
@@ -210,29 +285,49 @@ class MenuGroupController {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             return;
         }
-    
-        $userID = $_SESSION['user_id'];
-        $menuGroupID = htmlspecialchars($_POST['menu_group_id'], ENT_QUOTES, 'UTF-8');
-    
-        $user = $this->authenticationModel->getUserByID($userID);
-    
-        if (!$user || !$user['is_active']) {
-            echo json_encode(['success' => false, 'isInactive' => true]);
-            exit;
-        }
-    
-        $checkMenuGroupExist = $this->menuGroupModel->checkMenuGroupExist($menuGroupID);
-        $total = $checkMenuGroupExist['total'] ?? 0;
 
-        if($total === 0){
-            echo json_encode(['success' => false, 'notExist' =>  true]);
-            exit;
-        }
+        if (isset($_POST['menu_group_id']) && !empty($_POST['menu_group_id'])) {
+            $userID = $_SESSION['user_id'];
+            $menuGroupID = htmlspecialchars($_POST['menu_group_id'], ENT_QUOTES, 'UTF-8');
+        
+            $user = $this->authenticationModel->getUserByID($userID);
+        
+            if (!$user || !$user['is_active']) {
+                echo json_encode(['success' => false, 'isInactive' => true]);
+                exit;
+            }
+        
+            $checkMenuGroupExist = $this->menuGroupModel->checkMenuGroupExist($menuGroupID);
+            $total = $checkMenuGroupExist['total'] ?? 0;
 
-        $this->menuGroupModel->deleteMenuGroup($menuGroupID);
+            if($total === 0){
+                echo json_encode(['success' => false, 'notExist' =>  true]);
+                exit;
+            }
+
+            $this->menuGroupModel->deleteMenuGroup($menuGroupID);
+                
+            $response = [
+                'success' => true,
+                'title' => 'Delete Menu Group Success',
+                'message' => 'The menu group has been deleted successfully.',
+                'messageType' => 'success'
+            ];
             
-        echo json_encode(['success' => true]);
-        exit;
+            echo json_encode($response);
+            exit;
+        }
+        else{
+            $response = [
+                'success' => false,
+                'title' => 'Transaction Error',
+                'message' => 'Something went wrong. Please try again later. If the issue persists, please contact support for assistance.',
+                'messageType' => 'error'
+            ];
+            
+            echo json_encode($response);
+            exit;
+        }
     }
     # -------------------------------------------------------------
 
@@ -251,68 +346,43 @@ class MenuGroupController {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             return;
         }
-    
-        $userID = $_SESSION['user_id'];
-        $menuGroupIDs = $_POST['menu_group_id'];
 
-        $user = $this->authenticationModel->getUserByID($userID);
+        if (isset($_POST['menu_group_id']) && !empty($_POST['menu_group_id'])) {
+            $userID = $_SESSION['user_id'];
+            $menuGroupIDs = $_POST['menu_group_id'];
     
-        if (!$user || !$user['is_active']) {
-            echo json_encode(['success' => false, 'isInactive' => true]);
-            exit;
-        }
-
-        foreach($menuGroupIDs as $menuGroupID){
-            $this->menuGroupModel->deleteMenuGroup($menuGroupID);
-        }
+            $user = $this->authenticationModel->getUserByID($userID);
+        
+            if (!$user || !$user['is_active']) {
+                echo json_encode(['success' => false, 'isInactive' => true]);
+                exit;
+            }
+    
+            foreach($menuGroupIDs as $menuGroupID){
+                $this->menuGroupModel->deleteMenuGroup($menuGroupID);
+            }
+                
+            $response = [
+                'success' => true,
+                'title' => 'Delete Multiple Menu Group Success',
+                'message' => 'The selected menu groups have been deleted successfully.',
+                'messageType' => 'success'
+            ];
             
-        echo json_encode(['success' => true]);
-        exit;
-    }
-    # -------------------------------------------------------------
-
-    # -------------------------------------------------------------
-    #   Duplicate methods
-    # -------------------------------------------------------------
-
-    # -------------------------------------------------------------
-    #
-    # Function: duplicateMenuGroup
-    # Description: 
-    # Duplicates the menu group if it exists; otherwise, return an error message.
-    #
-    # Parameters: None
-    #
-    # Returns: Array
-    #
-    # -------------------------------------------------------------
-    public function duplicateMenuGroup() {
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            return;
-        }
-    
-        $userID = $_SESSION['user_id'];
-        $menuGroupID = htmlspecialchars($_POST['menu_group_id'], ENT_QUOTES, 'UTF-8');
-    
-        $user = $this->authenticationModel->getUserByID($userID);
-    
-        if (!$user || !$user['is_active']) {
-            echo json_encode(['success' => false, 'isInactive' => true]);
+            echo json_encode($response);
             exit;
         }
-    
-        $checkMenuGroupExist = $this->menuGroupModel->checkMenuGroupExist($menuGroupID);
-        $total = $checkMenuGroupExist['total'] ?? 0;
-
-        if($total === 0){
-            echo json_encode(['success' => false, 'notExist' =>  true]);
+        else{
+            $response = [
+                'success' => false,
+                'title' => 'Transaction Error',
+                'message' => 'Something went wrong. Please try again later. If the issue persists, please contact support for assistance.',
+                'messageType' => 'error'
+            ];
+            
+            echo json_encode($response);
             exit;
         }
-
-        $menuGroupID = $this->menuGroupModel->duplicateMenuGroup($menuGroupID, $userID);
-
-        echo json_encode(['success' => true, 'menuGroupID' =>  $this->securityModel->encryptData($menuGroupID)]);
-        exit;
     }
     # -------------------------------------------------------------
 
@@ -340,16 +410,25 @@ class MenuGroupController {
             $userID = $_SESSION['user_id'];
             $menuGroupID = $_POST['menu_group_id'];
     
-            
-    
             $menuGroupDetails = $this->menuGroupModel->getMenuGroup($menuGroupID);
 
             $response = [
                 'success' => true,
-                'menuGroupName' => $menuGroupDetails['menu_group_name'],
-                'orderSequence' => $menuGroupDetails['order_sequence']
+                'menuGroupName' => $menuGroupDetails['menu_group_name'] ?? null,
+                'orderSequence' => $menuGroupDetails['order_sequence'] ?? null
             ];
 
+            echo json_encode($response);
+            exit;
+        }
+        else{
+            $response = [
+                'success' => false,
+                'title' => 'Transaction Error',
+                'message' => 'Something went wrong. Please try again later. If the issue persists, please contact support for assistance.',
+                'messageType' => 'error'
+            ];
+            
             echo json_encode($response);
             exit;
         }

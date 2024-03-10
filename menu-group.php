@@ -6,17 +6,17 @@
 
     if(isset($_GET['id'])){
         if(empty($_GET['id'])){
-          header('location: menu-group.php');
-          exit;
+            header('location: menu-group.php');
+            exit;
         }
     
         $menuGroupID = $securityModel->decryptData($_GET['id']);
-      }
-      else{
+    }
+    else{
         $menuGroupID = null;
-      }
+    }
     
-      $newRecord = isset($_GET['new']);
+    $newRecord = isset($_GET['new']);
 ?>
 <!DOCTYPE html>
 <html lang="en" dir="ltr" data-bs-theme="light" data-color-theme="Blue_Theme" data-layout="vertical">

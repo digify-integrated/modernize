@@ -12,13 +12,13 @@
                 <div class="col-lg-6">
                     <div class="mb-4">
                         <label class="col-sm-4 form-label" for="menu_group_name">Display Name <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control form-control-lg maxlength" id="menu_group_name" name="menu_group_name" maxlength="100" autocomplete="off">
+                        <input type="text" class="form-control maxlength" id="menu_group_name" name="menu_group_name" maxlength="100" autocomplete="off">
                     </div>
                 </div>
                 <div class="col-lg-6">
                     <div class="mb-4">
                         <label class="col-sm-4 form-label" for="order_sequence">Order Sequence <span class="text-danger">*</span></label>
-                        <input type="number" class="form-control form-control-lg" id="order_sequence" name="order_sequence" min="0">
+                        <input type="number" class="form-control" id="order_sequence" name="order_sequence" min="0">
                     </div>
                 </div>
             </div>
