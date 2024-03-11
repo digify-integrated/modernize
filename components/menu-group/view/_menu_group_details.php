@@ -1,9 +1,18 @@
 <div class="card">
     <div class="card-header d-flex align-items-center">
-        <h5 class="card-title mb-0">Menu Group Details</h5>
+        <h5 class="card-title mb-0">Menu Group</h5>
+        <div class="card-actions cursor-pointer ms-auto d-flex button-group">
+            <button type="button" class="btn btn-dark dropdown-toggle action-dropdown mb-0" data-bs-toggle="dropdown" aria-expanded="false">Action</button>
+            <ul class="dropdown-menu dropdown-menu-end">
+                <li><button class="dropdown-item" type="button" id="delete-menu-group">Delete Menu Group</button></li>
+                <li><button class="dropdown-item" type="button" data-bs-toggle="offcanvas" data-bs-target="#log-notes-offcanvas" aria-controls="log-notes-offcanvas" id="delete-menu-group">View Log Notes</button></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item" href="menu-group.php?new">Create Menu Group</a></li>
+            </ul>
+        </div>
         <div class="card-actions cursor-pointer ms-auto d-flex button-group">
             <button class="btn btn-info mb-0 px-4" data-bs-toggle="modal" data-bs-target="#menu-group-modal">Edit</button>
-            <a href="menu-group.php?new" class="btn btn-secondary d-flex align-items-center mb-0">Create</a>
+            <a href="menu-group.php?new" class="btn btn-success d-flex align-items-center mb-0">Create</a>
         </div>
     </div>
     <div class="card-body">
@@ -61,20 +70,133 @@
     </div>
 </div>
 
-<div class="card">
-    <div class="card-header d-flex align-items-center">
-        <h5 class="card-title mb-0">Log Notes</h5>
+<div class="offcanvas offcanvas-log offcanvas-end" tabindex="-1" id="log-notes-offcanvas" aria-labelledby="log-notes-offcanvas-label">
+    <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="log-notes-offcanvas-label">Log Notes</h5>
+        <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
-    <div class="card-body">
-        <div class="position-relative">
-            <div class="p-4 rounded-2 text-bg-light mb-3">
-                <div class="d-flex align-items-center gap-3">
-                    <img src="./assets/images/profile/user-3.jpg" alt="" class="rounded-circle" width="33" height="33">
-                    <h6 class="fw-semibold mb-0 fs-4">Don Russell</h6><br/>
-                    <span class="p-1">March 10, 2023 08:30:00 am</span>
+    <div class="offcanvas-body p-0">
+        <div class="comment-widgets scrollable mb-2 common-widget" id="log-notes" data-simplebar="">
+            <div class="d-flex flex-row comment-row border-bottom p-3 gap-3">
+                <div>
+                    <span class=""><img src="./assets/images/profile/user-2.jpg" class="rounded-circle" alt="user" width="50" /></span>
                 </div>
-                <p class="my-3">Es do ujurus nejson imju azgudpi toceztep ji cocicoci bosawrop korze ta. Casetlu udumej umocu wanaro webmos ijafa ud muli amja softoj ma pijum.</p>
+                <div class="comment-text w-100">
+                    <h6 class="font-weight-medium">James Anderson</h6>
+                    <div class="comment-footer mb-4">
+                        <span class="text-muted ms-auto fw-normal fs-2 d-block mt-2">April 14, 2023 08:00:00 am</span>
+                    </div>
+                    <p class="mb-1 fs-2 text-muted"> Lorem Ipsum is simply dummy text of the printing and type etting industry</p>
+                </div>
             </div>
-        </div>
+            <div class="d-flex flex-row comment-row border-bottom p-3 gap-3">
+                <div>
+                    <span class=""><img src="./assets/images/profile/user-2.jpg" class="rounded-circle" alt="user" width="50" /></span>
+                </div>
+                <div class="comment-text w-100">
+                    <h6 class="font-weight-medium">James Anderson</h6>
+                    <div class="comment-footer mb-4">
+                        <span class="text-muted ms-auto fw-normal fs-2 d-block mt-2">April 14, 2023 08:00:00 am</span>
+                    </div>
+                    <p class="mb-1 fs-2 text-muted"> Lorem Ipsum is simply dummy text of the printing and type etting industry</p>
+                </div>
+            </div>
+            <div class="d-flex flex-row comment-row border-bottom p-3 gap-3">
+                <div>
+                    <span class=""><img src="./assets/images/profile/user-2.jpg" class="rounded-circle" alt="user" width="50" /></span>
+                </div>
+                <div class="comment-text w-100">
+                    <h6 class="font-weight-medium">James Anderson</h6>
+                    <div class="comment-footer mb-4">
+                        <span class="text-muted ms-auto fw-normal fs-2 d-block mt-2">April 14, 2023 08:00:00 am</span>
+                    </div>
+                    <p class="mb-1 fs-2 text-muted"> Lorem Ipsum is simply dummy text of the printing and type etting industry</p>
+                </div>
+            </div>
+            <div class="d-flex flex-row comment-row border-bottom p-3 gap-3">
+                <div>
+                    <span class=""><img src="./assets/images/profile/user-2.jpg" class="rounded-circle" alt="user" width="50" /></span>
+                </div>
+                <div class="comment-text w-100">
+                    <h6 class="font-weight-medium">James Anderson</h6>
+                    <div class="comment-footer mb-4">
+                        <span class="text-muted ms-auto fw-normal fs-2 d-block mt-2">April 14, 2023 08:00:00 am</span>
+                    </div>
+                    <p class="mb-1 fs-2 text-muted"> Lorem Ipsum is simply dummy text of the printing and type etting industry</p>
+                </div>
+            </div>
+            <div class="d-flex flex-row comment-row border-bottom p-3 gap-3">
+                <div>
+                    <span class=""><img src="./assets/images/profile/user-2.jpg" class="rounded-circle" alt="user" width="50" /></span>
+                </div>
+                <div class="comment-text w-100">
+                    <h6 class="font-weight-medium">James Anderson</h6>
+                    <div class="comment-footer mb-4">
+                        <span class="text-muted ms-auto fw-normal fs-2 d-block mt-2">April 14, 2023 08:00:00 am</span>
+                    </div>
+                    <p class="mb-1 fs-2 text-muted"> Lorem Ipsum is simply dummy text of the printing and type etting industry</p>
+                </div>
+            </div>
+            <div class="d-flex flex-row comment-row border-bottom p-3 gap-3">
+                <div>
+                    <span class=""><img src="./assets/images/profile/user-2.jpg" class="rounded-circle" alt="user" width="50" /></span>
+                </div>
+                <div class="comment-text w-100">
+                    <h6 class="font-weight-medium">James Anderson</h6>
+                    <div class="comment-footer mb-4">
+                        <span class="text-muted ms-auto fw-normal fs-2 d-block mt-2">April 14, 2023 08:00:00 am</span>
+                    </div>
+                    <p class="mb-1 fs-2 text-muted"> Lorem Ipsum is simply dummy text of the printing and type etting industry</p>
+                </div>
+            </div>
+            <div class="d-flex flex-row comment-row border-bottom p-3 gap-3">
+                <div>
+                    <span class=""><img src="./assets/images/profile/user-2.jpg" class="rounded-circle" alt="user" width="50" /></span>
+                </div>
+                <div class="comment-text w-100">
+                    <h6 class="font-weight-medium">James Anderson</h6>
+                    <div class="comment-footer mb-4">
+                        <span class="text-muted ms-auto fw-normal fs-2 d-block mt-2">April 14, 2023 08:00:00 am</span>
+                    </div>
+                    <p class="mb-1 fs-2 text-muted"> Lorem Ipsum is simply dummy text of the printing and type etting industry</p>
+                </div>
+            </div>
+            <div class="d-flex flex-row comment-row border-bottom p-3 gap-3">
+                <div>
+                    <span class=""><img src="./assets/images/profile/user-2.jpg" class="rounded-circle" alt="user" width="50" /></span>
+                </div>
+                <div class="comment-text w-100">
+                    <h6 class="font-weight-medium">James Anderson</h6>
+                    <div class="comment-footer mb-4">
+                        <span class="text-muted ms-auto fw-normal fs-2 d-block mt-2">April 14, 2023 08:00:00 am</span>
+                    </div>
+                    <p class="mb-1 fs-2 text-muted"> Lorem Ipsum is simply dummy text of the printing and type etting industry</p>
+                </div>
+            </div>
+            <div class="d-flex flex-row comment-row border-bottom p-3 gap-3">
+                <div>
+                    <span class=""><img src="./assets/images/profile/user-2.jpg" class="rounded-circle" alt="user" width="50" /></span>
+                </div>
+                <div class="comment-text w-100">
+                    <h6 class="font-weight-medium">James Anderson</h6>
+                    <div class="comment-footer mb-4">
+                        <span class="text-muted ms-auto fw-normal fs-2 d-block mt-2">April 14, 2023 08:00:00 am</span>
+                    </div>
+                    <p class="mb-1 fs-2 text-muted"> Lorem Ipsum is simply dummy text of the printing and type etting industry</p>
+                </div>
+            </div>
+            <div class="d-flex flex-row comment-row border-bottom p-3 gap-3">
+                <div>
+                    <span class=""><img src="./assets/images/profile/user-2.jpg" class="rounded-circle" alt="user" width="50" /></span>
+                </div>
+                <div class="comment-text w-100">
+                    <h6 class="font-weight-medium">James Anderson</h6>
+                    <div class="comment-footer mb-4">
+                        <span class="text-muted ms-auto fw-normal fs-2 d-block mt-2">April 14, 2023 08:00:00 am</span>
+                    </div>
+                    <p class="mb-1 fs-2 text-muted"> Lorem Ipsum is simply dummy text of the printing and type etting industry</p>
+                </div>
+            </div>
+        </div>      
     </div>
 </div>

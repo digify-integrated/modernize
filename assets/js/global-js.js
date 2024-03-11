@@ -35,7 +35,6 @@
         $(document).on('click','.datatable-checkbox-children',function() {
             toggleActionDropdown();
         });
-
     });
 })(jQuery);
 
@@ -63,8 +62,8 @@ function maxLength(){
     if ($('[maxlength]').length) {
         $('[maxlength]').maxlength({
             alwaysShow: true,
-            warningClass: "badge rounded-pill bg-info fs-1 mt-0",
-            limitReachedClass: "badge rounded-pill bg-danger fs-1 mt-0",
+            warningClass: 'badge rounded-pill bg-info fs-1 mt-0',
+            limitReachedClass: 'badge rounded-pill bg-danger fs-1 mt-0',
         });
     }
 }
@@ -203,4 +202,18 @@ function checkNotification() {
 
         showNotification(notificationTitle, notificationMessage, notificationType);
     }
+}
+
+function logNotes(databaseTable, referenceID){
+    const type = 'log notes';
+
+    $.ajax({
+        type: 'POST',
+        url: 'components/global/_log_notes_generation.php',
+        dataType: 'json',
+        data: { type: type, 'database_table': databaseTable, 'reference_id': referenceID },
+        success: function (result) {
+            document.getElementById('log-notes').innerHTML = result[0].logNotes;
+        }
+    });
 }

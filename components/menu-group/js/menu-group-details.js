@@ -7,6 +7,12 @@
         if($('#menu-group-form').length){
             menuGroupForm();
         }
+
+        if($('#log-notes-offcanvas').length){
+            const menu_group_id = $('#menu-group-id').text();
+
+            logNotes('menu_group', menu_group_id);
+        }
     });
 })(jQuery);
 
