@@ -67,30 +67,19 @@ define('MAIL_PORT', 465);
 
 # -------------------------------------------------------------
 #
-# Name       : Default Upload File Path
-# Purpose    : Define default upload file paths for various modules.
+# Name       : Default user interface image
+# Purpose    : This is the serves as the default images for the user interface.
 #
 # -------------------------------------------------------------
 
-// Full and relative paths for default images
-define('DEFAULT_IMAGES_FULL_PATH_FILE', '/modernize/assets/images/');
-define('DEFAULT_IMAGES_RELATIVE_PATH_FILE', './assets/images/');
-
-// Full and relative paths for default documents
-define('DEFAULT_DOCUMENT_FULL_PATH_FILE', '/modernize/document/');
-define('DEFAULT_DOCUMENT_RELATIVE_PATH_FILE', './document/');
-
-// Full and relative paths for default product images
-define('DEFAULT_PRODUCT_FULL_PATH_FILE', '/modernize/inventory/product/');
-define('DEFAULT_PRODUCT_RELATIVE_PATH_FILE', './inventory/product/');
-
-// Full and relative paths for default employee images
-define('DEFAULT_EMPLOYEE_FULL_PATH_FILE', '/modernize/employee/');
-define('DEFAULT_EMPLOYEE_RELATIVE_PATH_FILE', './employee/');
-
-// Full and relative paths for default customer images
-define('DEFAULT_CUSTOMER_FULL_PATH_FILE', '/modernize/customer/');
-define('DEFAULT_CUSTOMER_RELATIVE_PATH_FILE', './customer/');
+define('DEFAULT_AVATAR_IMAGE', './assets/images/default/default-avatar.jpg');
+define('DEFAULT_BG_IMAGE', './assets/images/default/default-bg.jpg');
+define('DEFAULT_LOGIN_LOGO_IMAGE', './assets/images/default/default-logo-placeholder.png');
+define('DEFAULT_MENU_LOGO_IMAGE', './assets/images/default/default-menu-logo.png');
+define('DEFAULT_MODULE_ICON_IMAGE', './assets/images/default/default-module-icon.svg');
+define('DEFAULT_FAVICON_IMAGE', './assets/images/default/default-favicon.svg');
+define('DEFAULT_COMPANY_LOGO_IMAGE', './assets/images/default/default-company-logo.png');
+define('DEFAULT_PLACEHOLDER_IMAGE', './assets/images/default/default-image-placeholder.png');
 
 # -------------------------------------------------------------
 

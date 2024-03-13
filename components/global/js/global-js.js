@@ -209,11 +209,11 @@ function logNotes(databaseTable, referenceID){
 
     $.ajax({
         type: 'POST',
-        url: 'components/global/_log_notes_generation.php',
+        url: 'components/global/view/_log_notes_generation.php',
         dataType: 'json',
         data: { type: type, 'database_table': databaseTable, 'reference_id': referenceID },
         success: function (result) {
-            document.getElementById('log-notes').innerHTML = result[0].logNotes;
+            document.getElementById('log-notes').innerHTML = result[0].LOG_NOTE;
         }
     });
 }

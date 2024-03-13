@@ -2,18 +2,18 @@
     require('view/_required_php_files.php');
     require('view/_check_user_status.php');
 
-    $pageTitle = 'Menu Group';
+    $pageTitle = 'Menu Item';
 
     if(isset($_GET['id'])){
         if(empty($_GET['id'])){
-            header('location: menu-group.php');
+            header('location: menu-item.php');
             exit;
         }
     
-        $menuGroupID = $securityModel->decryptData($_GET['id']);
+        $menuItemID = $securityModel->decryptData($_GET['id']);
     }
     else{
-        $menuGroupID = null;
+        $menuItemID = null;
     }
     
     $newRecord = isset($_GET['new']);
@@ -23,6 +23,7 @@
     <head>
         <?php include_once('view/_head.php'); ?>
         <link rel="stylesheet" href="./assets/libs/datatables.net-bs5/css/dataTables.bootstrap5.min.css" />
+        <link rel="stylesheet" href="./assets/libs/select2/dist/css/select2.min.css">
     </head>
 
     <body>
@@ -46,8 +47,8 @@
                                                     <li class="breadcrumb-item">Technical</li>
                                                     <li class="breadcrumb-item" aria-current="page"><?php echo $pageTitle; ?></li>
                                                     <?php
-                                                        if(!$newRecord && !empty($menuGroupID)){
-                                                            echo '<li class="breadcrumb-item" id="menu-group-id">'. $menuGroupID .'</li>';
+                                                        if(!$newRecord && !empty($menuItemID)){
+                                                            echo '<li class="breadcrumb-item" id="menu-item-id">'. $menuItemID .'</li>';
                                                         }
 
                                                         if($newRecord){
@@ -69,13 +70,13 @@
                         </div>
                         <?php
                             if($newRecord){
-                                require_once('components/menu-group/view/_menu_group_new.php');
+                                require_once('components/menu-item/view/_menu_item_new.php');
                             }
-                            else if(!empty($menuGroupID)){
-                                require_once('components/menu-group/view/_menu_group_details.php');
+                            else if(!empty($menuItemID)){
+                                require_once('components/menu-item/view/_menu_item_details.php');
                             }
                             else{
-                                require_once('components/menu-group/view/_menu_group.php');
+                                require_once('components/menu-item/view/_menu_item.php');
                             }
                         ?>
                     </div>
@@ -91,19 +92,21 @@
         
         <script src="./assets/libs/max-length/bootstrap-maxlength.min.js"></script>
         <script src="./assets/libs/datatables.net/js/jquery.dataTables.min.js"></script>
+        <script src="./assets/libs/select2/dist/js/select2.full.min.js"></script>
+        <script src="./assets/libs/select2/dist/js/select2.min.js"></script>
 
         <?php 
             if($newRecord){
-                $scriptLink = 'menu-group-new.js';
+                $scriptLink = 'menu-item-new.js';
             }
-            else if(!empty($menuGroupID)){
-                $scriptLink = 'menu-group-details.js';
+            else if(!empty($menuItemID)){
+                $scriptLink = 'menu-item-details.js';
             }
             else{
-                $scriptLink = 'menu-group.js';
+                $scriptLink = 'menu-item.js';
             }
 
-            echo '<script src="./components/menu-group/js/'. $scriptLink .'?v=' . rand() .'"></script>';
+            echo '<script src="./components/menu-item/js/'. $scriptLink .'?v=' . rand() .'"></script>';
         ?>
     </body>
 </html>

@@ -8,10 +8,70 @@
             menuGroupForm();
         }
 
-        if($('#log-notes-offcanvas').length){
+        $(document).on('click','#delete-menu-group',function() {
             const menu_group_id = $('#menu-group-id').text();
+            const transaction = 'delete menu group';
+    
+            Swal.fire({
+                title: 'Confirm Menu Group Deletion',
+                text: 'Are you sure you want to delete this menu group?',
+                icon: 'warning',
+                showCancelButton: !0,
+                confirmButtonText: 'Delete',
+                cancelButtonText: 'Cancel',
+                customClass: {
+                    confirmButton: 'btn btn-danger mt-2',
+                    cancelButton: 'btn btn-secondary ms-2 mt-2'
+                },
+                buttonsStyling: !1
+            }).then(function(result) {
+                if (result.value) {
+                    $.ajax({
+                        type: 'POST',
+                        url: 'components/menu-group/controller/menu-group-controller.php',
+                        dataType: 'json',
+                        data: {
+                            menu_group_id : menu_group_id, 
+                            transaction : transaction
+                        },
+                        success: function (response) {
+                            if (response.success) {
+                                setNotification('Delete Menu Group Success', 'The menu group has been deleted successfully.', 'success');
+                                window.location = 'menu-group.php';
+                            }
+                            else {
+                                if (response.isInactive || response.userNotExist || response.userInactive || response.userLocked || response.sessionExpired) {
+                                    setNotification(response.title, response.message, response.messageType);
+                                    window.location = 'logout.php?logout';
+                                }
+                                else if (response.notExist) {
+                                    setNotification(response.title, response.message, response.messageType);
+                                    window.location = 'menu-group.php';
+                                }
+                                else {
+                                    showNotification(response.title, response.message, response.messageType);
+                                }
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            var fullErrorMessage = `XHR status: ${status}, Error: ${error}`;
+                            if (xhr.responseText) {
+                                fullErrorMessage += `, Response: ${xhr.responseText}`;
+                            }
+                            showErrorDialog(fullErrorMessage);
+                        }
+                    });
+                    return false;
+                }
+            });
+        });
 
-            logNotes('menu_group', menu_group_id);
+        if($('#log-notes-offcanvas').length && $('#view-log-notes').length){
+            $(document).on('click','#view-log-notes',function() {
+                const menu_group_id = $('#menu-group-id').text();
+
+                logNotes('menu_group', menu_group_id);
+            });
         }
     });
 })(jQuery);
@@ -82,9 +142,13 @@ function menuGroupForm(){
                         $('#menu-group-modal').modal('hide');
                     }
                     else {
-                        if (response.isInactive || response.notExist || response.userInactive || response.userLocked || response.sessionExpired) {
+                        if (response.isInactive || response.userNotExist || response.userInactive || response.userLocked || response.sessionExpired) {
                             setNotification(response.title, response.message, response.messageType);
                             window.location = 'logout.php?logout';
+                        }
+                        else if (response.notExist) {
+                            setNotification(response.title, response.message, response.messageType);
+                            window.location = 'menu-group.php';
                         }
                         else {
                             showNotification(response.title, response.message, response.messageType);
@@ -130,9 +194,13 @@ function displayDetails(transaction){
                         $('#order_sequence_summary').text(response.orderSequence);
                     } 
                     else {
-                        if (response.isInactive || response.notExist || response.userInactive || response.userLocked || response.sessionExpired) {
+                        if (response.isInactive || response.userNotExist || response.userInactive || response.userLocked || response.sessionExpired) {
                             setNotification(response.title, response.message, response.messageType);
                             window.location = 'logout.php?logout';
+                        }
+                        else if (response.notExist) {
+                            setNotification(response.title, response.message, response.messageType);
+                            window.location = 'menu-group.php';
                         }
                         else {
                             showNotification(response.title, response.message, response.messageType);

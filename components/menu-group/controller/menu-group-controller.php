@@ -63,7 +63,7 @@ class MenuGroupController {
             if ($total === 0) {
                 $response = [
                     'success' => false,
-                    'notExist' => true,
+                    'userNotExist' => true,
                     'title' => 'User Account Not Exist',
                     'message' => 'The user account specified does not exist. Please contact the administrator for assistance.',
                     'messageType' => 'error'
@@ -236,7 +236,15 @@ class MenuGroupController {
             $total = $checkMenuGroupExist['total'] ?? 0;
 
             if($total === 0){
-                echo json_encode(['success' => false, 'notExist' =>  true]);
+                $response = [
+                    'success' => false,
+                    'notExist' => true,
+                    'title' => 'Update Menu Group Error',
+                    'message' => 'The menu group has does not exist.',
+                    'messageType' => 'error'
+                ];
+                
+                echo json_encode($response);
                 exit;
             }
 
@@ -287,21 +295,21 @@ class MenuGroupController {
         }
 
         if (isset($_POST['menu_group_id']) && !empty($_POST['menu_group_id'])) {
-            $userID = $_SESSION['user_id'];
             $menuGroupID = htmlspecialchars($_POST['menu_group_id'], ENT_QUOTES, 'UTF-8');
-        
-            $user = $this->authenticationModel->getUserByID($userID);
-        
-            if (!$user || !$user['is_active']) {
-                echo json_encode(['success' => false, 'isInactive' => true]);
-                exit;
-            }
         
             $checkMenuGroupExist = $this->menuGroupModel->checkMenuGroupExist($menuGroupID);
             $total = $checkMenuGroupExist['total'] ?? 0;
 
             if($total === 0){
-                echo json_encode(['success' => false, 'notExist' =>  true]);
+                $response = [
+                    'success' => false,
+                    'notExist' => true,
+                    'title' => 'Delete Menu Group Error',
+                    'message' => 'The menu group has does not exist.',
+                    'messageType' => 'error'
+                ];
+                
+                echo json_encode($response);
                 exit;
             }
 
@@ -348,18 +356,15 @@ class MenuGroupController {
         }
 
         if (isset($_POST['menu_group_id']) && !empty($_POST['menu_group_id'])) {
-            $userID = $_SESSION['user_id'];
             $menuGroupIDs = $_POST['menu_group_id'];
     
-            $user = $this->authenticationModel->getUserByID($userID);
-        
-            if (!$user || !$user['is_active']) {
-                echo json_encode(['success' => false, 'isInactive' => true]);
-                exit;
-            }
-    
             foreach($menuGroupIDs as $menuGroupID){
-                $this->menuGroupModel->deleteMenuGroup($menuGroupID);
+                $checkMenuGroupExist = $this->menuGroupModel->checkMenuGroupExist($menuGroupID);
+                $total = $checkMenuGroupExist['total'] ?? 0;
+
+                if($total > 0){
+                    $this->menuGroupModel->deleteMenuGroup($menuGroupID);
+                }
             }
                 
             $response = [
@@ -409,6 +414,22 @@ class MenuGroupController {
         if (isset($_POST['menu_group_id']) && !empty($_POST['menu_group_id'])) {
             $userID = $_SESSION['user_id'];
             $menuGroupID = $_POST['menu_group_id'];
+
+            $checkMenuGroupExist = $this->menuGroupModel->checkMenuGroupExist($menuGroupID);
+            $total = $checkMenuGroupExist['total'] ?? 0;
+
+            if($total === 0){
+                $response = [
+                    'success' => false,
+                    'notExist' => true,
+                    'title' => 'Get Menu Group Details Error',
+                    'message' => 'The menu group has does not exist.',
+                    'messageType' => 'error'
+                ];
+                
+                echo json_encode($response);
+                exit;
+            }
     
             $menuGroupDetails = $this->menuGroupModel->getMenuGroup($menuGroupID);
 

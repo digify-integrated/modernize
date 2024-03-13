@@ -26,9 +26,8 @@
         <div class="dark-transparent sidebartoggler"></div>
         <?php 
             include_once('view/_customizer.php');
-            include_once('view/_global_js.php');
             include_once('view/_error_modal.php');
-            include_once('view/_required_js_files.php');
+            include_once('view/_global_js.php');
         ?>
     </body>
 </html>

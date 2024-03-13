@@ -44,12 +44,6 @@ BEGIN
 	WHERE menu_group_id = p_menu_group_id;
 END //
 
-CREATE PROCEDURE generateMenuGroupOptions()
-BEGIN
-	SELECT menu_group_id, menu_group_name FROM menu_group
-	ORDER BY menu_group_name;
-END //
-
 CREATE PROCEDURE generateMenuGroupTable()
 BEGIN
 	SELECT menu_group_id, menu_group_name, order_sequence 
@@ -57,10 +51,9 @@ BEGIN
     ORDER BY menu_group_id;
 END //
 
-CREATE PROCEDURE generateMenuGroupMenuItemTable(IN p_menu_group_id INT)
+CREATE PROCEDURE generateMenuGroupOptions()
 BEGIN
-	SELECT menu_item_id, menu_item_name, parent_id, order_sequence 
-    FROM menu_item
-    WHERE menu_group_id = p_menu_group_id 
-    ORDER BY menu_item_id;
+	SELECT menu_group_id, menu_group_name 
+    FROM menu_group 
+    ORDER BY menu_group_name;
 END //

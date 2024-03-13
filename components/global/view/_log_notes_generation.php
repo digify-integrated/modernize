@@ -1,5 +1,5 @@
 <?php
-require_once '../session.php';
+require_once '../../../session.php';
 require_once '../../global/config/config.php';
 require_once '../../global/model/database-model.php';
 require_once '../../global/model/system-model.php';
@@ -45,14 +45,18 @@ if(isset($_POST['type']) && !empty($_POST['type'])){
                     $log = $row['log'];
                     $changedBy = $row['changed_by'];
                     $timeElapsed = $systemModel->timeElapsedString($row['changed_at']);
+
+                    $userDetails = $userModel->getUser($changedBy, null);
+                    $fileAs = $userDetails['file_as'];
+                    $profilePicture = $systemModel->checkImage($userDetails['profile_picture'] ?? null, 'profile');
                     
                     $table .= ' <div class="d-flex flex-row comment-row border-bottom p-3 gap-3">
                                     <div>
-                                        <span class=""><img src="./assets/images/profile/user-2.jpg" class="rounded-circle" alt="user" width="50" /></span>
+                                        <span class=""><img src="'. $profilePicture .'" class="rounded-circle" alt="user" width="50" /></span>
                                     </div>
                                     <div class="comment-text w-100">
-                                        <h6 class="font-weight-medium">James Anderson</h6>
-                                        <div class="comment-footer mb-4">
+                                        <h6 class="font-weight-medium">'. $fileAs .'</h6>
+                                        <div class="comment-footer mb-3">
                                             <span class="text-muted ms-auto fw-normal fs-2 d-block mt-2">'. $timeElapsed .'</span>
                                         </div>
                                         <p class="mb-1 fs-2 text-muted">'. $log .'</p>
@@ -60,12 +64,17 @@ if(isset($_POST['type']) && !empty($_POST['type'])){
                                 </div>';
                 }
 
-                $response[] = ['LOG_NOTE' => $table];
+                if(empty($table)){
+                    $table = '<div class="text-center">
+                                No log notes found
+                            </div>';
+                }
+
+                $response[] = [
+                    'LOG_NOTE' => $table
+                ];
 
                 echo json_encode($response);
-            }
-            else{
-
             }
         break;
         # -------------------------------------------------------------
