@@ -73,10 +73,16 @@ if(isset($_POST['type']) && !empty($_POST['type'])){
         #
         # -------------------------------------------------------------
         case 'menu group options':
+
             $sql = $databaseModel->getConnection()->prepare('CALL generateMenuGroupOptions()');
             $sql->execute();
             $options = $sql->fetchAll(PDO::FETCH_ASSOC);
             $sql->closeCursor();
+
+            $response[] = [
+                'id' => '',
+                'text' => '--'
+            ];
 
             foreach ($options as $row) {
                 $menuGroupID = $row['menu_group_id'];

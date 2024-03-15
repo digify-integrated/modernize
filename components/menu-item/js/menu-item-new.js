@@ -16,13 +16,30 @@
                 method : 'POST',
                 url: './components/menu-group/view/_menu_group_generation.php',
                 dataType: 'json',
-                processResults: function (data) {
+                minimumInputLength: 1   ,
+                processResults: function (data, params) {
+                    if (!params.term || params.term.trim() === '') {
+                        return {
+                            results: data
+                        };
+                    }
+
+                    var filteredData = $.map(data, function (item) {
+                        if (item.text.toLowerCase().indexOf(params.term.toLowerCase()) !== -1) {
+                            return {
+                                id: item.id,
+                                text: item.text
+                            };
+                        }
+                    });
+                    
                     return {
-                        results: data
+                        results: filteredData
                     };
                 },
-                delay: 250
             }
+        }).on('change', function (e) {
+            $(this).valid()
         });
     });
 })(jQuery);
@@ -65,7 +82,7 @@ function menuItemForm(){
         highlight: function(element) {
             var inputElement = $(element);
             if (inputElement.hasClass('select2-hidden-accessible')) {
-                inputElement.next().find('.select2-selection__rendered').addClass('is-invalid');
+                inputElement.next().find('.select2-selection').addClass('is-invalid');
             }
             else {
                 inputElement.addClass('is-invalid');
@@ -74,7 +91,7 @@ function menuItemForm(){
         unhighlight: function(element) {
             var inputElement = $(element);
             if (inputElement.hasClass('select2-hidden-accessible')) {
-                inputElement.next().find('.select2-selection__rendered').removeClass('is-invalid');
+                inputElement.next().find('.select2-selection').removeClass('is-invalid');
             }
             else {
                 inputElement.removeClass('is-invalid');

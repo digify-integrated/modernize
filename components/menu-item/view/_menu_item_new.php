@@ -21,6 +21,7 @@
                             <label class="form-label" for="order_sequence">Menu Group <span class="text-danger">*</span></label>
                             <div class="mb-4">
                                 <select id="menu_group" name="menu_group" class="select2 form-control"></select>
+                                <div class="select2-error"></div>
                             </div>
                         </div>
                     </div>

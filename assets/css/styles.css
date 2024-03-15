@@ -3641,7 +3641,7 @@ textarea.form-control-lg {
   display: block;
 }
 
-.was-validated .form-control:invalid, .form-control.is-invalid, body .select2-container--default .select2-selection--single .select2-selection__rendered{
+.was-validated .form-control:invalid, .form-control.is-invalid, .select2-selection.is-invalid{
   border-color: var(--bs-form-invalid-border-color) !important;
   background-repeat: no-repeat;
   background-position: right calc(0.375em + 4px) center;
@@ -3657,7 +3657,7 @@ textarea.form-control-lg {
   background-position: top calc(0.375em + 4px) right calc(0.375em + 4px);
 }
 
-.was-validated .form-select:invalid, .form-select.is-invalid {
+.was-validated .form-select:invalid, .form-select.is-invalid, body .select2-container--default .select2-selection--single .select2-selection__rendered {
   border-color: var(--bs-form-invalid-border-color) !important;
 }
 .was-validated .form-select:invalid:not([multiple]):not([size]), .was-validated .form-select:invalid:not([multiple])[size="1"], .form-select.is-invalid:not([multiple]):not([size]), .form-select.is-invalid:not([multiple])[size="1"] {
@@ -26416,4 +26416,8 @@ body .dp-nav.dp-nav-right::before {
 .error {
   color: #fa896b;
   font-size: 12px;
+}
+
+.select2-selection__arrow b{
+  display: none !important;
 }
