@@ -3641,14 +3641,14 @@ textarea.form-control-lg {
   display: block;
 }
 
-.was-validated .form-control:invalid, .form-control.is-invalid {
-  border-color: var(--bs-form-invalid-border-color);
+.was-validated .form-control:invalid, .form-control.is-invalid, body .select2-container--default .select2-selection--single .select2-selection__rendered{
+  border-color: var(--bs-form-invalid-border-color) !important;
   background-repeat: no-repeat;
   background-position: right calc(0.375em + 4px) center;
   background-size: calc(0.75em + 8px) calc(0.75em + 8px);
 }
 .was-validated .form-control:invalid:focus, .form-control.is-invalid:focus {
-  border-color: var(--bs-form-invalid-border-color);
+  border-color: var(--bs-form-invalid-border-color) !important;
   box-shadow: var(--bs-box-shadow-inset), 0 0 0 0.25rem rgba(var(--bs-danger-rgb), 0.25);
 }
 
@@ -3658,7 +3658,7 @@ textarea.form-control-lg {
 }
 
 .was-validated .form-select:invalid, .form-select.is-invalid {
-  border-color: var(--bs-form-invalid-border-color);
+  border-color: var(--bs-form-invalid-border-color) !important;
 }
 .was-validated .form-select:invalid:not([multiple]):not([size]), .was-validated .form-select:invalid:not([multiple])[size="1"], .form-select.is-invalid:not([multiple]):not([size]), .form-select.is-invalid:not([multiple])[size="1"] {
   --bs-form-select-bg-icon: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23fa896b'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23fa896b' stroke='none'/%3e%3c/svg%3e");

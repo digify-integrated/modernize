@@ -21,7 +21,7 @@
                         results: data
                     };
                 },
-                cache: true
+                delay: 250
             }
         });
     });
@@ -52,7 +52,7 @@ function menuItemForm(){
             }
         },
         errorPlacement: function (error, element) {
-            if (element.hasClass('select2') || element.hasClass('modal-select2')) {
+            if(element.hasClass('select2') && element.next('.select2-container').length) {
                 error.insertAfter(element.next('.select2-container'));
             }
             else if (element.parent('.input-item').length) {

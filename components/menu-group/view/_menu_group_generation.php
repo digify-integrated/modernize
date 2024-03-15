@@ -88,8 +88,6 @@ if(isset($_POST['type']) && !empty($_POST['type'])){
                 ];
             }
 
-            header('Content-Type: application/json');
-
             echo json_encode($response);
         break;
         # -------------------------------------------------------------

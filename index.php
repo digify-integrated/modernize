@@ -51,7 +51,7 @@
                                     <div class="text-end mb-4">
                                         <a class="text-primary fw-medium fs-3" href="forgot-password.php">Forgot Password ?</a>
                                     </div>
-                                    <button id="signin" type="submit" class="btn btn-primary w-100 py-8 mb-4 rounded-2">Login</button>
+                                    <button id="signin" type="submit" class="btn btn-info w-100 py-8 mb-4 rounded-2">Login</button>
                                 </form>
                             </div>
                         </div>
