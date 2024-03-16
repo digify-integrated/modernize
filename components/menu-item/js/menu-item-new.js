@@ -41,6 +41,38 @@
         }).on('change', function (e) {
             $(this).valid()
         });
+
+        $('#parent_id').select2({
+            ajax: {
+                data: {'type' : 'menu item options'},
+                method : 'POST',
+                url: './components/menu-item/view/_menu_item_generation.php',
+                dataType: 'json',
+                minimumInputLength: 1   ,
+                processResults: function (data, params) {
+                    if (!params.term || params.term.trim() === '') {
+                        return {
+                            results: data
+                        };
+                    }
+
+                    var filteredData = $.map(data, function (item) {
+                        if (item.text.toLowerCase().indexOf(params.term.toLowerCase()) !== -1) {
+                            return {
+                                id: item.id,
+                                text: item.text
+                            };
+                        }
+                    });
+                    
+                    return {
+                        results: filteredData
+                    };
+                },
+            }
+        }).on('change', function (e) {
+            $(this).valid()
+        });
     });
 })(jQuery);
 
@@ -69,15 +101,7 @@ function menuItemForm(){
             }
         },
         errorPlacement: function (error, element) {
-            if(element.hasClass('select2') && element.next('.select2-container').length) {
-                error.insertAfter(element.next('.select2-container'));
-            }
-            else if (element.parent('.input-item').length) {
-                error.insertAfter(element.parent());
-            }
-            else {
-                error.insertAfter(element);
-            }
+            showNotification('Form Validation Error', error, 'error', 1500);
         },
         highlight: function(element) {
             var inputElement = $(element);

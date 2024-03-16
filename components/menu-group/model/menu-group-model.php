@@ -63,7 +63,7 @@ class MenuGroupModel {
         $stmt->bindValue(':p_last_log_by', $p_last_log_by, PDO::PARAM_INT);
         $stmt->execute();
         
-        $result = $this->db->getConnection()->query("SELECT @p_menu_group_id AS menu_group_id");
+        $result = $this->db->getConnection()->query('SELECT @p_menu_group_id AS menu_group_id');
         $menuGroupID = $result->fetch(PDO::FETCH_ASSOC)['menu_group_id'];
         
         return $menuGroupID;
@@ -112,35 +112,6 @@ class MenuGroupModel {
         $stmt = $this->db->getConnection()->prepare('CALL deleteMenuGroup(:p_menu_group_id)');
         $stmt->bindValue(':p_menu_group_id', $p_menu_group_id, PDO::PARAM_INT);
         $stmt->execute();
-    }
-    # -------------------------------------------------------------
-
-    # -------------------------------------------------------------
-    #   Duplicate methods
-    # -------------------------------------------------------------
-
-    # -------------------------------------------------------------
-    #
-    # Function: duplicateMenuGroup
-    # Description: Duplicates the menu group.
-    #
-    # Parameters:
-    # - $p_menu_group_id (int): The menu group ID.
-    # - $p_last_log_by (int): The last logged user.
-    #
-    # Returns: None
-    #
-    # -------------------------------------------------------------
-    public function duplicateMenuGroup($p_menu_group_id, $p_last_log_by) {
-        $stmt = $this->db->getConnection()->prepare('CALL duplicateMenuGroup(:p_menu_group_id, :p_last_log_by, @p_new_menu_group_id)');
-        $stmt->bindValue(':p_menu_group_id', $p_menu_group_id, PDO::PARAM_INT);
-        $stmt->bindValue(':p_last_log_by', $p_last_log_by, PDO::PARAM_INT);
-        $stmt->execute();
-
-        $result = $this->db->getConnection()->query("SELECT @p_new_menu_group_id AS menu_group_id");
-        $menu_group_id = $result->fetch(PDO::FETCH_ASSOC)['menu_group_id'];
-
-        return $menu_group_id;
     }
     # -------------------------------------------------------------
 

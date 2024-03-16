@@ -1,8 +1,9 @@
 function findMatchingElement() {
-  var currentUrl = window.location.href;
+  var currentUrl = window.location.href.split("?")[0]; // Get the base URL without parameters
   var anchors = document.querySelectorAll("#sidebarnav a");
   for (var i = 0; i < anchors.length; i++) {
-    if (anchors[i].href === currentUrl) {
+    // Compare the base URL of the links with the current URL
+    if (anchors[i].href.split("?")[0] === currentUrl) {
       return anchors[i];
     }
   }

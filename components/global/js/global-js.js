@@ -159,7 +159,7 @@ function handleSystemError(xhr, status, error) {
     showErrorDialog(fullErrorMessage);
 }
 
-function showNotification(notificationTitle, notificationMessage, notificationType) {
+function showNotification(notificationTitle, notificationMessage, notificationType, timeOut = 5000) {
     const validNotificationTypes = ['success', 'info', 'warning', 'error'];
 
     if (!validNotificationTypes.includes(notificationType)) {
@@ -171,9 +171,9 @@ function showNotification(notificationTitle, notificationMessage, notificationTy
         closeButton: true,
         progressBar: true,
         newestOnTop: true,
-        preventDuplicates: false,
+        preventDuplicates: true,
         positionClass: 'toast-top-center',
-        timeOut: 5000,
+        timeOut: timeOut,
         showMethod: 'fadeIn',
         hideMethod: 'fadeOut'
     };

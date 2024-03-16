@@ -3,16 +3,17 @@ session_start();
 
 # -------------------------------------------------------------
 #
-# Function: MenuGroupController
+# Function: MenuItemController
 # Description: 
-# The MenuGroupController class handles menu group related operations and interactions.
+# The MenuItemController class handles menu item related operations and interactions.
 #
 # Parameters: None
 #
 # Returns: None
 #
 # -------------------------------------------------------------
-class MenuGroupController {
+class MenuItemController {
+    private $menuItemModel;
     private $menuGroupModel;
     private $authenticationModel;
     private $securityModel;
@@ -21,18 +22,20 @@ class MenuGroupController {
     #
     # Function: __construct
     # Description: 
-    # The constructor initializes the object with the provided MenuGroupModel, AuthenticationModel and SecurityModel instances.
-    # These instances are used for menu group related, user related operations and security related operations, respectively.
+    # The constructor initializes the object with the provided menuItemModel, AuthenticationModel and SecurityModel instances.
+    # These instances are used for menu item related, user related operations and security related operations, respectively.
     #
     # Parameters:
-    # - @param MenuGroupModel $menuGroupModel     The MenuGroupModel instance for menu group related operations.
+    # - @param menuItemModel $menuItemModel     The menuItemModel instance for menu item related operations.
+    # - @param MenuGroupModel $menuGroupModel     The menuGroupModel instance for menu group related operations.
     # - @param AuthenticationModel $authenticationModel     The AuthenticationModel instance for user related operations.
     # - @param SecurityModel $securityModel   The SecurityModel instance for security related operations.
     #
     # Returns: None
     #
     # -------------------------------------------------------------
-    public function __construct(MenuGroupModel $menuGroupModel, AuthenticationModel $authenticationModel, SecurityModel $securityModel) {
+    public function __construct(MenuItemModel $menuItemModel, MenuGroupModel $menuGroupModel, AuthenticationModel $authenticationModel, SecurityModel $securityModel) {
+        $this->menuItemModel = $menuItemModel;
         $this->menuGroupModel = $menuGroupModel;
         $this->authenticationModel = $authenticationModel;
         $this->securityModel = $securityModel;
@@ -121,23 +124,23 @@ class MenuGroupController {
             $transaction = isset($_POST['transaction']) ? $_POST['transaction'] : null;
 
             switch ($transaction) {
-                case 'add menu group':
-                    $this->addMenuGroup();
+                case 'add menu item':
+                    $this->addMenuItem();
                     break;
-                case 'update menu group':
-                    $this->updateMenuGroup();
+                case 'update menu item':
+                    $this->updateMenuItem();
                     break;
-                case 'get menu group details':
-                    $this->getMenuGroupDetails();
+                case 'get menu item details':
+                    $this->getMenuItemDetails();
                     break;
-                case 'delete menu group':
-                    $this->deleteMenuGroup();
+                case 'delete menu item':
+                    $this->deleteMenuItem();
                     break;
-                case 'delete multiple menu group':
-                    $this->deleteMultipleMenuGroup();
+                case 'delete multiple menu item':
+                    $this->deleteMultipleMenuItem();
                     break;
-                case 'duplicate menu group':
-                    $this->duplicateMenuGroup();
+                case 'duplicate menu item':
+                    $this->duplicateMenuItem();
                     break;
                 default:
                     $response = [
@@ -160,32 +163,42 @@ class MenuGroupController {
 
     # -------------------------------------------------------------
     #
-    # Function: addMenuGroup
+    # Function: addMenuItem
     # Description: 
-    # Inserts a menu group.
+    # Inserts a menu item.
     #
     # Parameters: None
     #
     # Returns: Array
     #
     # -------------------------------------------------------------
-    public function addMenuGroup() {
+    public function addMenuItem() {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             return;
         }
 
-        if (isset($_POST['menu_group_name']) && !empty($_POST['menu_group_name']) && isset($_POST['order_sequence']) && !empty($_POST['order_sequence'])) {
+        if (isset($_POST['menu_item_name']) && !empty($_POST['menu_item_name']) && isset($_POST['menu_group']) && !empty($_POST['menu_group']) && isset($_POST['order_sequence']) && !empty($_POST['order_sequence']) && isset($_POST['menu_item_url']) && isset($_POST['menu_item_icon'])) {
             $userID = $_SESSION['user_id'];
-            $menuGroupName = htmlspecialchars($_POST['menu_group_name'], ENT_QUOTES, 'UTF-8');
+            $menuItemName = htmlspecialchars($_POST['menu_item_name'], ENT_QUOTES, 'UTF-8');
             $orderSequence = htmlspecialchars($_POST['order_sequence'], ENT_QUOTES, 'UTF-8');
+            $menuGroup = htmlspecialchars($_POST['menu_group'], ENT_QUOTES, 'UTF-8');
+            $parentID = isset($_POST['parent_id']) ? htmlspecialchars($_POST['parent_id'], ENT_QUOTES, 'UTF-8') : null;
+            $menuItemURL = htmlspecialchars($_POST['menu_item_url'], ENT_QUOTES, 'UTF-8');
+            $menuItemIcon = htmlspecialchars($_POST['menu_item_icon'], ENT_QUOTES, 'UTF-8');
+
+            $menuGroupDetails = $this->menuGroupModel->getMenuGroup($menuGroup);
+            $menuGroupName = $menuGroupDetails['menu_group_name'] ?? null;
+
+            $parentMenuItemDetails = $this->menuItemModel->getMenuItem($parentID);
+            $parentName = $parentMenuItemDetails['menu_group_name'] ?? null;
         
-            $menuGroupID = $this->menuGroupModel->insertMenuGroup($menuGroupName, $orderSequence, $userID);
+            $menuItemID = $this->menuItemModel->insertMenuItem($menuItemName, $menuItemURL, $menuGroup, $menuGroupName, $parentID, $parentName, $menuItemIcon, $orderSequence, $userID);
     
             $response = [
                 'success' => true,
-                'menuGroupID' => $this->securityModel->encryptData($menuGroupID),
-                'title' => 'Insert Menu Group Success',
-                'message' => 'The menu group has been inserted successfully.',
+                'menuItemID' => $this->securityModel->encryptData($menuItemID),
+                'title' => 'Insert Menu Item Success',
+                'message' => 'The menu item has been inserted successfully.',
                 'messageType' => 'success'
             ];
             
@@ -212,35 +225,39 @@ class MenuGroupController {
 
     # -------------------------------------------------------------
     #
-    # Function: updateMenuGroup
+    # Function: updateMenuItem
     # Description: 
-    # Updates the menu group if it exists; otherwise, return an error message.
+    # Updates the menu item if it exists; otherwise, return an error message.
     #
     # Parameters: None
     #
     # Returns: Array
     #
     # -------------------------------------------------------------
-    public function updateMenuGroup() {
+    public function updateMenuItem() {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             return;
         }
         
-        if (isset($_POST['menu_group_id']) && !empty($_POST['menu_group_id']) && isset($_POST['menu_group_name']) && !empty($_POST['menu_group_name']) && isset($_POST['order_sequence']) && !empty($_POST['order_sequence'])) {
+        if (isset($_POST['menu_item_id']) && !empty($_POST['menu_item_id']) && isset($_POST['menu_item_name']) && !empty($_POST['menu_item_name']) && isset($_POST['menu_group']) && !empty($_POST['menu_group']) && isset($_POST['order_sequence']) && !empty($_POST['order_sequence']) && isset($_POST['parent_id']) && isset($_POST['menu_item_url']) && isset($_POST['menu_item_icon'])) {
             $userID = $_SESSION['user_id'];
-            $menuGroupID = htmlspecialchars($_POST['menu_group_id'], ENT_QUOTES, 'UTF-8');
-            $menuGroupName = htmlspecialchars($_POST['menu_group_name'], ENT_QUOTES, 'UTF-8');
+            $menuItemID = htmlspecialchars($_POST['menu_item_id'], ENT_QUOTES, 'UTF-8');
+            $menuItemName = htmlspecialchars($_POST['menu_item_name'], ENT_QUOTES, 'UTF-8');
             $orderSequence = htmlspecialchars($_POST['order_sequence'], ENT_QUOTES, 'UTF-8');
+            $menuGroup = htmlspecialchars($_POST['menu_group'], ENT_QUOTES, 'UTF-8');
+            $parentID = htmlspecialchars($_POST['parent_id'], ENT_QUOTES, 'UTF-8');
+            $menuItemURL = htmlspecialchars($_POST['menu_item_url'], ENT_QUOTES, 'UTF-8');
+            $menuItemIcon = htmlspecialchars($_POST['menu_item_icon'], ENT_QUOTES, 'UTF-8');
         
-            $checkMenuGroupExist = $this->menuGroupModel->checkMenuGroupExist($menuGroupID);
-            $total = $checkMenuGroupExist['total'] ?? 0;
+            $checkMenuItemExist = $this->menuItemModel->checkMenuItemExist($menuItemID);
+            $total = $checkMenuItemExist['total'] ?? 0;
 
             if($total === 0){
                 $response = [
                     'success' => false,
                     'notExist' => true,
-                    'title' => 'Update Menu Group Error',
-                    'message' => 'The menu group has does not exist.',
+                    'title' => 'Update Menu Item Error',
+                    'message' => 'The menu item has does not exist.',
                     'messageType' => 'error'
                 ];
                 
@@ -248,12 +265,18 @@ class MenuGroupController {
                 exit;
             }
 
-            $this->menuGroupModel->updateMenuGroup($menuGroupID, $menuGroupName, $orderSequence, $userID);
+            $menuGroupDetails = $this->menuGroupModel->getMenuGroup($menuGroup);
+            $menuGroupName = $menuGroupDetails['menu_group_name'] ?? null;
+
+            $parentMenuItemDetails = $this->menuItemModel->getMenuItem($parentID);
+            $parentName = $parentMenuItemDetails['menu_group_name'] ?? null;
+
+            $this->menuItemModel->updateMenuItem($menuItemID, $menuItemName, $menuItemURL, $menuGroup, $menuGroupName, $parentID, $parentName, $menuItemIcon, $orderSequence, $userID);
                 
             $response = [
                 'success' => true,
-                'title' => 'Update Menu Group Success',
-                'message' => 'The menu group has been updated successfully.',
+                'title' => 'Update Menu Item Success',
+                'message' => 'The menu item has been updated successfully.',
                 'messageType' => 'success'
             ];
             
@@ -280,32 +303,32 @@ class MenuGroupController {
 
     # -------------------------------------------------------------
     #
-    # Function: deleteMenuGroup
+    # Function: deleteMenuItem
     # Description: 
-    # Delete the menu group if it exists; otherwise, return an error message.
+    # Delete the menu item if it exists; otherwise, return an error message.
     #
     # Parameters: None
     #
     # Returns: Array
     #
     # -------------------------------------------------------------
-    public function deleteMenuGroup() {
+    public function deleteMenuItem() {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             return;
         }
 
-        if (isset($_POST['menu_group_id']) && !empty($_POST['menu_group_id'])) {
-            $menuGroupID = htmlspecialchars($_POST['menu_group_id'], ENT_QUOTES, 'UTF-8');
+        if (isset($_POST['menu_item_id']) && !empty($_POST['menu_item_id'])) {
+            $menuItemID = htmlspecialchars($_POST['menu_item_id'], ENT_QUOTES, 'UTF-8');
         
-            $checkMenuGroupExist = $this->menuGroupModel->checkMenuGroupExist($menuGroupID);
-            $total = $checkMenuGroupExist['total'] ?? 0;
+            $checkMenuItemExist = $this->menuItemModel->checkMenuItemExist($menuItemID);
+            $total = $checkMenuItemExist['total'] ?? 0;
 
             if($total === 0){
                 $response = [
                     'success' => false,
                     'notExist' => true,
-                    'title' => 'Delete Menu Group Error',
-                    'message' => 'The menu group has does not exist.',
+                    'title' => 'Delete Menu Item Error',
+                    'message' => 'The menu item has does not exist.',
                     'messageType' => 'error'
                 ];
                 
@@ -313,12 +336,12 @@ class MenuGroupController {
                 exit;
             }
 
-            $this->menuGroupModel->deleteMenuGroup($menuGroupID);
+            $this->menuItemModel->deleteMenuItem($menuItemID);
                 
             $response = [
                 'success' => true,
-                'title' => 'Delete Menu Group Success',
-                'message' => 'The menu group has been deleted successfully.',
+                'title' => 'Delete Menu Item Success',
+                'message' => 'The menu item has been deleted successfully.',
                 'messageType' => 'success'
             ];
             
@@ -341,36 +364,36 @@ class MenuGroupController {
 
     # -------------------------------------------------------------
     #
-    # Function: deleteMultipleMenuGroup
+    # Function: deleteMultipleMenuItem
     # Description: 
-    # Delete the selected menu groups if it exists; otherwise, skip it.
+    # Delete the selected menu items if it exists; otherwise, skip it.
     #
     # Parameters: None
     #
     # Returns: Array
     #
     # -------------------------------------------------------------
-    public function deleteMultipleMenuGroup() {
+    public function deleteMultipleMenuItem() {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             return;
         }
 
-        if (isset($_POST['menu_group_id']) && !empty($_POST['menu_group_id'])) {
-            $menuGroupIDs = $_POST['menu_group_id'];
+        if (isset($_POST['menu_item_id']) && !empty($_POST['menu_item_id'])) {
+            $menuItemIDs = $_POST['menu_item_id'];
     
-            foreach($menuGroupIDs as $menuGroupID){
-                $checkMenuGroupExist = $this->menuGroupModel->checkMenuGroupExist($menuGroupID);
-                $total = $checkMenuGroupExist['total'] ?? 0;
+            foreach($menuItemIDs as $menuItemID){
+                $checkMenuItemExist = $this->menuItemModel->checkMenuItemExist($menuItemID);
+                $total = $checkMenuItemExist['total'] ?? 0;
 
                 if($total > 0){
-                    $this->menuGroupModel->deleteMenuGroup($menuGroupID);
+                    $this->menuItemModel->deleteMenuItem($menuItemID);
                 }
             }
                 
             $response = [
                 'success' => true,
-                'title' => 'Delete Multiple Menu Group Success',
-                'message' => 'The selected menu groups have been deleted successfully.',
+                'title' => 'Delete Multiple Menu Item Success',
+                'message' => 'The selected menu items have been deleted successfully.',
                 'messageType' => 'success'
             ];
             
@@ -397,33 +420,33 @@ class MenuGroupController {
 
     # -------------------------------------------------------------
     #
-    # Function: getMenuGroupDetails
+    # Function: getMenuItemDetails
     # Description: 
-    # Handles the retrieval of menu group details such as menu group name, order sequence, etc.
+    # Handles the retrieval of menu item details such as menu item name, order sequence, etc.
     #
     # Parameters: None
     #
     # Returns: Array
     #
     # -------------------------------------------------------------
-    public function getMenuGroupDetails() {
+    public function getMenuItemDetails() {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             return;
         }
     
-        if (isset($_POST['menu_group_id']) && !empty($_POST['menu_group_id'])) {
+        if (isset($_POST['menu_item_id']) && !empty($_POST['menu_item_id'])) {
             $userID = $_SESSION['user_id'];
-            $menuGroupID = htmlspecialchars($_POST['menu_group_id'], ENT_QUOTES, 'UTF-8');
+            $menuItemID = htmlspecialchars($_POST['menu_item_id'], ENT_QUOTES, 'UTF-8');
 
-            $checkMenuGroupExist = $this->menuGroupModel->checkMenuGroupExist($menuGroupID);
-            $total = $checkMenuGroupExist['total'] ?? 0;
+            $checkMenuItemExist = $this->menuItemModel->checkMenuItemExist($menuItemID);
+            $total = $checkMenuItemExist['total'] ?? 0;
 
             if($total === 0){
                 $response = [
                     'success' => false,
                     'notExist' => true,
-                    'title' => 'Get Menu Group Details Error',
-                    'message' => 'The menu group has does not exist.',
+                    'title' => 'Get menu item Details Error',
+                    'message' => 'The menu item has does not exist.',
                     'messageType' => 'error'
                 ];
                 
@@ -431,12 +454,18 @@ class MenuGroupController {
                 exit;
             }
     
-            $menuGroupDetails = $this->menuGroupModel->getMenuGroup($menuGroupID);
+            $menuItemDetails = $this->menuItemModel->getMenuItem($menuItemID);
 
             $response = [
                 'success' => true,
-                'menuGroupName' => $menuGroupDetails['menu_group_name'] ?? null,
-                'orderSequence' => $menuGroupDetails['order_sequence'] ?? null
+                'menuItemName' => $menuItemDetails['menu_item_name'] ?? null,
+                'menuItemURL' => $menuItemDetails['menu_item_url'] ?? null,
+                'menuItemID' => $menuItemDetails['menu_group_id'] ?? null,
+                'menuItemName' => $menuItemDetails['menu_group_name'] ?? null,
+                'parentID' => $menuItemDetails['parent_id'] ?? null,
+                'parentName' => $menuItemDetails['parent_name'] ?? null,
+                'menuItemIcon' => $menuItemDetails['menu_item_icon'] ?? null,
+                'orderSequence' => $menuItemDetails['order_sequence'] ?? null
             ];
 
             echo json_encode($response);
@@ -462,10 +491,11 @@ require_once '../../global/config/config.php';
 require_once '../../global/model/database-model.php';
 require_once '../../global/model/security-model.php';
 require_once '../../global/model/system-model.php';
+require_once '../../menu-item/model/menu-item-model.php';
 require_once '../../menu-group/model/menu-group-model.php';
 require_once '../../authentication/model/authentication-model.php';
 
-$controller = new MenuGroupController(new MenuGroupModel(new DatabaseModel), new AuthenticationModel(new DatabaseModel), new SecurityModel());
+$controller = new MenuItemController(new menuItemModel(new DatabaseModel), new MenuGroupModel(new DatabaseModel), new AuthenticationModel(new DatabaseModel), new SecurityModel());
 $controller->handleRequest();
 
 ?>
