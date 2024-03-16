@@ -68,6 +68,10 @@ function maxLength(){
     }
 }
 
+function checkOptionExist(element, option){
+    $(element).val(option).trigger('change');
+}
+
 function reloadDatatable(datatable){
     toggleHideActionDropdown();
     $(datatable).DataTable().ajax.reload();
