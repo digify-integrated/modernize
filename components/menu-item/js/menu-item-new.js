@@ -2,6 +2,9 @@
     'use strict';
 
     $(function() {
+        generateDropdownOptions('menu group options');
+        generateDropdownOptions('menu item options');
+
         if($('#menu-item-form').length){
             menuItemForm();
         }
@@ -162,4 +165,59 @@ function menuItemForm(){
             return false;
         }
     });
+}
+
+function generateDropdownOptions(type){
+    switch (type) {
+        case 'menu group options':
+            
+            $.ajax({
+                url: 'components/menu-group/view/_menu_group_generation.php',
+                method: 'POST',
+                dataType: 'json',
+                data: {
+                    type : type
+                },
+                success: function(response) {
+                    $('#menu_group').select2({
+                        data: response
+                    }).on('change', function (e) {
+                        $(this).valid()
+                    });
+                },
+                error: function(xhr, status, error) {
+                    var fullErrorMessage = `XHR status: ${status}, Error: ${error}`;
+                    if (xhr.responseText) {
+                        fullErrorMessage += `, Response: ${xhr.responseText}`;
+                    }
+                    showErrorDialog(fullErrorMessage);
+                }
+            });
+            break;
+        case 'menu item options':
+            
+            $.ajax({
+                url: 'components/menu-item/view/_menu_item_generation.php',
+                method: 'POST',
+                dataType: 'json',
+                data: {
+                    type : type
+                },
+                success: function(response) {
+                    $('#parent_id').select2({
+                        data: response
+                    }).on('change', function (e) {
+                        $(this).valid()
+                    });
+                },
+                error: function(xhr, status, error) {
+                    var fullErrorMessage = `XHR status: ${status}, Error: ${error}`;
+                    if (xhr.responseText) {
+                        fullErrorMessage += `, Response: ${xhr.responseText}`;
+                    }
+                    showErrorDialog(fullErrorMessage);
+                }
+            });
+            break;
+    }
 }

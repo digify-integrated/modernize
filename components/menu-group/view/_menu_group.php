@@ -16,7 +16,7 @@
                 </div>
                 <div class="card-body">
                     <div class="table-responsive ">
-                        <table id="menu-group-table" class="table border w-100 table-hover align-middle display text-nowrap">
+                        <table id="menu-group-table" class="table border table-bordered table-striped table-hover align-middle display text-nowrap w-100">
                             <thead class="text-dark">
                                 <tr>
                                     <th class="all">

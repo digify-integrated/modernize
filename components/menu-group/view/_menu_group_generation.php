@@ -97,6 +97,47 @@ if(isset($_POST['type']) && !empty($_POST['type'])){
             echo json_encode($response);
         break;
         # -------------------------------------------------------------
+
+        # -------------------------------------------------------------
+        #
+        # Type: menu group radio filter
+        # Description:
+        # Generates the menu group options.
+        #
+        # Parameters: None
+        #
+        # Returns: Array
+        #
+        # -------------------------------------------------------------
+        case 'menu group radio filter':
+
+            $sql = $databaseModel->getConnection()->prepare('CALL generateMenuGroupOptions()');
+            $sql->execute();
+            $options = $sql->fetchAll(PDO::FETCH_ASSOC);
+            $sql->closeCursor();
+
+            $filterOptions = '<div class="form-check py-2 mb-0">
+                            <input class="form-check-input p-2" type="radio" name="filter-menu-group" id="filter-menu-group-all" value="" checked>
+                            <label class="form-check-label d-flex align-items-center ps-2" for="filter-menu-group-all">All</label>
+                        </div>';
+
+            foreach ($options as $row) {
+                $menuGroupID = $row['menu_group_id'];
+                $menuGroupName = $row['menu_group_name'];
+
+                $filterOptions .= '<div class="form-check py-2 mb-0">
+                                <input class="form-check-input p-2" type="radio" name="filter-menu-group" id="filter-menu-group-'. $menuGroupID .'" value="'. $menuGroupID .'">
+                                <label class="form-check-label d-flex align-items-center ps-2" for="filter-menu-group-'. $menuGroupID .'">'. $menuGroupName .'</label>
+                            </div>';
+            }
+
+            $response[] = [
+                'filterOptions' => $filterOptions
+            ];
+
+            echo json_encode($response);
+        break;
+        # -------------------------------------------------------------
     }
 }
 

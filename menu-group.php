@@ -44,7 +44,7 @@
                                                 <ol class="breadcrumb fs-2">
                                                     <li class="breadcrumb-item"><a class="text-muted text-decoration-none" href="dashboard.php">Home</a></li>
                                                     <li class="breadcrumb-item">Technical</li>
-                                                    <li class="breadcrumb-item" aria-current="page"><?php echo $pageTitle; ?></li>
+                                                    <li class="breadcrumb-item" aria-current="page"><a class="text-decoration-none" href="menu-item.php"><?php echo $pageTitle; ?></a></li>
                                                     <?php
                                                         if(!$newRecord && !empty($menuGroupID)){
                                                             echo '<li class="breadcrumb-item" id="menu-group-id">'. $menuGroupID .'</li>';

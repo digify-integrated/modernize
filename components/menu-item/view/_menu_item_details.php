@@ -77,6 +77,31 @@
     </div>
 </div>
 
+<div  class="datatables">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex align-items-center">
+                    <h5 class="card-title mb-0">Sub Menu Item List</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive ">
+                        <table id="submenu-item-table" class="table border table-bordered table-striped table-hover align-middle display text-nowrap w-100">
+                            <thead class="text-dark">
+                                <tr>
+                                    <th>Submenu Item</th>
+                                    <th>Order Sequence</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div id="menu-item-modal" class="modal fade" tabindex="-1" aria-labelledby="menu-item-modal" aria-hidden="true">
     <div class="modal-dialog modal-dialog-scrollable modal-lg">
         <div class="modal-content">

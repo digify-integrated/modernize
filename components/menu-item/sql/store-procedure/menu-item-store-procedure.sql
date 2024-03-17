@@ -50,11 +50,30 @@ BEGIN
 	WHERE menu_item_id = p_menu_item_id;
 END //
 
-CREATE PROCEDURE generateMenuItemTable()
+CREATE PROCEDURE generateMenuItemTable(IN p_filter_by_menu_group INT)
 BEGIN
-	SELECT menu_item_id, menu_item_name, menu_group_name, order_sequence 
-    FROM menu_item 
-    ORDER BY menu_item_id;
+    DECLARE query VARCHAR(5000);
+
+    SET query = CONCAT('
+        SELECT menu_item_id, menu_item_name, menu_group_name, order_sequence 
+        FROM menu_item 
+        WHERE 1 = 1');
+
+    IF p_filter_by_menu_group IS NOT NULL THEN
+        SET query = CONCAT(query, ' AND menu_group_id = ', p_filter_by_menu_group);
+    END IF;
+
+    SET query = CONCAT(query, ' ORDER BY menu_item_name');
+
+    PREPARE stmt FROM query;
+    EXECUTE stmt;
+    DEALLOCATE PREPARE stmt;
+END //
+
+CREATE PROCEDURE generateSubmenuItemTable(IN p_parent_id INT)
+BEGIN
+	SELECT * FROM menu_item
+	WHERE parent_id = p_parent_id AND parent_id IS NOT NULL;
 END //
 
 CREATE PROCEDURE generateMenuItemOptions()

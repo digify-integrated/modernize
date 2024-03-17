@@ -30,7 +30,9 @@ if(isset($_POST['type']) && !empty($_POST['type'])){
         #
         # -------------------------------------------------------------
         case 'menu item table':
-            $sql = $databaseModel->getConnection()->prepare('CALL generateMenuItemTable()');
+            $filterByMenuGroup = isset($_POST['filter_by_menu_group']) ? htmlspecialchars($_POST['filter_by_menu_group'], ENT_QUOTES, 'UTF-8') : null;
+            $sql = $databaseModel->getConnection()->prepare('CALL generateMenuItemTable(:filterByMenuGroup)');
+            $sql->bindValue(':filterByMenuGroup', $filterByMenuGroup, PDO::PARAM_INT);
             $sql->execute();
             $options = $sql->fetchAll(PDO::FETCH_ASSOC);
             $sql->closeCursor();
@@ -65,6 +67,43 @@ if(isset($_POST['type']) && !empty($_POST['type'])){
 
         # -------------------------------------------------------------
         #
+        # Type: submenu item table
+        # Description:
+        # Generates the submenu item table.
+        #
+        # Parameters: None
+        #
+        # Returns: Array
+        #
+        # -------------------------------------------------------------
+        case 'submenu item table':
+            if(isset($_POST['menu_item_id']) && !empty($_POST['menu_item_id'])){
+                $menuItemID = htmlspecialchars($_POST['menu_item_id'], ENT_QUOTES, 'UTF-8');
+                $sql = $databaseModel->getConnection()->prepare('CALL generateSubmenuItemTable(:menuItemID)');
+                $sql->bindValue(':menuItemID', $menuItemID, PDO::PARAM_INT);
+                $sql->execute();
+                $options = $sql->fetchAll(PDO::FETCH_ASSOC);
+                $sql->closeCursor();
+    
+                foreach ($options as $row) {
+                    $menuItemName = $row['menu_item_name'];
+                    $orderSequence = $row['order_sequence'];
+    
+                    $menuItemIDEncrypted = $securityModel->encryptData($menuItemID);
+    
+                    $response[] = [
+                        'MENU_ITEM_NAME' => $menuItemName,
+                        'ORDER_SEQUENCE' => $orderSequence,
+                    ];
+                }
+    
+                echo json_encode($response);
+            }
+        break;
+        # -------------------------------------------------------------
+
+        # -------------------------------------------------------------
+        #
         # Type: menu item options
         # Description:
         # Generates the menu item options.
@@ -75,7 +114,6 @@ if(isset($_POST['type']) && !empty($_POST['type'])){
         #
         # -------------------------------------------------------------
         case 'menu item options':
-
             $sql = $databaseModel->getConnection()->prepare('CALL generateMenuItemOptions()');
             $sql->execute();
             $options = $sql->fetchAll(PDO::FETCH_ASSOC);

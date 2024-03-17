@@ -2,10 +2,16 @@
     'use strict';
 
     $(function() {
+        generateDropdownOptions('menu group options');
+        generateDropdownOptions('menu item options');
         displayDetails('get menu item details');
 
         if($('#menu-item-form').length){
             menuItemForm();
+        }
+
+        if($('#submenu-item-table').length){
+            submenuItemTable('#submenu-item-table');
         }
 
         $(document).on('click','#delete-menu-item',function() {
@@ -66,72 +72,6 @@
             });
         });
 
-        $('#menu_group').select2({
-            dropdownParent: $('#menu-item-modal'),
-            ajax: {
-                data: {'type' : 'menu group options'},
-                method : 'POST',
-                url: './components/menu-group/view/_menu_group_generation.php',
-                dataType: 'json',
-                minimumInputLength: 1,
-                processResults: function (data, params) {
-                    if (!params.term || params.term.trim() === '') {
-                        return {
-                            results: data
-                        };
-                    }
-
-                    var filteredData = $.map(data, function (item) {
-                        if (item.text.toLowerCase().indexOf(params.term.toLowerCase()) !== -1) {
-                            return {
-                                id: item.id,
-                                text: item.text
-                            };
-                        }
-                    });
-                    
-                    return {
-                        results: filteredData
-                    };
-                },
-            }
-        }).on('change', function (e) {
-            $(this).valid();
-        });
-
-        $('#parent_id').select2({
-            dropdownParent: $('#menu-item-modal'),
-            ajax: {
-                data: {'type' : 'menu item options'},
-                method : 'POST',
-                url: './components/menu-item/view/_menu_item_generation.php',
-                dataType: 'json',
-                minimumInputLength: 1,
-                processResults: function (data, params) {
-                    if (!params.term || params.term.trim() === '') {
-                        return {
-                            results: data
-                        };
-                    }
-
-                    var filteredData = $.map(data, function (item) {
-                        if (item.text.toLowerCase().indexOf(params.term.toLowerCase()) !== -1) {
-                            return {
-                                id: item.id,
-                                text: item.text
-                            };
-                        }
-                    });
-                    
-                    return {
-                        results: filteredData
-                    };
-                },
-            }
-        }).on('change', function (e) {
-            $(this).valid();
-        });
-
         if($('#log-notes-offcanvas').length && $('#view-log-notes').length){
             $(document).on('click','#view-log-notes',function() {
                 const menu_item_id = $('#menu-item-id').text();
@@ -188,25 +128,31 @@ function menuItemForm(){
             }
         },
         submitHandler: function(form) {
+            const menu_item_id = $('#menu-item-id').text();
             const transaction = 'update menu item';
           
             $.ajax({
                 type: 'POST',
                 url: 'components/menu-item/controller/menu-item-controller.php',
-                data: $(form).serialize() + '&transaction=' + transaction,
+                data: $(form).serialize() + '&transaction=' + transaction + '&menu_item_id=' + menu_item_id,
                 dataType: 'json',
                 beforeSend: function() {
                     disableFormSubmitButton('submit-data');
                 },
                 success: function (response) {
                     if (response.success) {
-                        setNotification(response.title, response.message, response.messageType);
-                        window.location = 'menu-item.php?id=' + response.menuItemID;
+                        showNotification(response.title, response.message, response.messageType);
+                        displayDetails('get menu item details');
+                        $('#menu-item-modal').modal('hide');
                     }
                     else {
-                        if (response.isInactive || response.notExist || response.userInactive || response.userLocked || response.sessionExpired) {
+                        if (response.isInactive || response.userNotExist || response.userInactive || response.userLocked || response.sessionExpired) {
                             setNotification(response.title, response.message, response.messageType);
                             window.location = 'logout.php?logout';
+                        }
+                        else if (response.notExist) {
+                            setNotification(response.title, response.message, response.messageType);
+                            window.location = 'menu-group.php';
                         }
                         else {
                             showNotification(response.title, response.message, response.messageType);
@@ -230,6 +176,65 @@ function menuItemForm(){
     });
 }
 
+function submenuItemTable(datatable_name, buttons = false, show_all = false){
+    toggleHideActionDropdown();
+
+    const type = 'submenu item table';
+    const menu_item_id = $('#menu-item-id').text();
+    var settings;
+
+    const column = [ 
+        { 'data' : 'MENU_ITEM_NAME' },
+        { 'data' : 'ORDER_SEQUENCE' },
+    ];
+
+    const column_definition = [
+        { 'width': '50%', 'aTargets': 0 },
+        { 'width': '50%', 'aTargets': 1 }
+    ];
+
+    const length_menu = show_all ? [[-1], ['All']] : [[10, 25, 50, 100, -1], [10, 25, 50, 100, 'All']];
+
+    settings = {
+        'ajax': { 
+            'url' : 'components/menu-item/view/_menu_item_generation.php',
+            'method' : 'POST',
+            'dataType': 'json',
+            'data': {'type' : type, 'menu_item_id' : menu_item_id},
+            'dataSrc' : '',
+            'error': function(xhr, status, error) {
+                var fullErrorMessage = `XHR status: ${status}, Error: ${error}`;
+                if (xhr.responseText) {
+                    fullErrorMessage += `, Response: ${xhr.responseText}`;
+                }
+                showErrorDialog(fullErrorMessage);
+            }
+        },
+        'order': [[ 1, 'asc' ]],
+        'columns' : column,
+        'fnDrawCallback': function( oSettings ) {
+            readjustDatatableColumn();
+        },
+        'columnDefs': column_definition,
+        'lengthMenu': length_menu,
+        'language': {
+            'emptyTable': 'No data found',
+            'searchPlaceholder': 'Search...',
+            'search': '',
+            'loadingRecords': 'Just a moment while we fetch your data...'
+        },
+    };
+
+    if (buttons) {
+        settings.dom = "<'row'<'col-sm-6'f><'col-sm-6 text-right'B>>" + "<'row'<'col-sm-12'tr>>" + "<'row'<'col-sm-5'i><'col-sm-7'p>>";
+        settings.buttons = ['csv', 'excel', 'pdf'];
+    }
+
+    destroyDatatable(datatable_name);
+
+    $(datatable_name).dataTable(settings);
+}
+
 function displayDetails(transaction){
     switch (transaction) {
         case 'get menu item details':
@@ -246,9 +251,12 @@ function displayDetails(transaction){
                 success: function(response) {
                     if (response.success) {
                         $('#menu_item_name').val(response.menuItemName);
+                        $('#menu_item_url').val(response.menuItemURL);
+                        $('#menu_item_icon').val(response.menuItemIcon);
                         $('#order_sequence').val(response.orderSequence);
                         
-                        $('#menu_group').val(5).trigger('change');
+                        $('#menu_group').val(response.menuGroupID).trigger('change');
+                        $('#parent_id').val(response.parentID).trigger('change');
                         
                         $('#menu_item_name_summary').text(response.menuItemName);
                         $('#menu_group_summary').text(response.menuGroupName);
@@ -270,6 +278,63 @@ function displayDetails(transaction){
                             showNotification(response.title, response.message, response.messageType);
                         }
                     }
+                },
+                error: function(xhr, status, error) {
+                    var fullErrorMessage = `XHR status: ${status}, Error: ${error}`;
+                    if (xhr.responseText) {
+                        fullErrorMessage += `, Response: ${xhr.responseText}`;
+                    }
+                    showErrorDialog(fullErrorMessage);
+                }
+            });
+            break;
+    }
+}
+
+function generateDropdownOptions(type){
+    switch (type) {
+        case 'menu group options':
+            
+            $.ajax({
+                url: 'components/menu-group/view/_menu_group_generation.php',
+                method: 'POST',
+                dataType: 'json',
+                data: {
+                    type : type
+                },
+                success: function(response) {
+                    $('#menu_group').select2({
+                        dropdownParent: $('#menu-item-modal'),
+                        data: response
+                    }).on('change', function (e) {
+                        $(this).valid()
+                    });
+                },
+                error: function(xhr, status, error) {
+                    var fullErrorMessage = `XHR status: ${status}, Error: ${error}`;
+                    if (xhr.responseText) {
+                        fullErrorMessage += `, Response: ${xhr.responseText}`;
+                    }
+                    showErrorDialog(fullErrorMessage);
+                }
+            });
+            break;
+        case 'menu item options':
+            
+            $.ajax({
+                url: 'components/menu-item/view/_menu_item_generation.php',
+                method: 'POST',
+                dataType: 'json',
+                data: {
+                    type : type
+                },
+                success: function(response) {
+                    $('#parent_id').select2({
+                        dropdownParent: $('#menu-item-modal'),
+                        data: response
+                    }).on('change', function (e) {
+                        $(this).valid()
+                    });
                 },
                 error: function(xhr, status, error) {
                     var fullErrorMessage = `XHR status: ${status}, Error: ${error}`;

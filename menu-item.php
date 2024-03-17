@@ -45,7 +45,7 @@
                                                 <ol class="breadcrumb fs-2">
                                                     <li class="breadcrumb-item"><a class="text-muted text-decoration-none" href="dashboard.php">Home</a></li>
                                                     <li class="breadcrumb-item">Technical</li>
-                                                    <li class="breadcrumb-item" aria-current="page"><?php echo $pageTitle; ?></li>
+                                                    <li class="breadcrumb-item" aria-current="page"><a class="text-decoration-none" href="menu-item.php"><?php echo $pageTitle; ?></a></li>
                                                     <?php
                                                         if(!$newRecord && !empty($menuItemID)){
                                                             echo '<li class="breadcrumb-item" id="menu-item-id">'. $menuItemID .'</li>';
@@ -60,7 +60,7 @@
                                             </div>
                                             <div class="col-3">
                                                 <div class="text-center mb-n5">
-                                                <img src="./assets/images/breadcrumb/ChatBc.png" alt="" class="img-fluid mb-n4"/>
+                                                    <img src="./assets/images/breadcrumb/ChatBc.png" alt="" class="img-fluid mb-n4"/>
                                                 </div>
                                             </div>
                                         </div>

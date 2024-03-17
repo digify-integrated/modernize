@@ -15,11 +15,11 @@ BEGIN
     END IF;
 
     IF NEW.menu_group_name <> OLD.menu_group_name THEN
-        SET audit_log = CONCAT(audit_log, "Menu Group Name: ", OLD.menu_group_name, " -> ", NEW.menu_group_name, "<br/>");
+        SET audit_log = CONCAT(audit_log, "Menu Group: ", OLD.menu_group_name, " -> ", NEW.menu_group_name, "<br/>");
     END IF;
 
     IF NEW.parent_name <> OLD.parent_name THEN
-        SET audit_log = CONCAT(audit_log, "Parent Name: ", OLD.parent_name, " -> ", NEW.parent_name, "<br/>");
+        SET audit_log = CONCAT(audit_log, "Parent: ", OLD.parent_name, " -> ", NEW.parent_name, "<br/>");
     END IF;
 
     IF NEW.menu_item_icon <> OLD.menu_item_icon THEN
@@ -51,11 +51,11 @@ BEGIN
     END IF;
 
     IF NEW.menu_group_name <> '' THEN
-        SET audit_log = CONCAT(audit_log, "<br/>Menu Group Name: ", NEW.menu_group_name);
+        SET audit_log = CONCAT(audit_log, "<br/>Menu Group: ", NEW.menu_group_name);
     END IF;
 
     IF NEW.parent_name <> '' THEN
-        SET audit_log = CONCAT(audit_log, "<br/>Parent Name: ", NEW.parent_name);
+        SET audit_log = CONCAT(audit_log, "<br/>Parent: ", NEW.parent_name);
     END IF;
 
     IF NEW.menu_item_icon <> '' THEN

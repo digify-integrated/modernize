@@ -190,7 +190,7 @@ class MenuItemController {
             $menuGroupName = $menuGroupDetails['menu_group_name'] ?? null;
 
             $parentMenuItemDetails = $this->menuItemModel->getMenuItem($parentID);
-            $parentName = $parentMenuItemDetails['menu_group_name'] ?? null;
+            $parentName = $parentMenuItemDetails['menu_item_name'] ?? null;
         
             $menuItemID = $this->menuItemModel->insertMenuItem($menuItemName, $menuItemURL, $menuGroup, $menuGroupName, $parentID, $parentName, $menuItemIcon, $orderSequence, $userID);
     
@@ -239,13 +239,13 @@ class MenuItemController {
             return;
         }
         
-        if (isset($_POST['menu_item_id']) && !empty($_POST['menu_item_id']) && isset($_POST['menu_item_name']) && !empty($_POST['menu_item_name']) && isset($_POST['menu_group']) && !empty($_POST['menu_group']) && isset($_POST['order_sequence']) && !empty($_POST['order_sequence']) && isset($_POST['parent_id']) && isset($_POST['menu_item_url']) && isset($_POST['menu_item_icon'])) {
+        if (isset($_POST['menu_item_id']) && !empty($_POST['menu_item_id']) && isset($_POST['menu_item_name']) && !empty($_POST['menu_item_name']) && isset($_POST['menu_group']) && !empty($_POST['menu_group']) && isset($_POST['order_sequence']) && !empty($_POST['order_sequence']) && isset($_POST['menu_item_url']) && isset($_POST['menu_item_icon'])) {
             $userID = $_SESSION['user_id'];
             $menuItemID = htmlspecialchars($_POST['menu_item_id'], ENT_QUOTES, 'UTF-8');
             $menuItemName = htmlspecialchars($_POST['menu_item_name'], ENT_QUOTES, 'UTF-8');
             $orderSequence = htmlspecialchars($_POST['order_sequence'], ENT_QUOTES, 'UTF-8');
             $menuGroup = htmlspecialchars($_POST['menu_group'], ENT_QUOTES, 'UTF-8');
-            $parentID = htmlspecialchars($_POST['parent_id'], ENT_QUOTES, 'UTF-8');
+            $parentID = isset($_POST['parent_id']) ? htmlspecialchars($_POST['parent_id'], ENT_QUOTES, 'UTF-8') : null;
             $menuItemURL = htmlspecialchars($_POST['menu_item_url'], ENT_QUOTES, 'UTF-8');
             $menuItemIcon = htmlspecialchars($_POST['menu_item_icon'], ENT_QUOTES, 'UTF-8');
         
@@ -269,7 +269,7 @@ class MenuItemController {
             $menuGroupName = $menuGroupDetails['menu_group_name'] ?? null;
 
             $parentMenuItemDetails = $this->menuItemModel->getMenuItem($parentID);
-            $parentName = $parentMenuItemDetails['menu_group_name'] ?? null;
+            $parentName = $parentMenuItemDetails['menu_item_name'] ?? null;
 
             $this->menuItemModel->updateMenuItem($menuItemID, $menuItemName, $menuItemURL, $menuGroup, $menuGroupName, $parentID, $parentName, $menuItemIcon, $orderSequence, $userID);
                 
