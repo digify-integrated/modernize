@@ -1,11 +1,17 @@
 DELIMITER //
 
+/* Check Stored Procedure */
+
 CREATE PROCEDURE checkMenuGroupExist(IN p_menu_group_id INT)
 BEGIN
 	SELECT COUNT(*) AS total
     FROM menu_group
     WHERE menu_group_id = p_menu_group_id;
 END //
+
+/* ----------------------------------------------------------------------------------------------------------------------------- */
+
+/* Insert Stored Procedure */
 
 CREATE PROCEDURE insertMenuGroup(IN p_menu_group_name VARCHAR(100), IN p_order_sequence TINYINT(10), IN p_last_log_by INT, OUT p_menu_group_id INT)
 BEGIN
@@ -15,6 +21,10 @@ BEGIN
     SET p_menu_group_id = LAST_INSERT_ID();
 END //
 
+/* ----------------------------------------------------------------------------------------------------------------------------- */
+
+/* Update Stored Procedure */
+
 CREATE PROCEDURE updateMenuGroup(IN p_menu_group_id INT, IN p_menu_group_name VARCHAR(100), IN p_order_sequence TINYINT(10), IN p_last_log_by INT)
 BEGIN
 	UPDATE menu_group
@@ -23,6 +33,10 @@ BEGIN
     last_log_by = p_last_log_by
     WHERE menu_group_id = p_menu_group_id;
 END //
+
+/* ----------------------------------------------------------------------------------------------------------------------------- */
+
+/* Delete Stored Procedure */
 
 CREATE PROCEDURE deleteMenuGroup(IN p_menu_group_id INT)
 BEGIN
@@ -38,11 +52,19 @@ BEGIN
     COMMIT;
 END //
 
+/* ----------------------------------------------------------------------------------------------------------------------------- */
+
+/* Get Stored Procedure */
+
 CREATE PROCEDURE getMenuGroup(IN p_menu_group_id INT)
 BEGIN
 	SELECT * FROM menu_group
 	WHERE menu_group_id = p_menu_group_id;
 END //
+
+/* ----------------------------------------------------------------------------------------------------------------------------- */
+
+/* Generate Stored Procedure */
 
 CREATE PROCEDURE generateMenuGroupTable()
 BEGIN
@@ -57,3 +79,5 @@ BEGIN
     FROM menu_group 
     ORDER BY menu_group_name;
 END //
+
+/* ----------------------------------------------------------------------------------------------------------------------------- */

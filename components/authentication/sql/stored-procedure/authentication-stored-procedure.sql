@@ -1,5 +1,7 @@
 DELIMITER //
 
+/* Check Stored Procedure */
+
 CREATE PROCEDURE checkLoginCredentialsExist(IN p_user_id INT, IN p_email VARCHAR(255))
 BEGIN
 	SELECT COUNT(*) AS total
@@ -7,11 +9,25 @@ BEGIN
     WHERE user_id = p_user_id OR email = p_email;
 END //
 
+/* ----------------------------------------------------------------------------------------------------------------------------- */
+
+/* Get Stored Procedure */
+
 CREATE PROCEDURE getLoginCredentials(IN p_user_id INT, IN p_email VARCHAR(255))
 BEGIN
 	SELECT * FROM users
     WHERE user_id = p_user_id OR email = p_email;
 END //
+
+CREATE PROCEDURE getPasswordHistory(IN p_user_id INT, IN p_email VARCHAR(255))
+BEGIN
+	SELECT * FROM password_history
+	WHERE user_id = p_user_id OR email = BINARY p_email;
+END //
+
+/* ----------------------------------------------------------------------------------------------------------------------------- */
+
+/* Update Stored Procedure */
 
 CREATE PROCEDURE updateLoginAttempt(IN p_user_id INT, IN p_failed_login_attempts INT, IN p_last_failed_login_attempt DATETIME)
 BEGIN
@@ -76,14 +92,14 @@ BEGIN
     WHERE user_id = p_user_id;
 END //
 
+/* ----------------------------------------------------------------------------------------------------------------------------- */
+
+/* Insert Stored Procedure */
+
 CREATE PROCEDURE insertPasswordHistory(IN p_user_id INT, IN p_email VARCHAR(255), IN p_password VARCHAR(255), IN p_last_password_change DATETIME)
 BEGIN
     INSERT INTO password_history (user_id, email, password, password_change_date) 
     VALUES (p_user_id, p_email, p_password, p_last_password_change);
 END //
 
-CREATE PROCEDURE getPasswordHistory(IN p_user_id INT, IN p_email VARCHAR(255))
-BEGIN
-	SELECT * FROM password_history
-	WHERE user_id = p_user_id OR email = BINARY p_email;
-END //
+/* ----------------------------------------------------------------------------------------------------------------------------- */

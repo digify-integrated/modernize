@@ -16,8 +16,8 @@
                     </div>
                 </div>
                 <div class="card-body">
-                    <div class="table-responsive ">
-                        <table id="menu-item-table" class="table border table-bordered table-striped table-hover align-middle display text-nowrap w-100">
+                    <div class="table-responsive">
+                        <table id="menu-item-table" class="table border table-striped table-hover align-middle text-nowrap mb-0">
                             <thead class="text-dark">
                                 <tr>
                                     <th class="all">

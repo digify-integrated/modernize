@@ -639,7 +639,7 @@
   --bs-font-monospace: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   --bs-gradient: linear-gradient(180deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0));
   --bs-body-font-family: var(--bs-font-sans-serif);
-  --bs-body-font-size: 0.875rem;
+  --bs-body-font-size: 0.8125rem;
   --bs-body-font-weight: 400;
   --bs-body-line-height: 1.5;
   --bs-body-color: #5a6a85;
@@ -1302,7 +1302,7 @@ progress {
 .container-lg,
 .container-md,
 .container-sm {
-  --bs-gutter-x: 24px;
+  --bs-gutter-x: 16px;
   --bs-gutter-y: 0;
   width: 100%;
   padding-right: calc(var(--bs-gutter-x) * 0.5);
@@ -1346,7 +1346,7 @@ progress {
 }
 
 .row {
-  --bs-gutter-x: 24px;
+  --bs-gutter-x: 16px;
   --bs-gutter-y: 0;
   display: flex;
   flex-wrap: wrap;
@@ -2881,7 +2881,7 @@ progress {
   display: block;
   width: 100%;
   padding: 8px 16px;
-  font-size: 0.875rem;
+  font-size: 0.8125rem;
   font-weight: 400;
   line-height: 1.5;
   color: #5a6a85;
@@ -5227,8 +5227,8 @@ textarea.form-control-lg {
 }
 
 .card {
-  --bs-card-spacer-y: 30px;
-  --bs-card-spacer-x: 30px;
+  --bs-card-spacer-y: 20px;
+  --bs-card-spacer-x: 20px;
   --bs-card-title-spacer-y: 0.5rem;
   --bs-card-title-color: #2a3547;
   --bs-card-subtitle-color: var(--bs-body-color);
@@ -16041,7 +16041,7 @@ html[data-boxed-layout=boxed] .container-fluid, html[data-boxed-layout=boxed] .c
 
 .sidebar-nav ul .sidebar-item .sidebar-link {
   display: flex;
-  font-size: 14px;
+  font-size: 13px;
   white-space: nowrap;
   align-items: center;
   line-height: 25px;
@@ -24785,7 +24785,7 @@ body .dp-nav.dp-nav-right::before {
 
 @media (min-width: 992px) {
   .datatables .table-responsive {
-    overflow-x: clip;
+    overflow-x: visible;
   }
 }
 .table-responsive .dataTables_wrapper .dataTables_length select {

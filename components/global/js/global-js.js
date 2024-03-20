@@ -163,6 +163,30 @@ function handleSystemError(xhr, status, error) {
     showErrorDialog(fullErrorMessage);
 }
 
+function resetForm(){
+    var errorMessages = document.querySelectorAll('.error');
+  
+    errorMessages.forEach(function(errorMessage) {
+      errorMessage.parentNode.removeChild(errorMessage);
+    });
+  
+    var invalidInputs = document.querySelectorAll('.is-invalid');
+    invalidInputs.forEach(function(invalidInput) {
+      invalidInput.classList.remove('is-invalid');
+    });
+    
+    $('.form-details').removeClass('d-none');
+    $('.form-edit').addClass('d-none');
+}
+
+function resetModalForm(form_id) {
+    var form = document.getElementById(form_id);
+  
+    form.querySelectorAll('.is-invalid').forEach(function(element) {
+        element.classList.remove('is-invalid');
+    });
+}
+
 function showNotification(notificationTitle, notificationMessage, notificationType, timeOut = 5000) {
     const validNotificationTypes = ['success', 'info', 'warning', 'error'];
 

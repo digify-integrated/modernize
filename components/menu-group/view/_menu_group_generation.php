@@ -47,12 +47,12 @@ if(isset($_POST['type']) && !empty($_POST['type'])){
                     'MENU_GROUP_NAME' => $menuGroupName,
                     'ORDER_SEQUENCE' => $orderSequence,
                     'ACTION' => '<div class="d-flex gap-2">
-                                    <a href="menu-group.php?id='. $menuGroupIDEncrypted .'" class="btn btn-info rounded-circle round-40 btn-sm d-inline-flex align-items-center justify-content-center fs-3" title="View Details">
-                                        <i class="ti ti-eye"></i>
+                                    <a href="menu-group.php?id='. $menuGroupIDEncrypted .'" class="text-info" title="View Details">
+                                        <i class="ti ti-eye fs-5"></i>
                                     </a>
-                                    <button type="button" class="btn btn-danger rounded-circle round-40 btn-sm d-inline-flex align-items-center justify-content-center fs-3 delete-menu-group" data-menu-group-id="' . $menuGroupID . '" title="Delete Menu Group">
-                                        <i class="ti ti-trash"></i>
-                                    </button>
+                                    <a href="javascript:void(0);" class="text-danger ms-3 delete-menu-group" data-menu-group-id="' . $menuGroupID . '" title="Delete Menu Group">
+                                        <i class="ti ti-trash fs-5"></i>
+                                    </a>
                                 </div>'
                 ];
             }

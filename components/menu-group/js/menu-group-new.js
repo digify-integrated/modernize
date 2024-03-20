@@ -31,15 +31,7 @@ function menuGroupForm(){
             }
         },
         errorPlacement: function (error, element) {
-            if (element.hasClass('select2') || element.hasClass('modal-select2')) {
-                error.insertAfter(element.next('.select2-container'));
-            }
-            else if (element.parent('.input-group').length) {
-                error.insertAfter(element.parent());
-            }
-            else {
-                error.insertAfter(element);
-            }
+            showNotification('Form Validation Error', error, 'error', 1500);
         },
         highlight: function(element) {
             var inputElement = $(element);

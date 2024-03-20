@@ -1,10 +1,10 @@
 <div class="row">
-    <div class="col-12">
+    <div class="col-md-12">
         <div class="card">
             <div class="card-header d-flex align-items-center">
                 <h5 class="card-title mb-0">Menu Item</h5>
                 <div class="card-actions cursor-pointer ms-auto d-flex button-group">
-                    <button type="button" class="btn btn-dark dropdown-toggle action-dropdown mb-0" data-bs-toggle="dropdown" aria-expanded="false">Action</button>
+                    <button type="button" class="btn btn-dark dropdown-toggle mb-0" data-bs-toggle="dropdown" aria-expanded="false">Action</button>
                     <ul class="dropdown-menu dropdown-menu-end">
                         <li><a class="dropdown-item" href="menu-item.php?new">Create Menu Item</a></li>
                         <li><button class="dropdown-item" type="button" id="delete-menu-item">Delete Menu Item</button></li>
@@ -13,7 +13,7 @@
                     </ul>
                 </div>
                 <div class="card-actions cursor-pointer ms-auto d-flex button-group">
-                    <button class="btn btn-info mb-0 px-4" data-bs-toggle="modal" data-bs-target="#menu-item-modal" id="edit-details">Edit</button>
+                    <button class="btn btn-info mb-0 px-4" data-bs-toggle="modal" id="edit-details" data-bs-target="#menu-item-modal" id="edit-details">Edit</button>
                     <a href="menu-item.php?new" class="btn btn-success d-flex align-items-center mb-0">Create</a>
                 </div>
             </div>
@@ -77,16 +77,16 @@
     </div>
 </div>
 
-<div  class="datatables">
+<div class="datatables">
     <div class="row">
-        <div class="col-12">
+        <div class="col-md-12">
             <div class="card">
                 <div class="card-header d-flex align-items-center">
                     <h5 class="card-title mb-0">Sub Menu Item List</h5>
                 </div>
                 <div class="card-body">
                     <div class="table-responsive ">
-                        <table id="submenu-item-table" class="table border table-bordered table-striped table-hover align-middle display text-nowrap w-100">
+                        <table id="submenu-item-table" class="table border table-striped table-hover align-middle text-nowrap mb-0">
                             <thead class="text-dark">
                                 <tr>
                                     <th>Submenu Item</th>
@@ -103,51 +103,51 @@
 </div>
 
 <div id="menu-item-modal" class="modal fade" tabindex="-1" aria-labelledby="menu-item-modal" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-scrollable modal-lg">
+    <div class="modal-dialog modal-dialog-scrollable modal-r">
         <div class="modal-content">
-            <div class="modal-header modal-colored-header bg-info text-white">
-                <h4 class="modal-title text-white">Edit Menu Item</h4>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <div class="modal-header border-bottom">
+                <h5 class="modal-title fw-8">Edit Menu Item Details</h5>
+                <button type="button" class="btn-close fs-2" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <form id="menu-item-form" method="post" action="#">
                     <div class="row">
-                        <div class="col-lg-6">
-                            <div class="mb-4">
+                        <div class="col-md-6">
+                            <div class="mb-2">
                                 <label class="form-label" for="menu_item_name">Display Name <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control maxlength" id="menu_item_name" name="menu_item_name" maxlength="100" autocomplete="off">
                             </div>
                         </div>
-                        <div class="col-lg-6">
+                        <div class="col-md-6">
                             <label class="form-label" for="menu_group">Menu Group <span class="text-danger">*</span></label>
-                            <div class="mb-4">
+                            <div class="mb-2">
                                 <select id="menu_group" name="menu_group" class="select2 form-control"></select>
                             </div>
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-lg-6">
-                            <div class="mb-4">
+                        <div class="col-md-6">
+                            <div class="mb-2">
                                 <label class="form-label" for="order_sequence">Order Sequence <span class="text-danger">*</span></label>
                                 <input type="number" class="form-control" id="order_sequence" name="order_sequence" min="0">
                             </div>
                         </div>
-                        <div class="col-lg-6">
+                        <div class="col-md-6">
                             <label class="form-label" for="parent_id">Parent Menu Item</label>
-                            <div class="mb-4">
+                            <div class="mb-2">
                                 <select id="parent_id" name="parent_id" class="select2 form-control"></select>
                             </div>
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-lg-6">
-                            <div class="mb-4">
+                        <div class="col-md-6">
+                            <div class="mb-2">
                                 <label class="form-label" for="menu_item_url">URL</label>
                                 <input type="text" class="form-control maxlength" id="menu_item_url" name="menu_item_url" maxlength="50" autocomplete="off">
                             </div>
                         </div>
-                        <div class="col-lg-6">
-                            <div class="mb-4">
+                        <div class="col-md-6">
+                            <div class="mb-2">
                                 <label class="form-label" for="menu_item_icon">Menu Icon</label>
                                 <input type="text" class="form-control maxlength" id="menu_item_icon" name="menu_item_icon" maxlength="50" autocomplete="off">
                             </div>
@@ -155,9 +155,9 @@
                     </div>
                 </form>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn bg-danger-subtle text-danger waves-effect" data-bs-dismiss="modal">Close</button>
-                <button type="submit" form="menu-item-form" class="btn btn-success mb-0" id="submit-data">Save</button>
+            <div class="modal-footer border-top">
+                <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Close</button>
+                <button type="submit" form="menu-item-form" class="btn btn-success mb-0" id="submit-data">Save changes</button>
             </div>
         </div>
     </div>

@@ -13,7 +13,7 @@
                     </ul>
                 </div>
                 <div class="card-actions cursor-pointer ms-auto d-flex button-group">
-                    <button class="btn btn-info mb-0 px-4" data-bs-toggle="modal" data-bs-target="#menu-group-modal">Edit</button>
+                    <button class="btn btn-info mb-0 px-4" data-bs-toggle="modal" id="edit-details" data-bs-target="#menu-group-modal">Edit</button>
                     <a href="menu-group.php?new" class="btn btn-success d-flex align-items-center mb-0">Create</a>
                 </div>
             </div>
@@ -42,33 +42,33 @@
 </div>
 
 <div id="menu-group-modal" class="modal fade" tabindex="-1" aria-labelledby="menu-group-modal" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-scrollable modal-lg">
+    <div class="modal-dialog modal-dialog-scrollable modal-r">
         <div class="modal-content">
-            <div class="modal-header modal-colored-header bg-info text-white">
-                <h4 class="modal-title text-white">Edit Menu Group</h4>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <div class="modal-header border-bottom">
+                <h5 class="modal-title fw-8">Edit Menu Group Details</h5>
+                <button type="button" class="btn-close fs-2" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <form id="menu-group-form" method="post" action="#">
                     <div class="row">
                         <div class="col-lg-6">
-                            <div class="mb-4">
-                                <label class="col-sm-4 form-label" for="menu_group_name">Display Name <span class="text-danger">*</span></label>
+                            <div class="mb-2">
+                                <label class="form-label" for="menu_group_name">Display Name <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control maxlength" id="menu_group_name" name="menu_group_name" maxlength="100" autocomplete="off">
                             </div>
                         </div>
                         <div class="col-lg-6">
-                            <div class="mb-4">
-                                <label class="col-sm-4 form-label" for="order_sequence">Order Sequence <span class="text-danger">*</span></label>
+                            <div class="mb-2">
+                                <label class="form-label" for="order_sequence">Order Sequence <span class="text-danger">*</span></label>
                                 <input type="number" class="form-control" id="order_sequence" name="order_sequence" min="0">
                             </div>
                         </div>
                     </div>
                 </form>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn bg-danger-subtle text-danger waves-effect" data-bs-dismiss="modal">Close</button>
-                <button type="submit" form="menu-group-form" class="btn btn-success mb-0" id="submit-data">Save</button>
+            <div class="modal-footer border-top">
+                <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Close</button>
+                <button type="submit" form="menu-group-form" class="btn btn-success mb-0" id="submit-data">Save changes</button>
             </div>
         </div>
     </div>
