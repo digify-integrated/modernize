@@ -157,7 +157,7 @@
             </div>
             <div class="modal-footer border-top">
                 <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Close</button>
-                <button type="submit" form="menu-item-form" class="btn btn-success mb-0" id="submit-data">Save changes</button>
+                <button type="submit" form="menu-item-form" class="btn btn-success" id="submit-data">Save changes</button>
             </div>
         </div>
     </div>

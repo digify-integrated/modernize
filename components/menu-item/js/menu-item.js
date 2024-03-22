@@ -159,9 +159,9 @@ function menuItemTable(datatable_name, buttons = false, show_all = false){
 
     const column_definition = [
         { 'width': '2%','bSortable': false, 'aTargets': 0 },
-        { 'width': '30%', 'aTargets': 1 },
-        { 'width': '30%', 'aTargets': 2 },
-        { 'width': '25%', 'aTargets': 3 },
+        { 'width': '35%', 'aTargets': 1 },
+        { 'width': '35%', 'aTargets': 2 },
+        { 'width': '15%', 'aTargets': 3 },
         { 'width': '13%','bSortable': false, 'aTargets': 4 }
     ];
 
