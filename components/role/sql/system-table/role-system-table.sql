@@ -34,3 +34,19 @@ CREATE INDEX role_users_index_user_id ON role_users(user_id);
 INSERT INTO role_users (role_id, user_id) VALUES ('1', '2');
 
 /* ----------------------------------------------------------------------------------------------------------------------------- */
+
+/* Role Permission Table */
+
+CREATE TABLE role_permission(
+	role_id INT NOT NULL,
+	menu_item_id INT NOT NULL,
+	read_access TINYINT(1) NOT NULL,
+    write_access TINYINT(1) NOT NULL,
+    create_access TINYINT(1) NOT NULL,
+    delete_access TINYINT(1) NOT NULL
+);
+
+CREATE INDEX role_permission_index_menu_item_id ON role_permission(menu_item_id);
+CREATE INDEX role_permission_index_role_id ON role_permission(role_id);
+
+/* ----------------------------------------------------------------------------------------------------------------------------- */

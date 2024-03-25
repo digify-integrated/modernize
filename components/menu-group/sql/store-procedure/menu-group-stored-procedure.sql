@@ -27,11 +27,25 @@ END //
 
 CREATE PROCEDURE updateMenuGroup(IN p_menu_group_id INT, IN p_menu_group_name VARCHAR(100), IN p_order_sequence TINYINT(10), IN p_last_log_by INT)
 BEGIN
-	UPDATE menu_group
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+    END;
+
+    START TRANSACTION;
+
+    UPDATE menu_item
     SET menu_group_name = p_menu_group_name,
-    order_sequence = p_order_sequence,
-    last_log_by = p_last_log_by
+        last_log_by = p_last_log_by
     WHERE menu_group_id = p_menu_group_id;
+
+    UPDATE menu_group
+    SET menu_group_name = p_menu_group_name,
+        order_sequence = p_order_sequence,
+        last_log_by = p_last_log_by
+    WHERE menu_group_id = p_menu_group_id;
+
+    COMMIT;
 END //
 
 /* ----------------------------------------------------------------------------------------------------------------------------- */
