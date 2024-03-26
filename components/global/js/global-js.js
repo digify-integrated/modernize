@@ -245,3 +245,10 @@ function logNotes(databaseTable, referenceID){
         }
     });
 }
+
+function initializeDualListBoxIcon(){
+    $('.moveall i').removeClass().addClass('ti ti-chevron-right');
+    $('.removeall i').removeClass().addClass('ti ti-chevron-left');
+    $('.move i').removeClass().addClass('ti ti-chevron-right');
+    $('.remove i').removeClass().addClass('ti ti-chevron-left');
+}

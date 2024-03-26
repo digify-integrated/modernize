@@ -82,3 +82,11 @@ BEGIN
     FROM menu_item 
     ORDER BY menu_item_name;
 END //
+
+CREATE PROCEDURE generateRoleMenuItemDualListBoxOptions(IN p_role_id INT)
+BEGIN
+	SELECT menu_item_id, menu_item_name 
+    FROM menu_item 
+    WHERE menu_item_id NOT IN (SELECT menu_item_id FROM role_permission WHERE role_id = p_role_id)
+    ORDER BY menu_item_name;
+END //

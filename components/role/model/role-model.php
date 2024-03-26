@@ -33,7 +33,7 @@ class RoleModel {
         $stmt = $this->db->getConnection()->prepare('CALL updateRole(:p_role_id, :p_role_name, :p_role_description, :p_last_log_by)');
         $stmt->bindValue(':p_role_id', $p_role_id, PDO::PARAM_INT);
         $stmt->bindValue(':p_role_name', $p_role_name, PDO::PARAM_STR);
-        $stmt->bindValue(':p_role_description', $p_role_description, PDO::PARAM_INT);
+        $stmt->bindValue(':p_role_description', $p_role_description, PDO::PARAM_STR);
         $stmt->bindValue(':p_last_log_by', $p_last_log_by, PDO::PARAM_INT);
         $stmt->execute();
     }
@@ -59,7 +59,7 @@ class RoleModel {
     public function insertRole($p_role_name, $p_role_description, $p_last_log_by) {
         $stmt = $this->db->getConnection()->prepare('CALL insertRole(:p_role_name, :p_role_description, :p_last_log_by, @p_role_id)');
         $stmt->bindValue(':p_role_name', $p_role_name, PDO::PARAM_STR);
-        $stmt->bindValue(':p_role_description', $p_role_description, PDO::PARAM_INT);
+        $stmt->bindValue(':p_role_description', $p_role_description, PDO::PARAM_STR);
         $stmt->bindValue(':p_last_log_by', $p_last_log_by, PDO::PARAM_INT);
         $stmt->execute();
         
@@ -67,6 +67,28 @@ class RoleModel {
         $menuGroupID = $result->fetch(PDO::FETCH_ASSOC)['role_id'];
         
         return $menuGroupID;
+    }
+    # -------------------------------------------------------------
+
+    # -------------------------------------------------------------
+    #
+    # Function: insertRolePermission
+    # Description: Inserts the role permission.
+    #
+    # Parameters:
+    # - $p_role_id (int): The role ID.
+    # - $p_menu_item_id (int): The menu item ID.
+    # - $p_last_log_by (int): The last logged user.
+    #
+    # Returns: String
+    #
+    # -------------------------------------------------------------
+    public function insertRolePermission($p_role_id, $p_menu_item_id, $p_last_log_by) {
+        $stmt = $this->db->getConnection()->prepare('CALL insertRolePermission(:p_role_id, :p_menu_item_id, :p_last_log_by)');
+        $stmt->bindValue(':p_role_id', $p_role_id, PDO::PARAM_INT);
+        $stmt->bindValue(':p_menu_item_id', $p_menu_item_id, PDO::PARAM_INT);
+        $stmt->bindValue(':p_last_log_by', $p_last_log_by, PDO::PARAM_INT);
+        $stmt->execute();
     }
     # -------------------------------------------------------------
 

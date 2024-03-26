@@ -38,12 +38,17 @@ INSERT INTO role_users (role_id, user_id) VALUES ('1', '2');
 /* Role Permission Table */
 
 CREATE TABLE role_permission(
-	role_id INT NOT NULL,
-	menu_item_id INT NOT NULL,
-	read_access TINYINT(1) NOT NULL,
-    write_access TINYINT(1) NOT NULL,
-    create_access TINYINT(1) NOT NULL,
-    delete_access TINYINT(1) NOT NULL
+	role_id INT UNSIGNED NOT NULL,
+	menu_item_id INT UNSIGNED NOT NULL,
+	read_access TINYINT(1) NOT NULL DEFAULT 0,
+    write_access TINYINT(1) NOT NULL DEFAULT 0,
+    create_access TINYINT(1) NOT NULL DEFAULT 0,
+    delete_access TINYINT(1) NOT NULL DEFAULT 0,
+    date_assigned DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    last_log_by INT UNSIGNED NOT NULL,
+    FOREIGN KEY (menu_item_id) REFERENCES menu_item(menu_item_id),
+    FOREIGN KEY (role_id) REFERENCES role(role_id),
+    FOREIGN KEY (last_log_by) REFERENCES users(user_id)
 );
 
 CREATE INDEX role_permission_index_menu_item_id ON role_permission(menu_item_id);

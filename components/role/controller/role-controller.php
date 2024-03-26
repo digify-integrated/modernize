@@ -124,6 +124,9 @@ class RoleController {
                 case 'add role':
                     $this->addRole();
                     break;
+                case 'assign role permission':
+                    $this->assignRolePermission();
+                    break;
                 case 'update role':
                     $this->updateRole();
                     break;
@@ -254,6 +257,71 @@ class RoleController {
                 'success' => true,
                 'title' => 'Update Role Success',
                 'message' => 'The role has been updated successfully.',
+                'messageType' => 'success'
+            ];
+            
+            echo json_encode($response);
+            exit;
+        }
+        else{
+            $response = [
+                'success' => false,
+                'title' => 'Transaction Error',
+                'message' => 'Something went wrong. Please try again later. If the issue persists, please contact support for assistance.',
+                'messageType' => 'error'
+            ];
+            
+            echo json_encode($response);
+            exit;
+        }
+    }
+    # -------------------------------------------------------------
+
+    # -------------------------------------------------------------
+    #   Assign methods
+    # -------------------------------------------------------------
+
+    # -------------------------------------------------------------
+    #
+    # Function: assignRolePermission
+    # Description: 
+    # Assigns a role permission.
+    #
+    # Parameters: None
+    #
+    # Returns: Array
+    #
+    # -------------------------------------------------------------
+    public function assignRolePermission() {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            return;
+        }
+
+        if (isset($_POST['role_id']) && !empty($_POST['role_id'])) {
+            if(!isset($_POST['menu_item_id']) || empty($_POST['menu_item_id'])){
+                $response = [
+                    'success' => false,
+                    'title' => 'Permission Selection Required',
+                    'message' => 'Please select the permission(s) you wish to assign to the role.',
+                    'messageType' => 'error'
+                ];
+                
+                echo json_encode($response);
+                exit;
+            }
+
+            $userID = $_SESSION['user_id'];
+            $roleID = htmlspecialchars($_POST['role_id'], ENT_QUOTES, 'UTF-8');
+            $menuItemIDs = $_POST['menu_item_id'];
+
+            foreach ($menuItemIDs as $menuItemID) {
+                $this->roleModel->insertRolePermission($roleID, $menuItemID, $userID);
+            }
+    
+            $response = [
+                'success' => true,
+                'title' => 'Assign Role Permission Success',
+                'message' => 'The role permission has been assigned successfully.',
                 'messageType' => 'success'
             ];
             

@@ -21,6 +21,12 @@ BEGIN
     SET p_role_id = LAST_INSERT_ID();
 END //
 
+CREATE PROCEDURE insertRolePermission(IN p_role_id INT, IN p_menu_item_id INT, IN p_last_log_by INT)
+BEGIN
+    INSERT INTO role_permission (role_id, menu_item_id, last_log_by) 
+	VALUES(p_role_id, p_menu_item_id, p_last_log_by);
+END //
+
 /* ----------------------------------------------------------------------------------------------------------------------------- */
 
 /* Update Stored Procedures */
@@ -72,6 +78,15 @@ BEGIN
 	SELECT role_id, role_name, role_description
     FROM role 
     ORDER BY role_id;
+END //
+
+CREATE PROCEDURE generateRolePermissionTable(IN p_role_id INT)
+BEGIN
+	SELECT  menu_item_id, menu_item_name, read_access, write_access, create_access, delete_access 
+    FROM role_permission
+    LEFT JOIN menu_item USING (menu_item_id)
+    WHERE role_id = p_role_id
+    ORDER BY menu_item_name;
 END //
 
 /* ----------------------------------------------------------------------------------------------------------------------------- */
