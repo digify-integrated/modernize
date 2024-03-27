@@ -14,6 +14,7 @@ session_start();
 # -------------------------------------------------------------
 class RoleController {
     private $roleModel;
+    private $menuItemModel;
     private $authenticationModel;
     private $securityModel;
 
@@ -26,14 +27,16 @@ class RoleController {
     #
     # Parameters:
     # - @param RoleModel $roleModel     The RoleModel instance for role related operations.
+    # - @param MenuItemModel $menuItemModel     The MenuItemModel instance for menu item related operations.
     # - @param AuthenticationModel $authenticationModel     The AuthenticationModel instance for user related operations.
     # - @param SecurityModel $securityModel   The SecurityModel instance for security related operations.
     #
     # Returns: None
     #
     # -------------------------------------------------------------
-    public function __construct(RoleModel $roleModel, AuthenticationModel $authenticationModel, SecurityModel $securityModel) {
+    public function __construct(RoleModel $roleModel, MenuItemModel $menuItemModel, AuthenticationModel $authenticationModel, SecurityModel $securityModel) {
         $this->roleModel = $roleModel;
+        $this->menuItemModel = $menuItemModel;
         $this->authenticationModel = $authenticationModel;
         $this->securityModel = $securityModel;
     }
@@ -130,11 +133,17 @@ class RoleController {
                 case 'update role':
                     $this->updateRole();
                     break;
+                case 'update role permission':
+                    $this->updateRolePermission();
+                    break;
                 case 'get role details':
                     $this->getRoleDetails();
                     break;
                 case 'delete role':
                     $this->deleteRole();
+                    break;
+                case 'delete role permission':
+                    $this->deleteRolePermission();
                     break;
                 case 'delete multiple role':
                     $this->deleteMultipleRole();
@@ -278,6 +287,70 @@ class RoleController {
     # -------------------------------------------------------------
 
     # -------------------------------------------------------------
+    #
+    # Function: updateRolePermission
+    # Description: 
+    # Update the role permission if it exists; otherwise, return an error message.
+    #
+    # Parameters: None
+    #
+    # Returns: Array
+    #
+    # -------------------------------------------------------------
+    public function updateRolePermission() {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            return;
+        }
+
+        if (isset($_POST['role_permission_id']) && !empty($_POST['role_permission_id']) && isset($_POST['access_type']) && !empty($_POST['access_type']) && isset($_POST['access'])) {
+            $userID = $_SESSION['user_id'];
+            $rolePermissionID = htmlspecialchars($_POST['role_permission_id'], ENT_QUOTES, 'UTF-8');
+            $accessType = htmlspecialchars($_POST['access_type'], ENT_QUOTES, 'UTF-8');
+            $access = htmlspecialchars($_POST['access'], ENT_QUOTES, 'UTF-8');
+        
+            $checkRolePermissionExist = $this->roleModel->checkRolePermissionExist($rolePermissionID);
+            $total = $checkRolePermissionExist['total'] ?? 0;
+
+            if($total === 0){
+                $response = [
+                    'success' => false,
+                    'notExist' => true,
+                    'title' => 'Update Role Permission Error',
+                    'message' => 'The role permission has does not exist.',
+                    'messageType' => 'error'
+                ];
+                
+                echo json_encode($response);
+                exit;
+            }
+
+            $this->roleModel->updateRolePermission($rolePermissionID, $accessType, $access, $userID);
+                
+            $response = [
+                'success' => true,
+                'title' => 'Update Role Permission Success',
+                'message' => 'The role permission has been updated successfully.',
+                'messageType' => 'success'
+            ];
+            
+            echo json_encode($response);
+            exit;
+        }
+        else{
+            $response = [
+                'success' => false,
+                'title' => 'Transaction Error',
+                'message' => 'Something went wrong. Please try again later. If the issue persists, please contact support for assistance.',
+                'messageType' => 'error'
+            ];
+            
+            echo json_encode($response);
+            exit;
+        }
+    }
+    # -------------------------------------------------------------
+
+    # -------------------------------------------------------------
     #   Assign methods
     # -------------------------------------------------------------
 
@@ -313,9 +386,15 @@ class RoleController {
             $userID = $_SESSION['user_id'];
             $roleID = htmlspecialchars($_POST['role_id'], ENT_QUOTES, 'UTF-8');
             $menuItemIDs = $_POST['menu_item_id'];
+            
+            $roleDetails = $this->roleModel->getRole($roleID);
+            $roleName = $roleDetails['role_name'] ?? null;
 
             foreach ($menuItemIDs as $menuItemID) {
-                $this->roleModel->insertRolePermission($roleID, $menuItemID, $userID);
+                $menuItemDetails = $this->menuItemModel->getMenuItem($menuItemID);
+                $menuItemName = $menuItemDetails['menu_item_name'] ?? null;
+
+                $this->roleModel->insertRolePermission($roleID, $roleName, $menuItemID, $menuItemName, $userID);
             }
     
             $response = [
@@ -387,6 +466,67 @@ class RoleController {
                 'success' => true,
                 'title' => 'Delete Role Success',
                 'message' => 'The role has been deleted successfully.',
+                'messageType' => 'success'
+            ];
+            
+            echo json_encode($response);
+            exit;
+        }
+        else{
+            $response = [
+                'success' => false,
+                'title' => 'Transaction Error',
+                'message' => 'Something went wrong. Please try again later. If the issue persists, please contact support for assistance.',
+                'messageType' => 'error'
+            ];
+            
+            echo json_encode($response);
+            exit;
+        }
+    }
+    # -------------------------------------------------------------
+
+    # -------------------------------------------------------------
+    #
+    # Function: deleteRolePermission
+    # Description: 
+    # Delete the role permission if it exists; otherwise, return an error message.
+    #
+    # Parameters: None
+    #
+    # Returns: Array
+    #
+    # -------------------------------------------------------------
+    public function deleteRolePermission() {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            return;
+        }
+
+        if (isset($_POST['role_permission_id']) && !empty($_POST['role_permission_id'])) {
+            $rolePermissionID = htmlspecialchars($_POST['role_permission_id'], ENT_QUOTES, 'UTF-8');
+        
+            $checkRolePermissionExist = $this->roleModel->checkRolePermissionExist($rolePermissionID);
+            $total = $checkRolePermissionExist['total'] ?? 0;
+
+            if($total === 0){
+                $response = [
+                    'success' => false,
+                    'notExist' => true,
+                    'title' => 'Delete Role Permission Error',
+                    'message' => 'The role permission has does not exist.',
+                    'messageType' => 'error'
+                ];
+                
+                echo json_encode($response);
+                exit;
+            }
+
+            $this->roleModel->deleteRolePermission($rolePermissionID);
+                
+            $response = [
+                'success' => true,
+                'title' => 'Delete Role Permission Success',
+                'message' => 'The role permission has been deleted successfully.',
                 'messageType' => 'success'
             ];
             
@@ -531,9 +671,10 @@ require_once '../../global/model/database-model.php';
 require_once '../../global/model/security-model.php';
 require_once '../../global/model/system-model.php';
 require_once '../../role/model/role-model.php';
+require_once '../../menu-item/model/menu-item-model.php';
 require_once '../../authentication/model/authentication-model.php';
 
-$controller = new RoleController(new RoleModel(new DatabaseModel), new AuthenticationModel(new DatabaseModel), new SecurityModel());
+$controller = new RoleController(new RoleModel(new DatabaseModel), new MenuItemModel(new DatabaseModel), new AuthenticationModel(new DatabaseModel), new SecurityModel());
 $controller->handleRequest();
 
 ?>

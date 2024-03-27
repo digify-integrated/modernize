@@ -4,7 +4,7 @@
             <div class="card-header d-flex align-items-center">
                 <h5 class="card-title mb-0">Role</h5>
                 <div class="card-actions cursor-pointer ms-auto d-flex button-group">
-                    <button type="button" class="btn btn-dark dropdown-toggle action-dropdown mb-0" data-bs-toggle="dropdown" aria-expanded="false">Action</button>
+                    <button type="button" class="btn btn-dark dropdown-toggle mb-0" data-bs-toggle="dropdown" aria-expanded="false">Action</button>
                     <ul class="dropdown-menu dropdown-menu-end">
                         <li><a class="dropdown-item" href="role.php?new">Create Role</a></li>
                         <li><button class="dropdown-item" type="button" id="delete-role">Delete Role</button></li>
@@ -47,12 +47,6 @@
             <div class="card">
                 <div class="card-header d-flex align-items-center">
                     <h5 class="card-title mb-0">Role Permission</h5>
-                    <div class="card-actions cursor-pointer ms-auto d-flex button-group">
-                        <button type="button" class="btn btn-dark dropdown-toggle action-dropdown mb-0 d-none" data-bs-toggle="dropdown" aria-expanded="false">Action</button>
-                        <ul class="dropdown-menu dropdown-menu-end">
-                            <li><button class="dropdown-item" type="button" id="delete-role">Delete Role</button></li>
-                        </ul>
-                    </div>
                     <div class="card-actions cursor-pointer ms-auto d-flex button-group">
                         <button class="btn btn-success d-flex align-items-center mb-0" data-bs-toggle="modal" data-bs-target="#role-permission-assignment-modal" id="assign-role-permission">Assign</button>
                     </div>

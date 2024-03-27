@@ -23,7 +23,7 @@ class RoleModel {
     # Parameters:
     # - $p_role_id (int): The role ID.
     # - $p_role_name (string): The role name.
-    # - $p_role_description (int): The role description of role.
+    # - $p_role_description (string): The role description of role.
     # - $p_last_log_by (int): The last logged user.
     #
     # Returns: None
@@ -40,6 +40,30 @@ class RoleModel {
     # -------------------------------------------------------------
 
     # -------------------------------------------------------------
+    #
+    # Function: updateRolePermission
+    # Description: Updates the role permission.
+    #
+    # Parameters:
+    # - $p_role_permission_id (int): The role permission ID.
+    # - $p_access_type (string): The access type to update.
+    # - $p_access (int): The access either 1 or 0.
+    # - $p_last_log_by (int): The last logged user.
+    #
+    # Returns: None
+    #
+    # -------------------------------------------------------------
+    public function updateRolePermission($p_role_permission_id, $p_access_type, $p_access, $p_last_log_by) {
+        $stmt = $this->db->getConnection()->prepare('CALL updateRolePermission(:p_role_permission_id, :p_access_type, :p_access, :p_last_log_by)');
+        $stmt->bindValue(':p_role_permission_id', $p_role_permission_id, PDO::PARAM_INT);
+        $stmt->bindValue(':p_access_type', $p_access_type, PDO::PARAM_STR);
+        $stmt->bindValue(':p_access', $p_access, PDO::PARAM_INT);
+        $stmt->bindValue(':p_last_log_by', $p_last_log_by, PDO::PARAM_INT);
+        $stmt->execute();
+    }
+    # -------------------------------------------------------------
+
+    # -------------------------------------------------------------
     #   Insert methods
     # -------------------------------------------------------------
 
@@ -50,7 +74,7 @@ class RoleModel {
     #
     # Parameters:
     # - $p_role_name (string): The role name.
-    # - $p_role_description (int): The role description of role.
+    # - $p_role_description (string): The role description of role.
     # - $p_last_log_by (int): The last logged user.
     #
     # Returns: String
@@ -77,16 +101,20 @@ class RoleModel {
     #
     # Parameters:
     # - $p_role_id (int): The role ID.
+    # - $p_role_name (string): The role name.
     # - $p_menu_item_id (int): The menu item ID.
+    # - $p_menu_item_name (string): The menu item name.
     # - $p_last_log_by (int): The last logged user.
     #
     # Returns: String
     #
     # -------------------------------------------------------------
-    public function insertRolePermission($p_role_id, $p_menu_item_id, $p_last_log_by) {
-        $stmt = $this->db->getConnection()->prepare('CALL insertRolePermission(:p_role_id, :p_menu_item_id, :p_last_log_by)');
+    public function insertRolePermission($p_role_id, $p_role_name, $p_menu_item_id, $p_menu_item_name, $p_last_log_by) {
+        $stmt = $this->db->getConnection()->prepare('CALL insertRolePermission(:p_role_id, :p_role_name, :p_menu_item_id, :p_menu_item_name, :p_last_log_by)');
         $stmt->bindValue(':p_role_id', $p_role_id, PDO::PARAM_INT);
+        $stmt->bindValue(':p_role_name', $p_role_name, PDO::PARAM_STR);
         $stmt->bindValue(':p_menu_item_id', $p_menu_item_id, PDO::PARAM_INT);
+        $stmt->bindValue(':p_menu_item_name', $p_menu_item_name, PDO::PARAM_STR);
         $stmt->bindValue(':p_last_log_by', $p_last_log_by, PDO::PARAM_INT);
         $stmt->execute();
     }
@@ -116,6 +144,25 @@ class RoleModel {
     # -------------------------------------------------------------
 
     # -------------------------------------------------------------
+    #
+    # Function: checkRolePermissionExist
+    # Description: Checks if a role permission exists.
+    #
+    # Parameters:
+    # - $p_role_permission_id (int): The role permission ID.
+    #
+    # Returns: The result of the query as an associative array.
+    #
+    # -------------------------------------------------------------
+    public function checkRolePermissionExist($p_role_permission_id) {
+        $stmt = $this->db->getConnection()->prepare('CALL checkRolePermissionExist(:p_role_permission_id)');
+        $stmt->bindValue(':p_role_permission_id', $p_role_permission_id, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+    # -------------------------------------------------------------
+
+    # -------------------------------------------------------------
     #   Delete methods
     # -------------------------------------------------------------
 
@@ -133,6 +180,24 @@ class RoleModel {
     public function deleteRole($p_role_id) {
         $stmt = $this->db->getConnection()->prepare('CALL deleteRole(:p_role_id)');
         $stmt->bindValue(':p_role_id', $p_role_id, PDO::PARAM_INT);
+        $stmt->execute();
+    }
+    # -------------------------------------------------------------
+
+    # -------------------------------------------------------------
+    #
+    # Function: deleteRolePermission
+    # Description: Deletes the role permission.
+    #
+    # Parameters:
+    # - $p_role_permission_id (int): The role permission ID.
+    #
+    # Returns: None
+    #
+    # -------------------------------------------------------------
+    public function deleteRolePermission($p_role_permission_id) {
+        $stmt = $this->db->getConnection()->prepare('CALL deleteRolePermission(:p_role_permission_id)');
+        $stmt->bindValue(':p_role_permission_id', $p_role_permission_id, PDO::PARAM_INT);
         $stmt->execute();
     }
     # -------------------------------------------------------------

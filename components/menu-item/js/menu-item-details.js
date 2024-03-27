@@ -10,6 +10,10 @@
             menuItemForm();
         }
 
+        if($('#assigned-role-permission-table').length){
+            assignedRolePermissionTable('#assigned-role-permission-table');
+        }
+
         $(document).on('click','#edit-details',function() {
             displayDetails('get menu item details');
         });
@@ -76,11 +80,21 @@
             });
         });
 
+        $(document).on('click','#assign-role-permission',function() {
+            generateDropdownOptions('menu item role dual listbox options');
+        });
+
         if($('#log-notes-offcanvas').length && $('#view-log-notes').length){
             $(document).on('click','#view-log-notes',function() {
                 const menu_item_id = $('#menu-item-id').text();
 
                 logNotes('menu_item', menu_item_id);
+            });
+
+            $(document).on('click','.view-role-permission-log-notes',function() {
+                const role_permission_id = $(this).data('role-permission-id');
+
+                logNotes('role_permission', role_permission_id);
             });
         }
     });
@@ -239,6 +253,71 @@ function submenuItemTable(datatable_name, buttons = false, show_all = false){
     $(datatable_name).dataTable(settings);
 }
 
+function assignedRolePermissionTable(datatable_name, buttons = false, show_all = false){
+    const menu_item_id = $('#menu-item-id').text();
+    const type = 'assigned role permission table';
+    var settings;
+
+    const column = [ 
+        { 'data' : 'ROLE' },
+        { 'data' : 'READ_ACCESS' },
+        { 'data' : 'CREATE_ACCESS' },
+        { 'data' : 'WRITE_ACCESS' },
+        { 'data' : 'DELETE_ACCESS' },
+        { 'data' : 'ACTION' }
+    ];
+
+    const column_definition = [
+        { 'width': '30%', 'aTargets': 0 },
+        { 'width': '15%', 'bSortable': false, 'aTargets': 1 },
+        { 'width': '15%', 'bSortable': false, 'aTargets': 2 },
+        { 'width': '15%', 'bSortable': false, 'aTargets': 3 },
+        { 'width': '15%', 'bSortable': false, 'aTargets': 4 },
+        { 'width': '10%', 'bSortable': false, 'aTargets': 5 }
+    ];
+
+    const length_menu = show_all ? [[-1], ['All']] : [[10, 25, 50, 100, -1], [10, 25, 50, 100, 'All']];
+
+    settings = {
+        'ajax': { 
+            'url' : 'components/role/view/_role_generation.php',
+            'method' : 'POST',
+            'dataType': 'json',
+            'data': {'type' : type, 'menu_item_id' : menu_item_id},
+            'dataSrc' : '',
+            'error': function(xhr, status, error) {
+                var fullErrorMessage = `XHR status: ${status}, Error: ${error}`;
+                if (xhr.responseText) {
+                    fullErrorMessage += `, Response: ${xhr.responseText}`;
+                }
+                showErrorDialog(fullErrorMessage);
+            }
+        },
+        'order': [[ 0, 'asc' ]],
+        'columns' : column,
+        'fnDrawCallback': function( oSettings ) {
+            readjustDatatableColumn();
+        },
+        'columnDefs': column_definition,
+        'lengthMenu': length_menu,
+        'language': {
+            'emptyTable': 'No data found',
+            'searchPlaceholder': 'Search...',
+            'search': '',
+            'loadingRecords': 'Just a moment while we fetch your data...'
+        },
+    };
+
+    if (buttons) {
+        settings.dom = "<'row'<'col-sm-6'f><'col-sm-6 text-right'B>>" + "<'row'<'col-sm-12'tr>>" + "<'row'<'col-sm-5'i><'col-sm-7'p>>";
+        settings.buttons = ['csv', 'excel', 'pdf'];
+    }
+
+    destroyDatatable(datatable_name);
+
+    $(datatable_name).dataTable(settings);
+}
+
 function displayDetails(transaction){
     switch (transaction) {
         case 'get menu item details':
@@ -349,6 +428,50 @@ function generateDropdownOptions(type){
                         fullErrorMessage += `, Response: ${xhr.responseText}`;
                     }
                     showErrorDialog(fullErrorMessage);
+                }
+            });
+            break;
+        case 'menu item role dual listbox options':
+            const menu_item_id = $('#menu-item-id').text();
+    
+            $.ajax({
+                url: 'components/role/view/_role_generation.php',
+                method: 'POST',
+                dataType: 'json',
+                data: {
+                    type : type,
+                    menu_item_id : menu_item_id
+                },
+                success: function(response) {
+                    var select = document.getElementById('role_id');
+    
+                    select.options.length = 0;
+    
+                    response.forEach(function(opt) {
+                        var option = new Option(opt.text, opt.id);
+                        select.appendChild(option);
+                    });
+                },
+                error: function(xhr, status, error) {
+                    var fullErrorMessage = `XHR status: ${status}, Error: ${error}`;
+                    if (xhr.responseText) {
+                        fullErrorMessage += `, Response: ${xhr.responseText}`;
+                    }
+                     showErrorDialog(fullErrorMessage);
+                },
+                complete: function(){
+                    if($('#role_id').length){
+                        $('#role_id').bootstrapDualListbox({
+                            nonSelectedListLabel: 'Non-selected',
+                            selectedListLabel: 'Selected',
+                            preserveSelectionOnMove: 'moved',
+                            moveOnSelect: false,
+                        });
+    
+                        $('#role_id').bootstrapDualListbox('refresh', true);
+    
+                        initializeDualListBoxIcon();
+                    }
                 }
             });
             break;

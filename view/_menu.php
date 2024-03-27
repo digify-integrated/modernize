@@ -44,6 +44,12 @@
                     </a>
                 </li>
                 <li class="sidebar-item">
+                    <a class="sidebar-link" href="system-action.php" aria-expanded="false">
+                        <span><i class="ti ti-aperture"></i></span>
+                        <span class="hide-menu">System Action</span>
+                    </a>
+                </li>
+                <li class="sidebar-item">
                     <a class="sidebar-link" href="user-account.php" aria-expanded="false">
                         <span><i class="ti ti-aperture"></i></span>
                         <span class="hide-menu">User Account</span>

@@ -159,9 +159,6 @@ if(isset($_POST['type']) && !empty($_POST['type'])){
                 $sql->closeCursor();
 
                 foreach ($options as $row) {
-                    $menuItemID = $row['menu_item_id'];
-                    $menuItemName = $row['menu_item_name'];
-
                     $response[] = [
                         'id' => $row['menu_item_id'],
                         'text' => $row['menu_item_name']

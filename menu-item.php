@@ -23,6 +23,7 @@
     <head>
         <?php include_once('view/_head.php'); ?>
         <link rel="stylesheet" href="./assets/libs/datatables.net-bs5/css/dataTables.bootstrap5.min.css" />
+        <link rel="stylesheet" href="./assets/libs/bootstrap-duallistbox/dist/bootstrap-duallistbox.min.css">
         <link rel="stylesheet" href="./assets/libs/select2/dist/css/select2.min.css">
     </head>
 
@@ -94,6 +95,7 @@
         <script src="./assets/libs/datatables.net/js/jquery.dataTables.min.js"></script>
         <script src="./assets/libs/select2/dist/js/select2.full.min.js"></script>
         <script src="./assets/libs/select2/dist/js/select2.min.js"></script>
+        <script src="./assets/libs/bootstrap-duallistbox/dist/jquery.bootstrap-duallistbox.min.js"></script>
 
         <?php 
             if($newRecord){

@@ -38,8 +38,11 @@ INSERT INTO role_users (role_id, user_id) VALUES ('1', '2');
 /* Role Permission Table */
 
 CREATE TABLE role_permission(
+	role_permission_id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY NOT NULL,
 	role_id INT UNSIGNED NOT NULL,
+	role_name VARCHAR(100) NOT NULL,
 	menu_item_id INT UNSIGNED NOT NULL,
+	menu_item_name VARCHAR(100) NOT NULL,
 	read_access TINYINT(1) NOT NULL DEFAULT 0,
     write_access TINYINT(1) NOT NULL DEFAULT 0,
     create_access TINYINT(1) NOT NULL DEFAULT 0,
