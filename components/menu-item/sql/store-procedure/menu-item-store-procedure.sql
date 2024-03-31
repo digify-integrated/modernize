@@ -72,7 +72,7 @@ BEGIN
     SET query = CONCAT('
         SELECT menu_item_id, menu_item_name, menu_group_name, order_sequence 
         FROM menu_item 
-        WHERE 1 = 1');
+        WHERE 1');
 
     IF p_filter_by_menu_group IS NOT NULL THEN
         SET query = CONCAT(query, ' AND menu_group_id = ', p_filter_by_menu_group);

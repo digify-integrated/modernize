@@ -10,6 +10,10 @@
             menuItemForm();
         }
 
+        if($('#role-permission-assignment-form').length){
+            rolePermissionAssignmentForm();
+        }
+
         if($('#assigned-role-permission-table').length){
             assignedRolePermissionTable('#assigned-role-permission-table');
         }
@@ -82,6 +86,116 @@
 
         $(document).on('click','#assign-role-permission',function() {
             generateDropdownOptions('menu item role dual listbox options');
+        });
+
+        $(document).on('click','.update-role-permission',function() {
+            const role_permission_id = $(this).data('role-permission-id');
+            const access_type = $(this).data('access-type');
+            const transaction = 'update role permission';
+            var access;
+
+            if ($(this).is(':checked')){  
+                access = '1';
+            }
+            else{
+                access = '0';
+            }
+            
+            $.ajax({
+                type: 'POST',
+                url: 'components/role/controller/role-controller.php',
+                dataType: 'json',
+                data: {
+                    role_permission_id : role_permission_id, 
+                    access_type : access_type,
+                    access : access,
+                    transaction : transaction
+                },
+                success: function (response) {
+                    if (response.success) {
+                        showNotification('Update Role Permission Success', 'The role permission has been updated successfully.', 'success');
+                        reloadDatatable('#assigned-role-permission-table');
+                    }
+                    else {
+                        if (response.isInactive || response.userNotExist || response.userInactive || response.userLocked || response.sessionExpired) {
+                            setNotification(response.title, response.message, response.messageType);
+                            window.location = 'logout.php?logout';
+                        }
+                        else if (response.notExist) {
+                            setNotification(response.title, response.message, response.messageType);
+                            reloadDatatable('#assigned-role-permission-table');
+                        }
+                        else {
+                            showNotification(response.title, response.message, response.messageType);
+                        }
+                    }
+                },
+                error: function(xhr, status, error) {
+                    var fullErrorMessage = `XHR status: ${status}, Error: ${error}`;
+                    if (xhr.responseText) {
+                      fullErrorMessage += `, Response: ${xhr.responseText}`;
+                    }
+                    showErrorDialog(fullErrorMessage);
+                }
+            });
+        });
+
+        $(document).on('click','.delete-role-permission',function() {
+            const role_permission_id = $(this).data('role-permission-id');
+            const transaction = 'delete role permission';
+    
+            Swal.fire({
+                title: 'Confirm Role Permission Deletion',
+                text: 'Are you sure you want to delete this role permission?',
+                icon: 'warning',
+                showCancelButton: !0,
+                confirmButtonText: 'Delete',
+                cancelButtonText: 'Cancel',
+                customClass: {
+                    confirmButton: 'btn btn-danger mt-2',
+                    cancelButton: 'btn btn-secondary ms-2 mt-2'
+                },
+                buttonsStyling: !1
+            }).then(function(result) {
+                if (result.value) {
+                    $.ajax({
+                        type: 'POST',
+                        url: 'components/role/controller/role-controller.php',
+                        dataType: 'json',
+                        data: {
+                            role_permission_id : role_permission_id, 
+                            transaction : transaction
+                        },
+                        success: function (response) {
+                            if (response.success) {
+                                showNotification('Delete Role Permission Success', 'The role permission has been deleted successfully.', 'success');
+                                reloadDatatable('#assigned-role-permission-table');
+                            }
+                            else {
+                                if (response.isInactive || response.userNotExist || response.userInactive || response.userLocked || response.sessionExpired) {
+                                    setNotification(response.title, response.message, response.messageType);
+                                    window.location = 'logout.php?logout';
+                                }
+                                else if (response.notExist) {
+                                    setNotification(response.title, response.message, response.messageType);
+                                    reloadDatatable('#assigned-role-permission-table');
+                                }
+                                else {
+                                    showNotification(response.title, response.message, response.messageType);
+                                }
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            var fullErrorMessage = `XHR status: ${status}, Error: ${error}`;
+                            if (xhr.responseText) {
+                                fullErrorMessage += `, Response: ${xhr.responseText}`;
+                            }
+                            showErrorDialog(fullErrorMessage);
+                        }
+                    });
+                    return false;
+                }
+            });
         });
 
         if($('#log-notes-offcanvas').length && $('#view-log-notes').length){
@@ -171,6 +285,78 @@ function menuItemForm(){
                         else if (response.notExist) {
                             setNotification(response.title, response.message, response.messageType);
                             window.location = 'menu-group.php';
+                        }
+                        else {
+                            showNotification(response.title, response.message, response.messageType);
+                        }
+                    }
+                },
+                error: function(xhr, status, error) {
+                    var fullErrorMessage = `XHR status: ${status}, Error: ${error}`;
+                    if (xhr.responseText) {
+                        fullErrorMessage += `, Response: ${xhr.responseText}`;
+                    }
+                    showErrorDialog(fullErrorMessage);
+                },
+                complete: function() {
+                    enableFormSubmitButton('submit-data');
+                }
+            });
+        
+            return false;
+        }
+    });
+}
+
+function rolePermissionAssignmentForm(){
+    $('#role-permission-assignment-form').validate({
+        errorPlacement: function (error, element) {
+            showNotification('Form Validation Error', error, 'error', 1500);
+        },
+        highlight: function(element) {
+            var inputElement = $(element);
+            if (inputElement.hasClass('select2-hidden-accessible')) {
+                inputElement.next().find('.select2-selection__rendered').addClass('is-invalid');
+            }
+            else {
+                inputElement.addClass('is-invalid');
+            }
+        },
+        unhighlight: function(element) {
+            var inputElement = $(element);
+            if (inputElement.hasClass('select2-hidden-accessible')) {
+                inputElement.next().find('.select2-selection__rendered').removeClass('is-invalid');
+            }
+            else {
+                inputElement.removeClass('is-invalid');
+            }
+        },
+        submitHandler: function(form) {
+            const menu_item_id = $('#menu-item-id').text();
+            const transaction = 'assign menu item role permission';
+          
+            $.ajax({
+                type: 'POST',
+                url: 'components/role/controller/role-controller.php',
+                data: $(form).serialize() + '&transaction=' + transaction + '&menu_item_id=' + menu_item_id,
+                dataType: 'json',
+                beforeSend: function() {
+                    disableFormSubmitButton('submit-data');
+                },
+                success: function (response) {
+                    if (response.success) {
+                        showNotification(response.title, response.message, response.messageType);
+                        reloadDatatable('#assigned-role-permission-table');
+                        $('#role-permission-assignment-modal').modal('hide');
+                    }
+                    else {
+                        if (response.isInactive || response.userNotExist || response.userInactive || response.userLocked || response.sessionExpired) {
+                            setNotification(response.title, response.message, response.messageType);
+                            window.location = 'logout.php?logout';
+                        }
+                        else if (response.notExist) {
+                            setNotification(response.title, response.message, response.messageType);
+                            window.location = 'role.php';
                         }
                         else {
                             showNotification(response.title, response.message, response.messageType);

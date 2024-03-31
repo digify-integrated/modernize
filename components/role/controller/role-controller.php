@@ -130,6 +130,9 @@ class RoleController {
                 case 'assign role permission':
                     $this->assignRolePermission();
                     break;
+                case 'assign menu item role permission':
+                    $this->assignMenuItemRolePermission();
+                    break;
                 case 'update role':
                     $this->updateRole();
                     break;
@@ -375,7 +378,7 @@ class RoleController {
                 $response = [
                     'success' => false,
                     'title' => 'Permission Selection Required',
-                    'message' => 'Please select the permission(s) you wish to assign to the role.',
+                    'message' => 'Please select the menu item(s) you wish to assign to the role.',
                     'messageType' => 'error'
                 ];
                 
@@ -393,6 +396,73 @@ class RoleController {
             foreach ($menuItemIDs as $menuItemID) {
                 $menuItemDetails = $this->menuItemModel->getMenuItem($menuItemID);
                 $menuItemName = $menuItemDetails['menu_item_name'] ?? null;
+
+                $this->roleModel->insertRolePermission($roleID, $roleName, $menuItemID, $menuItemName, $userID);
+            }
+    
+            $response = [
+                'success' => true,
+                'title' => 'Assign Role Permission Success',
+                'message' => 'The role permission has been assigned successfully.',
+                'messageType' => 'success'
+            ];
+            
+            echo json_encode($response);
+            exit;
+        }
+        else{
+            $response = [
+                'success' => false,
+                'title' => 'Transaction Error',
+                'message' => 'Something went wrong. Please try again later. If the issue persists, please contact support for assistance.',
+                'messageType' => 'error'
+            ];
+            
+            echo json_encode($response);
+            exit;
+        }
+    }
+    # -------------------------------------------------------------
+
+    # -------------------------------------------------------------
+    #
+    # Function: assignMenuItemRolePermission
+    # Description: 
+    # Assigns a menu item role permission.
+    #
+    # Parameters: None
+    #
+    # Returns: Array
+    #
+    # -------------------------------------------------------------
+    public function assignMenuItemRolePermission() {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            return;
+        }
+
+        if (isset($_POST['menu_item_id']) && !empty($_POST['menu_item_id'])) {
+            if(!isset($_POST['role_id']) || empty($_POST['role_id'])){
+                $response = [
+                    'success' => false,
+                    'title' => 'Permission Selection Required',
+                    'message' => 'Please select the role(s) you wish to assign to the menu item.',
+                    'messageType' => 'error'
+                ];
+                
+                echo json_encode($response);
+                exit;
+            }
+
+            $userID = $_SESSION['user_id'];
+            $menuItemID = htmlspecialchars($_POST['menu_item_id'], ENT_QUOTES, 'UTF-8');
+            $roleIDs = $_POST['role_id'];
+
+            $menuItemDetails = $this->menuItemModel->getMenuItem($menuItemID);
+            $menuItemName = $menuItemDetails['menu_item_name'] ?? null;
+
+            foreach ($roleIDs as $roleID) {
+                $roleDetails = $this->roleModel->getRole($roleID);
+                $roleName = $roleDetails['role_name'] ?? null;
 
                 $this->roleModel->insertRolePermission($roleID, $roleName, $menuItemID, $menuItemName, $userID);
             }

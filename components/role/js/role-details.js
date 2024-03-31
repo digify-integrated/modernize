@@ -223,7 +223,7 @@ function roleForm(){
                 required: 'Please enter the display name'
             },
             role_description: {
-                required: 'Please enter the role description'
+                required: 'Please enter the description'
             }
         },
         errorPlacement: function (error, element) {
