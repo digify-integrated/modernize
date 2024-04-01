@@ -23,7 +23,7 @@ class RoleModel {
     # Parameters:
     # - $p_role_id (int): The role ID.
     # - $p_role_name (string): The role name.
-    # - $p_role_description (string): The role description of role.
+    # - $p_role_description (string): The description of role.
     # - $p_last_log_by (int): The last logged user.
     #
     # Returns: None
@@ -64,6 +64,28 @@ class RoleModel {
     # -------------------------------------------------------------
 
     # -------------------------------------------------------------
+    #
+    # Function: updateRoleSystemActionPermission
+    # Description: Updates the role permission.
+    #
+    # Parameters:
+    # - $p_role_system_action_permission_id (int): The role system action permission ID.
+    # - $p_system_action_access (int): The system action access either 1 or 0.
+    # - $p_last_log_by (int): The last logged user.
+    #
+    # Returns: None
+    #
+    # -------------------------------------------------------------
+    public function updateRoleSystemActionPermission($p_role_system_action_permission_id, $p_system_action_access, $p_last_log_by) {
+        $stmt = $this->db->getConnection()->prepare('CALL updateRoleSystemActionPermission(:p_role_system_action_permission_id, :p_system_action_access, :p_last_log_by)');
+        $stmt->bindValue(':p_role_system_action_permission_id', $p_role_system_action_permission_id, PDO::PARAM_INT);
+        $stmt->bindValue(':p_system_action_access', $p_system_action_access, PDO::PARAM_INT);
+        $stmt->bindValue(':p_last_log_by', $p_last_log_by, PDO::PARAM_INT);
+        $stmt->execute();
+    }
+    # -------------------------------------------------------------
+
+    # -------------------------------------------------------------
     #   Insert methods
     # -------------------------------------------------------------
 
@@ -74,7 +96,7 @@ class RoleModel {
     #
     # Parameters:
     # - $p_role_name (string): The role name.
-    # - $p_role_description (string): The role description of role.
+    # - $p_role_description (string): The description of role.
     # - $p_last_log_by (int): The last logged user.
     #
     # Returns: String
@@ -115,6 +137,32 @@ class RoleModel {
         $stmt->bindValue(':p_role_name', $p_role_name, PDO::PARAM_STR);
         $stmt->bindValue(':p_menu_item_id', $p_menu_item_id, PDO::PARAM_INT);
         $stmt->bindValue(':p_menu_item_name', $p_menu_item_name, PDO::PARAM_STR);
+        $stmt->bindValue(':p_last_log_by', $p_last_log_by, PDO::PARAM_INT);
+        $stmt->execute();
+    }
+    # -------------------------------------------------------------
+
+    # -------------------------------------------------------------
+    #
+    # Function: insertRoleSystemActionPermission
+    # Description: Inserts the role permission.
+    #
+    # Parameters:
+    # - $p_role_id (int): The role ID.
+    # - $p_role_name (string): The role name.
+    # - $p_system_action_id (int): The system action ID.
+    # - $p_system_action_name (string): The system action name.
+    # - $p_last_log_by (int): The last logged user.
+    #
+    # Returns: String
+    #
+    # -------------------------------------------------------------
+    public function insertRoleSystemActionPermission($p_role_id, $p_role_name, $p_system_action_id, $p_system_action_name, $p_last_log_by) {
+        $stmt = $this->db->getConnection()->prepare('CALL insertRoleSystemActionPermission(:p_role_id, :p_role_name, :p_system_action_id, :p_system_action_name, :p_last_log_by)');
+        $stmt->bindValue(':p_role_id', $p_role_id, PDO::PARAM_INT);
+        $stmt->bindValue(':p_role_name', $p_role_name, PDO::PARAM_STR);
+        $stmt->bindValue(':p_system_action_id', $p_system_action_id, PDO::PARAM_INT);
+        $stmt->bindValue(':p_system_action_name', $p_system_action_name, PDO::PARAM_STR);
         $stmt->bindValue(':p_last_log_by', $p_last_log_by, PDO::PARAM_INT);
         $stmt->execute();
     }
@@ -163,6 +211,25 @@ class RoleModel {
     # -------------------------------------------------------------
 
     # -------------------------------------------------------------
+    #
+    # Function: checkRoleSystemActionPermissionExist
+    # Description: Checks if a role system action permission exists.
+    #
+    # Parameters:
+    # - $p_role_system_action_permission_id (int): The role system action permission ID.
+    #
+    # Returns: The result of the query as an associative array.
+    #
+    # -------------------------------------------------------------
+    public function checkRoleSystemActionPermissionExist($p_role_system_action_permission_id) {
+        $stmt = $this->db->getConnection()->prepare('CALL checkRoleSystemActionPermissionExist(:p_role_system_action_permission_id)');
+        $stmt->bindValue(':p_role_system_action_permission_id', $p_role_system_action_permission_id, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+    # -------------------------------------------------------------
+
+    # -------------------------------------------------------------
     #   Delete methods
     # -------------------------------------------------------------
 
@@ -198,6 +265,24 @@ class RoleModel {
     public function deleteRolePermission($p_role_permission_id) {
         $stmt = $this->db->getConnection()->prepare('CALL deleteRolePermission(:p_role_permission_id)');
         $stmt->bindValue(':p_role_permission_id', $p_role_permission_id, PDO::PARAM_INT);
+        $stmt->execute();
+    }
+    # -------------------------------------------------------------
+
+    # -------------------------------------------------------------
+    #
+    # Function: deleteRoleSystemActionPermission
+    # Description: Deletes the role system action  permission.
+    #
+    # Parameters:
+    # - $p_role_system_action_permission_id (int): The role system action permission ID.
+    #
+    # Returns: None
+    #
+    # -------------------------------------------------------------
+    public function deleteRoleSystemActionPermission($p_role_system_action_permission_id) {
+        $stmt = $this->db->getConnection()->prepare('CALL deleteRoleSystemActionPermission(:p_role_system_action_permission_id)');
+        $stmt->bindValue(':p_role_system_action_permission_id', $p_role_system_action_permission_id, PDO::PARAM_INT);
         $stmt->execute();
     }
     # -------------------------------------------------------------

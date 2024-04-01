@@ -15,6 +15,7 @@ session_start();
 class RoleController {
     private $roleModel;
     private $menuItemModel;
+    private $systemActionModel;
     private $authenticationModel;
     private $securityModel;
 
@@ -28,15 +29,17 @@ class RoleController {
     # Parameters:
     # - @param RoleModel $roleModel     The RoleModel instance for role related operations.
     # - @param MenuItemModel $menuItemModel     The MenuItemModel instance for menu item related operations.
+    # - @param SystemActionModel $systemActionModel     The SystemActionModel instance for system action related operations.
     # - @param AuthenticationModel $authenticationModel     The AuthenticationModel instance for user related operations.
     # - @param SecurityModel $securityModel   The SecurityModel instance for security related operations.
     #
     # Returns: None
     #
     # -------------------------------------------------------------
-    public function __construct(RoleModel $roleModel, MenuItemModel $menuItemModel, AuthenticationModel $authenticationModel, SecurityModel $securityModel) {
+    public function __construct(RoleModel $roleModel, MenuItemModel $menuItemModel, SystemActionModel $systemActionModel, AuthenticationModel $authenticationModel, SecurityModel $securityModel) {
         $this->roleModel = $roleModel;
         $this->menuItemModel = $menuItemModel;
+        $this->systemActionModel = $systemActionModel;
         $this->authenticationModel = $authenticationModel;
         $this->securityModel = $securityModel;
     }
@@ -133,11 +136,20 @@ class RoleController {
                 case 'assign menu item role permission':
                     $this->assignMenuItemRolePermission();
                     break;
+                case 'assign role system action permission':
+                    $this->assignRoleSystemActionPermission();
+                    break;
+                case 'assign system action role permission':
+                    $this->assignSystemActionRolePermission();
+                    break;
                 case 'update role':
                     $this->updateRole();
                     break;
                 case 'update role permission':
                     $this->updateRolePermission();
+                    break;
+                case 'update role system action permission':
+                    $this->updateRoleSystemActionPermission();
                     break;
                 case 'get role details':
                     $this->getRoleDetails();
@@ -148,11 +160,11 @@ class RoleController {
                 case 'delete role permission':
                     $this->deleteRolePermission();
                     break;
+                case 'delete role system action permission':
+                    $this->deleteRoleSystemActionPermission();
+                    break;
                 case 'delete multiple role':
                     $this->deleteMultipleRole();
-                    break;
-                case 'duplicate role':
-                    $this->duplicateRole();
                     break;
                 default:
                     $response = [
@@ -354,6 +366,69 @@ class RoleController {
     # -------------------------------------------------------------
 
     # -------------------------------------------------------------
+    #
+    # Function: updateRoleSystemActionPermission
+    # Description: 
+    # Update the role permission if it exists; otherwise, return an error message.
+    #
+    # Parameters: None
+    #
+    # Returns: Array
+    #
+    # -------------------------------------------------------------
+    public function updateRoleSystemActionPermission() {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            return;
+        }
+
+        if (isset($_POST['role_system_action_permission_id']) && !empty($_POST['role_system_action_permission_id']) && isset($_POST['system_action_access'])) {
+            $userID = $_SESSION['user_id'];
+            $roleSystemActionPermissionID = htmlspecialchars($_POST['role_system_action_permission_id'], ENT_QUOTES, 'UTF-8');
+            $systemActionAccess = htmlspecialchars($_POST['system_action_access'], ENT_QUOTES, 'UTF-8');
+        
+            $checkRoleSystemActionPermissionExist = $this->roleModel->checkRoleSystemActionPermissionExist($roleSystemActionPermissionID);
+            $total = $checkRoleSystemActionPermissionExist['total'] ?? 0;
+
+            if($total === 0){
+                $response = [
+                    'success' => false,
+                    'notExist' => true,
+                    'title' => 'Update Role Permission Error',
+                    'message' => 'The role permission has does not exist.',
+                    'messageType' => 'error'
+                ];
+                
+                echo json_encode($response);
+                exit;
+            }
+
+            $this->roleModel->updateRoleSystemActionPermission($roleSystemActionPermissionID, $systemActionAccess, $userID);
+                
+            $response = [
+                'success' => true,
+                'title' => 'Update Role Permission Success',
+                'message' => 'The role permission has been updated successfully.',
+                'messageType' => 'success'
+            ];
+            
+            echo json_encode($response);
+            exit;
+        }
+        else{
+            $response = [
+                'success' => false,
+                'title' => 'Transaction Error',
+                'message' => 'Something went wrong. Please try again later. If the issue persists, please contact support for assistance.',
+                'messageType' => 'error'
+            ];
+            
+            echo json_encode($response);
+            exit;
+        }
+    }
+    # -------------------------------------------------------------
+
+    # -------------------------------------------------------------
     #   Assign methods
     # -------------------------------------------------------------
 
@@ -426,6 +501,73 @@ class RoleController {
 
     # -------------------------------------------------------------
     #
+    # Function: assignRoleSystemActionPermission
+    # Description: 
+    # Assigns a role system action permission.
+    #
+    # Parameters: None
+    #
+    # Returns: Array
+    #
+    # -------------------------------------------------------------
+    public function assignRoleSystemActionPermission() {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            return;
+        }
+
+        if (isset($_POST['role_id']) && !empty($_POST['role_id'])) {
+            if(!isset($_POST['system_action_id']) || empty($_POST['system_action_id'])){
+                $response = [
+                    'success' => false,
+                    'title' => 'Permission Selection Required',
+                    'message' => 'Please select the system action(s) you wish to assign to the role.',
+                    'messageType' => 'error'
+                ];
+                
+                echo json_encode($response);
+                exit;
+            }
+
+            $userID = $_SESSION['user_id'];
+            $roleID = htmlspecialchars($_POST['role_id'], ENT_QUOTES, 'UTF-8');
+            $systemActionIDs = $_POST['system_action_id'];
+            
+            $roleDetails = $this->roleModel->getRole($roleID);
+            $roleName = $roleDetails['role_name'] ?? null;
+
+            foreach ($systemActionIDs as $systemActionID) {
+                $systemActionDetails = $this->systemActionModel->getSystemAction($systemActionID);
+                $systemActionName = $systemActionDetails['system_action_name'] ?? null;
+
+                $this->roleModel->insertRoleSystemActionPermission($roleID, $roleName, $systemActionID, $systemActionName, $userID);
+            }
+    
+            $response = [
+                'success' => true,
+                'title' => 'Assign System Action Permission Success',
+                'message' => 'The system action permission has been assigned successfully.',
+                'messageType' => 'success'
+            ];
+            
+            echo json_encode($response);
+            exit;
+        }
+        else{
+            $response = [
+                'success' => false,
+                'title' => 'Transaction Error',
+                'message' => 'Something went wrong. Please try again later. If the issue persists, please contact support for assistance.',
+                'messageType' => 'error'
+            ];
+            
+            echo json_encode($response);
+            exit;
+        }
+    }
+    # -------------------------------------------------------------
+
+    # -------------------------------------------------------------
+    #
     # Function: assignMenuItemRolePermission
     # Description: 
     # Assigns a menu item role permission.
@@ -465,6 +607,73 @@ class RoleController {
                 $roleName = $roleDetails['role_name'] ?? null;
 
                 $this->roleModel->insertRolePermission($roleID, $roleName, $menuItemID, $menuItemName, $userID);
+            }
+    
+            $response = [
+                'success' => true,
+                'title' => 'Assign Role Permission Success',
+                'message' => 'The role permission has been assigned successfully.',
+                'messageType' => 'success'
+            ];
+            
+            echo json_encode($response);
+            exit;
+        }
+        else{
+            $response = [
+                'success' => false,
+                'title' => 'Transaction Error',
+                'message' => 'Something went wrong. Please try again later. If the issue persists, please contact support for assistance.',
+                'messageType' => 'error'
+            ];
+            
+            echo json_encode($response);
+            exit;
+        }
+    }
+    # -------------------------------------------------------------
+
+    # -------------------------------------------------------------
+    #
+    # Function: assignSystemActionRolePermission
+    # Description: 
+    # Assigns a menu item role system action permission.
+    #
+    # Parameters: None
+    #
+    # Returns: Array
+    #
+    # -------------------------------------------------------------
+    public function assignSystemActionRolePermission() {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            return;
+        }
+
+        if (isset($_POST['system_action_id']) && !empty($_POST['system_action_id'])) {
+            if(!isset($_POST['role_id']) || empty($_POST['role_id'])){
+                $response = [
+                    'success' => false,
+                    'title' => 'Permission Selection Required',
+                    'message' => 'Please select the role(s) you wish to assign to the system action.',
+                    'messageType' => 'error'
+                ];
+                
+                echo json_encode($response);
+                exit;
+            }
+
+            $userID = $_SESSION['user_id'];
+            $systemActionID = htmlspecialchars($_POST['system_action_id'], ENT_QUOTES, 'UTF-8');
+            $roleIDs = $_POST['role_id'];
+
+            $systemActionDetails = $this->systemActionModel->getSystemAction($systemActionID);
+            $systemActionName = $systemActionDetails['system_action_name'] ?? null;
+
+            foreach ($roleIDs as $roleID) {
+                $roleDetails = $this->roleModel->getRole($roleID);
+                $roleName = $roleDetails['role_name'] ?? null;
+
+                $this->roleModel->insertRoleSystemActionPermission($roleID, $roleName, $systemActionID, $systemActionName, $userID);
             }
     
             $response = [
@@ -616,6 +825,67 @@ class RoleController {
         }
     }
     # -------------------------------------------------------------
+    
+    # -------------------------------------------------------------
+    #
+    # Function: deleteRoleSystemActionPermission
+    # Description: 
+    # Delete the role system action permission if it exists; otherwise, return an error message.
+    #
+    # Parameters: None
+    #
+    # Returns: Array
+    #
+    # -------------------------------------------------------------
+    public function deleteRoleSystemActionPermission() {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            return;
+        }
+
+        if (isset($_POST['role_system_action_permission_id']) && !empty($_POST['role_system_action_permission_id'])) {
+            $roleSystemActionPermissionID = htmlspecialchars($_POST['role_system_action_permission_id'], ENT_QUOTES, 'UTF-8');
+        
+            $checkRoleSystemActionPermissionExist = $this->roleModel->checkRoleSystemActionPermissionExist($roleSystemActionPermissionID);
+            $total = $checkRoleSystemActionPermissionExist['total'] ?? 0;
+
+            if($total === 0){
+                $response = [
+                    'success' => false,
+                    'notExist' => true,
+                    'title' => 'Delete Role Permission Error',
+                    'message' => 'The role permission has does not exist.',
+                    'messageType' => 'error'
+                ];
+                
+                echo json_encode($response);
+                exit;
+            }
+
+            $this->roleModel->deleteRoleSystemActionPermission($roleSystemActionPermissionID);
+                
+            $response = [
+                'success' => true,
+                'title' => 'Delete Role Permission Success',
+                'message' => 'The role permission has been deleted successfully.',
+                'messageType' => 'success'
+            ];
+            
+            echo json_encode($response);
+            exit;
+        }
+        else{
+            $response = [
+                'success' => false,
+                'title' => 'Transaction Error',
+                'message' => 'Something went wrong. Please try again later. If the issue persists, please contact support for assistance.',
+                'messageType' => 'error'
+            ];
+            
+            echo json_encode($response);
+            exit;
+        }
+    }
+    # -------------------------------------------------------------
 
     # -------------------------------------------------------------
     #
@@ -677,7 +947,7 @@ class RoleController {
     #
     # Function: getRoleDetails
     # Description: 
-    # Handles the retrieval of role details such as role name, order sequence, etc.
+    # Handles the retrieval of role details.
     #
     # Parameters: None
     #
@@ -742,9 +1012,10 @@ require_once '../../global/model/security-model.php';
 require_once '../../global/model/system-model.php';
 require_once '../../role/model/role-model.php';
 require_once '../../menu-item/model/menu-item-model.php';
+require_once '../../system-action/model/system-action-model.php';
 require_once '../../authentication/model/authentication-model.php';
 
-$controller = new RoleController(new RoleModel(new DatabaseModel), new MenuItemModel(new DatabaseModel), new AuthenticationModel(new DatabaseModel), new SecurityModel());
+$controller = new RoleController(new RoleModel(new DatabaseModel), new MenuItemModel(new DatabaseModel), new SystemActionModel(new DatabaseModel), new AuthenticationModel(new DatabaseModel), new SecurityModel());
 $controller->handleRequest();
 
 ?>

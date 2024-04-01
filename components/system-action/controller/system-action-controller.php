@@ -3,17 +3,18 @@ session_start();
 
 # -------------------------------------------------------------
 #
-# Function: MenuGroupController
+# Function: SystemActionController
 # Description: 
-# The MenuGroupController class handles menu group related operations and interactions.
+# The SystemActionController class handles system action related operations and interactions.
 #
 # Parameters: None
 #
 # Returns: None
 #
 # -------------------------------------------------------------
-class MenuGroupController {
-    private $menuGroupModel;
+class SystemActionController {
+    private $systemActionModel;
+    private $roleModel;
     private $authenticationModel;
     private $securityModel;
 
@@ -21,19 +22,21 @@ class MenuGroupController {
     #
     # Function: __construct
     # Description: 
-    # The constructor initializes the object with the provided MenuGroupModel, AuthenticationModel and SecurityModel instances.
-    # These instances are used for menu group related, user related operations and security related operations, respectively.
+    # The constructor initializes the object with the provided RoleModel, AuthenticationModel and SecurityModel instances.
+    # These instances are used for role related, user related operations and security related operations, respectively.
     #
     # Parameters:
-    # - @param MenuGroupModel $menuGroupModel     The MenuGroupModel instance for menu group related operations.
+    # - @param SystemActionModel $systemActionModel     The SystemActionModel instance for system action related operations.
+    # - @param RoleModel $roleModel     The RoleModel instance for role related operations.
     # - @param AuthenticationModel $authenticationModel     The AuthenticationModel instance for user related operations.
     # - @param SecurityModel $securityModel   The SecurityModel instance for security related operations.
     #
     # Returns: None
     #
     # -------------------------------------------------------------
-    public function __construct(MenuGroupModel $menuGroupModel, AuthenticationModel $authenticationModel, SecurityModel $securityModel) {
-        $this->menuGroupModel = $menuGroupModel;
+    public function __construct(SystemActionModel $systemActionModel, RoleModel $roleModel, AuthenticationModel $authenticationModel, SecurityModel $securityModel) {
+        $this->systemActionModel = $systemActionModel;
+        $this->roleModel = $roleModel;
         $this->authenticationModel = $authenticationModel;
         $this->securityModel = $securityModel;
     }
@@ -121,20 +124,20 @@ class MenuGroupController {
             $transaction = isset($_POST['transaction']) ? $_POST['transaction'] : null;
 
             switch ($transaction) {
-                case 'add menu group':
-                    $this->addMenuGroup();
+                case 'add system action':
+                    $this->addSystemAction();
                     break;
-                case 'update menu group':
-                    $this->updateMenuGroup();
+                case 'update system action':
+                    $this->updateSystemAction();
                     break;
-                case 'get menu group details':
-                    $this->getMenuGroupDetails();
+                case 'get system action details':
+                    $this->getSystemActionDetails();
                     break;
-                case 'delete menu group':
-                    $this->deleteMenuGroup();
+                case 'delete system action':
+                    $this->deleteSystemAction();
                     break;
-                case 'delete multiple menu group':
-                    $this->deleteMultipleMenuGroup();
+                case 'delete multiple system action':
+                    $this->deleteMultipleSystemAction();
                     break;
                 default:
                     $response = [
@@ -157,32 +160,32 @@ class MenuGroupController {
 
     # -------------------------------------------------------------
     #
-    # Function: addMenuGroup
+    # Function: addSystemAction
     # Description: 
-    # Inserts a menu group.
+    # Inserts a system action.
     #
     # Parameters: None
     #
     # Returns: Array
     #
     # -------------------------------------------------------------
-    public function addMenuGroup() {
+    public function addSystemAction() {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             return;
         }
 
-        if (isset($_POST['menu_group_name']) && !empty($_POST['menu_group_name']) && isset($_POST['order_sequence']) && !empty($_POST['order_sequence'])) {
+        if (isset($_POST['system_action_name']) && !empty($_POST['system_action_name']) && isset($_POST['system_action_description']) && !empty($_POST['system_action_description'])) {
             $userID = $_SESSION['user_id'];
-            $menuGroupName = htmlspecialchars($_POST['menu_group_name'], ENT_QUOTES, 'UTF-8');
-            $orderSequence = htmlspecialchars($_POST['order_sequence'], ENT_QUOTES, 'UTF-8');
+            $systemActionName = htmlspecialchars($_POST['system_action_name'], ENT_QUOTES, 'UTF-8');
+            $systemActionDescription = htmlspecialchars($_POST['system_action_description'], ENT_QUOTES, 'UTF-8');
         
-            $menuGroupID = $this->menuGroupModel->insertMenuGroup($menuGroupName, $orderSequence, $userID);
+            $systemActionID = $this->systemActionModel->insertSystemAction($systemActionName, $systemActionDescription, $userID);
     
             $response = [
                 'success' => true,
-                'menuGroupID' => $this->securityModel->encryptData($menuGroupID),
-                'title' => 'Insert Menu Group Success',
-                'message' => 'The menu group has been inserted successfully.',
+                'systemActionID' => $this->securityModel->encryptData($systemActionID),
+                'title' => 'Insert System Action Success',
+                'message' => 'The system action has been inserted successfully.',
                 'messageType' => 'success'
             ];
             
@@ -209,35 +212,35 @@ class MenuGroupController {
 
     # -------------------------------------------------------------
     #
-    # Function: updateMenuGroup
+    # Function: updateSystemAction
     # Description: 
-    # Updates the menu group if it exists; otherwise, return an error message.
+    # Updates the system action if it exists; otherwise, return an error message.
     #
     # Parameters: None
     #
     # Returns: Array
     #
     # -------------------------------------------------------------
-    public function updateMenuGroup() {
+    public function updateSystemAction() {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             return;
         }
         
-        if (isset($_POST['menu_group_id']) && !empty($_POST['menu_group_id']) && isset($_POST['menu_group_name']) && !empty($_POST['menu_group_name']) && isset($_POST['order_sequence']) && !empty($_POST['order_sequence'])) {
+        if (isset($_POST['system_action_id']) && !empty($_POST['system_action_id']) && isset($_POST['system_action_name']) && !empty($_POST['system_action_name']) && isset($_POST['system_action_description']) && !empty($_POST['system_action_description'])) {
             $userID = $_SESSION['user_id'];
-            $menuGroupID = htmlspecialchars($_POST['menu_group_id'], ENT_QUOTES, 'UTF-8');
-            $menuGroupName = htmlspecialchars($_POST['menu_group_name'], ENT_QUOTES, 'UTF-8');
-            $orderSequence = htmlspecialchars($_POST['order_sequence'], ENT_QUOTES, 'UTF-8');
+            $systemActionID = htmlspecialchars($_POST['system_action_id'], ENT_QUOTES, 'UTF-8');
+            $systemActionName = htmlspecialchars($_POST['system_action_name'], ENT_QUOTES, 'UTF-8');
+            $systemActionDescription = htmlspecialchars($_POST['system_action_description'], ENT_QUOTES, 'UTF-8');
         
-            $checkMenuGroupExist = $this->menuGroupModel->checkMenuGroupExist($menuGroupID);
-            $total = $checkMenuGroupExist['total'] ?? 0;
+            $checkSystemActionExist = $this->systemActionModel->checkSystemActionExist($systemActionID);
+            $total = $checkSystemActionExist['total'] ?? 0;
 
             if($total === 0){
                 $response = [
                     'success' => false,
                     'notExist' => true,
-                    'title' => 'Update Menu Group Error',
-                    'message' => 'The menu group has does not exist.',
+                    'title' => 'Update System Action Error',
+                    'message' => 'The system action has does not exist.',
                     'messageType' => 'error'
                 ];
                 
@@ -245,12 +248,12 @@ class MenuGroupController {
                 exit;
             }
 
-            $this->menuGroupModel->updateMenuGroup($menuGroupID, $menuGroupName, $orderSequence, $userID);
+            $this->systemActionModel->updateSystemAction($systemActionID, $systemActionName, $systemActionDescription, $userID);
                 
             $response = [
                 'success' => true,
-                'title' => 'Update Menu Group Success',
-                'message' => 'The menu group has been updated successfully.',
+                'title' => 'Update System Action Success',
+                'message' => 'The system action has been updated successfully.',
                 'messageType' => 'success'
             ];
             
@@ -277,32 +280,32 @@ class MenuGroupController {
 
     # -------------------------------------------------------------
     #
-    # Function: deleteMenuGroup
+    # Function: deleteSystemAction
     # Description: 
-    # Delete the menu group if it exists; otherwise, return an error message.
+    # Delete the system action if it exists; otherwise, return an error message.
     #
     # Parameters: None
     #
     # Returns: Array
     #
     # -------------------------------------------------------------
-    public function deleteMenuGroup() {
+    public function deleteSystemAction() {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             return;
         }
 
-        if (isset($_POST['menu_group_id']) && !empty($_POST['menu_group_id'])) {
-            $menuGroupID = htmlspecialchars($_POST['menu_group_id'], ENT_QUOTES, 'UTF-8');
+        if (isset($_POST['system_action_id']) && !empty($_POST['system_action_id'])) {
+            $systemActionID = htmlspecialchars($_POST['system_action_id'], ENT_QUOTES, 'UTF-8');
         
-            $checkMenuGroupExist = $this->menuGroupModel->checkMenuGroupExist($menuGroupID);
-            $total = $checkMenuGroupExist['total'] ?? 0;
+            $checkSystemActionExist = $this->systemActionModel->checkSystemActionExist($systemActionID);
+            $total = $checkSystemActionExist['total'] ?? 0;
 
             if($total === 0){
                 $response = [
                     'success' => false,
                     'notExist' => true,
-                    'title' => 'Delete Menu Group Error',
-                    'message' => 'The menu group has does not exist.',
+                    'title' => 'Delete System Action Error',
+                    'message' => 'The system action has does not exist.',
                     'messageType' => 'error'
                 ];
                 
@@ -310,12 +313,12 @@ class MenuGroupController {
                 exit;
             }
 
-            $this->menuGroupModel->deleteMenuGroup($menuGroupID);
+            $this->systemActionModel->deleteSystemAction($systemActionID);
                 
             $response = [
                 'success' => true,
-                'title' => 'Delete Menu Group Success',
-                'message' => 'The menu group has been deleted successfully.',
+                'title' => 'Delete System Action Success',
+                'message' => 'The system action has been deleted successfully.',
                 'messageType' => 'success'
             ];
             
@@ -338,36 +341,36 @@ class MenuGroupController {
 
     # -------------------------------------------------------------
     #
-    # Function: deleteMultipleMenuGroup
+    # Function: deleteMultipleSystemAction
     # Description: 
-    # Delete the selected menu groups if it exists; otherwise, skip it.
+    # Delete the selected system actions if it exists; otherwise, skip it.
     #
     # Parameters: None
     #
     # Returns: Array
     #
     # -------------------------------------------------------------
-    public function deleteMultipleMenuGroup() {
+    public function deleteMultipleSystemAction() {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             return;
         }
 
-        if (isset($_POST['menu_group_id']) && !empty($_POST['menu_group_id'])) {
-            $menuGroupIDs = $_POST['menu_group_id'];
+        if (isset($_POST['system_action_id']) && !empty($_POST['system_action_id'])) {
+            $systemActionIDs = $_POST['system_action_id'];
     
-            foreach($menuGroupIDs as $menuGroupID){
-                $checkMenuGroupExist = $this->menuGroupModel->checkMenuGroupExist($menuGroupID);
-                $total = $checkMenuGroupExist['total'] ?? 0;
+            foreach($systemActionIDs as $systemActionID){
+                $checkSystemActionExist = $this->systemActionModel->checkSystemActionExist($systemActionID);
+                $total = $checkSystemActionExist['total'] ?? 0;
 
                 if($total > 0){
-                    $this->menuGroupModel->deleteMenuGroup($menuGroupID);
+                    $this->systemActionModel->deleteSystemAction($systemActionID);
                 }
             }
                 
             $response = [
                 'success' => true,
-                'title' => 'Delete Multiple Menu Group Success',
-                'message' => 'The selected menu groups have been deleted successfully.',
+                'title' => 'Delete Multiple System Action Success',
+                'message' => 'The selected system actions have been deleted successfully.',
                 'messageType' => 'success'
             ];
             
@@ -394,33 +397,33 @@ class MenuGroupController {
 
     # -------------------------------------------------------------
     #
-    # Function: getMenuGroupDetails
+    # Function: getSystemActionDetails
     # Description: 
-    # Handles the retrieval of menu group details.
+    # Handles the retrieval of system action details.
     #
     # Parameters: None
     #
     # Returns: Array
     #
     # -------------------------------------------------------------
-    public function getMenuGroupDetails() {
+    public function getSystemActionDetails() {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             return;
         }
     
-        if (isset($_POST['menu_group_id']) && !empty($_POST['menu_group_id'])) {
+        if (isset($_POST['system_action_id']) && !empty($_POST['system_action_id'])) {
             $userID = $_SESSION['user_id'];
-            $menuGroupID = htmlspecialchars($_POST['menu_group_id'], ENT_QUOTES, 'UTF-8');
+            $systemActionID = htmlspecialchars($_POST['system_action_id'], ENT_QUOTES, 'UTF-8');
 
-            $checkMenuGroupExist = $this->menuGroupModel->checkMenuGroupExist($menuGroupID);
-            $total = $checkMenuGroupExist['total'] ?? 0;
+            $checkSystemActionExist = $this->systemActionModel->checkSystemActionExist($systemActionID);
+            $total = $checkSystemActionExist['total'] ?? 0;
 
             if($total === 0){
                 $response = [
                     'success' => false,
                     'notExist' => true,
-                    'title' => 'Get Menu Group Details Error',
-                    'message' => 'The menu group has does not exist.',
+                    'title' => 'Get System Action Details Error',
+                    'message' => 'The system action has does not exist.',
                     'messageType' => 'error'
                 ];
                 
@@ -428,12 +431,12 @@ class MenuGroupController {
                 exit;
             }
     
-            $menuGroupDetails = $this->menuGroupModel->getMenuGroup($menuGroupID);
+            $systemActionDetails = $this->systemActionModel->getSystemAction($systemActionID);
 
             $response = [
                 'success' => true,
-                'menuGroupName' => $menuGroupDetails['menu_group_name'] ?? null,
-                'orderSequence' => $menuGroupDetails['order_sequence'] ?? null
+                'systemActionName' => $systemActionDetails['system_action_name'] ?? null,
+                'systemActionDescription' => $systemActionDetails['system_action_description'] ?? null
             ];
 
             echo json_encode($response);
@@ -459,10 +462,11 @@ require_once '../../global/config/config.php';
 require_once '../../global/model/database-model.php';
 require_once '../../global/model/security-model.php';
 require_once '../../global/model/system-model.php';
-require_once '../../menu-group/model/menu-group-model.php';
+require_once '../../system-action/model/system-action-model.php';
+require_once '../../role/model/role-model.php';
 require_once '../../authentication/model/authentication-model.php';
 
-$controller = new MenuGroupController(new MenuGroupModel(new DatabaseModel), new AuthenticationModel(new DatabaseModel), new SecurityModel());
+$controller = new SystemActionController(new SystemActionModel(new DatabaseModel), new RoleModel(new DatabaseModel), new AuthenticationModel(new DatabaseModel), new SecurityModel());
 $controller->handleRequest();
 
 ?>

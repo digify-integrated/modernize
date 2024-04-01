@@ -41,7 +41,7 @@
     </div>
 </div>
 
-<div  class="datatables">
+<div class="datatables">
     <div class="row">
         <div class="col-12">
             <div class="card">
@@ -61,6 +61,35 @@
                                     <th>Create Access</th>
                                     <th>Write Access</th>
                                     <th>Delete Access</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="datatables">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex align-items-center">
+                    <h5 class="card-title mb-0">System Action Permission</h5>
+                    <div class="card-actions cursor-pointer ms-auto d-flex button-group">
+                        <button class="btn btn-success d-flex align-items-center mb-0" data-bs-toggle="modal" data-bs-target="#role-system-action-permission-assignment-modal" id="assign-role-system-action-permission">Assign</button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table id="assigned-role-system-action-permission-table" class="table border table-striped table-hover align-middle text-wrap mb-0">
+                            <thead class="text-dark">
+                                <tr>
+                                    <th>System Action</th>
+                                    <th>Access</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
@@ -127,6 +156,30 @@
             <div class="modal-footer border-top">
                 <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Close</button>
                 <button type="submit" form="role-permission-assignment-form" class="btn btn-success" id="submit-assignment">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="role-system-action-permission-assignment-modal" class="modal fade" tabindex="-1" aria-labelledby="role-system-action-permission-assignment-modal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-lg">
+        <div class="modal-content">
+            <div class="modal-header border-bottom">
+                <h5 class="modal-title fw-8">Assign System Action Permission</h5>
+                <button type="button" class="btn-close fs-2" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="role-system-action-permission-assignment-form" method="post" action="#">
+                    <div class="row">
+                        <div class="col-12">
+                            <select multiple="multiple" size="20" id="system_action_id" name="system_action_id[]"></select>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer border-top">
+                <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Close</button>
+                <button type="submit" form="role-system-action-permission-assignment-form" class="btn btn-success" id="submit-system-action-assignment">Save changes</button>
             </div>
         </div>
     </div>

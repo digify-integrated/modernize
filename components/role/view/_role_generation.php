@@ -54,7 +54,7 @@ if(isset($_POST['type']) && !empty($_POST['type'])){
                                     <a href="role.php?id='. $roleIDEncrypted .'" class="text-info" title="View Details">
                                         <i class="ti ti-eye fs-5"></i>
                                     </a>
-                                    <a href="javascript:void(0);" class="text-danger ms-3 delete-role" data-role-id="' . $roleID . '" title="Delete Menu Group">
+                                    <a href="javascript:void(0);" class="text-danger ms-3 delete-role" data-role-id="' . $roleID . '" title="Delete Role">
                                         <i class="ti ti-trash fs-5"></i>
                                     </a>
                                 </div>'
@@ -126,6 +126,57 @@ if(isset($_POST['type']) && !empty($_POST['type'])){
                                             <i class="ti ti-file-text fs-5"></i>
                                         </a>
                                         <a href="javascript:void(0);" class="text-danger ms-3 delete-role-permission" data-role-permission-id="' . $rolePermissionID . '" title="Delete Role Permission">
+                                            <i class="ti ti-trash fs-5"></i>
+                                        </a>
+                                    </div>'
+                    ];
+                }
+
+                echo json_encode($response);
+            }
+        break;
+        # -------------------------------------------------------------
+
+        # -------------------------------------------------------------
+        #
+        # Type: assigned system action permission table
+        # Description:
+        # Generates the assigned system action permission table.
+        #
+        # Parameters: None
+        #
+        # Returns: Array
+        #
+        # -------------------------------------------------------------
+        case 'assigned system action permission table':
+            if(isset($_POST['role_id']) && !empty($_POST['role_id'])){
+                $roleID = htmlspecialchars($_POST['role_id'], ENT_QUOTES, 'UTF-8');
+
+                $sql = $databaseModel->getConnection()->prepare('CALL generateRoleSystemActionPermissionTable(:roleID)');
+                $sql->bindValue(':roleID', $roleID, PDO::PARAM_INT);
+                $sql->execute();
+                $options = $sql->fetchAll(PDO::FETCH_ASSOC);
+                $sql->closeCursor();
+
+                foreach ($options as $row) {
+                    $roleSystemActionPermissionID = $row['role_system_action_permission_id'];
+                    $systemActionName = $row['system_action_name'];
+                    $systemActionAccess = $row['system_action_access'];
+
+                    $systemActionAccessChecked = $systemActionAccess ? 'checked' : '';
+
+                    $systemActionAccessButton = '<div class="form-check form-check-inline">
+                                            <input class="form-check-input success update-role-system-action-permission" type="checkbox" data-role-system-action-permission-id="' . $roleSystemActionPermissionID . '" ' . $systemActionAccessChecked . '>
+                                        </div>';
+
+                    $response[] = [
+                        'SYSTEM_ACTION' => $systemActionName,
+                        'SYSTEM_ACTION_ACCESS' => $systemActionAccessButton,
+                        'ACTION' => '<div class="d-flex gap-2">
+                                        <a href="javascript:void(0);" class="text-info view-role-system-action-permission-log-notes" data-role-system-action-permission-id="' . $roleSystemActionPermissionID . '" data-bs-toggle="offcanvas" data-bs-target="#log-notes-offcanvas" aria-controls="log-notes-offcanvas" title="View Log Notes">
+                                            <i class="ti ti-file-text fs-5"></i>
+                                        </a>
+                                        <a href="javascript:void(0);" class="text-danger ms-3 delete-role-system-action-permission" data-role-system-action-permission-id="' . $roleSystemActionPermissionID . '" title="Delete System Action Permission">
                                             <i class="ti ti-trash fs-5"></i>
                                         </a>
                                     </div>'
@@ -211,6 +262,57 @@ if(isset($_POST['type']) && !empty($_POST['type'])){
 
         # -------------------------------------------------------------
         #
+        # Type: assigned role system action permission table
+        # Description:
+        # Generates the assigned role permission table.
+        #
+        # Parameters: None
+        #
+        # Returns: Array
+        #
+        # -------------------------------------------------------------
+        case 'assigned role system action permission table':
+            if(isset($_POST['system_action_id']) && !empty($_POST['system_action_id'])){
+                $systemActionID = htmlspecialchars($_POST['system_action_id'], ENT_QUOTES, 'UTF-8');
+
+                $sql = $databaseModel->getConnection()->prepare('CALL generateSystemActionRolePermissionTable(:systemActionID)');
+                $sql->bindValue(':systemActionID', $systemActionID, PDO::PARAM_INT);
+                $sql->execute();
+                $options = $sql->fetchAll(PDO::FETCH_ASSOC);
+                $sql->closeCursor();
+
+                foreach ($options as $row) {
+                    $roleSystemActionPermissionID = $row['role_system_action_permission_id'];
+                    $roleName = $row['role_name'];
+                    $systemActionAccess = $row['system_action_access'];
+
+                    $systemActionAccessChecked = $systemActionAccess ? 'checked' : '';
+
+                    $systemActionAccessButton = '<div class="form-check form-check-inline">
+                                            <input class="form-check-input success update-role-system-action-permission" type="checkbox" data-role-system-action-permission-id="' . $roleSystemActionPermissionID . '" ' . $systemActionAccessChecked . '>
+                                        </div>';
+
+                    $response[] = [
+                        'ROLE' => $roleName,
+                        'SYSTEM_ACTION_ACCESS' => $systemActionAccessButton,
+                        'ACTION' => '<div class="d-flex gap-2">
+                                        <a href="javascript:void(0);" class="text-info view-role-system-action-permission-log-notes" data-role-system-action-permission-id="' . $roleSystemActionPermissionID . '" data-bs-toggle="offcanvas" data-bs-target="#log-notes-offcanvas" aria-controls="log-notes-offcanvas" title="View Log Notes">
+                                            <i class="ti ti-file-text fs-5"></i>
+                                        </a>
+                                        <a href="javascript:void(0);" class="text-danger ms-3 delete-role-system-action-permission" data-role-system-action-permission-id="' . $roleSystemActionPermissionID . '" title="Delete System Action Permission">
+                                            <i class="ti ti-trash fs-5"></i>
+                                        </a>
+                                    </div>'
+                    ];
+                }
+
+                echo json_encode($response);
+            }
+        break;
+        # -------------------------------------------------------------
+
+        # -------------------------------------------------------------
+        #
         # Type: menu item role dual listbox options
         # Description:
         # Generates the menu item role dual listbox options.
@@ -225,6 +327,38 @@ if(isset($_POST['type']) && !empty($_POST['type'])){
                 $menuItemID = htmlspecialchars($_POST['menu_item_id'], ENT_QUOTES, 'UTF-8');
                 $sql = $databaseModel->getConnection()->prepare('CALL generateMenuItemRoleDualListBoxOptions(:menuItemID)');
                 $sql->bindValue(':menuItemID', $menuItemID, PDO::PARAM_INT);
+                $sql->execute();
+                $options = $sql->fetchAll(PDO::FETCH_ASSOC);
+                $sql->closeCursor();
+
+                foreach ($options as $row) {
+                    $response[] = [
+                        'id' => $row['role_id'],
+                        'text' => $row['role_name']
+                    ];
+                }
+
+                echo json_encode($response);
+            }
+        break;
+        # -------------------------------------------------------------
+
+        # -------------------------------------------------------------
+        #
+        # Type: system action role dual listbox options
+        # Description:
+        # Generates the system action role dual listbox options.
+        #
+        # Parameters: None
+        #
+        # Returns: Array
+        #
+        # -------------------------------------------------------------
+        case 'system action role dual listbox options':
+            if(isset($_POST['system_action_id']) && !empty($_POST['system_action_id'])){
+                $systemActionID = htmlspecialchars($_POST['system_action_id'], ENT_QUOTES, 'UTF-8');
+                $sql = $databaseModel->getConnection()->prepare('CALL generateSystemActionRoleDualListBoxOptions(:systemActionID)');
+                $sql->bindValue(':systemActionID', $systemActionID, PDO::PARAM_INT);
                 $sql->execute();
                 $options = $sql->fetchAll(PDO::FETCH_ASSOC);
                 $sql->closeCursor();

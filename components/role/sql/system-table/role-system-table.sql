@@ -54,7 +54,30 @@ CREATE TABLE role_permission(
     FOREIGN KEY (last_log_by) REFERENCES users(user_id)
 );
 
+CREATE INDEX role_permission_index_role_permission_id ON role_permission(role_permission_id);
 CREATE INDEX role_permission_index_menu_item_id ON role_permission(menu_item_id);
 CREATE INDEX role_permission_index_role_id ON role_permission(role_id);
+
+/* ----------------------------------------------------------------------------------------------------------------------------- */
+
+/* Role System Action Permission Table */
+
+CREATE TABLE role_system_action_permission(
+	role_system_action_permission_id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY NOT NULL,
+	role_id INT UNSIGNED NOT NULL,
+	role_name VARCHAR(100) NOT NULL,
+	system_action_id INT UNSIGNED NOT NULL,
+	system_action_name VARCHAR(100) NOT NULL,
+	system_action_access TINYINT(1) NOT NULL DEFAULT 0,
+    date_assigned DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    last_log_by INT UNSIGNED NOT NULL,
+    FOREIGN KEY (system_action_id) REFERENCES system_action(system_action_id),
+    FOREIGN KEY (role_id) REFERENCES role(role_id),
+    FOREIGN KEY (last_log_by) REFERENCES users(user_id)
+);
+
+CREATE INDEX role_system_action_permission_index_system_action_permission_id ON role_system_action_permission(role_system_action_permission_id);
+CREATE INDEX role_system_action_permission_index_system_action_id ON role_system_action_permission(system_action_id);
+CREATE INDEX role_system_action_permissionn_index_role_id ON role_system_action_permission(role_id);
 
 /* ----------------------------------------------------------------------------------------------------------------------------- */

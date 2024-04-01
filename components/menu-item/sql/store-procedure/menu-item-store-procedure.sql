@@ -1,11 +1,17 @@
 DELIMITER //
 
+/* Check Stored Procedure */
+
 CREATE PROCEDURE checkMenuItemExist(IN p_menu_item_id INT)
 BEGIN
 	SELECT COUNT(*) AS total
     FROM menu_item
     WHERE menu_item_id = p_menu_item_id;
 END //
+
+/* ----------------------------------------------------------------------------------------------------------------------------- */
+
+/* Insert Stored Procedure */
 
 CREATE PROCEDURE insertMenuItem(IN p_menu_item_name VARCHAR(100), IN p_menu_item_url VARCHAR(50), IN p_menu_group_id INT, IN p_menu_group_name VARCHAR(100), IN p_parent_id INT, IN p_parent_name VARCHAR(100), IN p_menu_item_icon VARCHAR(50), IN p_order_sequence TINYINT(10), IN p_last_log_by INT, OUT p_menu_item_id INT)
 BEGIN
@@ -14,6 +20,10 @@ BEGIN
 	
     SET p_menu_item_id = LAST_INSERT_ID();
 END //
+
+/* ----------------------------------------------------------------------------------------------------------------------------- */
+
+/* Update Stored Procedure */
 
 CREATE PROCEDURE updateMenuItem(IN p_menu_item_id INT, IN p_menu_item_name VARCHAR(100), IN p_menu_item_url VARCHAR(50), IN p_menu_group_id INT, IN p_menu_group_name VARCHAR(100), IN p_parent_id INT, IN p_parent_name VARCHAR(100), IN p_menu_item_icon VARCHAR(50), IN p_order_sequence TINYINT(10), IN p_last_log_by INT)
 BEGIN
@@ -44,6 +54,10 @@ BEGIN
     COMMIT;
 END //
 
+/* ----------------------------------------------------------------------------------------------------------------------------- */
+
+/* Delete Stored Procedure */
+
 CREATE PROCEDURE deleteMenuItem(IN p_menu_item_id INT)
 BEGIN
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
@@ -59,11 +73,19 @@ BEGIN
     COMMIT;
 END //
 
+/* ----------------------------------------------------------------------------------------------------------------------------- */
+
+/* Get Stored Procedure */
+
 CREATE PROCEDURE getMenuItem(IN p_menu_item_id INT)
 BEGIN
 	SELECT * FROM menu_item
 	WHERE menu_item_id = p_menu_item_id;
 END //
+
+/* ----------------------------------------------------------------------------------------------------------------------------- */
+
+/* Generate Stored Procedure */
 
 CREATE PROCEDURE generateMenuItemTable(IN p_filter_by_menu_group INT)
 BEGIN
@@ -105,3 +127,5 @@ BEGIN
     WHERE menu_item_id NOT IN (SELECT menu_item_id FROM role_permission WHERE role_id = p_role_id)
     ORDER BY menu_item_name;
 END //
+
+/* ----------------------------------------------------------------------------------------------------------------------------- */

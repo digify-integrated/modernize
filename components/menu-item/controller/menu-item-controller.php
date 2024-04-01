@@ -139,9 +139,6 @@ class MenuItemController {
                 case 'delete multiple menu item':
                     $this->deleteMultipleMenuItem();
                     break;
-                case 'duplicate menu item':
-                    $this->duplicateMenuItem();
-                    break;
                 default:
                     $response = [
                         'success' => false,
@@ -422,7 +419,7 @@ class MenuItemController {
     #
     # Function: getMenuItemDetails
     # Description: 
-    # Handles the retrieval of menu item details such as menu item name, order sequence, etc.
+    # Handles the retrieval of menu item details.
     #
     # Parameters: None
     #

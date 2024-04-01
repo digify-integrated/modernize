@@ -2,7 +2,7 @@
     require('view/_required_php_files.php');
     require('view/_check_user_status.php');
 
-    $pageTitle = 'Menu Item';
+    $pageTitle = 'System Action';
 
     if(isset($_GET['id'])){
         if(empty($_GET['id'])){

@@ -41,22 +41,22 @@
     </div>
 </div>
 
-<div  class="datatables">
+<div class="datatables">
     <div class="row">
         <div class="col-12">
             <div class="card">
                 <div class="card-header d-flex align-items-center">
-                    <h5 class="card-title mb-0">System Action Permission</h5>
+                    <h5 class="card-title mb-0">Role Permission</h5>
                     <div class="card-actions cursor-pointer ms-auto d-flex button-group">
-                        <button class="btn btn-success d-flex align-items-center mb-0" data-bs-toggle="modal" data-bs-target="#system-action-permission-assignment-modal" id="assign-system-action-permission">Assign</button>
+                        <button class="btn btn-success d-flex align-items-center mb-0" data-bs-toggle="modal" data-bs-target="#role-system-action-permission-assignment-modal" id="assign-role-system-action-permission">Assign</button>
                     </div>
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
-                        <table id="assigned-system-action-permission-table" class="table border table-striped table-hover align-middle text-wrap mb-0">
+                        <table id="assigned-role-system-action-permission-table" class="table border table-striped table-hover align-middle text-wrap mb-0">
                             <thead class="text-dark">
                                 <tr>
-                                    <th>Menu Item</th>
+                                    <th>Role</th>
                                     <th>Access</th>
                                     <th>Actions</th>
                                 </tr>
@@ -105,15 +105,15 @@
     </div>
 </div>
 
-<div id="system-action-permission-assignment-modal" class="modal fade" tabindex="-1" aria-labelledby="system-action-permission-assignment-modal" aria-hidden="true">
+<div id="role-system-action-permission-assignment-modal" class="modal fade" tabindex="-1" aria-labelledby="role-system-action-permission-assignment-modal" aria-hidden="true">
     <div class="modal-dialog modal-dialog-scrollable modal-lg">
         <div class="modal-content">
             <div class="modal-header border-bottom">
-                <h5 class="modal-title fw-8">Assign System Action Permission</h5>
+                <h5 class="modal-title fw-8">Assign Role Permission</h5>
                 <button type="button" class="btn-close fs-2" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form id="system-action-permission-assignment-form" method="post" action="#">
+                <form id="role-system-action-permission-assignment-form" method="post" action="#">
                     <div class="row">
                         <div class="col-12">
                             <select multiple="multiple" size="20" id="role_id" name="role_id[]"></select>
@@ -123,7 +123,7 @@
             </div>
             <div class="modal-footer border-top">
                 <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Close</button>
-                <button type="submit" form="system-action-permission-assignment-form" class="btn btn-success" id="submit-assignment">Save changes</button>
+                <button type="submit" form="role-system-action-permission-assignment-form" class="btn btn-success" id="submit-assignment">Save changes</button>
             </div>
         </div>
     </div>
