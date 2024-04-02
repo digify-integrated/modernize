@@ -150,9 +150,9 @@ function menuGroupTable(datatable_name, buttons = false, show_all = false){
 
     const column_definition = [
         { 'width': '1%','bSortable': false, 'aTargets': 0 },
-        { 'width': '60%', 'aTargets': 1 },
-        { 'width': '25%', 'aTargets': 2 },
-        { 'width': '14%','bSortable': false, 'aTargets': 3 }
+        { 'width': 'auto', 'aTargets': 1 },
+        { 'width': 'auto', 'aTargets': 2 },
+        { 'width': 'auto','bSortable': false, 'aTargets': 3 }
     ];
 
     const length_menu = show_all ? [[-1], ['All']] : [[10, 25, 50, 100, -1], [10, 25, 50, 100, 'All']];

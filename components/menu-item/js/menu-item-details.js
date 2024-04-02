@@ -393,8 +393,8 @@ function submenuItemTable(datatable_name, buttons = false, show_all = false){
     ];
 
     const column_definition = [
-        { 'width': '80%', 'aTargets': 0 },
-        { 'width': '20%', 'aTargets': 1 }
+        { 'width': 'auto', 'aTargets': 0 },
+        { 'width': 'auto', 'aTargets': 1 }
     ];
 
     const length_menu = show_all ? [[-1], ['All']] : [[10, 25, 50, 100, -1], [10, 25, 50, 100, 'All']];
@@ -454,12 +454,12 @@ function assignedRolePermissionTable(datatable_name, buttons = false, show_all =
     ];
 
     const column_definition = [
-        { 'width': '30%', 'aTargets': 0 },
-        { 'width': '15%', 'bSortable': false, 'aTargets': 1 },
-        { 'width': '15%', 'bSortable': false, 'aTargets': 2 },
-        { 'width': '15%', 'bSortable': false, 'aTargets': 3 },
-        { 'width': '15%', 'bSortable': false, 'aTargets': 4 },
-        { 'width': '10%', 'bSortable': false, 'aTargets': 5 }
+        { 'width': 'auto', 'aTargets': 0 },
+        { 'width': 'auto', 'bSortable': false, 'aTargets': 1 },
+        { 'width': 'auto', 'bSortable': false, 'aTargets': 2 },
+        { 'width': 'auto', 'bSortable': false, 'aTargets': 3 },
+        { 'width': 'auto', 'bSortable': false, 'aTargets': 4 },
+        { 'width': 'auto', 'bSortable': false, 'aTargets': 5 }
     ];
 
     const length_menu = show_all ? [[-1], ['All']] : [[10, 25, 50, 100, -1], [10, 25, 50, 100, 'All']];

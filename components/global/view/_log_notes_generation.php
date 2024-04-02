@@ -3,12 +3,12 @@ require_once '../../../session.php';
 require_once '../../global/config/config.php';
 require_once '../../global/model/database-model.php';
 require_once '../../global/model/system-model.php';
-require_once '../../user/model/user-model.php';
+require_once '../../user-account/model/user-account-model.php';
 require_once '../../global/model/security-model.php';
 
 $databaseModel = new DatabaseModel();
 $systemModel = new SystemModel();
-$userModel = new UserModel($databaseModel);
+$userAccountModel = new UserAccountModel($databaseModel);
 $securityModel = new SecurityModel();
 
 if(isset($_POST['type']) && !empty($_POST['type'])){
@@ -46,7 +46,7 @@ if(isset($_POST['type']) && !empty($_POST['type'])){
                     $changedBy = $row['changed_by'];
                     $timeElapsed = $systemModel->timeElapsedString($row['changed_at']);
 
-                    $userDetails = $userModel->getUser($changedBy, null);
+                    $userDetails = $userAccountModel->getUser($changedBy, null);
                     $fileAs = $userDetails['file_as'];
                     $profilePicture = $systemModel->checkImage($userDetails['profile_picture'] ?? null, 'profile');
                     

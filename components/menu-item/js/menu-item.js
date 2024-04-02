@@ -158,11 +158,11 @@ function menuItemTable(datatable_name, buttons = false, show_all = false){
     ];
 
     const column_definition = [
-        { 'width': '2%','bSortable': false, 'aTargets': 0 },
-        { 'width': '35%', 'aTargets': 1 },
-        { 'width': '35%', 'aTargets': 2 },
-        { 'width': '15%', 'aTargets': 3 },
-        { 'width': '13%','bSortable': false, 'aTargets': 4 }
+        { 'width': '1%','bSortable': false, 'aTargets': 0 },
+        { 'width': 'auto', 'aTargets': 1 },
+        { 'width': 'auto', 'aTargets': 2 },
+        { 'width': 'auto', 'aTargets': 3 },
+        { 'width': 'auto','bSortable': false, 'aTargets': 4 }
     ];
 
     const length_menu = show_all ? [[-1], ['All']] : [[10, 25, 50, 100, -1], [10, 25, 50, 100, 'All']];

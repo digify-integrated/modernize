@@ -149,8 +149,8 @@ function roleTable(datatable_name, buttons = false, show_all = false){
 
     const column_definition = [
         { 'width': '1%','bSortable': false, 'aTargets': 0 },
-        { 'width': '80%', 'aTargets': 1 },
-        { 'width': '19%','bSortable': false, 'aTargets': 2 }
+        { 'width': 'auto', 'aTargets': 1 },
+        { 'width': 'auto','bSortable': false, 'aTargets': 2 }
     ];
 
     const length_menu = show_all ? [[-1], ['All']] : [[10, 25, 50, 100, -1], [10, 25, 50, 100, 'All']];

@@ -3,13 +3,11 @@ require_once '../../../session.php';
 require_once '../../global/config/config.php';
 require_once '../../global/model/database-model.php';
 require_once '../../global/model/system-model.php';
-require_once '../../user/model/user-model.php';
 require_once '../../menu-group/model/menu-group-model.php';
 require_once '../../global/model/security-model.php';
 
 $databaseModel = new DatabaseModel();
 $systemModel = new SystemModel();
-$userModel = new UserModel($databaseModel);
 $menuGroupModel = new MenuGroupModel($databaseModel);
 $securityModel = new SecurityModel();
 

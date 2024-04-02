@@ -4,6 +4,7 @@
     $(function() {
         checkNotification();
         maxLength();
+        initializeFilterDaterange();
         
         $(document).on('click','#copy-error-message',function() {
             copyToClipboard('error-dialog');
@@ -163,22 +164,6 @@ function handleSystemError(xhr, status, error) {
     showErrorDialog(fullErrorMessage);
 }
 
-function resetForm(){
-    var errorMessages = document.querySelectorAll('.error');
-  
-    errorMessages.forEach(function(errorMessage) {
-      errorMessage.parentNode.removeChild(errorMessage);
-    });
-  
-    var invalidInputs = document.querySelectorAll('.is-invalid');
-    invalidInputs.forEach(function(invalidInput) {
-      invalidInput.classList.remove('is-invalid');
-    });
-    
-    $('.form-details').removeClass('d-none');
-    $('.form-edit').addClass('d-none');
-}
-
 function resetModalForm(form_id) {
     var form = document.getElementById(form_id);
   
@@ -251,4 +236,37 @@ function initializeDualListBoxIcon(){
     $('.removeall i').removeClass().addClass('ti ti-chevron-left');
     $('.move i').removeClass().addClass('ti ti-chevron-right');
     $('.remove i').removeClass().addClass('ti ti-chevron-left');
+}
+
+function initializeFilterDaterange(){
+    if ($('.filter-daterange').length) {
+        $('.filter-daterange').each(function() {
+            $(this).daterangepicker({
+                ranges: {
+                    Today: [moment(), moment()],
+                    Yesterday: [
+                        moment().subtract(1, 'days'),
+                        moment().subtract(1, 'days'),
+                    ],
+                    'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+                    'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+                    'This Month': [moment().startOf('month'), moment().endOf('month')],
+                    'Last Month': [
+                        moment().subtract(1, 'month').startOf('month'),
+                        moment().subtract(1, 'month').endOf('month'),
+                    ],
+                },
+                drops: 'up',
+                alwaysShowCalendars: true,
+                autoUpdateInput: false
+            }).on('apply.daterangepicker', function (e, picker) {
+                picker.element.val(picker.startDate.format(picker.locale.format) + ' - ' + picker.endDate.format(picker.locale.format));
+            }).on('cancel.daterangepicker', function (e, picker) {
+                $(this).val('');
+                picker.setStartDate({});
+                picker.setEndDate({});
+            });
+        });
+        
+    }
 }

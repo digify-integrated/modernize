@@ -2,17 +2,17 @@
     'use strict';
 
     $(function() {
-        if($('#system-action-table').length){
-            systemActionTable('#system-action-table');
+        if($('#user-account-table').length){
+            userAccountTable('#user-account-table');
         }
 
-        $(document).on('click','.delete-system-action',function() {
-            const system_action_id = $(this).data('system-action-id');
-            const transaction = 'delete system action';
+        $(document).on('click','.delete-user-account',function() {
+            const user_account_id = $(this).data('user-account-id');
+            const transaction = 'delete user account';
     
             Swal.fire({
-                title: 'Confirm System Action Deletion',
-                text: 'Are you sure you want to delete this system action?',
+                title: 'Confirm User Account Deletion',
+                text: 'Are you sure you want to delete this user account?',
                 icon: 'warning',
                 showCancelButton: !0,
                 confirmButtonText: 'Delete',
@@ -26,16 +26,16 @@
                 if (result.value) {
                     $.ajax({
                         type: 'POST',
-                        url: 'components/system-action/controller/system-action-controller.php',
+                        url: 'components/user-account/controller/user-account-controller.php',
                         dataType: 'json',
                         data: {
-                            system_action_id : system_action_id, 
+                            user_account_id : user_account_id, 
                             transaction : transaction
                         },
                         success: function (response) {
                             if (response.success) {
-                                showNotification('Delete System Action Success', 'The system action has been deleted successfully.', 'success');
-                                reloadDatatable('#system-action-table');
+                                showNotification('Delete User Account Success', 'The user account has been deleted successfully.', 'success');
+                                reloadDatatable('#user-account-table');
                             }
                             else {
                                 if (response.isInactive || response.userNotExist || response.userInactive || response.userLocked || response.sessionExpired) {
@@ -44,7 +44,7 @@
                                 }
                                 else if (response.notExist) {
                                     setNotification(response.title, response.message, response.messageType);
-                                    reloadDatatable('#system-action-table');
+                                    reloadDatatable('#user-account-table');
                                 }
                                 else {
                                     showNotification(response.title, response.message, response.messageType);
@@ -64,20 +64,20 @@
             });
         });
 
-        $(document).on('click','#delete-system-action',function() {
-            let system_action_id = [];
-            const transaction = 'delete multiple system action';
+        $(document).on('click','#delete-user-account',function() {
+            let user_account_id = [];
+            const transaction = 'delete multiple user account';
 
             $('.datatable-checkbox-children').each((index, element) => {
                 if ($(element).is(':checked')) {
-                    system_action_id.push(element.value);
+                    user_account_id.push(element.value);
                 }
             });
     
-            if(system_action_id.length > 0){
+            if(user_account_id.length > 0){
                 Swal.fire({
-                    title: 'Confirm Multiple System Actions Deletion',
-                    text: 'Are you sure you want to delete these system actions?',
+                    title: 'Confirm Multiple User Accounts Deletion',
+                    text: 'Are you sure you want to delete these user accounts?',
                     icon: 'warning',
                     showCancelButton: !0,
                     confirmButtonText: 'Delete',
@@ -91,16 +91,16 @@
                     if (result.value) {
                         $.ajax({
                             type: 'POST',
-                            url: 'components/system-action/controller/system-action-controller.php',
+                            url: 'components/user-account/controller/user-account-controller.php',
                             dataType: 'json',
                             data: {
-                                system_action_id: system_action_id,
+                                user_account_id: user_account_id,
                                 transaction : transaction
                             },
                             success: function (response) {
                                 if (response.success) {
-                                    showNotification('Delete System Actions Success', 'The selected system actions have been deleted successfully.', 'success');
-                                    reloadDatatable('#system-action-table');
+                                    showNotification('Delete User Account Success', 'The selected user accounts have been deleted successfully.', 'success');
+                                    reloadDatatable('#user-account-table');
                                 }
                                 else {
                                     if (response.isInactive || response.userNotExist || response.userInactive || response.userLocked || response.sessionExpired) {
@@ -129,38 +129,61 @@
                 });
             }
             else{
-                showNotification('Deletion Multiple System Action Error', 'Please select the system actions you wish to delete.', 'danger');
+                showNotification('Deletion Multiple User Account Error', 'Please select the user accounts you wish to delete.', 'danger');
             }
+        });
+
+        $(document).on('click','#apply-filter',function() {
+            userAccountTable('#user-account-table');
+            $('#filter-offcanvas').offcanvas('hide');
         });
     });
 })(jQuery);
 
-function systemActionTable(datatable_name, buttons = false, show_all = false){
+function userAccountTable(datatable_name, buttons = false, show_all = false){
     toggleHideActionDropdown();
 
-    const type = 'system action table';
+    const type = 'user account table';
+    var filter_by_user_account_status = $('input[name="filter-user-account-status"]:checked').val();
+    var filter_by_user_account_lock_status = $('input[name="filter-user-account-lock-status"]:checked').val();
+    var filter_by_password_expiry_date = $('#filter-password-expiry-date').val();
+    var filter_last_connection_date = $('#filter-last-connection-date').val();
     var settings;
 
     const column = [ 
         { 'data' : 'CHECK_BOX' },
-        { 'data' : 'SYSTEM_ACTION_NAME' },
+        { 'data' : 'USER_ACCOUNT' },
+        { 'data' : 'USER_ACCOUNT_STATUS' },
+        { 'data' : 'LOCKED' },
+        { 'data' : 'PASSWORD_EXPIRY_DATE' },
+        { 'data' : 'LAST_CONNECTION_DATE' },
         { 'data' : 'ACTION' }
     ];
 
     const column_definition = [
         { 'width': '1%','bSortable': false, 'aTargets': 0 },
         { 'width': 'auto', 'aTargets': 1 },
-        { 'width': 'auto','bSortable': false, 'aTargets': 2 }
+        { 'width': 'auto', 'aTargets': 2 },
+        { 'width': 'auto', 'aTargets': 3 },
+        { 'width': 'auto', 'aTargets': 4 },
+        { 'width': 'auto', 'aTargets': 5 },
+        { 'width': 'auto','bSortable': false, 'aTargets': 6 }
     ];
 
     const length_menu = show_all ? [[-1], ['All']] : [[10, 25, 50, 100, -1], [10, 25, 50, 100, 'All']];
 
     settings = {
         'ajax': { 
-            'url' : 'components/system-action/view/_system_action_generation.php',
+            'url' : 'components/user-account/view/_user_account_generation.php',
             'method' : 'POST',
             'dataType': 'json',
-            'data': {'type' : type},
+            'data': {
+                'type' : type, 
+                'filter_by_user_account_status' : filter_by_user_account_status, 
+                'filter_by_user_account_lock_status' : filter_by_user_account_lock_status,
+                'filter_by_password_expiry_date' : filter_by_password_expiry_date,
+                'filter_last_connection_date' : filter_last_connection_date
+            },
             'dataSrc' : '',
             'error': function(xhr, status, error) {
                 var fullErrorMessage = `XHR status: ${status}, Error: ${error}`;

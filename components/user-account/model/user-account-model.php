@@ -1,10 +1,10 @@
 <?php
 /**
-* Class UserModel
+* Class UserAccountModel
 *
-* The UserModel class handles user operations and interactions.
+* The UserAccountModel class handles user operations and interactions.
 */
-class UserModel {
+class UserAccountModel {
     public $db;
 
     public function __construct(DatabaseModel $db) {
