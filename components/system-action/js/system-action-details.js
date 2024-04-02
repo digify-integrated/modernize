@@ -430,7 +430,7 @@ function assignedRoleSystemActionPermissionTable(datatable_name, buttons = false
     const column_definition = [
         { 'width': 'auto', 'aTargets': 0 },
         { 'width': 'auto', 'bSortable': false, 'aTargets': 1 },
-        { 'width': 'auto', 'bSortable': false, 'aTargets': 2 }
+        { 'width': '15%', 'bSortable': false, 'aTargets': 2 }
     ];
 
     const length_menu = show_all ? [[-1], ['All']] : [[10, 25, 50, 100, -1], [10, 25, 50, 100, 'All']];

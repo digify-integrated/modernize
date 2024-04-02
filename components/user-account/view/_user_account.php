@@ -7,17 +7,17 @@
                     <div class="card-actions cursor-pointer ms-auto d-flex button-group">
                         <button type="button" class="btn btn-dark dropdown-toggle action-dropdown mb-0 d-none" data-bs-toggle="dropdown" aria-expanded="false">Action</button>
                         <ul class="dropdown-menu dropdown-menu-end">
-                            <li><button class="dropdown-item" type="button" id="delete-system-action">Delete User Account</button></li>
+                            <li><button class="dropdown-item" type="button" id="delete-user-account">Delete User Account</button></li>
                         </ul>
                     </div>
                     <div class="card-actions cursor-pointer ms-auto d-flex button-group">
-                        <a href="system-action.php?new" class="btn btn-success d-flex align-items-center mb-0">Create</a>
+                        <a href="user-account.php?new" class="btn btn-success d-flex align-items-center mb-0">Create</a>
                         <button type="button" class="btn btn-warning mb-0 px-4" data-bs-toggle="offcanvas" data-bs-target="#filter-offcanvas" aria-controls="filter-offcanvas">Filter</a>
                     </div>
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
-                        <table id="system-action-table" class="table border table-striped table-hover align-middle text-wrap mb-0">
+                        <table id="user-account-table" class="table border table-striped table-hover align-middle text-wrap mb-0">
                             <thead class="text-dark">
                                 <tr>
                                     <th class="all">

@@ -32,37 +32,59 @@ if(isset($_POST['type']) && !empty($_POST['type'])){
             $filterByUserAccountLockStatus = isset($_POST['filter_by_user_account_lock_status']) ? htmlspecialchars($_POST['filter_by_user_account_lock_status'], ENT_QUOTES, 'UTF-8') : null;
             
             $filterByPasswordExpiryDate = isset($_POST['filter_by_password_expiry_date']) ? explode(' - ', $_POST['filter_by_password_expiry_date']) : null;
-            $passwordExpiryStartDate = $filterByPasswordExpiryDate[0] ?? null;
-            $passwordExpiryEndDate = $filterByPasswordExpiryDate[1] ?? null;
+            $passwordExpiryStartDate = $systemModel->checkDate('empty', $filterByPasswordExpiryDate[0] ?? null, '', 'Y-m-d', '');
+            $passwordExpiryEndDate = $systemModel->checkDate('empty', $filterByPasswordExpiryDate[1] ?? null, '', 'Y-m-d', '');
             
             $filterByLastConnectionDate = isset($_POST['filter_last_connection_date']) ? explode(' - ', $_POST['filter_last_connection_date']) : null;
-            $lastConnectionStartDate = $filterByLastConnectionDate[0] ?? null;
-            $lastConnectionEndDate = $filterByLastConnectionDate[1] ?? null;
+            $lastConnectionStartDate = $systemModel->checkDate('empty', $filterByLastConnectionDate[0] ?? null, '', 'Y-m-d', '');
+            $lastConnectionEndDate = $systemModel->checkDate('empty', $filterByLastConnectionDate[1] ?? null, '', 'Y-m-d', '');
 
-            $sql = $databaseModel->getConnection()->prepare('CALL generateUserAccountTable(:filterByMenuGroup)');
-            $sql->bindValue(':filterByMenuGroup', $filterByMenuGroup, PDO::PARAM_INT);
+            $sql = $databaseModel->getConnection()->prepare('CALL generateUserAccountTable(:filterByUserAccountStatus, :filterByUserAccountLockStatus, :passwordExpiryStartDate, :passwordExpiryEndDate, :lastConnectionStartDate, :lastConnectionEndDate)');
+            $sql->bindValue(':filterByUserAccountStatus', $filterByUserAccountStatus, PDO::PARAM_STR);
+            $sql->bindValue(':filterByUserAccountLockStatus', $filterByUserAccountLockStatus, PDO::PARAM_STR);
+            $sql->bindValue(':passwordExpiryStartDate', $passwordExpiryStartDate, PDO::PARAM_STR);
+            $sql->bindValue(':passwordExpiryEndDate', $passwordExpiryEndDate, PDO::PARAM_STR);
+            $sql->bindValue(':lastConnectionStartDate', $lastConnectionStartDate, PDO::PARAM_STR);
+            $sql->bindValue(':lastConnectionEndDate', $lastConnectionEndDate, PDO::PARAM_STR);
             $sql->execute();
             $options = $sql->fetchAll(PDO::FETCH_ASSOC);
             $sql->closeCursor();
 
             foreach ($options as $row) {
-                $menuItemID = $row['menu_item_id'];
-                $menuItemName = $row['menu_item_name'];
-                $menuGroupName = $row['menu_group_name'];
-                $orderSequence = $row['order_sequence'];
+                $userAccountID = $row['user_id'];
+                $fileAs = $row['file_as'];
+                $email = $row['email'];
+                $profilePicture = $systemModel->checkImage($row['profile_picture'], 'profile');
+                $locked = $row['locked'];
+                $active = $row['active'];
+                $lastConnectionDate = $systemModel->checkDate('empty', $row['last_connection_date'], '', 'm/d/Y h:i:s a', '');
+                $passwordExpiryDate = $systemModel->checkDate('empty', $row['password_expiry_date'], '', 'm/d/Y', '');
 
-                $menuItemIDEncrypted = $securityModel->encryptData($menuItemID);
+                $userAccountIDEncrypted = $securityModel->encryptData($userAccountID);
+
+                $activeBadge = $active == 'Yes' ? '<span class="badge rounded-pill text-bg-success">Active</span>' : '<span class="badge rounded-pill text-bg-danger">Inactive</span>';
+                $lockedBadge = $locked == 'Yes' ? '<span class="badge rounded-pill text-bg-danger">Yes</span>' : '<span class=" badge rounded-pill text-bg-success">No</span>';
 
                 $response[] = [
-                    'CHECK_BOX' => '<input class="form-check-input datatable-checkbox-children" type="checkbox" value="'. $menuItemID .'">',
-                    'MENU_ITEM_NAME' => $menuItemName,
-                    'MENU_GROUP_NAME' => $menuGroupName,
-                    'ORDER_SEQUENCE' => $orderSequence,
+                    'CHECK_BOX' => '<input class="form-check-input datatable-checkbox-children" type="checkbox" value="'. $userAccountID .'">',
+                    'USER_ACCOUNT' => '<div class="d-flex align-items-center">
+                                            <img src="'. $profilePicture .'" alt="avatar" class="rounded-circle" width="35" />
+                                            <div class="ms-3">
+                                                <div class="user-meta-info">
+                                                    <h6 class="user-name mb-0">'. $fileAs .'</h6>
+                                                    <small>'. $email .'</small>
+                                                </div>
+                                            </div>
+                                        </div>',
+                    'USER_ACCOUNT_STATUS' => $activeBadge,
+                    'LOCK_STATUS' => $lockedBadge,
+                    'PASSWORD_EXPIRY_DATE' => $passwordExpiryDate,
+                    'LAST_CONNECTION_DATE' => $lastConnectionDate,
                     'ACTION' => '<div class="action-btn">
-                                    <a href="menu-item.php?id='. $menuItemIDEncrypted .'" class="text-info" title="View Details">
+                                    <a href="user-account.php?id='. $userAccountIDEncrypted .'" class="text-info" title="View Details">
                                         <i class="ti ti-eye fs-5"></i>
                                     </a>
-                                    <a href="javascript:void(0);" class="text-danger ms-3 delete-menu-item" data-menu-item-id="' . $menuItemID . '" title="Delete Menu Item">
+                                    <a href="javascript:void(0);" class="text-danger ms-3 delete-user-account" data-user-account-id="' . $userAccountID . '" title="Delete Menu Item">
                                         <i class="ti ti-trash fs-5"></i>
                                     </a>
                                 </div>'

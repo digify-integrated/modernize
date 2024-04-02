@@ -459,7 +459,7 @@ function assignedRolePermissionTable(datatable_name, buttons = false, show_all =
         { 'width': 'auto', 'bSortable': false, 'aTargets': 2 },
         { 'width': 'auto', 'bSortable': false, 'aTargets': 3 },
         { 'width': 'auto', 'bSortable': false, 'aTargets': 4 },
-        { 'width': 'auto', 'bSortable': false, 'aTargets': 5 }
+        { 'width': '15%', 'bSortable': false, 'aTargets': 5 }
     ];
 
     const length_menu = show_all ? [[-1], ['All']] : [[10, 25, 50, 100, -1], [10, 25, 50, 100, 'All']];

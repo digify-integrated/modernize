@@ -154,7 +154,7 @@ function userAccountTable(datatable_name, buttons = false, show_all = false){
         { 'data' : 'CHECK_BOX' },
         { 'data' : 'USER_ACCOUNT' },
         { 'data' : 'USER_ACCOUNT_STATUS' },
-        { 'data' : 'LOCKED' },
+        { 'data' : 'LOCK_STATUS' },
         { 'data' : 'PASSWORD_EXPIRY_DATE' },
         { 'data' : 'LAST_CONNECTION_DATE' },
         { 'data' : 'ACTION' }
@@ -167,7 +167,7 @@ function userAccountTable(datatable_name, buttons = false, show_all = false){
         { 'width': 'auto', 'aTargets': 3 },
         { 'width': 'auto', 'aTargets': 4 },
         { 'width': 'auto', 'aTargets': 5 },
-        { 'width': 'auto','bSortable': false, 'aTargets': 6 }
+        { 'width': '15%', 'bSortable': false, 'aTargets': 6 }
     ];
 
     const length_menu = show_all ? [[-1], ['All']] : [[10, 25, 50, 100, -1], [10, 25, 50, 100, 'All']];

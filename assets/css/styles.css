@@ -5682,7 +5682,7 @@ textarea.form-control-lg {
 .badge {
   --bs-badge-padding-x: 10px;
   --bs-badge-padding-y: 5px;
-  --bs-badge-font-size: 0.875rem;
+  --bs-badge-font-size: 0.75rem;
   --bs-badge-font-weight: 400;
   --bs-badge-color: #fff;
   --bs-badge-border-radius: 4px;
