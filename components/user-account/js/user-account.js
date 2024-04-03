@@ -150,7 +150,7 @@ function userAccountTable(datatable_name, buttons = false, show_all = false){
     var filter_last_connection_date = $('#filter-last-connection-date').val();
     var settings;
 
-    const column = [ 
+    const column = [
         { 'data' : 'CHECK_BOX' },
         { 'data' : 'USER_ACCOUNT' },
         { 'data' : 'USER_ACCOUNT_STATUS' },
@@ -167,7 +167,7 @@ function userAccountTable(datatable_name, buttons = false, show_all = false){
         { 'width': 'auto', 'aTargets': 3 },
         { 'width': 'auto', 'aTargets': 4 },
         { 'width': 'auto', 'aTargets': 5 },
-        { 'width': '15%', 'bSortable': false, 'aTargets': 6 }
+        { 'width': '10%', 'bSortable': false, 'aTargets': 6 }
     ];
 
     const length_menu = show_all ? [[-1], ['All']] : [[10, 25, 50, 100, -1], [10, 25, 50, 100, 'All']];

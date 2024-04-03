@@ -24789,11 +24789,11 @@ body .dp-nav.dp-nav-right::before {
   }
 }
 .table-responsive .dataTables_wrapper .dataTables_length select {
-  padding-top: 0.25rem;
-  padding-bottom: 0.25rem;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
   padding-left: 0.5rem;
   padding-right: 0.625rem;
-  font-size: 0.765625rem;
+  font-size: 0.75rem;
   border-radius: 5px;
   border-color: var(--bs-border-color);
 }
@@ -24801,8 +24801,8 @@ body .dp-nav.dp-nav-right::before {
   margin-bottom: 25px;
 }
 .table-responsive .dataTables_wrapper .dataTables_filter input {
-  padding: 0.25rem 0.5rem;
-  font-size: 0.765625rem;
+  padding: 0.5rem 0.5rem;
+  font-size: 0.75rem;
   border-radius: 5px;
   border: 1px solid var(--bs-border-color);
 }

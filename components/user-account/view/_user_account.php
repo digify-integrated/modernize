@@ -7,6 +7,10 @@
                     <div class="card-actions cursor-pointer ms-auto d-flex button-group">
                         <button type="button" class="btn btn-dark dropdown-toggle action-dropdown mb-0 d-none" data-bs-toggle="dropdown" aria-expanded="false">Action</button>
                         <ul class="dropdown-menu dropdown-menu-end">
+                            <li><button class="dropdown-item" type="button" id="activate-user-account">Activate User Account</button></li>
+                            <li><button class="dropdown-item" type="button" id="deactivate-user-account">Deactivate User Account</button></li>
+                            <li><button class="dropdown-item" type="button" id="lock-user-account">Lock User Account</button></li>
+                            <li><button class="dropdown-item" type="button" id="unlock-user-account">Unlock User Account</button></li>
                             <li><button class="dropdown-item" type="button" id="delete-user-account">Delete User Account</button></li>
                         </ul>
                     </div>
@@ -17,7 +21,7 @@
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
-                        <table id="user-account-table" class="table border table-striped table-hover align-middle text-wrap mb-0">
+                        <table id="user-account-table" class="table border table-striped table-hover align-middle text-nowrap mb-0">
                             <thead class="text-dark">
                                 <tr>
                                     <th class="all">
@@ -72,11 +76,11 @@
                 </div>
                 <div class="form-check py-2 mb-0">
                     <input class="form-check-input warning" type="radio" name="filter-user-account-lock-status" id="filter-user-account-status-lock-yes" value="Yes">
-                    <label class="form-check-label" for="filter-user-account-status-lock-yes">Active</label>
+                    <label class="form-check-label" for="filter-user-account-status-lock-yes">Yes</label>
                 </div>
                 <div class="form-check py-2 mb-0">
                     <input class="form-check-input warning" type="radio" name="filter-user-account-lock-status" id="filter-user-account-status-lock-no" value="No">
-                    <label class="form-check-label" for="filter-user-account-status-lock-no">Inactive</label>
+                    <label class="form-check-label" for="filter-user-account-status-lock-no">No</label>
                 </div>
             </div>
             <h6 class="mb-2 mx-4 fw-semibold">By Password Expiry Date</h6>

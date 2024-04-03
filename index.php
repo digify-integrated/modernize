@@ -31,7 +31,7 @@
                     </div>
                     <div class="col-xl-5 col-xxl-4">
                         <div class="authentication-login min-vh-100 bg-body row justify-content-center align-items-center p-0">
-                            <div class="auth-max-width col-sm-8 col-md-6 col-xl-7 px-0">
+                            <div class="auth-max-width col-sm-8 col-md-6 col-xl-7 ">
                                 <h2 class="mb-1 fs-7 fw-bolder">Welcome to <span class="text-primary">CGMI Digital Solutions</span></h2>
                                 <p class="mb-7">Empowering Futures, Crafting Digital Excellence</p>
                                 <form id="signin-form" method="post" action="#">

@@ -14,7 +14,6 @@
                 </div>
                 <div class="card-actions cursor-pointer ms-auto d-flex button-group">
                     <button class="btn btn-info mb-0 px-4" data-bs-toggle="modal" id="edit-details" data-bs-target="#menu-item-modal" id="edit-details">Edit</button>
-                    <a href="menu-item.php?new" class="btn btn-success d-flex align-items-center mb-0">Create</a>
                 </div>
             </div>
             <div class="card-body">

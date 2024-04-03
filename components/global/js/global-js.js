@@ -174,6 +174,7 @@ function resetModalForm(form_id) {
 
 function showNotification(notificationTitle, notificationMessage, notificationType, timeOut = 5000) {
     const validNotificationTypes = ['success', 'info', 'warning', 'error'];
+    const isDuplicate = isDuplicateNotification(notificationMessage);
 
     if (!validNotificationTypes.includes(notificationType)) {
         console.error('Invalid notification type:', notificationType);
@@ -185,14 +186,34 @@ function showNotification(notificationTitle, notificationMessage, notificationTy
         progressBar: true,
         newestOnTop: true,
         preventDuplicates: true,
+        preventOpenDuplicates: true,
         positionClass: 'toast-top-center',
         timeOut: timeOut,
         showMethod: 'fadeIn',
         hideMethod: 'fadeOut'
     };
 
-    toastr.options = toastrOptions;
-    toastr[notificationType](notificationMessage, notificationTitle);
+    console.log(isDuplicate);
+
+    if (!isDuplicate) {
+        toastr.options = toastrOptions;
+        toastr[notificationType](notificationMessage, notificationTitle);
+    }
+}
+
+function isDuplicateNotification(message) {
+    let isDuplicate = false;
+    
+    $('.toast').each(function() {
+        if ($(this).find('.toast-message').text() === message[0].innerText) {
+            isDuplicate = true;
+            return false;
+        }
+    });
+
+    console.log(message);
+
+    return isDuplicate;
 }
   
 function setNotification(notificationTitle, notificationMessage, notificationType){

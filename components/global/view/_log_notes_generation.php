@@ -46,7 +46,7 @@ if(isset($_POST['type']) && !empty($_POST['type'])){
                     $changedBy = $row['changed_by'];
                     $timeElapsed = $systemModel->timeElapsedString($row['changed_at']);
 
-                    $userDetails = $userAccountModel->getUser($changedBy, null);
+                    $userDetails = $userAccountModel->getUserAccount($changedBy, null);
                     $fileAs = $userDetails['file_as'];
                     $profilePicture = $systemModel->checkImage($userDetails['profile_picture'] ?? null, 'profile');
                     

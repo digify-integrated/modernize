@@ -21,7 +21,7 @@
                     <div class="row">
                         <div class="col-lg-12">
                             <div class="mb-2">
-                                <label class="col-sm-4 form-label" for="order_sequence">Description <span class="text-danger">*</span></label>
+                                <label class="col-sm-4 form-label" for="role_description">Description <span class="text-danger">*</span></label>
                                 <textarea class="form-control maxlength" id="role_description" name="role_description" maxlength="200"></textarea>
                             </div>
                         </div>

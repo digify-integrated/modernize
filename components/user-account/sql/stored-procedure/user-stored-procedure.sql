@@ -2,7 +2,7 @@ DELIMITER //
 
 /* Get Stored Procedures */
 
-CREATE PROCEDURE getUser(IN p_user_id INT, IN p_email VARCHAR(255))
+CREATE PROCEDURE getUserAccount(IN p_user_id INT, IN p_email VARCHAR(255))
 BEGIN
 	SELECT * FROM users
     WHERE user_id = p_user_id OR email = p_email;
@@ -21,11 +21,11 @@ BEGIN
         FROM users 
         WHERE 1');
 
-    /*IF p_filter_by_user_account_status IS NOT NULL THEN
+    IF p_filter_by_user_account_status IS NOT NULL AND p_filter_by_user_account_status != '' THEN
         SET query = CONCAT(query, ' AND active = ', QUOTE(p_filter_by_user_account_status));
     END IF;
 
-    IF p_filter_by_user_account_lock_status IS NOT NULL THEN
+    IF p_filter_by_user_account_lock_status IS NOT NULL AND p_filter_by_user_account_lock_status != '' THEN
         SET query = CONCAT(query, ' AND locked = ', QUOTE(p_filter_by_user_account_lock_status));
     END IF;
 
@@ -34,8 +34,8 @@ BEGIN
     END IF;
 
     IF p_filter_last_connection_start_date IS NOT NULL AND p_filter_last_connection_end_date IS NOT NULL THEN
-        SET query = CONCAT(query, ' AND last_connection_date BETWEEN ', QUOTE(p_filter_last_connection_start_date), ' AND ', QUOTE(p_filter_last_connection_end_date));
-    END IF;*/
+        SET query = CONCAT(query, ' AND DATE(last_connection_date) BETWEEN ', QUOTE(p_filter_last_connection_start_date), ' AND ', QUOTE(p_filter_last_connection_end_date));
+    END IF;
 
     SET query = CONCAT(query, ' ORDER BY file_as');
 
