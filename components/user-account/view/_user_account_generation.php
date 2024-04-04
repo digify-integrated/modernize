@@ -51,13 +51,13 @@ if(isset($_POST['type']) && !empty($_POST['type'])){
             $sql->closeCursor();
 
             foreach ($options as $row) {
-                $userAccountID = $row['user_id'];
+                $userAccountID = $row['user_account_id'];
                 $fileAs = $row['file_as'];
                 $email = $row['email'];
                 $profilePicture = $systemModel->checkImage($row['profile_picture'], 'profile');
                 $locked = $row['locked'];
                 $active = $row['active'];
-                $lastConnectionDate = $systemModel->checkDate('empty', $row['last_connection_date'], '', 'm/d/Y h:i:s a', '');
+                $lastConnectionDate = empty($row['last_connection_date']) ? 'Never Connected' : $systemModel->checkDate('empty', $row['last_connection_date'], '', 'm/d/Y h:i:s a', '');
                 $passwordExpiryDate = $systemModel->checkDate('empty', $row['password_expiry_date'], '', 'm/d/Y', '');
 
                 $userAccountIDEncrypted = $securityModel->encryptData($userAccountID);

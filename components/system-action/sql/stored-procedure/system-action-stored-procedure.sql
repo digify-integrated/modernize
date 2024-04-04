@@ -27,11 +27,25 @@ END //
 
 CREATE PROCEDURE updateSystemAction(IN p_system_action_id INT, IN p_system_action_name VARCHAR(100), IN p_system_action_description VARCHAR(200), IN p_last_log_by INT)
 BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+    END;
+
+    START TRANSACTION;
+
+    UPDATE role_system_action_permission
+    SET system_action_name = p_system_action_name,
+        last_log_by = p_last_log_by
+    WHERE system_action_id = p_system_action_id;
+
 	UPDATE system_action
     SET system_action_name = p_system_action_name,
-    system_action_description = p_system_action_description,
-    last_log_by = p_last_log_by
+        system_action_description = p_system_action_description,
+        last_log_by = p_last_log_by
     WHERE system_action_id = p_system_action_id;
+
+    COMMIT;
 END //
 
 /* ----------------------------------------------------------------------------------------------------------------------------- */

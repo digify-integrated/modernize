@@ -9,7 +9,7 @@ CREATE TABLE menu_item (
 	menu_item_icon VARCHAR(50),
     order_sequence TINYINT(10) NOT NULL,
     last_log_by INT UNSIGNED NOT NULL,
-    FOREIGN KEY (last_log_by) REFERENCES users(user_id)
+    FOREIGN KEY (last_log_by) REFERENCES user_account(user_account_id)
 );
 
 CREATE INDEX menu_item_index_menu_item_id ON menu_item(menu_item_id);

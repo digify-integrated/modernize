@@ -135,7 +135,7 @@ class AuthenticationController {
         }
 
         $loginCredentialsDetails = $this->authenticationModel->getLoginCredentials(null, $email);
-        $userID = $loginCredentialsDetails['user_id'];
+        $userAccountID = $loginCredentialsDetails['user_account_id'];
         $active = $loginCredentialsDetails['active'];
         $userPassword = $this->securityModel->decryptData($loginCredentialsDetails['password']);
         $locked = $loginCredentialsDetails['locked'];
@@ -144,10 +144,10 @@ class AuthenticationController {
         $accountLockDuration = $loginCredentialsDetails['account_lock_duration'];
         $lastFailedLoginAttempt = $loginCredentialsDetails['last_failed_login_attempt'];
         $twoFactorAuth = $loginCredentialsDetails['two_factor_auth'];
-        $encryptedUserID = $this->securityModel->encryptData($userID);
+        $encryptedUserID = $this->securityModel->encryptData($userAccountID);
     
         if ($password !== $userPassword) {
-            $this->handleInvalidCredentials($userID, $failedLoginAttempts);
+            $this->handleInvalidCredentials($userAccountID, $failedLoginAttempts);
             return;
         }
     
@@ -169,23 +169,23 @@ class AuthenticationController {
         }
     
         if ($locked === 'Yes') {
-            $this->handleAccountLock($userID, $accountLockDuration, $lastFailedLoginAttempt);
+            $this->handleAccountLock($userAccountID, $accountLockDuration, $lastFailedLoginAttempt);
             exit;
         }
     
-        $this->authenticationModel->updateLoginAttempt($userID, 0, null);
+        $this->authenticationModel->updateLoginAttempt($userAccountID, 0, null);
     
         if ($twoFactorAuth === 'Yes') {
-            $this->handleTwoFactorAuth($userID, $email, $encryptedUserID);
+            $this->handleTwoFactorAuth($userAccountID, $email, $encryptedUserID);
             exit;
         }
 
         $sessionToken = $this->generateToken(6, 6);
         $encryptedSessionToken = $this->securityModel->encryptData($sessionToken);
 
-        $this->authenticationModel->updateLastConnection($userID, $encryptedSessionToken, date('Y-m-d H:i:s'));
+        $this->authenticationModel->updateLastConnection($userAccountID, $encryptedSessionToken, date('Y-m-d H:i:s'));
 
-        $_SESSION['user_id'] = $userID;
+        $_SESSION['user_id'] = $userAccountID;
         $_SESSION['session_token'] = $sessionToken;
 
         $response = [
@@ -218,7 +218,7 @@ class AuthenticationController {
             return;
         }
     
-        $userID = htmlspecialchars($_POST['user_id'], ENT_QUOTES, 'UTF-8');
+        $userAccountID = htmlspecialchars($_POST['user_account_id'], ENT_QUOTES, 'UTF-8');
         $otpCode1 = htmlspecialchars($_POST['otp_code_1'], ENT_QUOTES, 'UTF-8');
         $otpCode2 = htmlspecialchars($_POST['otp_code_2'], ENT_QUOTES, 'UTF-8');
         $otpCode3 = htmlspecialchars($_POST['otp_code_3'], ENT_QUOTES, 'UTF-8');
@@ -227,7 +227,7 @@ class AuthenticationController {
         $otpCode6 = htmlspecialchars($_POST['otp_code_6'], ENT_QUOTES, 'UTF-8');
         $otpVerificationCode = $otpCode1 . $otpCode2 . $otpCode3 . $otpCode4 . $otpCode5 . $otpCode6;
 
-        $checkLoginCredentialsExist = $this->authenticationModel->checkLoginCredentialsExist($userID, null);
+        $checkLoginCredentialsExist = $this->authenticationModel->checkLoginCredentialsExist($userAccountID, null);
         $total = $checkLoginCredentialsExist['total'] ?? 0;
     
         if ($total === 0) {
@@ -243,7 +243,7 @@ class AuthenticationController {
             exit;
         }
 
-        $loginCredentialsDetails = $this->authenticationModel->getLoginCredentials($userID, null);
+        $loginCredentialsDetails = $this->authenticationModel->getLoginCredentials($userAccountID, null);
         $otp = $this->securityModel->decryptData($loginCredentialsDetails['otp']);
         $failedOTPAttempts = $loginCredentialsDetails['failed_otp_attempts'];
         $otpExpiryDate = $loginCredentialsDetails['otp_expiry_date'];
@@ -282,7 +282,7 @@ class AuthenticationController {
 
             if ($failedOTPAttempts >= $maxFailedOTPAttempts) {
                 $otpExpiryDate = date('Y-m-d H:i:s', strtotime('-1 year'));
-                $this->authenticationModel->updateOTPAsExpired($userID, $otpExpiryDate);
+                $this->authenticationModel->updateOTPAsExpired($userAccountID, $otpExpiryDate);
 
                 $response = [
                     'success' => false,
@@ -296,7 +296,7 @@ class AuthenticationController {
                 exit;
             }
     
-            $this->authenticationModel->updateFailedOTPAttempts($userID, $failedOTPAttempts + 1);
+            $this->authenticationModel->updateFailedOTPAttempts($userAccountID, $failedOTPAttempts + 1);
 
             $response = [
                 'success' => false,
@@ -326,9 +326,9 @@ class AuthenticationController {
         $sessionToken = $this->generateToken(6, 6);
         $encryptedSessionToken = $this->securityModel->encryptData($sessionToken);
 
-        $this->authenticationModel->updateLastConnection($userID, $encryptedSessionToken, date('Y-m-d H:i:s'));
+        $this->authenticationModel->updateLastConnection($userAccountID, $encryptedSessionToken, date('Y-m-d H:i:s'));
 
-        $_SESSION['user_id'] = $userID;
+        $_SESSION['user_account_id'] = $userAccountID;
         $_SESSION['session_token'] = $sessionToken;
 
         $response = [
@@ -360,11 +360,11 @@ class AuthenticationController {
             return;
         }
     
-        $userID = htmlspecialchars($_POST['user_id'], ENT_QUOTES, 'UTF-8');
+        $userAccountID = htmlspecialchars($_POST['user_account_id'], ENT_QUOTES, 'UTF-8');
         $newPassword = htmlspecialchars($_POST['new_password'], ENT_QUOTES, 'UTF-8');
         $encryptedPassword = $this->securityModel->encryptData($newPassword);
 
-        $checkLoginCredentialsExist = $this->authenticationModel->checkLoginCredentialsExist($userID, null);
+        $checkLoginCredentialsExist = $this->authenticationModel->checkLoginCredentialsExist($userAccountID, null);
         $total = $checkLoginCredentialsExist['total'] ?? 0;
     
         if ($total === 0) {
@@ -380,7 +380,7 @@ class AuthenticationController {
             exit;
         }
 
-        $loginCredentialsDetails = $this->authenticationModel->getLoginCredentials($userID, null);
+        $loginCredentialsDetails = $this->authenticationModel->getLoginCredentials($userAccountID, null);
         $email = $loginCredentialsDetails['email'];
         $active = $loginCredentialsDetails['active'];
         $locked = $loginCredentialsDetails['locked'];
@@ -422,7 +422,7 @@ class AuthenticationController {
             exit;
         }
 
-        $checkPasswordHistory = $this->checkPasswordHistory($userID, $email, $newPassword);
+        $checkPasswordHistory = $this->checkPasswordHistory($userAccountID, $email, $newPassword);
     
         if ($checkPasswordHistory > 0) {
             $response = [
@@ -443,11 +443,11 @@ class AuthenticationController {
         $lastPasswordChange = date('Y-m-d H:i:s');
         $passwordExpiryDate = date('Y-m-d', strtotime('+'. $defaultPasswordDuration .' days'));
 
-        $this->authenticationModel->updateUserPassword($userID, $email, $encryptedPassword, $passwordExpiryDate, $lastPasswordChange);
-        $this->authenticationModel->insertPasswordHistory($userID, $email, $encryptedPassword, $lastPasswordChange);
+        $this->authenticationModel->updateUserPassword($userAccountID, $email, $encryptedPassword, $passwordExpiryDate, $lastPasswordChange);
+        $this->authenticationModel->insertPasswordHistory($userAccountID, $email, $encryptedPassword, $lastPasswordChange);
 
         $resetTokenExpiryDate = date('Y-m-d H:i:s', strtotime('-1 year'));
-        $this->authenticationModel->updateResetTokenAsExpired($userID, $resetTokenExpiryDate);
+        $this->authenticationModel->updateResetTokenAsExpired($userAccountID, $resetTokenExpiryDate);
 
         $response = [
             'success' => true,
@@ -500,10 +500,10 @@ class AuthenticationController {
         }
 
         $loginCredentialsDetails = $this->authenticationModel->getLoginCredentials(null, $email);
-        $userID = $loginCredentialsDetails['user_id'];
+        $userAccountID = $loginCredentialsDetails['user_account_id'];
         $active = $loginCredentialsDetails['active'];
         $locked = $loginCredentialsDetails['locked'];
-        $encryptedUserID = $this->securityModel->encryptData($userID);
+        $encryptedUserID = $this->securityModel->encryptData($userAccountID);
     
         if ($active === 'No') {
             $response = [
@@ -538,7 +538,7 @@ class AuthenticationController {
         $encryptedResetToken = $this->securityModel->encryptData($resetToken);
         $resetTokenExpiryDate = date('Y-m-d H:i:s', strtotime('+'. $resetPasswordTokenDuration .' minutes'));
     
-        $this->authenticationModel->updateResetToken($userID, $encryptedResetToken, $resetTokenExpiryDate);
+        $this->authenticationModel->updateResetToken($userAccountID, $encryptedResetToken, $resetTokenExpiryDate);
         $this->sendPasswordReset($email, $encryptedUserID, $encryptedResetToken, $resetPasswordTokenDuration);
 
         $response = [
@@ -573,9 +573,9 @@ class AuthenticationController {
             return;
         }
     
-        $userID = htmlspecialchars($_POST['user_id'], ENT_QUOTES, 'UTF-8');
+        $userAccountID = htmlspecialchars($_POST['user_account_id'], ENT_QUOTES, 'UTF-8');
 
-        $checkLoginCredentialsExist = $this->authenticationModel->checkLoginCredentialsExist($userID, null);
+        $checkLoginCredentialsExist = $this->authenticationModel->checkLoginCredentialsExist($userAccountID, null);
         $total = $checkLoginCredentialsExist['total'] ?? 0;
     
         if ($total === 0) {
@@ -591,7 +591,7 @@ class AuthenticationController {
             exit;
         }
 
-        $loginCredentialsDetails = $this->authenticationModel->getLoginCredentials($userID, null);
+        $loginCredentialsDetails = $this->authenticationModel->getLoginCredentials($userAccountID, null);
         $email = $loginCredentialsDetails['email'];
         $active = $loginCredentialsDetails['active'];
         $locked = $loginCredentialsDetails['locked'];
@@ -622,7 +622,7 @@ class AuthenticationController {
             exit;
         }
 
-        $this->resendOTPCode($userID, $email);
+        $this->resendOTPCode($userAccountID, $email);
 
         $response = [
             'success' => true
@@ -640,14 +640,14 @@ class AuthenticationController {
     # Generates and encrypts an OTP, sets the OTP expiry date, and sends the OTP to the user's email.
     #
     # Parameters: 
-    # - $userID (int): The user ID.
+    # - $userAccountID (int): The user ID.
     # - $email (string): The email address of the user.
     # - $encryptedUserID (string): The encrypted user ID.
     #
     # Returns: Array
     #
     # -------------------------------------------------------------
-    private function resendOTPCode($userID, $email) {
+    private function resendOTPCode($userAccountID, $email) {
         $securitySettingDetails = $this->securitySettingModel->getSecuritySetting(6);
         $otpDuration = $securitySettingDetails['value'] ?? DEFAULT_OTP_DURATION;
 
@@ -655,7 +655,7 @@ class AuthenticationController {
         $encryptedOTP = $this->securityModel->encryptData($otp);
         $otpExpiryDate = date('Y-m-d H:i:s', strtotime('+'. $otpDuration .' minutes'));
     
-        $this->authenticationModel->updateOTP($userID, $encryptedOTP, $otpExpiryDate);
+        $this->authenticationModel->updateOTP($userAccountID, $encryptedOTP, $otpExpiryDate);
         $this->sendOTP($email, $otp);
     }
     # -------------------------------------------------------------
@@ -676,11 +676,11 @@ class AuthenticationController {
     # Returns: Array
     #
     # -------------------------------------------------------------
-    private function handleInvalidCredentials($userID, $failedAttempts) {
+    private function handleInvalidCredentials($userAccountID, $failedAttempts) {
         $failedAttempts = $failedAttempts + 1;
         $lastFailedLogin = date('Y-m-d H:i:s');
     
-        $this->authenticationModel->updateLoginAttempt($userID, $failedAttempts, $lastFailedLogin);
+        $this->authenticationModel->updateLoginAttempt($userAccountID, $failedAttempts, $lastFailedLogin);
 
         $securitySettingDetails = $this->securitySettingModel->getSecuritySetting(1);
         $maxFailedLoginAttempts = $securitySettingDetails['value'] ?? MAX_FAILED_LOGIN_ATTEMPTS;
@@ -690,7 +690,7 @@ class AuthenticationController {
 
         if ($failedAttempts > $maxFailedLoginAttempts) {
             $lockDuration = pow(2, ($failedAttempts - $maxFailedLoginAttempts)) * 5;
-            $this->authenticationModel->updateAccountLock($userID, 'Yes', $lockDuration);
+            $this->authenticationModel->updateAccountLock($userAccountID, 'Yes', $lockDuration);
             
             $durationParts = $this->formatDuration($lockDuration);
             
@@ -734,12 +734,12 @@ class AuthenticationController {
     # If the lock time has expired, unlocks the account.
     #
     # Parameters: 
-    # - $userID (int): The user ID.
+    # - $userAccountID (int): The user ID.
     #
     # Returns: Array
     #
     # -------------------------------------------------------------
-    private function handleAccountLock($userID, $accountLockDuration, $lastFailedLoginAttempt) {
+    private function handleAccountLock($userAccountID, $accountLockDuration, $lastFailedLoginAttempt) {
         $unlockTime = strtotime('+'. $accountLockDuration .' minutes', strtotime($lastFailedLoginAttempt));
     
         if (time() < $unlockTime) {
@@ -764,7 +764,7 @@ class AuthenticationController {
             exit;
         }
         else {
-            $this->authenticationModel->updateAccountLock($userID, 'No', null);
+            $this->authenticationModel->updateAccountLock($userAccountID, 'No', null);
         }
     
         exit;
@@ -778,14 +778,14 @@ class AuthenticationController {
     # Generates and encrypts an OTP, sets the OTP expiry date, and sends the OTP to the user's email.
     #
     # Parameters: 
-    # - $userID (int): The user ID.
+    # - $userAccountID (int): The user ID.
     # - $email (string): The email address of the user.
     # - $encryptedUserID (string): The encrypted user ID.
     #
     # Returns: Array
     #
     # -------------------------------------------------------------
-    private function handleTwoFactorAuth($userID, $email, $encryptedUserID) {
+    private function handleTwoFactorAuth($userAccountID, $email, $encryptedUserID) {
         $securitySettingDetails = $this->securitySettingModel->getSecuritySetting(6);
         $otpDuration = $securitySettingDetails['value'] ?? DEFAULT_OTP_DURATION;
 
@@ -793,7 +793,7 @@ class AuthenticationController {
         $encryptedOTP = $this->securityModel->encryptData($otp);
         $otpExpiryDate = date('Y-m-d H:i:s', strtotime('+'. $otpDuration .' minutes'));
     
-        $this->authenticationModel->updateOTP($userID, $encryptedOTP, $otpExpiryDate);
+        $this->authenticationModel->updateOTP($userAccountID, $encryptedOTP, $otpExpiryDate);
         $this->sendOTP($email, $otp);
     
         $response = [
@@ -853,7 +853,7 @@ class AuthenticationController {
     # Checks if the user's password is expired.
     #
     # Parameters: 
-    # - $userID (int): The user ID.
+    # - $userAccountID (int): The user ID.
     #
     # Returns: Bool
     #
@@ -881,16 +881,16 @@ class AuthenticationController {
     # Checks the password history for a given user ID and email to determine if the new password matches any previous passwords.
     #
     # Parameters: 
-    # - $p_user_id (array): The user ID.
+    # - $p_user_account_id (array): The user ID.
     # - $p_email (string): The email address of the user.
     # - $p_password (string): The password of the user.
     #
     # Returns: Array
     #
     # -------------------------------------------------------------
-    private function checkPasswordHistory($p_user_id, $p_email, $p_password) {
+    private function checkPasswordHistory($p_user_account_id, $p_email, $p_password) {
         $total = 0;
-        $passwordHistory = $this->authenticationModel->getPasswordHistory($p_user_id, $p_email);
+        $passwordHistory = $this->authenticationModel->getPasswordHistory($p_user_account_id, $p_email);
     
         foreach ($passwordHistory as $history) {
             $password = $this->securityModel->decryptData($history['password']);
@@ -1011,13 +1011,13 @@ class AuthenticationController {
     #
     # Parameters: 
     # - $email (string): The email address of the user.
-    # - $userID (int): The user ID.
+    # - $userAccountID (int): The user ID.
     # - $resetToken (string): The reset token generated.
     #
     # Returns: Array
     #
     # -------------------------------------------------------------
-    public function sendPasswordReset($email, $userID, $resetToken, $resetPasswordTokenDuration) {
+    public function sendPasswordReset($email, $userAccountID, $resetToken, $resetPasswordTokenDuration) {
         $emailSetting = $this->emailSettingModel->getEmailSetting(1);
         $mailFromName = $emailSetting['mail_from_name'];
         $mailFromEmail = $emailSetting['mail_from_email'];
@@ -1028,7 +1028,7 @@ class AuthenticationController {
         $notificationSettingDetails = $this->notificationSettingModel->getNotificationSetting(2);
         $emailSubject = $notificationSettingDetails['email_notification_subject'] ?? null;
         $emailBody = $notificationSettingDetails['email_notification_body'] ?? null;
-        $emailBody = str_replace('{RESET_LINK}', $defaultForgotPasswordLink . $userID .'&token=' . $resetToken, $emailBody);
+        $emailBody = str_replace('{RESET_LINK}', $defaultForgotPasswordLink . $userAccountID .'&token=' . $resetToken, $emailBody);
         $emailBody = str_replace('{RESET_DURATION}', $resetPasswordTokenDuration, $emailBody);
 
         $message = file_get_contents('../../notification-setting/template/default-email.html');

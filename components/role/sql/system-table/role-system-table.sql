@@ -5,7 +5,7 @@ CREATE TABLE role(
 	role_name VARCHAR(100) NOT NULL,
 	role_description VARCHAR(200) NOT NULL,
     last_log_by INT UNSIGNED NOT NULL,
-    FOREIGN KEY (last_log_by) REFERENCES users(user_id)
+    FOREIGN KEY (last_log_by) REFERENCES user_account(user_account_id)
 );
 
 CREATE INDEX role_index_role_id ON role(role_id);
@@ -17,21 +17,6 @@ INSERT INTO role (role_name, role_description, last_log_by) VALUES ('Human Resou
 INSERT INTO role (role_name, role_description, last_log_by) VALUES ('Sales Proposal Approver', 'Access to approve or reject requests and transactions.', '1');
 INSERT INTO role (role_name, role_description, last_log_by) VALUES ('Accounting', 'Access to financial and accounting-related functionalities.', '1');
 INSERT INTO role (role_name, role_description, last_log_by) VALUES ('Sales', 'Access to sales-related functionalities and customer management.', '1');
-
-/* ----------------------------------------------------------------------------------------------------------------------------- */
-
-/* Role Users Table */
-
-CREATE TABLE role_users(
-	role_id INT NOT NULL,
-	user_id INT NOT NULL,
-	date_assigned DATETIME DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE INDEX role_users_index_role_id ON role_users(role_id);
-CREATE INDEX role_users_index_user_id ON role_users(user_id);
-
-INSERT INTO role_users (role_id, user_id) VALUES ('1', '2');
 
 /* ----------------------------------------------------------------------------------------------------------------------------- */
 
@@ -51,7 +36,7 @@ CREATE TABLE role_permission(
     last_log_by INT UNSIGNED NOT NULL,
     FOREIGN KEY (menu_item_id) REFERENCES menu_item(menu_item_id),
     FOREIGN KEY (role_id) REFERENCES role(role_id),
-    FOREIGN KEY (last_log_by) REFERENCES users(user_id)
+    FOREIGN KEY (last_log_by) REFERENCES user_account(user_account_id)
 );
 
 CREATE INDEX role_permission_index_role_permission_id ON role_permission(role_permission_id);
@@ -73,11 +58,32 @@ CREATE TABLE role_system_action_permission(
     last_log_by INT UNSIGNED NOT NULL,
     FOREIGN KEY (system_action_id) REFERENCES system_action(system_action_id),
     FOREIGN KEY (role_id) REFERENCES role(role_id),
-    FOREIGN KEY (last_log_by) REFERENCES users(user_id)
+    FOREIGN KEY (last_log_by) REFERENCES user_account(user_account_id)
 );
 
 CREATE INDEX role_system_action_permission_index_system_action_permission_id ON role_system_action_permission(role_system_action_permission_id);
 CREATE INDEX role_system_action_permission_index_system_action_id ON role_system_action_permission(system_action_id);
 CREATE INDEX role_system_action_permissionn_index_role_id ON role_system_action_permission(role_id);
+
+/* ----------------------------------------------------------------------------------------------------------------------------- */
+
+/* Role User Account Table */
+
+CREATE TABLE role_user_account(
+	role_user_account_id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY NOT NULL,
+	role_id INT UNSIGNED NOT NULL,
+	role_name VARCHAR(100) NOT NULL,
+	user_account_id INT UNSIGNED NOT NULL,
+	file_as VARCHAR(300) NOT NULL,
+    date_assigned DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    last_log_by INT UNSIGNED NOT NULL,
+    FOREIGN KEY (user_account_id) REFERENCES user_account(user_account_id),
+    FOREIGN KEY (role_id) REFERENCES role(role_id),
+    FOREIGN KEY (last_log_by) REFERENCES user_account(user_account_id)
+);
+
+CREATE INDEX role_user_account_index_role_user_account_id ON role_user_account(role_user_account_id);
+CREATE INDEX role_user_account_permission_index_user_account_id ON role_user_account(user_account_id);
+CREATE INDEX role_user_account_permissionn_index_role_id ON role_user_account(role_id);
 
 /* ----------------------------------------------------------------------------------------------------------------------------- */

@@ -6,7 +6,7 @@ CREATE TABLE system_setting(
 	system_setting_description VARCHAR(200) NOT NULL,
 	value VARCHAR(1000) NOT NULL,
     last_log_by INT UNSIGNED NOT NULL,
-    FOREIGN KEY (last_log_by) REFERENCES users(user_id)
+    FOREIGN KEY (last_log_by) REFERENCES user_account(user_account_id)
 );
 
 CREATE INDEX system_setting_index_system_setting_id ON system_setting(system_setting_id);

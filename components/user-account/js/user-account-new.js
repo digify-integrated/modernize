@@ -38,7 +38,7 @@ function userAccountForm(){
             }
         },
         errorPlacement: function (error, element) {
-            showNotification('Form Validation Error', error, 'error', 1500);
+            showNotification('Attention Required: Error Found', error, 'error', 1500);
         },
         highlight: function(element) {
             var inputElement = $(element);
@@ -59,7 +59,7 @@ function userAccountForm(){
             }
         },
         submitHandler: function(form) {
-            const transaction = 'add menu group';
+            const transaction = 'add user account';
           
             $.ajax({
                 type: 'POST',

@@ -6,7 +6,7 @@ CREATE TABLE security_setting(
 	security_setting_description VARCHAR(200) NOT NULL,
 	value VARCHAR(1000) NOT NULL,
     last_log_by INT UNSIGNED NOT NULL,
-    FOREIGN KEY (last_log_by) REFERENCES users(user_id)
+    FOREIGN KEY (last_log_by) REFERENCES user_account(user_account_id)
 );
 
 CREATE INDEX security_setting_index_security_setting_id ON security_setting(security_setting_id);

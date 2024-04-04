@@ -53,12 +53,36 @@ END //
 
 CREATE PROCEDURE updateRole(IN p_role_id INT, IN p_role_name VARCHAR(100), IN p_role_description VARCHAR(200), IN p_last_log_by INT)
 BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+    END;
+
+    START TRANSACTION;
+
+    UPDATE role_permission
+    SET role_name = p_role_name,
+        last_log_by = p_last_log_by
+    WHERE role_id = p_role_id;
+
+    UPDATE role_system_action_permission
+    SET role_name = p_role_name,
+        last_log_by = p_last_log_by
+    WHERE role_id = p_role_id;
+
+    UPDATE role_user_account
+    SET role_name = p_role_name,
+        last_log_by = p_last_log_by
+    WHERE role_id = p_role_id;
+
 	UPDATE role
     SET role_name = p_role_name,
     role_name = p_role_name,
     role_description = p_role_description,
     last_log_by = p_last_log_by
     WHERE role_id = p_role_id;
+
+    COMMIT;
 END //
 
 CREATE PROCEDURE updateRolePermission(IN p_role_permission_id INT, IN p_access_type VARCHAR(10), IN p_access TINYINT(1), IN p_last_log_by INT)

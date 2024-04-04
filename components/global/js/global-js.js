@@ -184,7 +184,7 @@ function showNotification(notificationTitle, notificationMessage, notificationTy
     const toastrOptions = {
         closeButton: true,
         progressBar: true,
-        newestOnTop: true,
+        newestOnTop: false,
         preventDuplicates: true,
         preventOpenDuplicates: true,
         positionClass: 'toast-top-center',

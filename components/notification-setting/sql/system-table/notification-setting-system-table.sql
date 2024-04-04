@@ -11,7 +11,7 @@ CREATE TABLE notification_setting(
 	email_notification_body LONGTEXT,
 	sms_notification_message VARCHAR(500),
     last_log_by INT UNSIGNED NOT NULL,
-    FOREIGN KEY (last_log_by) REFERENCES users(user_id)
+    FOREIGN KEY (last_log_by) REFERENCES user_account(user_account_id)
 );
 
 CREATE INDEX notification_setting_index_notification_setting_id ON notification_setting(notification_setting_id);

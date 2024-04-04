@@ -14,7 +14,7 @@ CREATE TABLE email_setting(
 	mail_from_name VARCHAR(200),
 	mail_from_email VARCHAR(200),
     last_log_by INT UNSIGNED NOT NULL,
-    FOREIGN KEY (last_log_by) REFERENCES users(user_id)
+    FOREIGN KEY (last_log_by) REFERENCES user_account(user_account_id)
 );
 
 CREATE INDEX email_setting_index_email_setting_id ON email_setting(email_setting_id);

@@ -40,7 +40,7 @@ function menuItemForm(){
             }
         },
         errorPlacement: function (error, element) {
-            showNotification('Form Validation Error', error, 'error', 1500);
+            showNotification('Attention Required: Error Found', error, 'error', 1500);
         },
         highlight: function(element) {
             var inputElement = $(element);

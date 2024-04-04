@@ -639,7 +639,7 @@
   --bs-font-monospace: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   --bs-gradient: linear-gradient(180deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0));
   --bs-body-font-family: var(--bs-font-sans-serif);
-  --bs-body-font-size: 0.8125rem;
+  --bs-body-font-size: 0.75rem;
   --bs-body-font-weight: 400;
   --bs-body-line-height: 1.5;
   --bs-body-color: #5a6a85;
@@ -667,7 +667,7 @@
   --bs-highlight-bg: #ffefd2;
   --bs-border-width: 1px;
   --bs-border-style: solid;
-  --bs-border-color: #ebf1f6;
+  --bs-border-color: #dfe5ef;
   --bs-border-color-translucent: rgba(0, 0, 0, 0.175);
   --bs-border-radius: 7px;
   --bs-border-radius-sm: 5px;
@@ -2881,7 +2881,7 @@ progress {
   display: block;
   width: 100%;
   padding: 8px 16px;
-  font-size: 0.8125rem;
+  font-size: 0.75rem;
   font-weight: 400;
   line-height: 1.5;
   color: #5a6a85;
@@ -5682,7 +5682,7 @@ textarea.form-control-lg {
 .badge {
   --bs-badge-padding-x: 10px;
   --bs-badge-padding-y: 5px;
-  --bs-badge-font-size: 0.75rem;
+  --bs-badge-font-size: 0.625rem;
   --bs-badge-font-weight: 400;
   --bs-badge-color: #fff;
   --bs-badge-border-radius: 4px;
@@ -24168,7 +24168,7 @@ body .select2-container--classic .select2-selection--single .select2-selection__
 body .select2-container--classic .select2-selection--single .select2-selection__rendered {
   border-color: var(--bs-border-color);
   color: var(--bs-body-color);
-  height: 40px;
+  height: 38px;
   line-height: 40px;
 }
 body .select2-container--default .select2-selection--multiple {

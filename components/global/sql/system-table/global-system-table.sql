@@ -7,7 +7,7 @@ CREATE TABLE audit_log (
     log TEXT NOT NULL,
     changed_by INT UNSIGNED NOT NULL,
     changed_at DATETIME NOT NULL,
-    FOREIGN KEY (changed_by) REFERENCES users(user_id)
+    FOREIGN KEY (changed_by) REFERENCES user_account(user_account_id)
 );
 
 CREATE INDEX audit_log_index_audit_log_id ON audit_log(audit_log_id);

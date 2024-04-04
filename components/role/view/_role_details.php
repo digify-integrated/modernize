@@ -112,7 +112,7 @@
                 <form id="role-form" method="post" action="#">
                     <div class="row">
                         <div class="col-lg-12">
-                            <div class="mb-2">
+                            <div class="mb-3">
                                 <label class="form-label" for="role_name">Display Name <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control maxlength" id="role_name" name="role_name" maxlength="100" autocomplete="off">
                             </div>
@@ -120,7 +120,7 @@
                     </div>
                     <div class="row">
                         <div class="col-lg-12">
-                            <div class="mb-2">
+                            <div class="mb-3">
                                 <label class="form-label" for="role_description">Description <span class="text-danger">*</span></label>
                                 <textarea class="form-control maxlength" id="role_description" name="role_description" maxlength="200"></textarea>
                             </div>
