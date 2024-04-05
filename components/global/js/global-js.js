@@ -193,8 +193,6 @@ function showNotification(notificationTitle, notificationMessage, notificationTy
         hideMethod: 'fadeOut'
     };
 
-    console.log(isDuplicate);
-
     if (!isDuplicate) {
         toastr.options = toastrOptions;
         toastr[notificationType](notificationMessage, notificationTitle);
@@ -210,8 +208,6 @@ function isDuplicateNotification(message) {
             return false;
         }
     });
-
-    console.log(message);
 
     return isDuplicate;
 }

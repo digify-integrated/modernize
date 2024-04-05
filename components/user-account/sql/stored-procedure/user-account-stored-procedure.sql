@@ -39,7 +39,7 @@ END //
 
 /* Update Stored Procedure */
 
-CREATE PROCEDURE updateUserAccount(IN p_user_account_id INT, IN p_file_as VARCHAR(300), IN p_email VARCHAR(255), IN p_password VARCHAR(255), IN p_password_expiry_date DATE, IN p_last_password_change DATETIME, IN p_last_log_by INT)
+CREATE PROCEDURE updateUserAccount(IN p_user_account_id INT, IN p_file_as VARCHAR(300), IN p_email VARCHAR(255), IN p_last_log_by INT)
 BEGIN
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
     BEGIN
@@ -53,22 +53,11 @@ BEGIN
         last_log_by = p_last_log_by
     WHERE user_account_id = p_user_account_id;
 
-    IF p_password IS NOT NULL AND p_password != '' THEN
-        UPDATE user_account
-        SET file_as = p_file_as,
-            email = p_email,
-            password = p_password,
-            password_expiry_date = p_password_expiry_date,
-            last_password_change = p_last_password_change,
-            last_log_by = p_last_log_by
-        WHERE user_account_id = p_user_account_id;
-    ELSE
-        UPDATE user_account
-        SET file_as = p_file_as,
-            email = p_email,
-            last_log_by = p_last_log_by
-        WHERE user_account_id = p_user_account_id;
-    END IF;
+    UPDATE user_account
+    SET file_as = p_file_as,
+        email = p_email,
+        last_log_by = p_last_log_by
+    WHERE user_account_id = p_user_account_id;
 
     COMMIT;
 END //
@@ -102,6 +91,7 @@ BEGIN
     START TRANSACTION;
 
     DELETE FROM role_user_account WHERE user_account_id = p_user_account_id;
+    DELETE FROM password_history WHERE user_account_id = p_user_account_id;
     DELETE FROM user_account WHERE user_account_id = p_user_account_id;
 
     COMMIT;

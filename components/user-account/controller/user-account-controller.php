@@ -18,6 +18,7 @@ class UserAccountController {
     private $authenticationModel;
     private $securitySettingModel;
     private $securityModel;
+    private $systemModel;
 
     # -------------------------------------------------------------
     #
@@ -32,16 +33,18 @@ class UserAccountController {
     # - @param AuthenticationModel $authenticationModel     The AuthenticationModel instance for user related operations.
     # - @param SecuritySettingModel $securitySettingModel     The securitySettingModel instance for security setting related operations.
     # - @param SecurityModel $securityModel   The SecurityModel instance for security related operations.
+    # - @param SystemModel $systemModel   The SystemModel instance for system related operations.
     #
     # Returns: None
     #
     # -------------------------------------------------------------
-    public function __construct(UserAccountModel $userAccountModel, RoleModel $roleModel, AuthenticationModel $authenticationModel, SecuritySettingModel $securitySettingModel, SecurityModel $securityModel) {
+    public function __construct(UserAccountModel $userAccountModel, RoleModel $roleModel, AuthenticationModel $authenticationModel, SecuritySettingModel $securitySettingModel, SecurityModel $securityModel, SystemModel $systemModel) {
         $this->userAccountModel = $userAccountModel;
         $this->roleModel = $roleModel;
         $this->authenticationModel = $authenticationModel;
         $this->securitySettingModel = $securitySettingModel;
         $this->securityModel = $securityModel;
+        $this->systemModel = $systemModel;
     }
     # -------------------------------------------------------------
 
@@ -276,12 +279,11 @@ class UserAccountController {
             return;
         }
         
-        if (isset($_POST['user_account_id']) && !empty($_POST['user_account_id']) && isset($_POST['file_as']) && !empty($_POST['file_as']) && isset($_POST['email']) && !empty($_POST['email']) && isset($_POST['password'])) {
+        if (isset($_POST['user_account_id']) && !empty($_POST['user_account_id']) && isset($_POST['file_as']) && !empty($_POST['file_as']) && isset($_POST['email']) && !empty($_POST['email'])) {
             $userID = $_SESSION['user_id'];
             $userAccountID = htmlspecialchars($_POST['user_account_id'], ENT_QUOTES, 'UTF-8');
             $fileAs = htmlspecialchars($_POST['file_as'], ENT_QUOTES, 'UTF-8');
             $email = htmlspecialchars($_POST['email'], ENT_QUOTES, 'UTF-8');
-            $password = !empty($_POST['password']) ? $this->securityModel->encryptData($_POST['password']) : null;
         
             $checkUserAccountExist = $this->userAccountModel->checkUserAccountExist($userAccountID);
             $total = $checkUserAccountExist['total'] ?? 0;
@@ -314,19 +316,7 @@ class UserAccountController {
                 exit;
             }
 
-            if(!empty($password)){
-                $securitySettingDetails = $this->securitySettingModel->getSecuritySetting(4);
-                $defaultPasswordDuration = $securitySettingDetails['value'] ?? DEFAULT_PASSWORD_DURATION;
-            
-                $lastPasswordChange = date('Y-m-d H:i:s');
-                $passwordExpiryDate = date('Y-m-d', strtotime('+'. $defaultPasswordDuration .' days'));
-    
-                $this->userAccountModel->updateUserAccount($userAccountID, $fileAs, $email, $password, $passwordExpiryDate, $lastPasswordChange, $userID);
-                $this->authenticationModel->insertPasswordHistory($userAccountID, $email, $password, $lastPasswordChange);
-            }
-            else{
-                $this->userAccountModel->updateUserAccount($userAccountID, $fileAs, $email, null, null, null, $userID);
-            }           
+            $this->userAccountModel->updateUserAccount($userAccountID, $fileAs, $email, $userID);
             
             $response = [
                 'success' => true,
@@ -942,6 +932,49 @@ class UserAccountController {
     # -------------------------------------------------------------
 
     # -------------------------------------------------------------
+    #  Format methods
+    # -------------------------------------------------------------
+
+    # -------------------------------------------------------------
+    #
+    # Function: formatDuration
+    # Description:
+    # Updates the failed login attempts and, if the maximum attempts are reached, locks the account.
+    #
+    # Parameters: 
+    # - $lockDuration (int): The duration in seconds that needs to be formatted. This value represents the total duration that you want to convert into a human-readable format.
+    #
+    # Returns: 
+    #  Returns a formatted string representing the duration in a human-readable format. 
+    #  The format includes years, months, days, hours, and minutes, as applicable. 
+    #  The function constructs this string based on the provided $lockDuration parameter.
+    #
+    # -------------------------------------------------------------
+    private function formatDuration($lockDuration) {
+        $durationParts = [];
+
+        $timeUnits = [
+            ['year', 60 * 60 * 24 * 30 * 12],
+            ['month', 60 * 60 * 24 * 30],
+            ['day', 60 * 60 * 24],
+            ['hour', 60 * 60],
+            ['minute', 60]
+        ];
+
+        foreach ($timeUnits as list($unit, $seconds)) {
+            $value = floor($lockDuration / $seconds);
+            $lockDuration %= $seconds;
+
+            if ($value > 0) {
+                $durationParts[] = number_format($value) . ' ' . $unit . ($value > 1 ? 's' : '');
+            }
+        }
+
+        return $durationParts;
+    }
+    # -------------------------------------------------------------
+
+    # -------------------------------------------------------------
     #   Get details methods
     # -------------------------------------------------------------
 
@@ -982,11 +1015,32 @@ class UserAccountController {
             }
     
             $userAccountDetails = $this->userAccountModel->getUserAccount($userAccountID, null);
+            $active = $userAccountDetails['active'] ?? null;
+            $locked = $userAccountDetails['locked'] ?? null;
+            $accountLockDuration = $userAccountDetails['account_lock_duration'];
+            $profilePicture = $this->systemModel->checkImage($userAccountDetails['profile_picture'], 'profile');
+            $passwordExpiryDate = date('F d, Y', strtotime($userAccountDetails['password_expiry_date']));
+            $lastPasswordReset = (!empty($userAccountDetails['last_password_reset'])) ? date('F d, Y h:i:s a', strtotime($userAccountDetails['last_password_reset'])) : 'Never Reset';
+            $lastConnectionDate = (!empty($userAccountDetails['last_connection_date'])) ? date('F d, Y h:i:s a', strtotime($userAccountDetails['last_connection_date'])) : 'Never Connected';
+            $lastFailedLoginAttempt = (!empty($userAccountDetails['last_failed_login_attempt'])) ? date('F d, Y h:i:s a', strtotime($userAccountDetails['last_failed_login_attempt'])) : '--';
+
+            $activeBadge = $active == 'Yes' ? '<span class="badge bg-success">Active</span>' : '<span class="badge bg-danger">Inactive</span>';
+            $lockedBadge = $locked == 'Yes' ? '<span class="badge bg-danger">Yes</span>' : '<span class="badge bg-success">No</span>';
+
+            $accountLockDuration = ($accountLockDuration > 0) ? 'Locked for ' . implode(", ", $this->formatDuration($accountLockDuration)) : '--';
 
             $response = [
                 'success' => true,
                 'fileAs' => $userAccountDetails['file_as'] ?? null,
-                'email' => $userAccountDetails['email'] ?? null
+                'email' => $userAccountDetails['email'] ?? null,
+                'profilePicture' => $profilePicture,
+                'passwordExpiryDate' => $passwordExpiryDate,
+                'lastPasswordReset' => $lastPasswordReset,
+                'lastConnectionDate' => $lastConnectionDate,
+                'lastFailedLoginAttempt' => $lastFailedLoginAttempt,
+                'accountLockDuration' => $accountLockDuration,
+                'activeBadge' => $activeBadge,
+                'lockedBadge' => $lockedBadge
             ];
 
             echo json_encode($response);
@@ -1017,7 +1071,7 @@ require_once '../../role/model/role-model.php';
 require_once '../../authentication/model/authentication-model.php';
 require_once '../../security-setting/model/security-setting-model.php';
 
-$controller = new UserAccountController(new UserAccountModel(new DatabaseModel), new RoleModel(new DatabaseModel), new AuthenticationModel(new DatabaseModel), new SecuritySettingModel(new DatabaseModel), new SecurityModel());
+$controller = new UserAccountController(new UserAccountModel(new DatabaseModel), new RoleModel(new DatabaseModel), new AuthenticationModel(new DatabaseModel), new SecuritySettingModel(new DatabaseModel), new SecurityModel(), new SystemModel());
 $controller->handleRequest();
 
 ?>

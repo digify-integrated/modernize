@@ -49,6 +49,7 @@
                                             <button type="button" class="btn btn-dark dropdown-toggle mb-0" data-bs-toggle="dropdown" aria-expanded="false">Action</button>
                                             <ul class="dropdown-menu dropdown-menu-end">
                                                 <li><a class="dropdown-item" href="user-account.php?new">Create User Account</a></li>
+                                                <li><button class="dropdown-item" type="button" id="activate-user-account">Change Password</button></li>
                                                 <li><button class="dropdown-item" type="button" id="activate-user-account">Activate User Account</button></li>
                                                 <li><button class="dropdown-item" type="button" id="deactivate-user-account">Deactivate User Account</button></li>
                                                 <li><button class="dropdown-item" type="button" id="lock-user-account">Lock User Account</button></li>
@@ -57,10 +58,7 @@
                                                 <li><hr class="dropdown-divider"></li>
                                                 <li><button class="dropdown-item" type="button" data-bs-toggle="offcanvas" data-bs-target="#log-notes-offcanvas" aria-controls="log-notes-offcanvas" id="view-log-notes">View Log Notes</button></li>
                                             </ul>
-                                        </div>
-                                        <div class="card-actions cursor-pointer ms-auto d-flex button-group">
                                             <button class="btn btn-info mb-0 px-4" data-bs-toggle="modal" id="edit-details" data-bs-target="#user-account-modal">Edit</button>
-                                            <a href="user-account.php?new" class="btn btn-success d-flex align-items-center mb-0">Create</a>
                                         </div>
                                     </div>
                                     <div class="card-body">
@@ -158,7 +156,7 @@
                                         </div>
                                         <div class="d-flex align-items-center justify-content-between pb-3">
                                             <div>
-                                                <h5 class="fs-4 fw-semibold mb-0">Administrator</h5>
+                                                <h5 class="fs-4 fw-semibold mb-0">Sales Proposal Validator</h5>
                                                 <p class="mb-0 mt-1">Date Assigned: 04/04/2024</p>
                                             </div>
                                             <button class="btn bg-danger-subtle text-danger">Delete</button>
@@ -184,12 +182,17 @@
                                                     </div>
                                                     <div>
                                                         <h5 class="fs-4 fw-semibold">Two-factor Authentication</h5>
-                                                        <p class="mb-0 text-wrap w-80">Enhance account security with Two-factor Authentication, adding an extra layer of verification beyond passwords to protect sensitive data and mitigate unauthorized access.</p>
+                                                        <p class="mb-0 text-wrap w-80">Enhance security with 2FA, adding extra verification beyond passwords.</p>
                                                     </div>
                                                 </div>
-                                                <div class="form-check form-switch mb-0">
-                                                    <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked">
-                                                </div>
+                                                <?php
+                                                    if($twoFactorAuthentication == 'Yes'){
+                                                        echo '<button class="btn btn-danger ms-2" id="disable-two-factor-authentication">Disable</button>';
+                                                    }
+                                                    else{
+                                                        echo '<button class="btn btn-success ms-2" id="enable-two-factor-authentication">Enable</button>';
+                                                    }
+                                                ?>
                                             </div>
                                             <div class="d-flex align-items-center justify-content-between mb-4">
                                                 <div class="d-flex align-items-center gap-3">
@@ -198,12 +201,17 @@
                                                     </div>
                                                     <div>
                                                         <h5 class="fs-4 fw-semibold">Multiple Login Sessions</h5>
-                                                        <p class="mb-0 text-wrap w-80">Stay informed about account activity with Multiple Login Sessions, receiving notifications for significant changes like new logins from unfamiliar devices or locations, enabling proactive security management.</p>
+                                                        <p class="mb-0 text-wrap w-80">Track logins with Multiple Sessions, get alerts for unfamiliar activity, boost security.</p>
                                                     </div>
                                                 </div>
-                                                <div class="form-check form-switch mb-0">
-                                                    <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked">
-                                                </div>
+                                                <?php
+                                                    if($multipleSession == 'Yes'){
+                                                        echo '<button class="btn btn-danger ms-2" id="disable-multiple-session">Disable</button>';
+                                                    }
+                                                    else{
+                                                        echo '<button class="btn btn-success ms-2" id="enable-multiple-session">Enable</button>';
+                                                    }
+                                                ?>
                                             </div>
                                         </div>
                                     </div>
@@ -216,3 +224,40 @@
         </div>
     </div>
 </div>
+
+<div id="user-account-modal" class="modal fade" tabindex="-1" aria-labelledby="user-account-modal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-r">
+        <div class="modal-content">
+            <div class="modal-header border-bottom">
+                <h5 class="modal-title fw-8">Edit User Account Details</h5>
+                <button type="button" class="btn-close fs-2" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="user-account-form" method="post" action="#">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="mb-3">
+                                <label class="col-sm-4 form-label" for="file_as">Display Name <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control maxlength" id="file_as" name="file_as" maxlength="300" autocomplete="off">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="mb-3">
+                                <label class="col-sm-4 form-label" for="email">Email Address <span class="text-danger">*</span></label>
+                                <input type="email" class="form-control maxlength" id="email" name="email" maxlength="250" autocomplete="off">
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer border-top">
+                <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Close</button>
+                <button type="submit" form="user-account-form" class="btn btn-success" id="submit-data">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<?php require_once('components/global/view/_log_notes_offcanvas.php'); ?>

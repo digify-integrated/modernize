@@ -1,6 +1,10 @@
 <?php
     require('view/_required_php_files.php');
     require('view/_check_user_status.php');
+    
+    require('components/user-account/model/user-account-model.php');
+
+    $userAccountModel = new UserAccountModel($databaseModel);
 
     $pageTitle = 'User Account';
 
@@ -11,6 +15,10 @@
         }
     
         $userAccountID = $securityModel->decryptData($_GET['id']);
+
+        $userAccountDetails = $userAccountModel->getUserAccount($userAccountID, null);
+        $twoFactorAuthentication = $userAccountDetails['two_factor_auth'];
+        $multipleSession = $userAccountDetails['multiple_session'];
     }
     else{
         $userAccountID = null;
