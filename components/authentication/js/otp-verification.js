@@ -38,27 +38,20 @@ $(document).ready(function () {
 function otpForm(){
     $('#otp-form').validate({
         errorPlacement: function (error, element) {
-            const isSelect2 = element.hasClass('select2') || element.hasClass('modal-select2') || element.hasClass('offcanvas-select2');
-            const insertAfterElement = isSelect2 ? element.next('.select2-container') : (element.parent('.input-group').length ? element.parent() : element);
-        
-            error.insertAfter(insertAfterElement);
+            showNotification('Attention Required: Error Found', error, 'error', 1500);
         },
-        highlight: function (element) {
-            const inputElement = $(element);
-            const isSelect2 = inputElement.hasClass('select2-hidden-accessible');
-        
-            if (isSelect2) {
+        highlight: function(element) {
+            var inputElement = $(element);
+            if (inputElement.hasClass('select2-hidden-accessible')) {
                 inputElement.next().find('.select2-selection__rendered').addClass('is-invalid');
             }
             else {
                 inputElement.addClass('is-invalid');
             }
         },
-        unhighlight: function (element) {
-            const inputElement = $(element);
-            const isSelect2 = inputElement.hasClass('select2-hidden-accessible');
-        
-            if (isSelect2) {
+        unhighlight: function(element) {
+            var inputElement = $(element);
+            if (inputElement.hasClass('select2-hidden-accessible')) {
                 inputElement.next().find('.select2-selection__rendered').removeClass('is-invalid');
             }
             else {

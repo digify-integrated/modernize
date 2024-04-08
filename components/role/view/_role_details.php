@@ -45,6 +45,35 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-header d-flex align-items-center">
+                    <h5 class="card-title mb-0">User Account</h5>
+                    <div class="card-actions cursor-pointer ms-auto d-flex button-group">
+                        <button class="btn btn-success d-flex align-items-center mb-0" data-bs-toggle="modal" data-bs-target="#user-account-assignment-modal" id="assign-user-account">Assign</button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table id="assigned-user-account-table" class="table border table-striped table-hover align-middle text-wrap mb-0">
+                            <thead class="text-dark">
+                                <tr>
+                                    <th>User Account</th>
+                                    <th>Last Connection Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="datatables">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex align-items-center">
                     <h5 class="card-title mb-0">Role Permission</h5>
                     <div class="card-actions cursor-pointer ms-auto d-flex button-group">
                         <button class="btn btn-success d-flex align-items-center mb-0" data-bs-toggle="modal" data-bs-target="#role-permission-assignment-modal" id="assign-role-permission">Assign</button>
@@ -131,6 +160,30 @@
             <div class="modal-footer border-top">
                 <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Close</button>
                 <button type="submit" form="role-form" class="btn btn-success" id="submit-data">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="user-account-assignment-modal" class="modal fade" tabindex="-1" aria-labelledby="user-account-assignment-modal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-lg">
+        <div class="modal-content">
+            <div class="modal-header border-bottom">
+                <h5 class="modal-title fw-8">Assign User Account</h5>
+                <button type="button" class="btn-close fs-2" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="user-account-assignment-form" method="post" action="#">
+                    <div class="row">
+                        <div class="col-12">
+                            <select multiple="multiple" size="20" id="user_account_id" name="user_account_id[]"></select>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer border-top">
+                <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Close</button>
+                <button type="submit" form="user-account-assignment-form" class="btn btn-success" id="submit-user-account-assignment">Save changes</button>
             </div>
         </div>
     </div>

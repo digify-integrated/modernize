@@ -95,6 +95,38 @@ if(isset($_POST['type']) && !empty($_POST['type'])){
             echo json_encode($response);
         break;
         # -------------------------------------------------------------
+
+        # -------------------------------------------------------------
+        #
+        # Type: role user account dual listbox options
+        # Description:
+        # Generates the role user account dual listbox options.
+        #
+        # Parameters: None
+        #
+        # Returns: Array
+        #
+        # -------------------------------------------------------------
+        case 'role user account dual listbox options':
+            if(isset($_POST['role_id']) && !empty($_POST['role_id'])){
+                $roleID = htmlspecialchars($_POST['role_id'], ENT_QUOTES, 'UTF-8');
+                $sql = $databaseModel->getConnection()->prepare('CALL generateRoleUserAccountDualListBoxOptions(:roleID)');
+                $sql->bindValue(':roleID', $roleID, PDO::PARAM_INT);
+                $sql->execute();
+                $options = $sql->fetchAll(PDO::FETCH_ASSOC);
+                $sql->closeCursor();
+
+                foreach ($options as $row) {
+                    $response[] = [
+                        'id' => $row['user_account_id'],
+                        'text' => $row['file_as']
+                    ];
+                }
+
+                echo json_encode($response);
+            }
+        break;
+        # -------------------------------------------------------------
     }
 }
 

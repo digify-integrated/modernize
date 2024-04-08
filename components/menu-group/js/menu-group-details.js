@@ -40,7 +40,7 @@
                         },
                         success: function (response) {
                             if (response.success) {
-                                setNotification('Delete Menu Group Success', 'The menu group has been deleted successfully.', 'success');
+                                setNotification(response.title, response.message, response.messageType);
                                 window.location = 'menu-group.php';
                             }
                             else {

@@ -268,18 +268,16 @@ class AuthenticationModel {
     # - $p_email (string): The email address of the user.
     # - $p_password (string): The new password.
     # - $p_password_expiry_date (date): The expiry date of the password.
-    # - $p_last_password_change (datetime): The date and time of the last password change.
     #
     # Returns: None
     #
     # -------------------------------------------------------------
-    public function updateUserPassword($p_user_id, $p_email, $p_password, $p_password_expiry_date, $p_last_password_change) {
-        $stmt = $this->db->getConnection()->prepare('CALL updateUserPassword(:p_user_id, :p_email, :p_password, :p_password_expiry_date, :p_last_password_change)');
+    public function updateUserPassword($p_user_id, $p_email, $p_password, $p_password_expiry_date) {
+        $stmt = $this->db->getConnection()->prepare('CALL updateUserPassword(:p_user_id, :p_email, :p_password, :p_password_expiry_date)');
         $stmt->bindValue(':p_user_id', $p_user_id, PDO::PARAM_INT);
         $stmt->bindValue(':p_email', $p_email, PDO::PARAM_STR);
         $stmt->bindValue(':p_password', $p_password, PDO::PARAM_STR);
         $stmt->bindValue(':p_password_expiry_date', $p_password_expiry_date, PDO::PARAM_STR);
-        $stmt->bindValue(':p_last_password_change', $p_last_password_change, PDO::PARAM_STR);
         $stmt->execute();
     }
     # -------------------------------------------------------------

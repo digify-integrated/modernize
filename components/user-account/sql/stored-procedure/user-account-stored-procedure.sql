@@ -62,6 +62,17 @@ BEGIN
     COMMIT;
 END //
 
+CREATE PROCEDURE updateUserAccountPassword(IN p_user_account_id INT, IN p_password VARCHAR(255), IN p_password_expiry_date DATE, IN p_last_log_by INT)
+BEGIN
+	UPDATE user_account 
+    SET 
+        password = p_password, 
+        password_expiry_date = p_password_expiry_date, 
+        last_password_change = NOW(), 
+        last_log_by = p_last_log_by
+    WHERE p_user_account_id = user_account_id;
+END //
+
 CREATE PROCEDURE updateUserAccountStatus(IN p_user_account_id INT, IN p_active VARCHAR(5), IN p_last_log_by INT)
 BEGIN
     UPDATE user_account
@@ -74,6 +85,22 @@ CREATE PROCEDURE updateUserAccountLock(IN p_user_account_id INT, IN p_locked VAR
 BEGIN
 	UPDATE user_account 
     SET locked = p_locked, account_lock_duration = p_account_lock_duration 
+    WHERE user_account_id = p_user_account_id;
+END //
+
+CREATE PROCEDURE updateTwoFactorAuthenticationStatus(IN p_user_account_id INT, IN p_two_factor_auth VARCHAR(5), IN p_last_log_by INT)
+BEGIN
+    UPDATE user_account
+    SET two_factor_auth = p_two_factor_auth,
+        last_log_by = p_last_log_by
+    WHERE user_account_id = p_user_account_id;
+END //
+
+CREATE PROCEDURE updateMultipleLoginSessionsStatus(IN p_user_account_id INT, IN p_multiple_session VARCHAR(5), IN p_last_log_by INT)
+BEGIN
+    UPDATE user_account
+    SET multiple_session = p_multiple_session,
+        last_log_by = p_last_log_by
     WHERE user_account_id = p_user_account_id;
 END //
 
@@ -141,6 +168,14 @@ BEGIN
     PREPARE stmt FROM query;
     EXECUTE stmt;
     DEALLOCATE PREPARE stmt;
+END //
+
+CREATE PROCEDURE generateRoleUserAccountDualListBoxOptions(IN p_role_id INT)
+BEGIN
+	SELECT user_account_id, file_as 
+    FROM user_account 
+    WHERE user_account_id NOT IN (SELECT user_account_id FROM role_user_account WHERE role_id = p_role_id)
+    ORDER BY file_as;
 END //
 
 /* ----------------------------------------------------------------------------------------------------------------------------- */

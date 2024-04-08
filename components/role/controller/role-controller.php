@@ -14,6 +14,7 @@ session_start();
 # -------------------------------------------------------------
 class RoleController {
     private $roleModel;
+    private $userAccountModel;
     private $menuItemModel;
     private $systemActionModel;
     private $authenticationModel;
@@ -28,6 +29,7 @@ class RoleController {
     #
     # Parameters:
     # - @param RoleModel $roleModel     The RoleModel instance for role related operations.
+    # - @param UserAccountModel $userAccountModel     The UserAccountModel instance for user account related operations.
     # - @param MenuItemModel $menuItemModel     The MenuItemModel instance for menu item related operations.
     # - @param SystemActionModel $systemActionModel     The SystemActionModel instance for system action related operations.
     # - @param AuthenticationModel $authenticationModel     The AuthenticationModel instance for user related operations.
@@ -36,8 +38,9 @@ class RoleController {
     # Returns: None
     #
     # -------------------------------------------------------------
-    public function __construct(RoleModel $roleModel, MenuItemModel $menuItemModel, SystemActionModel $systemActionModel, AuthenticationModel $authenticationModel, SecurityModel $securityModel) {
+    public function __construct(RoleModel $roleModel, UserAccountModel $userAccountModel, MenuItemModel $menuItemModel, SystemActionModel $systemActionModel, AuthenticationModel $authenticationModel, SecurityModel $securityModel) {
         $this->roleModel = $roleModel;
+        $this->userAccountModel = $userAccountModel;
         $this->menuItemModel = $menuItemModel;
         $this->systemActionModel = $systemActionModel;
         $this->authenticationModel = $authenticationModel;
@@ -142,6 +145,12 @@ class RoleController {
                 case 'assign system action role permission':
                     $this->assignSystemActionRolePermission();
                     break;
+                case 'assign role user account':
+                    $this->assignRoleUserAccount();
+                    break;
+                case 'assign user account role':
+                    $this->assignUserAccountRole();
+                    break;
                 case 'update role':
                     $this->updateRole();
                     break;
@@ -162,6 +171,12 @@ class RoleController {
                     break;
                 case 'delete role system action permission':
                     $this->deleteRoleSystemActionPermission();
+                    break;
+                case 'delete role user account':
+                    $this->deleteRoleUserAccount();
+                    break;
+                case 'delete user account role':
+                    $this->deleteUserAccountRole();
                     break;
                 case 'delete multiple role':
                     $this->deleteMultipleRole();
@@ -479,6 +494,142 @@ class RoleController {
                 'success' => true,
                 'title' => 'Assign Role Permission Success',
                 'message' => 'The role permission has been assigned successfully.',
+                'messageType' => 'success'
+            ];
+            
+            echo json_encode($response);
+            exit;
+        }
+        else{
+            $response = [
+                'success' => false,
+                'title' => 'Transaction Error',
+                'message' => 'Something went wrong. Please try again later. If the issue persists, please contact support for assistance.',
+                'messageType' => 'error'
+            ];
+            
+            echo json_encode($response);
+            exit;
+        }
+    }
+    # -------------------------------------------------------------
+
+    # -------------------------------------------------------------
+    #
+    # Function: assignRoleUserAccount
+    # Description: 
+    # Assigns a role user account.
+    #
+    # Parameters: None
+    #
+    # Returns: Array
+    #
+    # -------------------------------------------------------------
+    public function assignRoleUserAccount() {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            return;
+        }
+
+        if (isset($_POST['role_id']) && !empty($_POST['role_id'])) {
+            if(!isset($_POST['user_account_id']) || empty($_POST['user_account_id'])){
+                $response = [
+                    'success' => false,
+                    'title' => 'User Account Selection Required',
+                    'message' => 'Please select the user account(s) you wish to assign to the role.',
+                    'messageType' => 'error'
+                ];
+                
+                echo json_encode($response);
+                exit;
+            }
+
+            $userID = $_SESSION['user_id'];
+            $roleID = htmlspecialchars($_POST['role_id'], ENT_QUOTES, 'UTF-8');
+            $userAccountIDs = $_POST['user_account_id'];
+            
+            $roleDetails = $this->roleModel->getRole($roleID);
+            $roleName = $roleDetails['role_name'] ?? null;
+
+            foreach ($userAccountIDs as $userAccountID) {
+                $userAccountDetails = $this->userAccountModel->getUserAccount($userAccountID, null);
+                $fileAs = $userAccountDetails['file_as'] ?? null;
+
+                $this->roleModel->insertRoleUserAccount($roleID, $roleName, $userAccountID, $fileAs, $userID);
+            }
+    
+            $response = [
+                'success' => true,
+                'title' => 'Assign User Account Success',
+                'message' => 'The user account has been assigned successfully.',
+                'messageType' => 'success'
+            ];
+            
+            echo json_encode($response);
+            exit;
+        }
+        else{
+            $response = [
+                'success' => false,
+                'title' => 'Transaction Error',
+                'message' => 'Something went wrong. Please try again later. If the issue persists, please contact support for assistance.',
+                'messageType' => 'error'
+            ];
+            
+            echo json_encode($response);
+            exit;
+        }
+    }
+    # -------------------------------------------------------------
+
+    # -------------------------------------------------------------
+    #
+    # Function: assignUserAccountRole
+    # Description: 
+    # Assigns a user account role.
+    #
+    # Parameters: None
+    #
+    # Returns: Array
+    #
+    # -------------------------------------------------------------
+    public function assignUserAccountRole() {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            return;
+        }
+
+        if (isset($_POST['user_account_id']) && !empty($_POST['user_account_id'])) {
+            if(!isset($_POST['role_id']) || empty($_POST['role_id'])){ 
+                $response = [
+                    'success' => false,
+                    'title' => 'Role Selection Required',
+                    'message' => 'Please select the role(s) you wish to assign to the user account.',
+                    'messageType' => 'error'
+                ];
+                
+                echo json_encode($response);
+                exit;
+            }
+
+            $userID = $_SESSION['user_id'];
+            $userAccountID = htmlspecialchars($_POST['user_account_id'], ENT_QUOTES, 'UTF-8');
+            $roleIDs = $_POST['role_id'];
+
+            $userAccountDetails = $this->userAccountModel->getUserAccount($userAccountID, null);
+            $fileAs = $userAccountDetails['file_as'] ?? null;
+
+            foreach ($roleIDs as $roleID) {
+                if(strpos($roleID, '_helper2') === false) {
+                    $roleDetails = $this->roleModel->getRole($roleID);
+                    $roleName = $roleDetails['role_name'] ?? null;
+    
+                    $this->roleModel->insertRoleUserAccount($roleID, $roleName, $userAccountID, $fileAs, $userID);
+                }
+            }
+    
+            $response = [
+                'success' => true,
+                'title' => 'Assign Role Success',
+                'message' => 'The role has been assigned successfully.',
                 'messageType' => 'success'
             ];
             
@@ -886,6 +1037,128 @@ class RoleController {
         }
     }
     # -------------------------------------------------------------
+    
+    # -------------------------------------------------------------
+    #
+    # Function: deleteRoleUserAccount
+    # Description: 
+    # Delete the role user account if it exists; otherwise, return an error message.
+    #
+    # Parameters: None
+    #
+    # Returns: Array
+    #
+    # -------------------------------------------------------------
+    public function deleteRoleUserAccount() {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            return;
+        }
+
+        if (isset($_POST['role_user_account_id']) && !empty($_POST['role_user_account_id'])) {
+            $roleUserAccountID = htmlspecialchars($_POST['role_user_account_id'], ENT_QUOTES, 'UTF-8');
+        
+            $checkRoleUserAccountExist = $this->roleModel->checkRoleUserAccountExist($roleUserAccountID);
+            $total = $checkRoleUserAccountExist['total'] ?? 0;
+
+            if($total === 0){
+                $response = [
+                    'success' => false,
+                    'notExist' => true,
+                    'title' => 'Delete User Account Error',
+                    'message' => 'The role permission has does not exist.',
+                    'messageType' => 'error'
+                ];
+                
+                echo json_encode($response);
+                exit;
+            }
+
+            $this->roleModel->deleteRoleUserAccount($roleUserAccountID);
+                
+            $response = [
+                'success' => true,
+                'title' => 'Delete User Account Success',
+                'message' => 'The user account has been deleted successfully.',
+                'messageType' => 'success'
+            ];
+            
+            echo json_encode($response);
+            exit;
+        }
+        else{
+            $response = [
+                'success' => false,
+                'title' => 'Transaction Error',
+                'message' => 'Something went wrong. Please try again later. If the issue persists, please contact support for assistance.',
+                'messageType' => 'error'
+            ];
+            
+            echo json_encode($response);
+            exit;
+        }
+    }
+    # -------------------------------------------------------------
+    
+    # -------------------------------------------------------------
+    #
+    # Function: deleteUserAccountRole
+    # Description: 
+    # Delete the role user account if it exists; otherwise, return an error message.
+    #
+    # Parameters: None
+    #
+    # Returns: Array
+    #
+    # -------------------------------------------------------------
+    public function deleteUserAccountRole() {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            return;
+        }
+
+        if (isset($_POST['role_user_account_id']) && !empty($_POST['role_user_account_id'])) {
+            $roleUserAccountID = htmlspecialchars($_POST['role_user_account_id'], ENT_QUOTES, 'UTF-8');
+        
+            $checkRoleUserAccountExist = $this->roleModel->checkRoleUserAccountExist($roleUserAccountID);
+            $total = $checkRoleUserAccountExist['total'] ?? 0;
+
+            if($total === 0){
+                $response = [
+                    'success' => false,
+                    'notExist' => true,
+                    'title' => 'Delete Role Error',
+                    'message' => 'The role permission has does not exist.',
+                    'messageType' => 'error'
+                ];
+                
+                echo json_encode($response);
+                exit;
+            }
+
+            $this->roleModel->deleteRoleUserAccount($roleUserAccountID);
+                
+            $response = [
+                'success' => true,
+                'title' => 'Delete Role Success',
+                'message' => 'The role has been deleted successfully.',
+                'messageType' => 'success'
+            ];
+            
+            echo json_encode($response);
+            exit;
+        }
+        else{
+            $response = [
+                'success' => false,
+                'title' => 'Transaction Error',
+                'message' => 'Something went wrong. Please try again later. If the issue persists, please contact support for assistance.',
+                'messageType' => 'error'
+            ];
+            
+            echo json_encode($response);
+            exit;
+        }
+    }
+    # -------------------------------------------------------------
 
     # -------------------------------------------------------------
     #
@@ -1011,11 +1284,12 @@ require_once '../../global/model/database-model.php';
 require_once '../../global/model/security-model.php';
 require_once '../../global/model/system-model.php';
 require_once '../../role/model/role-model.php';
+require_once '../../user-account/model/user-account-model.php';
 require_once '../../menu-item/model/menu-item-model.php';
 require_once '../../system-action/model/system-action-model.php';
 require_once '../../authentication/model/authentication-model.php';
 
-$controller = new RoleController(new RoleModel(new DatabaseModel), new MenuItemModel(new DatabaseModel), new SystemActionModel(new DatabaseModel), new AuthenticationModel(new DatabaseModel), new SecurityModel());
+$controller = new RoleController(new RoleModel(new DatabaseModel), new UserAccountModel(new DatabaseModel), new MenuItemModel(new DatabaseModel), new SystemActionModel(new DatabaseModel), new AuthenticationModel(new DatabaseModel), new SecurityModel());
 $controller->handleRequest();
 
 ?>

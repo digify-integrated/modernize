@@ -440,7 +440,6 @@ class AuthenticationController {
         $securitySettingDetails = $this->securitySettingModel->getSecuritySetting(4);
         $defaultPasswordDuration = $securitySettingDetails['value'] ?? DEFAULT_PASSWORD_DURATION;
     
-        $lastPasswordChange = date('Y-m-d H:i:s');
         $passwordExpiryDate = date('Y-m-d', strtotime('+'. $defaultPasswordDuration .' days'));
 
         $this->authenticationModel->updateUserPassword($userAccountID, $email, $encryptedPassword, $passwordExpiryDate, $lastPasswordChange);

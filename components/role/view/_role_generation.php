@@ -4,11 +4,13 @@ require_once '../../global/config/config.php';
 require_once '../../global/model/database-model.php';
 require_once '../../global/model/system-model.php';
 require_once '../../role/model/role-model.php';
+require_once '../../user-account/model/user-account-model.php';
 require_once '../../global/model/security-model.php';
 
 $databaseModel = new DatabaseModel();
 $systemModel = new SystemModel();
 $roleModel = new RoleModel($databaseModel);
+$userAccountModel = new UserAccountModel($databaseModel);
 $securityModel = new SecurityModel();
 
 if(isset($_POST['type']) && !empty($_POST['type'])){
@@ -60,6 +62,116 @@ if(isset($_POST['type']) && !empty($_POST['type'])){
             }
 
             echo json_encode($response);
+        break;
+        # -------------------------------------------------------------
+
+        # -------------------------------------------------------------
+        #
+        # Type: assigned role user account table
+        # Description:
+        # Generates the assigned role user account table.
+        #
+        # Parameters: None
+        #
+        # Returns: Array
+        #
+        # -------------------------------------------------------------
+        case 'assigned role user account table':
+            if(isset($_POST['role_id']) && !empty($_POST['role_id'])){
+                $roleID = htmlspecialchars($_POST['role_id'], ENT_QUOTES, 'UTF-8');
+
+                $sql = $databaseModel->getConnection()->prepare('CALL generateRoleUserAccountTable(:roleID)');
+                $sql->bindValue(':roleID', $roleID, PDO::PARAM_INT);
+                $sql->execute();
+                $options = $sql->fetchAll(PDO::FETCH_ASSOC);
+                $sql->closeCursor();
+
+                foreach ($options as $row) {
+                    $roleUserAccountID = $row['role_user_account_id'];
+                    $userAccountID = $row['user_account_id'];
+                    $fileAs = $row['file_as'];
+
+                    $userAccountDetails = $userAccountModel->getUserAccount($userAccountID, null);
+                    $email = $userAccountDetails['email'];
+                    $profilePicture = $systemModel->checkImage($userAccountDetails['profile_picture'], 'profile');
+                    $lastConnectionDate = empty($userAccountDetails['last_connection_date']) ? 'Never Connected' : $systemModel->checkDate('empty', $userAccountDetails['last_connection_date'], '', 'm/d/Y h:i:s a', '');
+
+                    $response[] = [
+                        'USER_ACCOUNT' => '<div class="d-flex align-items-center">
+                                                    <img src="'. $profilePicture .'" alt="avatar" class="rounded-circle" width="35" />
+                                                    <div class="ms-3">
+                                                        <div class="user-meta-info">
+                                                            <h6 class="user-name mb-0">'. $fileAs .'</h6>
+                                                            <small>'. $email .'</small>
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </div>',
+                        'LAST_CONNECTION_DATE' => $lastConnectionDate,
+                        'ACTION' => '<div class="d-flex gap-2">
+                                        <a href="javascript:void(0);" class="text-info view-role-user-account-log-notes" data-role-user-account-id="' . $roleUserAccountID . '" data-bs-toggle="offcanvas" data-bs-target="#log-notes-offcanvas" aria-controls="log-notes-offcanvas" title="View Log Notes">
+                                            <i class="ti ti-file-text fs-5"></i>
+                                        </a>
+                                        <a href="javascript:void(0);" class="text-danger ms-3 delete-role-user-account" data-role-user-account-id="' . $roleUserAccountID . '" title="Delete User Account">
+                                            <i class="ti ti-trash fs-5"></i>
+                                        </a>
+                                    </div>'
+                    ];
+                }
+
+                echo json_encode($response);
+            }
+        break;
+        # -------------------------------------------------------------
+
+        # -------------------------------------------------------------
+        #
+        # Type: assigned role user account list
+        # Description:
+        # Generates the assigned role user account table.
+        #
+        # Parameters: None
+        #
+        # Returns: Array
+        #
+        # -------------------------------------------------------------
+        case 'assigned role user account list':
+            if(isset($_POST['user_account_id']) && !empty($_POST['user_account_id'])){
+                $table = '';
+                $userAccountID = htmlspecialchars($_POST['user_account_id'], ENT_QUOTES, 'UTF-8');
+
+                $sql = $databaseModel->getConnection()->prepare('CALL generateUserAccountRoleList(:userAccountID)');
+                $sql->bindValue(':userAccountID', $userAccountID, PDO::PARAM_INT);
+                $sql->execute();
+                $options = $sql->fetchAll(PDO::FETCH_ASSOC);
+                $sql->closeCursor();
+
+                foreach ($options as $row) {
+                    $roleUserAccountID = $row['role_user_account_id'];
+                    $roleName = $row['role_name'];
+                    $assignmentDate = $systemModel->checkDate('empty', $row['date_assigned'], '', 'm/d/Y h:i:s a', '');
+
+                    $table .= '<div class="d-flex align-items-center justify-content-between pb-3">
+                                    <div>
+                                        <h5 class="fs-4 fw-semibold mb-0">'. $roleName .'</h5>
+                                        <small class="mb-0 mt-1">Date Assigned : '. $assignmentDate .'</small>
+                                    </div>
+                                    <button class="btn bg-danger-subtle text-danger delete-role-user-account" data-role-user-account-id="' . $roleUserAccountID . '">Delete</button>
+                                </div>';
+                }
+
+                if(empty($table)){
+                    $table = '<div class="d-flex align-items-center text-center justify-content-between pb-0">
+                                No user role found
+                            </div>';
+                }
+
+                $response[] = [
+                    'ROLE_USER_ACCOUNT' => $table
+                ];
+
+                echo json_encode($response);
+            }
         break;
         # -------------------------------------------------------------
 
@@ -357,6 +469,38 @@ if(isset($_POST['type']) && !empty($_POST['type'])){
                 $systemActionID = htmlspecialchars($_POST['system_action_id'], ENT_QUOTES, 'UTF-8');
                 $sql = $databaseModel->getConnection()->prepare('CALL generateSystemActionRoleDualListBoxOptions(:systemActionID)');
                 $sql->bindValue(':systemActionID', $systemActionID, PDO::PARAM_INT);
+                $sql->execute();
+                $options = $sql->fetchAll(PDO::FETCH_ASSOC);
+                $sql->closeCursor();
+
+                foreach ($options as $row) {
+                    $response[] = [
+                        'id' => $row['role_id'],
+                        'text' => $row['role_name']
+                    ];
+                }
+
+                echo json_encode($response);
+            }
+        break;
+        # -------------------------------------------------------------
+
+        # -------------------------------------------------------------
+        #
+        # Type: user account role dual listbox options
+        # Description:
+        # Generates the user account role dual listbox options.
+        #
+        # Parameters: None
+        #
+        # Returns: Array
+        #
+        # -------------------------------------------------------------
+        case 'user account role dual listbox options':
+            if(isset($_POST['user_account_id']) && !empty($_POST['user_account_id'])){
+                $userAccountID = htmlspecialchars($_POST['user_account_id'], ENT_QUOTES, 'UTF-8');
+                $sql = $databaseModel->getConnection()->prepare('CALL generateUserAccountRoleDualListBoxOptions(:userAccountID)');
+                $sql->bindValue(':userAccountID', $userAccountID, PDO::PARAM_INT);
                 $sql->execute();
                 $options = $sql->fetchAll(PDO::FETCH_ASSOC);
                 $sql->closeCursor();

@@ -34,7 +34,7 @@
                         },
                         success: function (response) {
                             if (response.success) {
-                                showNotification('Delete Role Success', 'The role has been deleted successfully.', 'success');
+                                showNotification(response.title, response.message, response.messageType);
                                 reloadDatatable('#role-table');
                             }
                             else {
@@ -99,7 +99,7 @@
                             },
                             success: function (response) {
                                 if (response.success) {
-                                    showNotification('Delete Role Success', 'The selected roles have been deleted successfully.', 'success');
+                                    showNotification(response.title, response.message, response.messageType);
                                     reloadDatatable('#role-table');
                                 }
                                 else {

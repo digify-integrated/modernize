@@ -34,7 +34,7 @@
                         },
                         success: function (response) {
                             if (response.success) {
-                                showNotification('Delete User Account Success', 'The user account has been deleted successfully.', 'success');
+                                showNotification(response.title, response.message, response.messageType);
                                 reloadDatatable('#user-account-table');
                             }
                             else {
@@ -99,7 +99,7 @@
                             },
                             success: function (response) {
                                 if (response.success) {
-                                    showNotification('Delete User Account Success', 'The selected user accounts have been deleted successfully.', 'success');
+                                    showNotification(response.title, response.message, response.messageType);
                                     reloadDatatable('#user-account-table');
                                 }
                                 else {

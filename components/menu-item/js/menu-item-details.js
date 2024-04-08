@@ -54,7 +54,7 @@
                         },
                         success: function (response) {
                             if (response.success) {
-                                setNotification('Delete Menu Item Success', 'The menu item has been deleted successfully.', 'success');
+                                setNotification(response.title, response.message, response.messageType);
                                 window.location = 'menu-item.php';
                             }
                             else {
@@ -113,7 +113,7 @@
                 },
                 success: function (response) {
                     if (response.success) {
-                        showNotification('Update Role Permission Success', 'The role permission has been updated successfully.', 'success');
+                        showNotification(response.title, response.message, response.messageType);
                         reloadDatatable('#assigned-role-permission-table');
                     }
                     else {
@@ -168,7 +168,7 @@
                         },
                         success: function (response) {
                             if (response.success) {
-                                showNotification('Delete Role Permission Success', 'The role permission has been deleted successfully.', 'success');
+                                showNotification(response.title, response.message, response.messageType);
                                 reloadDatatable('#assigned-role-permission-table');
                             }
                             else {
@@ -652,6 +652,7 @@ function generateDropdownOptions(type){
                             selectedListLabel: 'Selected',
                             preserveSelectionOnMove: 'moved',
                             moveOnSelect: false,
+                            helperSelectNamePostfix: false
                         });
     
                         $('#role_id').bootstrapDualListbox('refresh', true);

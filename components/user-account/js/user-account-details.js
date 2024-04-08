@@ -8,8 +8,20 @@
             userAccountForm();
         }
 
+        if($('#change-password-form').length){
+            changePasswordForm();
+        }
+
+        if($('#user-account-assignment-form').length){
+            userAccountAssignmentForm();
+        }
+
         $(document).on('click','#edit-details',function() {
             displayDetails('get user account details');
+        });
+
+        $(document).on('click','#change-password',function() {
+            resetModalForm('change-password-form');
         });
 
         $(document).on('click','#delete-user-account',function() {
@@ -40,8 +52,356 @@
                         },
                         success: function (response) {
                             if (response.success) {
-                                setNotification('Delete User Account Success', 'The user account has been deleted successfully.', 'success');
+                                setNotification(response.title, response.message, response.messageType);
                                 window.location = 'user-account.php';
+                            }
+                            else {
+                                if (response.isInactive || response.userNotExist || response.userInactive || response.userLocked || response.sessionExpired) {
+                                    setNotification(response.title, response.message, response.messageType);
+                                    window.location = 'logout.php?logout';
+                                }
+                                else if (response.notExist) {
+                                    setNotification(response.title, response.message, response.messageType);
+                                    window.location = 'user-account.php';
+                                }
+                                else {
+                                    showNotification(response.title, response.message, response.messageType);
+                                }
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            var fullErrorMessage = `XHR status: ${status}, Error: ${error}`;
+                            if (xhr.responseText) {
+                                fullErrorMessage += `, Response: ${xhr.responseText}`;
+                            }
+                            showErrorDialog(fullErrorMessage);
+                        }
+                    });
+                    return false;
+                }
+            });
+        });
+
+        $(document).on('click','.delete-role-user-account',function() {
+            const role_user_account_id = $(this).data('role-user-account-id');
+            const transaction = 'delete user account role';
+    
+            Swal.fire({
+                title: 'Confirm Role Deletion',
+                text: 'Are you sure you want to delete this role?',
+                icon: 'warning',
+                showCancelButton: !0,
+                confirmButtonText: 'Delete',
+                cancelButtonText: 'Cancel',
+                customClass: {
+                    confirmButton: 'btn btn-danger mt-2',
+                    cancelButton: 'btn btn-secondary ms-2 mt-2'
+                },
+                buttonsStyling: !1
+            }).then(function(result) {
+                if (result.value) {
+                    $.ajax({
+                        type: 'POST',
+                        url: 'components/role/controller/role-controller.php',
+                        dataType: 'json',
+                        data: {
+                            role_user_account_id : role_user_account_id, 
+                            transaction : transaction
+                        },
+                        success: function (response) {
+                            if (response.success) {
+                                showNotification(response.title, response.message, response.messageType);
+                                roleList();
+                            }
+                            else {
+                                if (response.isInactive || response.userNotExist || response.userInactive || response.userLocked || response.sessionExpired) {
+                                    setNotification(response.title, response.message, response.messageType);
+                                    window.location = 'logout.php?logout';
+                                }
+                                else if (response.notExist) {
+                                    setNotification(response.title, response.message, response.messageType);
+                                    roleList();
+                                }
+                                else {
+                                    showNotification(response.title, response.message, response.messageType);
+                                }
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            var fullErrorMessage = `XHR status: ${status}, Error: ${error}`;
+                            if (xhr.responseText) {
+                                fullErrorMessage += `, Response: ${xhr.responseText}`;
+                            }
+                            showErrorDialog(fullErrorMessage);
+                        }
+                    });
+                    return false;
+                }
+            });
+        });
+
+        $(document).on('click','#activate-user-account',function() {
+            const user_account_id = $('#user-account-id').text();
+            const transaction = 'activate user account';
+    
+            Swal.fire({
+                title: 'Confirm User Account Activation',
+                text: 'Are you sure you want to activate this user account?',
+                icon: 'warning',
+                showCancelButton: !0,
+                confirmButtonText: 'Activate',
+                cancelButtonText: 'Cancel',
+                customClass: {
+                    confirmButton: 'btn btn-success mt-2',
+                    cancelButton: 'btn btn-secondary ms-2 mt-2'
+                },
+                buttonsStyling: !1
+            }).then(function(result) {
+                if (result.value) {
+                    $.ajax({
+                        type: 'POST',
+                        url: 'components/user-account/controller/user-account-controller.php',
+                        dataType: 'json',
+                        data: {
+                            user_account_id : user_account_id, 
+                            transaction : transaction
+                        },
+                        success: function (response) {
+                            if (response.success) {
+                                setNotification(response.title, response.message, response.messageType);
+                                window.location.reload();
+                            }
+                            else {
+                                if (response.isInactive || response.userNotExist || response.userInactive || response.userLocked || response.sessionExpired) {
+                                    setNotification(response.title, response.message, response.messageType);
+                                    window.location = 'logout.php?logout';
+                                }
+                                else if (response.notExist) {
+                                    setNotification(response.title, response.message, response.messageType);
+                                    window.location = 'user-account.php';
+                                }
+                                else {
+                                    showNotification(response.title, response.message, response.messageType);
+                                }
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            var fullErrorMessage = `XHR status: ${status}, Error: ${error}`;
+                            if (xhr.responseText) {
+                                fullErrorMessage += `, Response: ${xhr.responseText}`;
+                            }
+                            showErrorDialog(fullErrorMessage);
+                        }
+                    });
+                    return false;
+                }
+            });
+        });
+
+        $(document).on('click','#deactivate-user-account',function() {
+            const user_account_id = $('#user-account-id').text();
+            const transaction = 'deactivate user account';
+    
+            Swal.fire({
+                title: 'Confirm User Account Deactivation',
+                text: 'Are you sure you want to deactivate this user account?',
+                icon: 'warning',
+                showCancelButton: !0,
+                confirmButtonText: 'Deactivate',
+                cancelButtonText: 'Cancel',
+                customClass: {
+                    confirmButton: 'btn btn-danger mt-2',
+                    cancelButton: 'btn btn-secondary ms-2 mt-2'
+                },
+                buttonsStyling: !1
+            }).then(function(result) {
+                if (result.value) {
+                    $.ajax({
+                        type: 'POST',
+                        url: 'components/user-account/controller/user-account-controller.php',
+                        dataType: 'json',
+                        data: {
+                            user_account_id : user_account_id, 
+                            transaction : transaction
+                        },
+                        success: function (response) {
+                            if (response.success) {
+                                setNotification(response.title, response.message, response.messageType);
+                                window.location.reload();
+                            }
+                            else {
+                                if (response.isInactive || response.userNotExist || response.userInactive || response.userLocked || response.sessionExpired) {
+                                    setNotification(response.title, response.message, response.messageType);
+                                    window.location = 'logout.php?logout';
+                                }
+                                else if (response.notExist) {
+                                    setNotification(response.title, response.message, response.messageType);
+                                    window.location = 'user-account.php';
+                                }
+                                else {
+                                    showNotification(response.title, response.message, response.messageType);
+                                }
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            var fullErrorMessage = `XHR status: ${status}, Error: ${error}`;
+                            if (xhr.responseText) {
+                                fullErrorMessage += `, Response: ${xhr.responseText}`;
+                            }
+                            showErrorDialog(fullErrorMessage);
+                        }
+                    });
+                    return false;
+                }
+            });
+        });
+
+        $(document).on('click','#lock-user-account',function() {
+            const user_account_id = $('#user-account-id').text();
+            const transaction = 'lock user account';
+    
+            Swal.fire({
+                title: 'Confirm User Account Lock',
+                text: 'Are you sure you want to lock this user account?',
+                icon: 'warning',
+                showCancelButton: !0,
+                confirmButtonText: 'Lock',
+                cancelButtonText: 'Cancel',
+                customClass: {
+                    confirmButton: 'btn btn-danger mt-2',
+                    cancelButton: 'btn btn-secondary ms-2 mt-2'
+                },
+                buttonsStyling: !1
+            }).then(function(result) {
+                if (result.value) {
+                    $.ajax({
+                        type: 'POST',
+                        url: 'components/user-account/controller/user-account-controller.php',
+                        dataType: 'json',
+                        data: {
+                            user_account_id : user_account_id, 
+                            transaction : transaction
+                        },
+                        success: function (response) {
+                            if (response.success) {
+                                setNotification(response.title, response.message, response.messageType);
+                                window.location.reload();
+                            }
+                            else {
+                                if (response.isInactive || response.userNotExist || response.userInactive || response.userLocked || response.sessionExpired) {
+                                    setNotification(response.title, response.message, response.messageType);
+                                    window.location = 'logout.php?logout';
+                                }
+                                else if (response.notExist) {
+                                    setNotification(response.title, response.message, response.messageType);
+                                    window.location = 'user-account.php';
+                                }
+                                else {
+                                    showNotification(response.title, response.message, response.messageType);
+                                }
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            var fullErrorMessage = `XHR status: ${status}, Error: ${error}`;
+                            if (xhr.responseText) {
+                                fullErrorMessage += `, Response: ${xhr.responseText}`;
+                            }
+                            showErrorDialog(fullErrorMessage);
+                        }
+                    });
+                    return false;
+                }
+            });
+        });
+
+        $(document).on('click','#unlock-user-account',function() {
+            const user_account_id = $('#user-account-id').text();
+            const transaction = 'unlock user account';
+    
+            Swal.fire({
+                title: 'Confirm User Account Unlock',
+                text: 'Are you sure you want to unlock this user account?',
+                icon: 'warning',
+                showCancelButton: !0,
+                confirmButtonText: 'Unlock',
+                cancelButtonText: 'Cancel',
+                customClass: {
+                    confirmButton: 'btn btn-success mt-2',
+                    cancelButton: 'btn btn-secondary ms-2 mt-2'
+                },
+                buttonsStyling: !1
+            }).then(function(result) {
+                if (result.value) {
+                    $.ajax({
+                        type: 'POST',
+                        url: 'components/user-account/controller/user-account-controller.php',
+                        dataType: 'json',
+                        data: {
+                            user_account_id : user_account_id, 
+                            transaction : transaction
+                        },
+                        success: function (response) {
+                            if (response.success) {
+                                setNotification(response.title, response.message, response.messageType);
+                                window.location.reload();
+                            }
+                            else {
+                                if (response.isInactive || response.userNotExist || response.userInactive || response.userLocked || response.sessionExpired) {
+                                    setNotification(response.title, response.message, response.messageType);
+                                    window.location = 'logout.php?logout';
+                                }
+                                else if (response.notExist) {
+                                    setNotification(response.title, response.message, response.messageType);
+                                    window.location = 'user-account.php';
+                                }
+                                else {
+                                    showNotification(response.title, response.message, response.messageType);
+                                }
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            var fullErrorMessage = `XHR status: ${status}, Error: ${error}`;
+                            if (xhr.responseText) {
+                                fullErrorMessage += `, Response: ${xhr.responseText}`;
+                            }
+                            showErrorDialog(fullErrorMessage);
+                        }
+                    });
+                    return false;
+                }
+            });
+        });
+
+        $(document).on('click','#enable-two-factor-authentication',function() {
+            const user_account_id = $('#user-account-id').text();
+            const transaction = 'enable two factor authentication';
+    
+            Swal.fire({
+                title: 'Confirm Two-Factor Authentication Enable',
+                text: 'Are you sure you want to enable the two-factor authentication of this user account?',
+                icon: 'warning',
+                showCancelButton: !0,
+                confirmButtonText: 'Enable',
+                cancelButtonText: 'Cancel',
+                customClass: {
+                    confirmButton: 'btn btn-success mt-2',
+                    cancelButton: 'btn btn-secondary ms-2 mt-2'
+                },
+                buttonsStyling: !1
+            }).then(function(result) {
+                if (result.value) {
+                    $.ajax({
+                        type: 'POST',
+                        url: 'components/user-account/controller/user-account-controller.php',
+                        dataType: 'json',
+                        data: {
+                            user_account_id : user_account_id, 
+                            transaction : transaction
+                        },
+                        success: function (response) {
+                            if (response.success) {
+                                setNotification(response.title, response.message, response.messageType);
+                                window.location.reload();
                             }
                             else {
                                 if (response.isInactive || response.userNotExist || response.userInactive || response.userLocked || response.sessionExpired) {
@@ -98,7 +458,7 @@
                         },
                         success: function (response) {
                             if (response.success) {
-                                setNotification('Disable Two-Factor Authentication Success', 'The two-factor authentication has been deactivated successfully.', 'success');
+                                setNotification(response.title, response.message, response.messageType);
                                 window.location.reload();
                             }
                             else {
@@ -128,74 +488,16 @@
             });
         });
 
-        $(document).on('click','#enable-two-factor-authentication',function() {
+        $(document).on('click','#enable-multiple-login-sessions',function() {
             const user_account_id = $('#user-account-id').text();
-            const transaction = 'enable two factor authentication';
+            const transaction = 'enable multiple login sessions';
     
             Swal.fire({
-                title: 'Confirm Two-Factor Authentication Enable',
-                text: 'Are you sure you want to enable the two-factor authentication of this user account?',
+                title: 'Confirm Multiple Login Sessions Enable',
+                text: 'Are you sure you want to enable the multiple login sessions of this user account?',
                 icon: 'warning',
                 showCancelButton: !0,
                 confirmButtonText: 'Enable',
-                cancelButtonText: 'Cancel',
-                customClass: {
-                    confirmButton: 'btn btn-success mt-2',
-                    cancelButton: 'btn btn-secondary ms-2 mt-2'
-                },
-                buttonsStyling: !1
-            }).then(function(result) {
-                if (result.value) {
-                    $.ajax({
-                        type: 'POST',
-                        url: 'components/user-account/controller/user-account-controller.php',
-                        dataType: 'json',
-                        data: {
-                            user_account_id : user_account_id, 
-                            transaction : transaction
-                        },
-                        success: function (response) {
-                            if (response.success) {
-                                setNotification('Enable Two-Factor Authentication Success', 'The two-factor authentication has been enabled successfully.', 'success');
-                                window.location.reload();
-                            }
-                            else {
-                                if (response.isInactive || response.userNotExist || response.userInactive || response.userLocked || response.sessionExpired) {
-                                    setNotification(response.title, response.message, response.messageType);
-                                    window.location = 'logout.php?logout';
-                                }
-                                else if (response.notExist) {
-                                    setNotification(response.title, response.message, response.messageType);
-                                    window.location = 'user-account.php';
-                                }
-                                else {
-                                    showNotification(response.title, response.message, response.messageType);
-                                }
-                            }
-                        },
-                        error: function(xhr, status, error) {
-                            var fullErrorMessage = `XHR status: ${status}, Error: ${error}`;
-                            if (xhr.responseText) {
-                                fullErrorMessage += `, Response: ${xhr.responseText}`;
-                            }
-                            showErrorDialog(fullErrorMessage);
-                        }
-                    });
-                    return false;
-                }
-            });
-        });
-
-        $(document).on('click','#disable-multiple-session',function() {
-            const user_account_id = $('#user-account-id').text();
-            const transaction = 'disable two factor authentication';
-    
-            Swal.fire({
-                title: 'Confirm Two-Factor Authentication Disable',
-                text: 'Are you sure you want to disable the two-factor authentication of this user account?',
-                icon: 'warning',
-                showCancelButton: !0,
-                confirmButtonText: 'Disable',
                 cancelButtonText: 'Cancel',
                 customClass: {
                     confirmButton: 'btn btn-danger mt-2',
@@ -214,7 +516,7 @@
                         },
                         success: function (response) {
                             if (response.success) {
-                                setNotification('Disable Two-Factor Authentication Success', 'The two-factor authentication has been deactivated successfully.', 'success');
+                                setNotification(response.title, response.message, response.messageType);
                                 window.location.reload();
                             }
                             else {
@@ -244,16 +546,16 @@
             });
         });
 
-        $(document).on('click','#enable-two-factor-authentication',function() {
+        $(document).on('click','#disable-multiple-login-sessions',function() {
             const user_account_id = $('#user-account-id').text();
-            const transaction = 'enable two factor authentication';
+            const transaction = 'disable multiple login sessions';
     
             Swal.fire({
-                title: 'Confirm Two-Factor Authentication Enable',
-                text: 'Are you sure you want to enable the two-factor authentication of this user account?',
+                title: 'Confirm Multiple Login Sessions Disable',
+                text: 'Are you sure you want to disable the multiple login sessions of this user account?',
                 icon: 'warning',
                 showCancelButton: !0,
-                confirmButtonText: 'Enable',
+                confirmButtonText: 'Disable',
                 cancelButtonText: 'Cancel',
                 customClass: {
                     confirmButton: 'btn btn-success mt-2',
@@ -272,7 +574,7 @@
                         },
                         success: function (response) {
                             if (response.success) {
-                                setNotification('Enable Two-Factor Authentication Success', 'The two-factor authentication has been enabled successfully.', 'success');
+                                setNotification(response.title, response.message, response.messageType);
                                 window.location.reload();
                             }
                             else {
@@ -301,6 +603,14 @@
                 }
             });
         });
+
+        $(document).on('click','#assign-user-account',function() {
+            generateDropdownOptions('user account role dual listbox options');
+        });
+
+        if($('#role-list').length){
+            roleList();
+        }
 
         if($('#log-notes-offcanvas').length && $('#view-log-notes').length){
             $(document).on('click','#view-log-notes',function() {
@@ -396,6 +706,175 @@ function userAccountForm(){
     });
 }
 
+function changePasswordForm(){
+    $('#change-password-form').validate({
+        rules: {
+            new_password: {
+                required: true,
+                password_strength: true
+            },
+            confirm_password: {
+                required: true,
+                equalTo: '#new_password'
+            }
+          },
+        messages: {
+            new_password: {
+                required: 'Please enter password'
+            },
+            confirm_password: {
+                required: 'Please re-enter your password for confirmation',
+                equalTo: 'The passwords you entered do not match'
+            }
+        },
+        errorPlacement: function (error, element) {
+            showNotification('Attention Required: Error Found', error, 'error', 1500);
+        },
+        highlight: function(element) {
+            var inputElement = $(element);
+            if (inputElement.hasClass('select2-hidden-accessible')) {
+                inputElement.next().find('.select2-selection__rendered').addClass('is-invalid');
+            }
+            else {
+                inputElement.addClass('is-invalid');
+            }
+        },
+        unhighlight: function(element) {
+            var inputElement = $(element);
+            if (inputElement.hasClass('select2-hidden-accessible')) {
+                inputElement.next().find('.select2-selection__rendered').removeClass('is-invalid');
+            }
+            else {
+                inputElement.removeClass('is-invalid');
+            }
+        },
+        submitHandler: function(form) {
+            const user_account_id = $('#user-account-id').text();
+            const transaction = 'change password';
+    
+            $.ajax({
+                type: 'POST',
+                url: 'components/user-account/controller/user-account-controller.php',
+                data: $(form).serialize() + '&transaction=' + transaction +'&user_account_id=' + user_account_id,
+                dataType: 'json',
+                beforeSend: function() {
+                    disableFormSubmitButton('submit-change-password');
+                },
+                success: function(response) {
+                    if (response.success) {
+                        showNotification(response.title, response.message, response.messageType);
+                        $('#change-password-modal').modal('hide');
+                    }
+                    else {
+                        if (response.isInactive || response.notExist || response.userInactive || response.userLocked || response.sessionExpired) {
+                            setNotification(response.title, response.message, response.messageType);
+                            window.location = 'logout.php?logout';
+                        }
+                        else {
+                            showNotification(response.title, response.message, response.messageType);
+                        }
+                    }
+                },
+                error: function(xhr, status, error) {
+                    handleSystemError(xhr, status, error);
+                },
+                complete: function() {
+                    enableFormSubmitButton('submit-change-password');
+                }
+            });
+    
+            return false;
+        }
+    });
+}
+
+function userAccountAssignmentForm(){
+    $('#user-account-assignment-form').validate({
+        errorPlacement: function (error, element) {
+            showNotification('Attention Required: Error Found', error, 'error', 1500);
+        },
+        highlight: function(element) {
+            var inputElement = $(element);
+            if (inputElement.hasClass('select2-hidden-accessible')) {
+                inputElement.next().find('.select2-selection__rendered').addClass('is-invalid');
+            }
+            else {
+                inputElement.addClass('is-invalid');
+            }
+        },
+        unhighlight: function(element) {
+            var inputElement = $(element);
+            if (inputElement.hasClass('select2-hidden-accessible')) {
+                inputElement.next().find('.select2-selection__rendered').removeClass('is-invalid');
+            }
+            else {
+                inputElement.removeClass('is-invalid');
+            }
+        },
+        submitHandler: function(form) {
+            const user_account_id = $('#user-account-id').text();
+            const transaction = 'assign user account role';
+          
+            $.ajax({
+                type: 'POST',
+                url: 'components/role/controller/role-controller.php',
+                data: $(form).serialize() + '&transaction=' + transaction + '&user_account_id=' + user_account_id,
+                dataType: 'json',
+                beforeSend: function() {
+                    disableFormSubmitButton('submit-user-account-assignment');
+                },
+                success: function (response) {
+                    if (response.success) {
+                        showNotification(response.title, response.message, response.messageType);
+                        roleList();
+                        $('#user-account-assignment-modal').modal('hide');
+                    }
+                    else {
+                        if (response.isInactive || response.userNotExist || response.userInactive || response.userLocked || response.sessionExpired) {
+                            setNotification(response.title, response.message, response.messageType);
+                            window.location = 'logout.php?logout';
+                        }
+                        else if (response.notExist) {
+                            setNotification(response.title, response.message, response.messageType);
+                            window.location = 'role.php';
+                        }
+                        else {
+                            showNotification(response.title, response.message, response.messageType);
+                        }
+                    }
+                },
+                error: function(xhr, status, error) {
+                    var fullErrorMessage = `XHR status: ${status}, Error: ${error}`;
+                    if (xhr.responseText) {
+                        fullErrorMessage += `, Response: ${xhr.responseText}`;
+                    }
+                    showErrorDialog(fullErrorMessage);
+                },
+                complete: function() {
+                    enableFormSubmitButton('submit-user-account-assignment');
+                }
+            });
+        
+            return false;
+        }
+    });
+}
+
+function roleList(){
+    const user_account_id = $('#user-account-id').text();
+    const type = 'assigned role user account list';
+
+    $.ajax({
+        type: 'POST',
+        url: 'components/role/view/_role_generation.php',
+        dataType: 'json',
+        data: { type: type, 'user_account_id': user_account_id },
+        success: function (result) {
+            document.getElementById('role-list').innerHTML = result[0].ROLE_USER_ACCOUNT;
+        }
+    });
+}
+
 function displayDetails(transaction){
     switch (transaction) {
         case 'get user account details':
@@ -453,65 +932,6 @@ function displayDetails(transaction){
     }
 }
 
-function assignedRoleSystemActionPermissionTable(datatable_name, buttons = false, show_all = false){
-    const user_account_id = $('#user-account-id').text();
-    const type = 'assigned role user account permission table';
-    var settings;
-
-    const column = [ 
-        { 'data' : 'ROLE' },
-        { 'data' : 'SYSTEM_ACTION_ACCESS' },
-        { 'data' : 'ACTION' }
-    ];
-
-    const column_definition = [
-        { 'width': 'auto', 'aTargets': 0 },
-        { 'width': 'auto', 'bSortable': false, 'aTargets': 1 },
-        { 'width': '15%', 'bSortable': false, 'aTargets': 2 }
-    ];
-
-    const length_menu = show_all ? [[-1], ['All']] : [[10, 25, 50, 100, -1], [10, 25, 50, 100, 'All']];
-
-    settings = {
-        'ajax': { 
-            'url' : 'components/role/view/_role_generation.php',
-            'method' : 'POST',
-            'dataType': 'json',
-            'data': {'type' : type, 'user_account_id' : user_account_id},
-            'dataSrc' : '',
-            'error': function(xhr, status, error) {
-                var fullErrorMessage = `XHR status: ${status}, Error: ${error}`;
-                if (xhr.responseText) {
-                    fullErrorMessage += `, Response: ${xhr.responseText}`;
-                }
-                showErrorDialog(fullErrorMessage);
-            }
-        },
-        'order': [[ 0, 'asc' ]],
-        'columns' : column,
-        'fnDrawCallback': function( oSettings ) {
-            readjustDatatableColumn();
-        },
-        'columnDefs': column_definition,
-        'lengthMenu': length_menu,
-        'language': {
-            'emptyTable': 'No data found',
-            'searchPlaceholder': 'Search...',
-            'search': '',
-            'loadingRecords': 'Just a moment while we fetch your data...'
-        },
-    };
-
-    if (buttons) {
-        settings.dom = "<'row'<'col-sm-6'f><'col-sm-6 text-right'B>>" + "<'row'<'col-sm-12'tr>>" + "<'row'<'col-sm-5'i><'col-sm-7'p>>";
-        settings.buttons = ['csv', 'excel', 'pdf'];
-    }
-
-    destroyDatatable(datatable_name);
-
-    $(datatable_name).dataTable(settings);
-}
-
 function generateDropdownOptions(type){
     switch (type) {
         case 'user account role dual listbox options':
@@ -527,8 +947,7 @@ function generateDropdownOptions(type){
                 },
                 success: function(response) {
                     var select = document.getElementById('role_id');
-
-                    select.options.length = 0;
+                    select.innerHTML = '';
 
                     response.forEach(function(opt) {
                         var option = new Option(opt.text, opt.id);
@@ -549,6 +968,7 @@ function generateDropdownOptions(type){
                             selectedListLabel: 'Selected',
                             preserveSelectionOnMove: 'moved',
                             moveOnSelect: false,
+                            helperSelectNamePostfix: false
                         });
 
                         $('#role_id').bootstrapDualListbox('refresh', true);

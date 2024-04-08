@@ -47,7 +47,7 @@
                 },
                 success: function (response) {
                     if (response.success) {
-                        showNotification('Update System Action Permission Success', 'The system action permission has been updated successfully.', 'success');
+                        showNotification(response.title, response.message, response.messageType);
                         reloadDatatable('#assigned-role-system-action-permission-table');
                     }
                     else {
@@ -102,7 +102,7 @@
                         },
                         success: function (response) {
                             if (response.success) {
-                                setNotification('Delete Menu Item Success', 'The system action has been deleted successfully.', 'success');
+                                setNotification(response.title, response.message, response.messageType);
                                 window.location = 'system-action.php';
                             }
                             else {
@@ -160,7 +160,7 @@
                         },
                         success: function (response) {
                             if (response.success) {
-                                showNotification('Delete System Action Permission Success', 'The system action permission has been deleted successfully.', 'success');
+                                showNotification(response.title, response.message, response.messageType);
                                 reloadDatatable('#assigned-role-system-action-permission-table');
                             }
                             else {
@@ -512,6 +512,7 @@ function generateDropdownOptions(type){
                             selectedListLabel: 'Selected',
                             preserveSelectionOnMove: 'moved',
                             moveOnSelect: false,
+                            helperSelectNamePostfix: false
                         });
 
                         $('#role_id').bootstrapDualListbox('refresh', true);

@@ -170,6 +170,8 @@ function resetModalForm(form_id) {
     form.querySelectorAll('.is-invalid').forEach(function(element) {
         element.classList.remove('is-invalid');
     });
+
+    form.reset();
 }
 
 function showNotification(notificationTitle, notificationMessage, notificationType, timeOut = 5000) {

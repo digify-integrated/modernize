@@ -36,7 +36,7 @@
                         },
                         success: function (response) {
                             if (response.success) {
-                                showNotification('Delete Menu Item Success', 'The menu item has been deleted successfully.', 'success');
+                                showNotification(response.title, response.message, response.messageType);
                                 reloadDatatable('#menu-item-table');
                             }
                             else {
@@ -101,7 +101,7 @@
                             },
                             success: function (response) {
                                 if (response.success) {
-                                    showNotification('Delete Menu Item Success', 'The selected menu items have been deleted successfully.', 'success');
+                                    showNotification(response.title, response.message, response.messageType);
                                     reloadDatatable('#menu-item-table');
                                 }
                                 else {

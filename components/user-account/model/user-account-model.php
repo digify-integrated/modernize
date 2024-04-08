@@ -40,6 +40,120 @@ class UserAccountModel {
     # -------------------------------------------------------------
 
     # -------------------------------------------------------------
+    #
+    # Function: updateUserAccountPassword
+    # Description: Updates the user account password.
+    #
+    # Parameters:
+    # - $p_user_account_id (int): The user account ID.
+    # - $p_password (string): The password of the user account.
+    # - $p_password_expiry_date (date): The expiry date of the password of the user account.
+    # - $p_last_log_by (int): The last logged user.
+    #
+    # Returns: None
+    #
+    # -------------------------------------------------------------
+    public function updateUserAccountPassword($p_user_account_id, $p_password, $p_password_expiry_date, $p_last_log_by) {
+        $stmt = $this->db->getConnection()->prepare('CALL updateUserAccountPassword(:p_user_account_id, :p_password, :p_password_expiry_date, :p_last_log_by)');
+        $stmt->bindValue(':p_user_account_id', $p_user_account_id, PDO::PARAM_INT);
+        $stmt->bindValue(':p_password', $p_password, PDO::PARAM_STR);
+        $stmt->bindValue(':p_password_expiry_date', $p_password_expiry_date, PDO::PARAM_STR);
+        $stmt->bindValue(':p_last_log_by', $p_last_log_by, PDO::PARAM_INT);
+        $stmt->execute();
+    }
+    # -------------------------------------------------------------
+
+    # -------------------------------------------------------------
+    #
+    # Function: updateUserAccountStatus
+    # Description: Updates the user account status.
+    #
+    # Parameters:
+    # - $p_user_account_id (int): The user account ID.
+    # - $p_active (string): The status of the user account.
+    # - $p_last_log_by (int): The last logged user.
+    #
+    # Returns: None
+    #
+    # -------------------------------------------------------------
+    public function updateUserAccountStatus($p_user_account_id, $p_active, $p_last_log_by) {
+        $stmt = $this->db->getConnection()->prepare('CALL updateUserAccountStatus(:p_user_account_id, :p_active, :p_last_log_by)');
+        $stmt->bindValue(':p_user_account_id', $p_user_account_id, PDO::PARAM_INT);
+        $stmt->bindValue(':p_active', $p_active, PDO::PARAM_STR);
+        $stmt->bindValue(':p_last_log_by', $p_last_log_by, PDO::PARAM_INT);
+        $stmt->execute();
+    }
+    # -------------------------------------------------------------
+
+    # -------------------------------------------------------------
+    #
+    # Function: updateUserAccountLock
+    # Description: Updates the user account lock status.
+    #
+    # Parameters:
+    # - $p_user_account_id (int): The user account ID.
+    # - $p_locked (string): The locked status of the user account.
+    # - $p_account_lock_duration (int): The account lock duration.
+    # - $p_last_log_by (int): The last logged user.
+    #
+    # Returns: None
+    #
+    # -------------------------------------------------------------
+    public function updateUserAccountLock($p_user_account_id, $p_locked, $p_account_lock_duration, $p_last_log_by) {
+        $stmt = $this->db->getConnection()->prepare('CALL updateUserAccountLock(:p_user_account_id, :p_locked, :p_account_lock_duration, :p_last_log_by)');
+        $stmt->bindValue(':p_user_account_id', $p_user_account_id, PDO::PARAM_INT);
+        $stmt->bindValue(':p_locked', $p_locked, PDO::PARAM_STR);
+        $stmt->bindValue(':p_account_lock_duration', $p_account_lock_duration, PDO::PARAM_INT);
+        $stmt->bindValue(':p_last_log_by', $p_last_log_by, PDO::PARAM_INT);
+        $stmt->execute();
+    }
+    # -------------------------------------------------------------
+
+    # -------------------------------------------------------------
+    #
+    # Function: updateTwoFactorAuthenticationStatus
+    # Description: Updates the user account two-factor authentication status.
+    #
+    # Parameters:
+    # - $p_user_account_id (int): The user account ID.
+    # - $p_two_factor_auth (string): The status of the two-factor authentication.
+    # - $p_last_log_by (int): The last logged user.
+    #
+    # Returns: None
+    #
+    # -------------------------------------------------------------
+    public function updateTwoFactorAuthenticationStatus($p_user_account_id, $p_two_factor_auth, $p_last_log_by) {
+        $stmt = $this->db->getConnection()->prepare('CALL updateTwoFactorAuthenticationStatus(:p_user_account_id, :p_two_factor_auth, :p_last_log_by)');
+        $stmt->bindValue(':p_user_account_id', $p_user_account_id, PDO::PARAM_INT);
+        $stmt->bindValue(':p_two_factor_auth', $p_two_factor_auth, PDO::PARAM_STR);
+        $stmt->bindValue(':p_last_log_by', $p_last_log_by, PDO::PARAM_INT);
+        $stmt->execute();
+    }
+    # -------------------------------------------------------------
+
+    # -------------------------------------------------------------
+    #
+    # Function: updateMultipleLoginSessionsStatus
+    # Description: Updates the user account multiple login sessions.
+    #
+    # Parameters:
+    # - $p_user_account_id (int): The user account ID.
+    # - $p_multiple_session (string): The status of the multiple login sessions.
+    # - $p_last_log_by (int): The last logged user.
+    #
+    # Returns: None
+    #
+    # -------------------------------------------------------------
+    public function updateMultipleLoginSessionsStatus($p_user_account_id, $p_multiple_session, $p_last_log_by) {
+        $stmt = $this->db->getConnection()->prepare('CALL updateMultipleLoginSessionsStatus(:p_user_account_id, :p_multiple_session, :p_last_log_by)');
+        $stmt->bindValue(':p_user_account_id', $p_user_account_id, PDO::PARAM_INT);
+        $stmt->bindValue(':p_multiple_session', $p_multiple_session, PDO::PARAM_STR);
+        $stmt->bindValue(':p_last_log_by', $p_last_log_by, PDO::PARAM_INT);
+        $stmt->execute();
+    }
+    # -------------------------------------------------------------
+
+    # -------------------------------------------------------------
     #   Insert methods
     # -------------------------------------------------------------
 

@@ -34,7 +34,7 @@
                         },
                         success: function (response) {
                             if (response.success) {
-                                showNotification('Delete System Action Success', 'The system action has been deleted successfully.', 'success');
+                                showNotification(response.title, response.message, response.messageType);
                                 reloadDatatable('#system-action-table');
                             }
                             else {
@@ -99,7 +99,7 @@
                             },
                             success: function (response) {
                                 if (response.success) {
-                                    showNotification('Delete System Actions Success', 'The selected system actions have been deleted successfully.', 'success');
+                                    showNotification(response.title, response.message, response.messageType);
                                     reloadDatatable('#system-action-table');
                                 }
                                 else {

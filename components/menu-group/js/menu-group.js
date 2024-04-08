@@ -34,7 +34,7 @@
                         },
                         success: function (response) {
                             if (response.success) {
-                                showNotification('Delete Menu Group Success', 'The menu group has been deleted successfully.', 'success');
+                                showNotification(response.title, response.message, response.messageType);
                                 reloadDatatable('#menu-group-table');
                             }
                             else {
@@ -99,7 +99,7 @@
                             },
                             success: function (response) {
                                 if (response.success) {
-                                    showNotification('Delete Menu Group Success', 'The selected menu groups have been deleted successfully.', 'success');
+                                    showNotification(response.title, response.message, response.messageType);
                                     reloadDatatable('#menu-group-table');
                                 }
                                 else {

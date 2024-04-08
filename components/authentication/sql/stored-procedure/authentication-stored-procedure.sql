@@ -78,10 +78,16 @@ BEGIN
     WHERE user_account_id = p_user_account_id;
 END //
 
-CREATE PROCEDURE updateUserPassword(IN p_user_account_id INT, IN p_email VARCHAR(255), IN p_password VARCHAR(255), IN p_password_expiry_date DATE, IN p_last_password_change DATETIME)
+CREATE PROCEDURE updateUserPassword(IN p_user_account_id INT, IN p_email VARCHAR(255), IN p_password VARCHAR(255), IN p_password_expiry_date DATE)
 BEGIN
 	UPDATE user_account 
-    SET password = p_password, password_expiry_date = p_password_expiry_date, last_password_change = p_last_password_change, locked = 'No', failed_login_attempts = 0, account_lock_duration = 0
+    SET password = p_password, 
+        password_expiry_date = p_password_expiry_date, 
+        last_password_change = NOW(), 
+        locked = 'No',
+        failed_login_attempts = 0, 
+        account_lock_duration = 0,
+        last_log_by = p_user_account_id
     WHERE p_user_account_id = user_account_id OR email = BINARY p_email;
 END //
 

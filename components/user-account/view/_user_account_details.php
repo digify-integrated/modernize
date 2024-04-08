@@ -49,11 +49,13 @@
                                             <button type="button" class="btn btn-dark dropdown-toggle mb-0" data-bs-toggle="dropdown" aria-expanded="false">Action</button>
                                             <ul class="dropdown-menu dropdown-menu-end">
                                                 <li><a class="dropdown-item" href="user-account.php?new">Create User Account</a></li>
-                                                <li><button class="dropdown-item" type="button" id="activate-user-account">Change Password</button></li>
-                                                <li><button class="dropdown-item" type="button" id="activate-user-account">Activate User Account</button></li>
-                                                <li><button class="dropdown-item" type="button" id="deactivate-user-account">Deactivate User Account</button></li>
-                                                <li><button class="dropdown-item" type="button" id="lock-user-account">Lock User Account</button></li>
-                                                <li><button class="dropdown-item" type="button" id="unlock-user-account">Unlock User Account</button></li>
+                                                <li><button class="dropdown-item" type="button" data-bs-toggle="modal" id="change-password" data-bs-target="#change-password-modal">Change Password</button></li>
+
+                                                <?php
+                                                    echo '<li><button class="dropdown-item" type="button" id="' . ($userAccountActive == 'Yes' ? 'deactivate' : 'activate') . '-user-account">' . ($userAccountActive == 'Yes' ? 'Deactivate' : 'Activate') . ' User Account</button></li>';
+                                                    echo '<li><button class="dropdown-item" type="button" id="' . ($userAccountLocked == 'Yes' ? 'unlock' : 'lock') . '-user-account">' . ($userAccountLocked == 'Yes' ? 'Unlock' : 'Lock') . ' User Account</button></li>';
+                                                ?>
+                                                
                                                 <li><button class="dropdown-item" type="button" id="delete-user-account">Delete User Account</button></li>
                                                 <li><hr class="dropdown-divider"></li>
                                                 <li><button class="dropdown-item" type="button" data-bs-toggle="offcanvas" data-bs-target="#log-notes-offcanvas" aria-controls="log-notes-offcanvas" id="view-log-notes">View Log Notes</button></li>
@@ -145,23 +147,11 @@
                                 <div class="card">
                                     <div class="card-header d-flex align-items-center">
                                         <h5 class="card-title mb-0">User Roles</h5>
-                                    </div>
-                                    <div class="card-body p-4">
-                                        <div class="d-flex align-items-center justify-content-between pb-3">
-                                            <div>
-                                                <h5 class="fs-4 fw-semibold mb-0">Administrator</h5>
-                                                <p class="mb-0 mt-1">Date Assigned: 04/04/2024</p>
-                                            </div>
-                                            <button class="btn bg-danger-subtle text-danger">Delete</button>
-                                        </div>
-                                        <div class="d-flex align-items-center justify-content-between pb-3">
-                                            <div>
-                                                <h5 class="fs-4 fw-semibold mb-0">Sales Proposal Validator</h5>
-                                                <p class="mb-0 mt-1">Date Assigned: 04/04/2024</p>
-                                            </div>
-                                            <button class="btn bg-danger-subtle text-danger">Delete</button>
+                                        <div class="card-actions cursor-pointer ms-auto d-flex button-group">
+                                            <button class="btn btn-success mb-0 px-4" data-bs-toggle="modal" data-bs-target="#user-account-assignment-modal" id="assign-user-account">Assign</button>
                                         </div>
                                     </div>
+                                    <div class="card-body p-4" id="role-list"></div>
                                 </div>
                             </div>
                         </div>
@@ -183,11 +173,12 @@
                                                     <div>
                                                         <h5 class="fs-4 fw-semibold">Two-factor Authentication</h5>
                                                         <p class="mb-0 text-wrap w-80">Enhance security with 2FA, adding extra verification beyond passwords.</p>
+                                                        <?php echo $twoFactorAuthenticationBadge; ?>
                                                     </div>
                                                 </div>
                                                 <?php
                                                     if($twoFactorAuthentication == 'Yes'){
-                                                        echo '<button class="btn btn-danger ms-2" id="disable-two-factor-authentication">Disable</button>';
+                                                        echo '<button class="btn btn-warning ms-2" id="disable-two-factor-authentication">Disable</button>';
                                                     }
                                                     else{
                                                         echo '<button class="btn btn-success ms-2" id="enable-two-factor-authentication">Enable</button>';
@@ -202,14 +193,15 @@
                                                     <div>
                                                         <h5 class="fs-4 fw-semibold">Multiple Login Sessions</h5>
                                                         <p class="mb-0 text-wrap w-80">Track logins with Multiple Sessions, get alerts for unfamiliar activity, boost security.</p>
+                                                        <?php echo $multipleSessionBadge; ?>
                                                     </div>
                                                 </div>
                                                 <?php
                                                     if($multipleSession == 'Yes'){
-                                                        echo '<button class="btn btn-danger ms-2" id="disable-multiple-session">Disable</button>';
+                                                        echo '<button class="btn btn-success ms-2" id="disable-multiple-login-sessions">Disable</button>';
                                                     }
                                                     else{
-                                                        echo '<button class="btn btn-success ms-2" id="enable-multiple-session">Enable</button>';
+                                                        echo '<button class="btn btn-warning ms-2" id="enable-multiple-login-sessions">Enable</button>';
                                                     }
                                                 ?>
                                             </div>
@@ -255,6 +247,75 @@
             <div class="modal-footer border-top">
                 <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Close</button>
                 <button type="submit" form="user-account-form" class="btn btn-success" id="submit-data">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="change-password-modal" class="modal fade" tabindex="-1" aria-labelledby="change-password-modal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-r">
+        <div class="modal-content">
+            <div class="modal-header border-bottom">
+                <h5 class="modal-title fw-8">Change Password</h5>
+                <button type="button" class="btn-close fs-2" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="change-password-form" method="post" action="#">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="mb-3">
+                                <label class="col-sm-4 form-label" for="new_password">New Password <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <input type="password" class="form-control" id="new_password" name="new_password">
+                                    <button class="btn bg-info-subtle text-info  rounded-end d-flex align-items-center password-addon" type="button">
+                                        <i class="ti ti-eye"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="mb-3">
+                                <label class="col-sm-4 form-label" for="confirm_password">Confirm Password <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <input type="password" class="form-control" id="confirm_password" name="confirm_password">
+                                    <button class="btn bg-info-subtle text-info  rounded-end d-flex align-items-center password-addon" type="button">
+                                        <i class="ti ti-eye"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer border-top">
+                <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Close</button>
+                <button type="submit" form="change-password-form" class="btn btn-success" id="submit-change-password">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="user-account-assignment-modal" class="modal fade" tabindex="-1" aria-labelledby="user-account-assignment-modal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-lg">
+        <div class="modal-content">
+            <div class="modal-header border-bottom">
+                <h5 class="modal-title fw-8">Assign User Account</h5>
+                <button type="button" class="btn-close fs-2" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="user-account-assignment-form" method="post" action="#">
+                    <div class="row">
+                        <div class="col-12">
+                            <select multiple="multiple" size="20" id="role_id" name="role_id[]"></select>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer border-top">
+                <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Close</button>
+                <button type="submit" form="user-account-assignment-form" class="btn btn-success" id="submit-user-account-assignment">Save changes</button>
             </div>
         </div>
     </div>

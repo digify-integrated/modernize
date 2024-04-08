@@ -136,6 +136,9 @@ class UserAccountController {
                 case 'update user account':
                     $this->updateUserAccount();
                     break;
+                case 'change password':
+                    $this->updateUserAccountPassword();
+                    break;
                 case 'get user account details':
                     $this->getUserAccountDetails();
                     break;
@@ -156,6 +159,18 @@ class UserAccountController {
                     break;
                 case 'lock multiple user account':
                     $this->lockMultipleUserAccount();
+                    break;
+                case 'enable two factor authentication':
+                    $this->enableTwoFactorAuthentication();
+                    break;
+                case 'disable two factor authentication':
+                    $this->disableTwoFactorAuthentication();
+                    break;
+                case 'enable multiple login sessions':
+                    $this->enableMultipleLoginSessions();
+                    break;
+                case 'disable multiple login sessions':
+                    $this->disableMultipleLoginSessions();
                     break;
                 case 'unlock user account':
                     $this->unlockUserAccount();
@@ -321,6 +336,95 @@ class UserAccountController {
             $response = [
                 'success' => true,
                 'title' => 'Update User Account Success',
+                'message' => 'The user account has been updated successfully.',
+                'messageType' => 'success'
+            ];
+            
+            echo json_encode($response);
+            exit;
+        }
+        else{
+            $response = [
+                'success' => false,
+                'title' => 'Transaction Error',
+                'message' => 'Something went wrong. Please try again later. If the issue persists, please contact support for assistance.',
+                'messageType' => 'error'
+            ];
+            
+            echo json_encode($response);
+            exit;
+        }
+    }
+    # -------------------------------------------------------------
+
+    # -------------------------------------------------------------
+    #
+    # Function: updateUserAccountPassword
+    # Description: 
+    # Updates the user account password if it exists; otherwise, return an error message.
+    #
+    # Parameters: None
+    #
+    # Returns: Array
+    #
+    # -------------------------------------------------------------
+    public function updateUserAccountPassword() {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            return;
+        }
+        
+        if (isset($_POST['user_account_id']) && !empty($_POST['user_account_id']) && isset($_POST['new_password']) && !empty($_POST['new_password'])) {
+            $userID = $_SESSION['user_id'];
+            $userAccountID = htmlspecialchars($_POST['user_account_id'], ENT_QUOTES, 'UTF-8');
+            $newPassword = htmlspecialchars($_POST['new_password'], ENT_QUOTES, 'UTF-8');
+            $encryptedPassword = $this->securityModel->encryptData($newPassword);
+        
+            $checkUserAccountExist = $this->userAccountModel->checkUserAccountExist($userAccountID);
+            $total = $checkUserAccountExist['total'] ?? 0;
+
+            if($total === 0){
+                $response = [
+                    'success' => false,
+                    'notExist' => true,
+                    'title' => 'Change User Account Password Error',
+                    'message' => 'The user account has does not exist.',
+                    'messageType' => 'error'
+                ];
+                
+                echo json_encode($response);
+                exit;
+            }
+
+            $checkPasswordHistory = $this->checkPasswordHistory($userAccountID, null, $newPassword);
+    
+            if ($checkPasswordHistory > 0) {
+                $response = [
+                    'success' => false,
+                    'passwordExist' => true,
+                    'title' => 'Change User Account Password Error',
+                    'message' => 'The new password cannot be identical to the previous one for security reasons. Please choose a different password to proceed.',
+                    'messageType' => 'error'
+                ];
+                
+                echo json_encode($response);
+                exit;
+            }
+
+            $userAccountDetails = $this->userAccountModel->getUserAccount($userAccountID, null);
+            $email = $userAccountDetails['email'];
+
+            $securitySettingDetails = $this->securitySettingModel->getSecuritySetting(4);
+            $defaultPasswordDuration = $securitySettingDetails['value'] ?? DEFAULT_PASSWORD_DURATION;
+        
+            $lastPasswordChange = date('Y-m-d H:i:s');
+            $passwordExpiryDate = date('Y-m-d', strtotime('+'. $defaultPasswordDuration .' days'));
+
+            $this->userAccountModel->updateUserAccountPassword($userAccountID, $encryptedPassword, $passwordExpiryDate, $userID);
+            $this->authenticationModel->insertPasswordHistory($userAccountID, $email, $encryptedPassword, $lastPasswordChange);
+            
+            $response = [
+                'success' => true,
+                'title' => 'Update User Account Password Success',
                 'message' => 'The user account has been updated successfully.',
                 'messageType' => 'success'
             ];
@@ -815,6 +919,262 @@ class UserAccountController {
     # -------------------------------------------------------------
 
     # -------------------------------------------------------------
+    #   Enable methods
+    # -------------------------------------------------------------
+
+    # -------------------------------------------------------------
+    #
+    # Function: enableTwoFactorAuthentication
+    # Description: 
+    # Enable the user account's two-factor authentication if it exists; otherwise, return an error message.
+    #
+    # Parameters: None
+    #
+    # Returns: Array
+    #
+    # -------------------------------------------------------------
+    public function enableTwoFactorAuthentication() {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            return;
+        }
+
+        if (isset($_POST['user_account_id']) && !empty($_POST['user_account_id'])) {
+            $userID = $_SESSION['user_id'];
+            $userAccountID = htmlspecialchars($_POST['user_account_id'], ENT_QUOTES, 'UTF-8');
+        
+            $checkUserAccountExist = $this->userAccountModel->checkUserAccountExist($userAccountID);
+            $total = $checkUserAccountExist['total'] ?? 0;
+
+            if($total === 0){
+                $response = [
+                    'success' => false,
+                    'notExist' => true,
+                    'title' => 'Enable Two-Factor Authentication Error',
+                    'message' => 'The user account has does not exist.',
+                    'messageType' => 'error'
+                ];
+                
+                echo json_encode($response);
+                exit;
+            }
+
+            $this->userAccountModel->updateTwoFactorAuthenticationStatus($userAccountID, 'Yes', $userID);
+                
+            $response = [
+                'success' => true,
+                'title' => 'Enable Two-Factor Authentication Success',
+                'message' => 'The two-factor authentication has been enabled successfully.',
+                'messageType' => 'success'
+            ];
+            
+            echo json_encode($response);
+            exit;
+        }
+        else{
+            $response = [
+                'success' => false,
+                'title' => 'Transaction Error',
+                'message' => 'Something went wrong. Please try again later. If the issue persists, please contact support for assistance.',
+                'messageType' => 'error'
+            ];
+            
+            echo json_encode($response);
+            exit;
+        }
+    }
+    # -------------------------------------------------------------
+
+    # -------------------------------------------------------------
+    #
+    # Function: enableMultipleLoginSessions
+    # Description: 
+    # Enable the user account's multiple login sessions if it exists; otherwise, return an error message.
+    #
+    # Parameters: None
+    #
+    # Returns: Array
+    #
+    # -------------------------------------------------------------
+    public function enableMultipleLoginSessions() {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            return;
+        }
+
+        if (isset($_POST['user_account_id']) && !empty($_POST['user_account_id'])) {
+            $userID = $_SESSION['user_id'];
+            $userAccountID = htmlspecialchars($_POST['user_account_id'], ENT_QUOTES, 'UTF-8');
+        
+            $checkUserAccountExist = $this->userAccountModel->checkUserAccountExist($userAccountID);
+            $total = $checkUserAccountExist['total'] ?? 0;
+
+            if($total === 0){
+                $response = [
+                    'success' => false,
+                    'notExist' => true,
+                    'title' => 'Enable Multiple Login Sessions Error',
+                    'message' => 'The user account has does not exist.',
+                    'messageType' => 'error'
+                ];
+                
+                echo json_encode($response);
+                exit;
+            }
+
+            $this->userAccountModel->updateMultipleLoginSessionsStatus($userAccountID, 'Yes', $userID);
+                
+            $response = [
+                'success' => true,
+                'title' => 'Enable Multiple Login Sessions Success',
+                'message' => 'The multiple login sessions has been enabled successfully.',
+                'messageType' => 'success'
+            ];
+            
+            echo json_encode($response);
+            exit;
+        }
+        else{
+            $response = [
+                'success' => false,
+                'title' => 'Transaction Error',
+                'message' => 'Something went wrong. Please try again later. If the issue persists, please contact support for assistance.',
+                'messageType' => 'error'
+            ];
+            
+            echo json_encode($response);
+            exit;
+        }
+    }
+    # -------------------------------------------------------------
+
+    # -------------------------------------------------------------
+    #   Disable methods
+    # -------------------------------------------------------------
+
+    # -------------------------------------------------------------
+    #
+    # Function: disableTwoFactorAuthentication
+    # Description: 
+    # Disable the user account's two-factor authentication if it exists; otherwise, return an error message.
+    #
+    # Parameters: None
+    #
+    # Returns: Array
+    #
+    # -------------------------------------------------------------
+    public function disableTwoFactorAuthentication() {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            return;
+        }
+
+        if (isset($_POST['user_account_id']) && !empty($_POST['user_account_id'])) {
+            $userID = $_SESSION['user_id'];
+            $userAccountID = htmlspecialchars($_POST['user_account_id'], ENT_QUOTES, 'UTF-8');
+        
+            $checkUserAccountExist = $this->userAccountModel->checkUserAccountExist($userAccountID);
+            $total = $checkUserAccountExist['total'] ?? 0;
+
+            if($total === 0){
+                $response = [
+                    'success' => false,
+                    'notExist' => true,
+                    'title' => 'Disable Two-Factor Authentication Error',
+                    'message' => 'The user account has does not exist.',
+                    'messageType' => 'error'
+                ];
+                
+                echo json_encode($response);
+                exit;
+            }
+
+            $this->userAccountModel->updateTwoFactorAuthenticationStatus($userAccountID, 'No', $userID);
+                
+            $response = [
+                'success' => true,
+                'title' => 'Disable Two-Factor Authentication Success',
+                'message' => 'The two-factor authentication has been disabled successfully.',
+                'messageType' => 'success'
+            ];
+            
+            echo json_encode($response);
+            exit;
+        }
+        else{
+            $response = [
+                'success' => false,
+                'title' => 'Transaction Error',
+                'message' => 'Something went wrong. Please try again later. If the issue persists, please contact support for assistance.',
+                'messageType' => 'error'
+            ];
+            
+            echo json_encode($response);
+            exit;
+        }
+    }
+    # -------------------------------------------------------------
+
+    # -------------------------------------------------------------
+    #
+    # Function: disableMultipleLoginSessions
+    # Description: 
+    # Disable the user account's multiple login sessions if it exists; otherwise, return an error message.
+    #
+    # Parameters: None
+    #
+    # Returns: Array
+    #
+    # -------------------------------------------------------------
+    public function disableMultipleLoginSessions() {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            return;
+        }
+
+        if (isset($_POST['user_account_id']) && !empty($_POST['user_account_id'])) {
+            $userID = $_SESSION['user_id'];
+            $userAccountID = htmlspecialchars($_POST['user_account_id'], ENT_QUOTES, 'UTF-8');
+        
+            $checkUserAccountExist = $this->userAccountModel->checkUserAccountExist($userAccountID);
+            $total = $checkUserAccountExist['total'] ?? 0;
+
+            if($total === 0){
+                $response = [
+                    'success' => false,
+                    'notExist' => true,
+                    'title' => 'Disable Multiple Login Sessions Error',
+                    'message' => 'The user account has does not exist.',
+                    'messageType' => 'error'
+                ];
+                
+                echo json_encode($response);
+                exit;
+            }
+
+            $this->userAccountModel->updateMultipleLoginSessionsStatus($userAccountID, 'No', $userID);
+                
+            $response = [
+                'success' => true,
+                'title' => 'Disable Multiple Login Sessions Success',
+                'message' => 'The multiple login sessions has been disabled successfully.',
+                'messageType' => 'success'
+            ];
+            
+            echo json_encode($response);
+            exit;
+        }
+        else{
+            $response = [
+                'success' => false,
+                'title' => 'Transaction Error',
+                'message' => 'Something went wrong. Please try again later. If the issue persists, please contact support for assistance.',
+                'messageType' => 'error'
+            ];
+            
+            echo json_encode($response);
+            exit;
+        }
+    }
+    # -------------------------------------------------------------
+
+    # -------------------------------------------------------------
     #   Delete methods
     # -------------------------------------------------------------
 
@@ -971,6 +1331,40 @@ class UserAccountController {
         }
 
         return $durationParts;
+    }
+    # -------------------------------------------------------------
+
+    # -------------------------------------------------------------
+    #   Check methods
+    # -------------------------------------------------------------
+
+    # -------------------------------------------------------------
+    #
+    # Function: checkPasswordHistory
+    # Description: 
+    # Checks the password history for a given user ID and email to determine if the new password matches any previous passwords.
+    #
+    # Parameters: 
+    # - $p_user_account_id (array): The user ID.
+    # - $p_email (string): The email address of the user.
+    # - $p_password (string): The password of the user.
+    #
+    # Returns: Array
+    #
+    # -------------------------------------------------------------
+    private function checkPasswordHistory($p_user_account_id, $p_email, $p_password) {
+        $total = 0;
+        $passwordHistory = $this->authenticationModel->getPasswordHistory($p_user_account_id, $p_email);
+    
+        foreach ($passwordHistory as $history) {
+            $password = $this->securityModel->decryptData($history['password']);
+    
+            if ($password === $p_password) {
+                $total++;
+            }
+        }
+    
+        return $total;
     }
     # -------------------------------------------------------------
 
