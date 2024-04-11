@@ -59,7 +59,7 @@
                                 <h2 class="mb-1 fs-7 fw-bolder">Password <span class="text-primary">Reset</span></h2>
                                 <p class="mb-7">Enter your new password</p>
                                 <form id="password-reset-form" method="post" action="#">
-                                    <input type="hidden" id="user_id" name="user_id" value="<?php echo $userID; ?>">
+                                    <input type="hidden" id="user_account_id" name="user_account_id" value="<?php echo $userID; ?>">
                                     <div class="mb-4">
                                         <label for="new_password" class="form-label">New Password</label>
                                         <div class="input-group mb-3">

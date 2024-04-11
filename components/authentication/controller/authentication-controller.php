@@ -185,7 +185,7 @@ class AuthenticationController {
 
         $this->authenticationModel->updateLastConnection($userAccountID, $encryptedSessionToken, date('Y-m-d H:i:s'));
 
-        $_SESSION['user_id'] = $userAccountID;
+        $_SESSION['user_account_id'] = $userAccountID;
         $_SESSION['session_token'] = $sessionToken;
 
         $response = [

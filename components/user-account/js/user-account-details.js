@@ -372,234 +372,84 @@
             });
         });
 
-        $(document).on('click','#enable-two-factor-authentication',function() {
+        $(document).on('change','#two-factor-authentication',function() {
             const user_account_id = $('#user-account-id').text();
-            const transaction = 'enable two factor authentication';
-    
-            Swal.fire({
-                title: 'Confirm Two-Factor Authentication Enable',
-                text: 'Are you sure you want to enable the two-factor authentication of this user account?',
-                icon: 'warning',
-                showCancelButton: !0,
-                confirmButtonText: 'Enable',
-                cancelButtonText: 'Cancel',
-                customClass: {
-                    confirmButton: 'btn btn-success mt-2',
-                    cancelButton: 'btn btn-secondary ms-2 mt-2'
+            var checkbox = document.getElementById('two-factor-authentication');
+            var transaction = (checkbox).checked ? 'enable two factor authentication' : 'disable two factor authentication';
+
+            $.ajax({
+                type: 'POST',
+                url: 'components/user-account/controller/user-account-controller.php',
+                data: {
+                    user_account_id : user_account_id,
+                    transaction : transaction
                 },
-                buttonsStyling: !1
-            }).then(function(result) {
-                if (result.value) {
-                    $.ajax({
-                        type: 'POST',
-                        url: 'components/user-account/controller/user-account-controller.php',
-                        dataType: 'json',
-                        data: {
-                            user_account_id : user_account_id, 
-                            transaction : transaction
-                        },
-                        success: function (response) {
-                            if (response.success) {
-                                setNotification(response.title, response.message, response.messageType);
-                                window.location.reload();
-                            }
-                            else {
-                                if (response.isInactive || response.userNotExist || response.userInactive || response.userLocked || response.sessionExpired) {
-                                    setNotification(response.title, response.message, response.messageType);
-                                    window.location = 'logout.php?logout';
-                                }
-                                else if (response.notExist) {
-                                    setNotification(response.title, response.message, response.messageType);
-                                    window.location = 'user-account.php';
-                                }
-                                else {
-                                    showNotification(response.title, response.message, response.messageType);
-                                }
-                            }
-                        },
-                        error: function(xhr, status, error) {
-                            var fullErrorMessage = `XHR status: ${status}, Error: ${error}`;
-                            if (xhr.responseText) {
-                                fullErrorMessage += `, Response: ${xhr.responseText}`;
-                            }
-                            showErrorDialog(fullErrorMessage);
+                dataType: 'json',
+                success: function (response) {
+                    if (response.success) {
+                        showNotification(response.title, response.message, response.messageType);
+                    }
+                    else {
+                        if (response.isInactive || response.userNotExist || response.userInactive || response.userLocked || response.sessionExpired) {
+                            setNotification(response.title, response.message, response.messageType);
+                            window.location = 'logout.php?logout';
                         }
-                    });
-                    return false;
+                        else if (response.notExist) {
+                            setNotification(response.title, response.message, response.messageType);
+                            window.location = 'user-account.php';
+                        }
+                        else {
+                            showNotification(response.title, response.message, response.messageType);
+                        }
+                    }
+                },
+                error: function(xhr, status, error) {
+                    var fullErrorMessage = `XHR status: ${status}, Error: ${error}`;
+                    if (xhr.responseText) {
+                        fullErrorMessage += `, Response: ${xhr.responseText}`;
+                    }
+                    showErrorDialog(fullErrorMessage);
                 }
             });
         });
 
-        $(document).on('click','#disable-two-factor-authentication',function() {
+        $(document).on('change','#multiple-login-sessions',function() {
             const user_account_id = $('#user-account-id').text();
-            const transaction = 'disable two factor authentication';
-    
-            Swal.fire({
-                title: 'Confirm Two-Factor Authentication Disable',
-                text: 'Are you sure you want to disable the two-factor authentication of this user account?',
-                icon: 'warning',
-                showCancelButton: !0,
-                confirmButtonText: 'Disable',
-                cancelButtonText: 'Cancel',
-                customClass: {
-                    confirmButton: 'btn btn-danger mt-2',
-                    cancelButton: 'btn btn-secondary ms-2 mt-2'
-                },
-                buttonsStyling: !1
-            }).then(function(result) {
-                if (result.value) {
-                    $.ajax({
-                        type: 'POST',
-                        url: 'components/user-account/controller/user-account-controller.php',
-                        dataType: 'json',
-                        data: {
-                            user_account_id : user_account_id, 
-                            transaction : transaction
-                        },
-                        success: function (response) {
-                            if (response.success) {
-                                setNotification(response.title, response.message, response.messageType);
-                                window.location.reload();
-                            }
-                            else {
-                                if (response.isInactive || response.userNotExist || response.userInactive || response.userLocked || response.sessionExpired) {
-                                    setNotification(response.title, response.message, response.messageType);
-                                    window.location = 'logout.php?logout';
-                                }
-                                else if (response.notExist) {
-                                    setNotification(response.title, response.message, response.messageType);
-                                    window.location = 'user-account.php';
-                                }
-                                else {
-                                    showNotification(response.title, response.message, response.messageType);
-                                }
-                            }
-                        },
-                        error: function(xhr, status, error) {
-                            var fullErrorMessage = `XHR status: ${status}, Error: ${error}`;
-                            if (xhr.responseText) {
-                                fullErrorMessage += `, Response: ${xhr.responseText}`;
-                            }
-                            showErrorDialog(fullErrorMessage);
-                        }
-                    });
-                    return false;
-                }
-            });
-        });
+            var checkbox = document.getElementById('multiple-login-sessions');
+            var transaction = (checkbox).checked ? 'enable multiple login sessions' : 'disable multiple login sessions';
 
-        $(document).on('click','#enable-multiple-login-sessions',function() {
-            const user_account_id = $('#user-account-id').text();
-            const transaction = 'enable multiple login sessions';
-    
-            Swal.fire({
-                title: 'Confirm Multiple Login Sessions Enable',
-                text: 'Are you sure you want to enable the multiple login sessions of this user account?',
-                icon: 'warning',
-                showCancelButton: !0,
-                confirmButtonText: 'Enable',
-                cancelButtonText: 'Cancel',
-                customClass: {
-                    confirmButton: 'btn btn-danger mt-2',
-                    cancelButton: 'btn btn-secondary ms-2 mt-2'
+            $.ajax({
+                type: 'POST',
+                url: 'components/user-account/controller/user-account-controller.php',
+                data: {
+                    user_account_id : user_account_id,
+                    transaction : transaction
                 },
-                buttonsStyling: !1
-            }).then(function(result) {
-                if (result.value) {
-                    $.ajax({
-                        type: 'POST',
-                        url: 'components/user-account/controller/user-account-controller.php',
-                        dataType: 'json',
-                        data: {
-                            user_account_id : user_account_id, 
-                            transaction : transaction
-                        },
-                        success: function (response) {
-                            if (response.success) {
-                                setNotification(response.title, response.message, response.messageType);
-                                window.location.reload();
-                            }
-                            else {
-                                if (response.isInactive || response.userNotExist || response.userInactive || response.userLocked || response.sessionExpired) {
-                                    setNotification(response.title, response.message, response.messageType);
-                                    window.location = 'logout.php?logout';
-                                }
-                                else if (response.notExist) {
-                                    setNotification(response.title, response.message, response.messageType);
-                                    window.location = 'user-account.php';
-                                }
-                                else {
-                                    showNotification(response.title, response.message, response.messageType);
-                                }
-                            }
-                        },
-                        error: function(xhr, status, error) {
-                            var fullErrorMessage = `XHR status: ${status}, Error: ${error}`;
-                            if (xhr.responseText) {
-                                fullErrorMessage += `, Response: ${xhr.responseText}`;
-                            }
-                            showErrorDialog(fullErrorMessage);
+                dataType: 'json',
+                success: function (response) {
+                    if (response.success) {
+                        showNotification(response.title, response.message, response.messageType);
+                    }
+                    else {
+                        if (response.isInactive || response.userNotExist || response.userInactive || response.userLocked || response.sessionExpired) {
+                            setNotification(response.title, response.message, response.messageType);
+                            window.location = 'logout.php?logout';
                         }
-                    });
-                    return false;
-                }
-            });
-        });
-
-        $(document).on('click','#disable-multiple-login-sessions',function() {
-            const user_account_id = $('#user-account-id').text();
-            const transaction = 'disable multiple login sessions';
-    
-            Swal.fire({
-                title: 'Confirm Multiple Login Sessions Disable',
-                text: 'Are you sure you want to disable the multiple login sessions of this user account?',
-                icon: 'warning',
-                showCancelButton: !0,
-                confirmButtonText: 'Disable',
-                cancelButtonText: 'Cancel',
-                customClass: {
-                    confirmButton: 'btn btn-success mt-2',
-                    cancelButton: 'btn btn-secondary ms-2 mt-2'
+                        else if (response.notExist) {
+                            setNotification(response.title, response.message, response.messageType);
+                            window.location = 'user-account.php';
+                        }
+                        else {
+                            showNotification(response.title, response.message, response.messageType);
+                        }
+                    }
                 },
-                buttonsStyling: !1
-            }).then(function(result) {
-                if (result.value) {
-                    $.ajax({
-                        type: 'POST',
-                        url: 'components/user-account/controller/user-account-controller.php',
-                        dataType: 'json',
-                        data: {
-                            user_account_id : user_account_id, 
-                            transaction : transaction
-                        },
-                        success: function (response) {
-                            if (response.success) {
-                                setNotification(response.title, response.message, response.messageType);
-                                window.location.reload();
-                            }
-                            else {
-                                if (response.isInactive || response.userNotExist || response.userInactive || response.userLocked || response.sessionExpired) {
-                                    setNotification(response.title, response.message, response.messageType);
-                                    window.location = 'logout.php?logout';
-                                }
-                                else if (response.notExist) {
-                                    setNotification(response.title, response.message, response.messageType);
-                                    window.location = 'user-account.php';
-                                }
-                                else {
-                                    showNotification(response.title, response.message, response.messageType);
-                                }
-                            }
-                        },
-                        error: function(xhr, status, error) {
-                            var fullErrorMessage = `XHR status: ${status}, Error: ${error}`;
-                            if (xhr.responseText) {
-                                fullErrorMessage += `, Response: ${xhr.responseText}`;
-                            }
-                            showErrorDialog(fullErrorMessage);
-                        }
-                    });
-                    return false;
+                error: function(xhr, status, error) {
+                    var fullErrorMessage = `XHR status: ${status}, Error: ${error}`;
+                    if (xhr.responseText) {
+                        fullErrorMessage += `, Response: ${xhr.responseText}`;
+                    }
+                    showErrorDialog(fullErrorMessage);
                 }
             });
         });

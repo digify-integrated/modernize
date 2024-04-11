@@ -173,17 +173,11 @@
                                                     <div>
                                                         <h5 class="fs-4 fw-semibold">Two-factor Authentication</h5>
                                                         <p class="mb-0 text-wrap w-80">Enhance security with 2FA, adding extra verification beyond passwords.</p>
-                                                        <?php echo $twoFactorAuthenticationBadge; ?>
                                                     </div>
                                                 </div>
-                                                <?php
-                                                    if($twoFactorAuthentication == 'Yes'){
-                                                        echo '<button class="btn btn-warning ms-2" id="disable-two-factor-authentication">Disable</button>';
-                                                    }
-                                                    else{
-                                                        echo '<button class="btn btn-success ms-2" id="enable-two-factor-authentication">Enable</button>';
-                                                    }
-                                                ?>
+                                                <div class="form-check form-switch mb-0">
+                                                    <input class="form-check-input" type="checkbox" role="switch" id="two-factor-authentication">
+                                                </div>
                                             </div>
                                             <div class="d-flex align-items-center justify-content-between mb-4">
                                                 <div class="d-flex align-items-center gap-3">
@@ -193,17 +187,11 @@
                                                     <div>
                                                         <h5 class="fs-4 fw-semibold">Multiple Login Sessions</h5>
                                                         <p class="mb-0 text-wrap w-80">Track logins with Multiple Sessions, get alerts for unfamiliar activity, boost security.</p>
-                                                        <?php echo $multipleSessionBadge; ?>
                                                     </div>
                                                 </div>
-                                                <?php
-                                                    if($multipleSession == 'Yes'){
-                                                        echo '<button class="btn btn-success ms-2" id="disable-multiple-login-sessions">Disable</button>';
-                                                    }
-                                                    else{
-                                                        echo '<button class="btn btn-warning ms-2" id="enable-multiple-login-sessions">Enable</button>';
-                                                    }
-                                                ?>
+                                                <div class="form-check form-switch mb-0">
+                                                    <input class="form-check-input" type="checkbox" role="switch" id="multiple-login-sessions">
+                                                </div>
                                             </div>
                                         </div>
                                     </div>

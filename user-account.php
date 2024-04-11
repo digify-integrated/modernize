@@ -19,11 +19,6 @@
         $userAccountDetails = $userAccountModel->getUserAccount($userAccountID, null);
         $userAccountActive = $userAccountDetails['active'];
         $userAccountLocked = $userAccountDetails['locked'];
-        $twoFactorAuthentication = $userAccountDetails['two_factor_auth'];
-        $multipleSession = $userAccountDetails['multiple_session'];
-
-        $twoFactorAuthenticationBadge = $twoFactorAuthentication == 'Yes' ? '<span class="badge rounded-pill text-bg-success mt-2">Enabled</span>' : '<span class="badge rounded-pill text-bg-warning mt-2">Disabled</span>';
-        $multipleSessionBadge = $multipleSession == 'Yes' ? '<span class="badge rounded-pill text-bg-warning mt-2">Enabled</span>' : '<span class=" badge rounded-pill text-bg-success mt-2">Disabled</span>';
     }
     else{
         $userAccountID = null;

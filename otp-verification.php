@@ -63,7 +63,7 @@
                                     <h6 class="fw-bolder"><?php echo $emailObscure; ?></h6>
                                 </div>
                                 <form id="otp-form" method="post" action="#">
-                                    <input type="hidden" id="user_id" name="user_id" value="<?php echo $userID; ?>">
+                                    <input type="hidden" id="user_account_id" name="user_account_id" value="<?php echo $userID; ?>">
                                     <div class="mb-3">
                                         <label class="form-label fw-semibold">Type your 6 digit security code</label>
                                         <div class="d-flex align-items-center gap-2 gap-sm-3">
