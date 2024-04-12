@@ -63,7 +63,7 @@ class RoleController {
     # -------------------------------------------------------------
     public function handleRequest(){
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $userID = $_SESSION['user_id'];
+            $userID = $_SESSION['user_account_id'];
             $sessionToken = $_SESSION['session_token'];
 
             $checkLoginCredentialsExist = $this->authenticationModel->checkLoginCredentialsExist($userID, null);
@@ -217,7 +217,7 @@ class RoleController {
         }
 
         if (isset($_POST['role_name']) && !empty($_POST['role_name']) && isset($_POST['role_description']) && !empty($_POST['role_description'])) {
-            $userID = $_SESSION['user_id'];
+            $userID = $_SESSION['user_account_id'];
             $roleName = htmlspecialchars($_POST['role_name'], ENT_QUOTES, 'UTF-8');
             $roleDescription = htmlspecialchars($_POST['role_description'], ENT_QUOTES, 'UTF-8');
         
@@ -269,7 +269,7 @@ class RoleController {
         }
         
         if (isset($_POST['role_id']) && !empty($_POST['role_id']) && isset($_POST['role_name']) && !empty($_POST['role_name']) && isset($_POST['role_description']) && !empty($_POST['role_description'])) {
-            $userID = $_SESSION['user_id'];
+            $userID = $_SESSION['user_account_id'];
             $roleID = htmlspecialchars($_POST['role_id'], ENT_QUOTES, 'UTF-8');
             $roleName = htmlspecialchars($_POST['role_name'], ENT_QUOTES, 'UTF-8');
             $roleDescription = htmlspecialchars($_POST['role_description'], ENT_QUOTES, 'UTF-8');
@@ -333,7 +333,7 @@ class RoleController {
         }
 
         if (isset($_POST['role_permission_id']) && !empty($_POST['role_permission_id']) && isset($_POST['access_type']) && !empty($_POST['access_type']) && isset($_POST['access'])) {
-            $userID = $_SESSION['user_id'];
+            $userID = $_SESSION['user_account_id'];
             $rolePermissionID = htmlspecialchars($_POST['role_permission_id'], ENT_QUOTES, 'UTF-8');
             $accessType = htmlspecialchars($_POST['access_type'], ENT_QUOTES, 'UTF-8');
             $access = htmlspecialchars($_POST['access'], ENT_QUOTES, 'UTF-8');
@@ -397,7 +397,7 @@ class RoleController {
         }
 
         if (isset($_POST['role_system_action_permission_id']) && !empty($_POST['role_system_action_permission_id']) && isset($_POST['system_action_access'])) {
-            $userID = $_SESSION['user_id'];
+            $userID = $_SESSION['user_account_id'];
             $roleSystemActionPermissionID = htmlspecialchars($_POST['role_system_action_permission_id'], ENT_QUOTES, 'UTF-8');
             $systemActionAccess = htmlspecialchars($_POST['system_action_access'], ENT_QUOTES, 'UTF-8');
         
@@ -476,7 +476,7 @@ class RoleController {
                 exit;
             }
 
-            $userID = $_SESSION['user_id'];
+            $userID = $_SESSION['user_account_id'];
             $roleID = htmlspecialchars($_POST['role_id'], ENT_QUOTES, 'UTF-8');
             $menuItemIDs = $_POST['menu_item_id'];
             
@@ -543,7 +543,7 @@ class RoleController {
                 exit;
             }
 
-            $userID = $_SESSION['user_id'];
+            $userID = $_SESSION['user_account_id'];
             $roleID = htmlspecialchars($_POST['role_id'], ENT_QUOTES, 'UTF-8');
             $userAccountIDs = $_POST['user_account_id'];
             
@@ -610,7 +610,7 @@ class RoleController {
                 exit;
             }
 
-            $userID = $_SESSION['user_id'];
+            $userID = $_SESSION['user_account_id'];
             $userAccountID = htmlspecialchars($_POST['user_account_id'], ENT_QUOTES, 'UTF-8');
             $roleIDs = $_POST['role_id'];
 
@@ -679,7 +679,7 @@ class RoleController {
                 exit;
             }
 
-            $userID = $_SESSION['user_id'];
+            $userID = $_SESSION['user_account_id'];
             $roleID = htmlspecialchars($_POST['role_id'], ENT_QUOTES, 'UTF-8');
             $systemActionIDs = $_POST['system_action_id'];
             
@@ -746,7 +746,7 @@ class RoleController {
                 exit;
             }
 
-            $userID = $_SESSION['user_id'];
+            $userID = $_SESSION['user_account_id'];
             $menuItemID = htmlspecialchars($_POST['menu_item_id'], ENT_QUOTES, 'UTF-8');
             $roleIDs = $_POST['role_id'];
 
@@ -813,7 +813,7 @@ class RoleController {
                 exit;
             }
 
-            $userID = $_SESSION['user_id'];
+            $userID = $_SESSION['user_account_id'];
             $systemActionID = htmlspecialchars($_POST['system_action_id'], ENT_QUOTES, 'UTF-8');
             $roleIDs = $_POST['role_id'];
 
@@ -1233,7 +1233,7 @@ class RoleController {
         }
     
         if (isset($_POST['role_id']) && !empty($_POST['role_id'])) {
-            $userID = $_SESSION['user_id'];
+            $userID = $_SESSION['user_account_id'];
             $roleID = htmlspecialchars($_POST['role_id'], ENT_QUOTES, 'UTF-8');
 
             $checkRoleExist = $this->roleModel->checkRoleExist($roleID);

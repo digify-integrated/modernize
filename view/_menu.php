@@ -17,44 +17,33 @@
                 </li>
                 <li class="sidebar-item">
                     <a class="sidebar-link" href="dashboard.php" aria-expanded="false">
-                        <span><i class="ti ti-aperture"></i></span>
+                        <span><i class="ti ti-home"></i></span>
                         <span class="hide-menu">Dashboard</span>
                     </a>
                 </li>
-                <li class="nav-small-cap">
-                    <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
-                    <span class="hide-menu">Technical</span>
-                </li>
-                <li class="sidebar-item">
-                    <a class="sidebar-link" href="menu-group.php" aria-expanded="false">
-                        <span><i class="ti ti-aperture"></i></span>
-                        <span class="hide-menu">Menu Group</span>
-                    </a>
-                </li>
-                <li class="sidebar-item">
-                    <a class="sidebar-link" href="menu-item.php" aria-expanded="false">
-                        <span><i class="ti ti-aperture"></i></span>
-                        <span class="hide-menu">Menu Item</span>
-                    </a>
-                </li>
-                <li class="sidebar-item">
-                    <a class="sidebar-link" href="role.php" aria-expanded="false">
-                        <span><i class="ti ti-aperture"></i></span>
-                        <span class="hide-menu">Role</span>
-                    </a>
-                </li>
-                <li class="sidebar-item">
-                    <a class="sidebar-link" href="system-action.php" aria-expanded="false">
-                        <span><i class="ti ti-aperture"></i></span>
-                        <span class="hide-menu">System Action</span>
-                    </a>
-                </li>
-                <li class="sidebar-item">
-                    <a class="sidebar-link" href="user-account.php" aria-expanded="false">
-                        <span><i class="ti ti-aperture"></i></span>
-                        <span class="hide-menu">User Account</span>
-                    </a>
-                </li>
+                <?php
+                    $menu = '';
+                
+                    $sql = $databaseModel->getConnection()->prepare('CALL buildMenuGroup(:userID)');
+                    $sql->bindValue(':userID', $userID, PDO::PARAM_INT);
+                    $sql->execute();
+                    $options = $sql->fetchAll(PDO::FETCH_ASSOC);
+                    $sql->closeCursor();
+            
+                    foreach ($options as $row) {
+                        $menuGroupID = $row['menu_group_id'];
+                        $menuGroupName = $row['menu_group_name'];
+        
+                        $menu .= '<li class="nav-small-cap">
+                                        <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
+                                        <span class="hide-menu">'. $menuGroupName .'</span>
+                                    </li>';
+        
+                        $menu .= $globalModel->buildMenuItem($userID, $menuGroupID);
+                    }
+            
+                    echo $menu;
+                ?>
             </ul>
         </nav>
     </div>

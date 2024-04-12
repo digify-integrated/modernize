@@ -181,6 +181,9 @@ function displayDetails(transaction){
                     menu_group_id : menu_group_id, 
                     transaction : transaction
                 },
+                beforeSend: function(){
+                    resetModalForm('menu-group-form');
+                },
                 success: function(response) {
                     if (response.success) {
                         $('#menu_group_name').val(response.menuGroupName);
@@ -209,9 +212,6 @@ function displayDetails(transaction){
                         fullErrorMessage += `, Response: ${xhr.responseText}`;
                     }
                     showErrorDialog(fullErrorMessage);
-                },
-                complete: function(){
-                    resetModalForm('menu-group-form');
                 }
             });
             break;

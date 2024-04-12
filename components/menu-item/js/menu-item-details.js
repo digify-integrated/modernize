@@ -517,6 +517,9 @@ function displayDetails(transaction){
                     menu_item_id : menu_item_id, 
                     transaction : transaction
                 },
+                beforeSend: function(){
+                    resetModalForm('menu-item-form');
+                },
                 success: function(response) {
                     if (response.success) {
                         $('#menu_item_name').val(response.menuItemName);
@@ -554,9 +557,6 @@ function displayDetails(transaction){
                         fullErrorMessage += `, Response: ${xhr.responseText}`;
                     }
                     showErrorDialog(fullErrorMessage);
-                },
-                complete: function(){
-                    resetModalForm('menu-item-form');
                 }
             });
             break;

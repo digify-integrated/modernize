@@ -63,7 +63,7 @@ class UserAccountController {
     # -------------------------------------------------------------
     public function handleRequest(){
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $userID = $_SESSION['user_id'];
+            $userID = $_SESSION['user_account_id'];
             $sessionToken = $_SESSION['session_token'];
 
             $checkLoginCredentialsExist = $this->authenticationModel->checkLoginCredentialsExist($userID, null);
@@ -220,7 +220,7 @@ class UserAccountController {
         }
 
         if (isset($_POST['file_as']) && !empty($_POST['file_as']) && isset($_POST['email']) && !empty($_POST['email']) && isset($_POST['password']) && !empty($_POST['password'])) {
-            $userID = $_SESSION['user_id'];
+            $userID = $_SESSION['user_account_id'];
             $fileAs = htmlspecialchars($_POST['file_as'], ENT_QUOTES, 'UTF-8');
             $email = htmlspecialchars($_POST['email'], ENT_QUOTES, 'UTF-8');
             $password = $this->securityModel->encryptData($_POST['password']);
@@ -295,7 +295,7 @@ class UserAccountController {
         }
         
         if (isset($_POST['user_account_id']) && !empty($_POST['user_account_id']) && isset($_POST['file_as']) && !empty($_POST['file_as']) && isset($_POST['email']) && !empty($_POST['email'])) {
-            $userID = $_SESSION['user_id'];
+            $userID = $_SESSION['user_account_id'];
             $userAccountID = htmlspecialchars($_POST['user_account_id'], ENT_QUOTES, 'UTF-8');
             $fileAs = htmlspecialchars($_POST['file_as'], ENT_QUOTES, 'UTF-8');
             $email = htmlspecialchars($_POST['email'], ENT_QUOTES, 'UTF-8');
@@ -374,7 +374,7 @@ class UserAccountController {
         }
         
         if (isset($_POST['user_account_id']) && !empty($_POST['user_account_id']) && isset($_POST['new_password']) && !empty($_POST['new_password'])) {
-            $userID = $_SESSION['user_id'];
+            $userID = $_SESSION['user_account_id'];
             $userAccountID = htmlspecialchars($_POST['user_account_id'], ENT_QUOTES, 'UTF-8');
             $newPassword = htmlspecialchars($_POST['new_password'], ENT_QUOTES, 'UTF-8');
             $encryptedPassword = $this->securityModel->encryptData($newPassword);
@@ -467,7 +467,7 @@ class UserAccountController {
         }
 
         if (isset($_POST['user_account_id']) && !empty($_POST['user_account_id'])) {
-            $userID = $_SESSION['user_id'];
+            $userID = $_SESSION['user_account_id'];
             $userAccountID = htmlspecialchars($_POST['user_account_id'], ENT_QUOTES, 'UTF-8');
         
             $checkUserAccountExist = $this->userAccountModel->checkUserAccountExist($userAccountID);
@@ -529,6 +529,7 @@ class UserAccountController {
         }
 
         if (isset($_POST['user_account_id']) && !empty($_POST['user_account_id'])) {
+            $userID = $_SESSION['user_account_id'];
             $userAccountIDs = $_POST['user_account_id'];
     
             foreach($userAccountIDs as $userAccountID){
@@ -585,11 +586,23 @@ class UserAccountController {
         }
 
         if (isset($_POST['user_account_id']) && !empty($_POST['user_account_id'])) {
-            $userID = $_SESSION['user_id'];
+            $userID = $_SESSION['user_account_id'];
             $userAccountID = htmlspecialchars($_POST['user_account_id'], ENT_QUOTES, 'UTF-8');
         
             $checkUserAccountExist = $this->userAccountModel->checkUserAccountExist($userAccountID);
             $total = $checkUserAccountExist['total'] ?? 0;
+
+            if($userAccountID == $userID){
+                $response = [
+                    'success' => false,
+                    'title' => 'Deactivate User Account Error',
+                    'message' => 'You cannot deactivate the user account you are currently logged in as.',
+                    'messageType' => 'error'
+                ];
+                
+                echo json_encode($response);
+                exit;
+            }
 
             if($total === 0){
                 $response = [
@@ -647,6 +660,7 @@ class UserAccountController {
         }
 
         if (isset($_POST['user_account_id']) && !empty($_POST['user_account_id'])) {
+            $userID = $_SESSION['user_account_id'];
             $userAccountIDs = $_POST['user_account_id'];
     
             foreach($userAccountIDs as $userAccountID){
@@ -654,7 +668,9 @@ class UserAccountController {
                 $total = $checkUserAccountExist['total'] ?? 0;
 
                 if($total > 0){
-                    $this->userAccountModel->updateUserAccountStatus($userAccountID, 'No', $userID);
+                    if($userAccountID != $userID){
+                        $this->userAccountModel->updateUserAccountStatus($userAccountID, 'No', $userID);
+                    }
                 }
             }
                 
@@ -703,7 +719,7 @@ class UserAccountController {
         }
 
         if (isset($_POST['user_account_id']) && !empty($_POST['user_account_id'])) {
-            $userID = $_SESSION['user_id'];
+            $userID = $_SESSION['user_account_id'];
             $userAccountID = htmlspecialchars($_POST['user_account_id'], ENT_QUOTES, 'UTF-8');
         
             $checkUserAccountExist = $this->userAccountModel->checkUserAccountExist($userAccountID);
@@ -715,6 +731,18 @@ class UserAccountController {
                     'notExist' => true,
                     'title' => 'Lock User Account Error',
                     'message' => 'The user account has does not exist.',
+                    'messageType' => 'error'
+                ];
+                
+                echo json_encode($response);
+                exit;
+            }
+
+            if($userAccountID == $userID){
+                $response = [
+                    'success' => false,
+                    'title' => 'Lock User Account Error',
+                    'message' => 'You cannot lock the user account you are currently logged in as.',
                     'messageType' => 'error'
                 ];
                 
@@ -765,6 +793,7 @@ class UserAccountController {
         }
 
         if (isset($_POST['user_account_id']) && !empty($_POST['user_account_id'])) {
+            $userID = $_SESSION['user_account_id'];
             $userAccountIDs = $_POST['user_account_id'];
     
             foreach($userAccountIDs as $userAccountID){
@@ -772,7 +801,9 @@ class UserAccountController {
                 $total = $checkUserAccountExist['total'] ?? 0;
 
                 if($total > 0){
-                    $this->userAccountModel->updateUserAccountLock($userAccountID, 'Yes', 9999999, $userID);
+                    if($userAccountID != $userID){
+                        $this->userAccountModel->updateUserAccountLock($userAccountID, 'Yes', 9999999, $userID);
+                    }
                 }
             }
                 
@@ -821,7 +852,7 @@ class UserAccountController {
         }
 
         if (isset($_POST['user_account_id']) && !empty($_POST['user_account_id'])) {
-            $userID = $_SESSION['user_id'];
+            $userID = $_SESSION['user_account_id'];
             $userAccountID = htmlspecialchars($_POST['user_account_id'], ENT_QUOTES, 'UTF-8');
         
             $checkUserAccountExist = $this->userAccountModel->checkUserAccountExist($userAccountID);
@@ -883,6 +914,7 @@ class UserAccountController {
         }
 
         if (isset($_POST['user_account_id']) && !empty($_POST['user_account_id'])) {
+            $userID = $_SESSION['user_account_id'];
             $userAccountIDs = $_POST['user_account_id'];
     
             foreach($userAccountIDs as $userAccountID){
@@ -939,7 +971,7 @@ class UserAccountController {
         }
 
         if (isset($_POST['user_account_id']) && !empty($_POST['user_account_id'])) {
-            $userID = $_SESSION['user_id'];
+            $userID = $_SESSION['user_account_id'];
             $userAccountID = htmlspecialchars($_POST['user_account_id'], ENT_QUOTES, 'UTF-8');
         
             $checkUserAccountExist = $this->userAccountModel->checkUserAccountExist($userAccountID);
@@ -1001,7 +1033,7 @@ class UserAccountController {
         }
 
         if (isset($_POST['user_account_id']) && !empty($_POST['user_account_id'])) {
-            $userID = $_SESSION['user_id'];
+            $userID = $_SESSION['user_account_id'];
             $userAccountID = htmlspecialchars($_POST['user_account_id'], ENT_QUOTES, 'UTF-8');
         
             $checkUserAccountExist = $this->userAccountModel->checkUserAccountExist($userAccountID);
@@ -1067,7 +1099,7 @@ class UserAccountController {
         }
 
         if (isset($_POST['user_account_id']) && !empty($_POST['user_account_id'])) {
-            $userID = $_SESSION['user_id'];
+            $userID = $_SESSION['user_account_id'];
             $userAccountID = htmlspecialchars($_POST['user_account_id'], ENT_QUOTES, 'UTF-8');
         
             $checkUserAccountExist = $this->userAccountModel->checkUserAccountExist($userAccountID);
@@ -1129,7 +1161,7 @@ class UserAccountController {
         }
 
         if (isset($_POST['user_account_id']) && !empty($_POST['user_account_id'])) {
-            $userID = $_SESSION['user_id'];
+            $userID = $_SESSION['user_account_id'];
             $userAccountID = htmlspecialchars($_POST['user_account_id'], ENT_QUOTES, 'UTF-8');
         
             $checkUserAccountExist = $this->userAccountModel->checkUserAccountExist($userAccountID);
@@ -1195,6 +1227,7 @@ class UserAccountController {
         }
 
         if (isset($_POST['user_account_id']) && !empty($_POST['user_account_id'])) {
+            $userID = $_SESSION['user_account_id'];
             $userAccountID = htmlspecialchars($_POST['user_account_id'], ENT_QUOTES, 'UTF-8');
         
             $checkUserAccountExist = $this->userAccountModel->checkUserAccountExist($userAccountID);
@@ -1206,6 +1239,18 @@ class UserAccountController {
                     'notExist' => true,
                     'title' => 'Delete User Account Error',
                     'message' => 'The user account has does not exist.',
+                    'messageType' => 'error'
+                ];
+                
+                echo json_encode($response);
+                exit;
+            }
+
+            if($userAccountID == $userID){
+                $response = [
+                    'success' => false,
+                    'title' => 'Delete User Account Error',
+                    'message' => 'You cannot delete the user account you are currently logged in as.',
                     'messageType' => 'error'
                 ];
                 
@@ -1256,6 +1301,7 @@ class UserAccountController {
         }
 
         if (isset($_POST['user_account_id']) && !empty($_POST['user_account_id'])) {
+            $userID = $_SESSION['user_account_id'];
             $userAccountIDs = $_POST['user_account_id'];
     
             foreach($userAccountIDs as $userAccountID){
@@ -1263,7 +1309,9 @@ class UserAccountController {
                 $total = $checkUserAccountExist['total'] ?? 0;
 
                 if($total > 0){
-                    $this->userAccountModel->deleteUserAccount($userAccountID);
+                    if($userAccountID != $userID){
+                        $this->userAccountModel->deleteUserAccount($userAccountID);
+                    }
                 }
             }
                 
@@ -1389,7 +1437,7 @@ class UserAccountController {
         }
     
         if (isset($_POST['user_account_id']) && !empty($_POST['user_account_id'])) {
-            $userID = $_SESSION['user_id'];
+            $userID = $_SESSION['user_account_id'];
             $userAccountID = htmlspecialchars($_POST['user_account_id'], ENT_QUOTES, 'UTF-8');
 
             $checkUserAccountExist = $this->userAccountModel->checkUserAccountExist($userAccountID);
@@ -1411,8 +1459,10 @@ class UserAccountController {
             $userAccountDetails = $this->userAccountModel->getUserAccount($userAccountID, null);
             $active = $userAccountDetails['active'] ?? null;
             $locked = $userAccountDetails['locked'] ?? null;
-            $accountLockDuration = $userAccountDetails['account_lock_duration'];
-            $profilePicture = $this->systemModel->checkImage($userAccountDetails['profile_picture'], 'profile');
+            $accountLockDuration = $userAccountDetails['account_lock_duration'] ?? 0;
+            $twoFactorAuthentication = $userAccountDetails['two_factor_auth'] ?? 'Yes';
+            $multipleSession = $userAccountDetails['multiple_session'] ?? 'No';
+            $profilePicture = $this->systemModel->checkImage($userAccountDetails['profile_picture'] ?? null, 'profile');
             $passwordExpiryDate = date('F d, Y', strtotime($userAccountDetails['password_expiry_date']));
             $lastPasswordReset = (!empty($userAccountDetails['last_password_reset'])) ? date('F d, Y h:i:s a', strtotime($userAccountDetails['last_password_reset'])) : 'Never Reset';
             $lastConnectionDate = (!empty($userAccountDetails['last_connection_date'])) ? date('F d, Y h:i:s a', strtotime($userAccountDetails['last_connection_date'])) : 'Never Connected';
@@ -1433,6 +1483,8 @@ class UserAccountController {
                 'lastConnectionDate' => $lastConnectionDate,
                 'lastFailedLoginAttempt' => $lastFailedLoginAttempt,
                 'accountLockDuration' => $accountLockDuration,
+                'twoFactorAuthentication' => $twoFactorAuthentication,
+                'multipleSession' => $multipleSession,
                 'activeBadge' => $activeBadge,
                 'lockedBadge' => $lockedBadge
             ];

@@ -29,7 +29,7 @@ if(isset($_POST['type']) && !empty($_POST['type'])){
         # -------------------------------------------------------------
         case 'log notes':
             if(isset($_POST['database_table']) && !empty($_POST['database_table']) && isset($_POST['reference_id']) && !empty($_POST['reference_id'])){
-                $table = '';
+                $logNote = '';
 
                 $databaseTable = htmlspecialchars($_POST['database_table'], ENT_QUOTES, 'UTF-8');
                 $referenceID = htmlspecialchars($_POST['reference_id'], ENT_QUOTES, 'UTF-8');
@@ -50,7 +50,7 @@ if(isset($_POST['type']) && !empty($_POST['type'])){
                     $fileAs = $userDetails['file_as'];
                     $profilePicture = $systemModel->checkImage($userDetails['profile_picture'] ?? null, 'profile');
                     
-                    $table .= ' <div class="d-flex flex-row comment-row border-bottom p-3 gap-3">
+                    $logNote .= ' <div class="d-flex flex-row comment-row border-bottom p-3 gap-3">
                                     <div>
                                         <span class=""><img src="'. $profilePicture .'" class="rounded-circle" alt="user" width="50" /></span>
                                     </div>
@@ -64,14 +64,14 @@ if(isset($_POST['type']) && !empty($_POST['type'])){
                                 </div>';
                 }
 
-                if(empty($table)){
-                    $table = '<div class="text-center">
+                if(empty($logNote)){
+                    $logNote = '<div class="text-center">
                                 No log notes found
                             </div>';
                 }
 
                 $response[] = [
-                    'LOG_NOTE' => $table
+                    'LOG_NOTE' => $logNote
                 ];
 
                 echo json_encode($response);

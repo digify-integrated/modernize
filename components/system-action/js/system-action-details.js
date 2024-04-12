@@ -379,6 +379,9 @@ function displayDetails(transaction){
                     system_action_id : system_action_id, 
                     transaction : transaction
                 },
+                beforeSend: function(){
+                    resetModalForm('system-action-form');
+                },
                 success: function(response) {
                     if (response.success) {
                         $('#system_action_name').val(response.systemActionName);
@@ -407,9 +410,6 @@ function displayDetails(transaction){
                         fullErrorMessage += `, Response: ${xhr.responseText}`;
                     }
                     showErrorDialog(fullErrorMessage);
-                },
-                complete: function(){
-                    resetModalForm('system-action-form');
                 }
             });
             break;

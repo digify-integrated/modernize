@@ -16046,7 +16046,7 @@ html[data-boxed-layout=boxed] .container-fluid, html[data-boxed-layout=boxed] .c
   align-items: center;
   line-height: 25px;
   position: relative;
-  margin: 0px 0px 2px;
+  margin: 0px 0px 1px;
   padding: 10px;
   border-radius: 7px;
   gap: 15px;
@@ -16087,7 +16087,7 @@ html[data-boxed-layout=boxed] .container-fluid, html[data-boxed-layout=boxed] .c
 .sidebar-nav ul .sidebar-item .first-level .sidebar-item > .sidebar-link {
   padding: 8px 10px;
   border-radius: 7px;
-  font-size: 14px;
+  font-size: 13px;
   gap: 23px;
 }
 .sidebar-nav ul .sidebar-item .first-level .sidebar-item > .sidebar-link .sidebar-icon {

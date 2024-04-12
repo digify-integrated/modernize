@@ -752,6 +752,9 @@ function displayDetails(transaction){
                         $('#last_connection_date_summary').text(response.lastConnectionDate);
                         $('#last_password_reset_summary').text(response.lastPasswordReset);
                         $('#account_lock_duration_summary').text(response.accountLockDuration);
+
+                        document.getElementById('two-factor-authentication').checked = response.twoFactorAuthentication === 'Yes';
+                        document.getElementById('multiple-login-sessions').checked = response.multipleSession === 'Yes';
                     } 
                     else {
                         if (response.isInactive || response.userNotExist || response.userInactive || response.userLocked || response.sessionExpired) {

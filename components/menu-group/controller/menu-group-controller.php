@@ -54,7 +54,7 @@ class MenuGroupController {
     # -------------------------------------------------------------
     public function handleRequest(){
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $userID = $_SESSION['user_id'];
+            $userID = $_SESSION['user_account_id'];
             $sessionToken = $_SESSION['session_token'];
 
             $checkLoginCredentialsExist = $this->authenticationModel->checkLoginCredentialsExist($userID, null);
@@ -172,7 +172,7 @@ class MenuGroupController {
         }
 
         if (isset($_POST['menu_group_name']) && !empty($_POST['menu_group_name']) && isset($_POST['order_sequence']) && !empty($_POST['order_sequence'])) {
-            $userID = $_SESSION['user_id'];
+            $userID = $_SESSION['user_account_id'];
             $menuGroupName = htmlspecialchars($_POST['menu_group_name'], ENT_QUOTES, 'UTF-8');
             $orderSequence = htmlspecialchars($_POST['order_sequence'], ENT_QUOTES, 'UTF-8');
         
@@ -224,7 +224,7 @@ class MenuGroupController {
         }
         
         if (isset($_POST['menu_group_id']) && !empty($_POST['menu_group_id']) && isset($_POST['menu_group_name']) && !empty($_POST['menu_group_name']) && isset($_POST['order_sequence']) && !empty($_POST['order_sequence'])) {
-            $userID = $_SESSION['user_id'];
+            $userID = $_SESSION['user_account_id'];
             $menuGroupID = htmlspecialchars($_POST['menu_group_id'], ENT_QUOTES, 'UTF-8');
             $menuGroupName = htmlspecialchars($_POST['menu_group_name'], ENT_QUOTES, 'UTF-8');
             $orderSequence = htmlspecialchars($_POST['order_sequence'], ENT_QUOTES, 'UTF-8');
@@ -409,7 +409,7 @@ class MenuGroupController {
         }
     
         if (isset($_POST['menu_group_id']) && !empty($_POST['menu_group_id'])) {
-            $userID = $_SESSION['user_id'];
+            $userID = $_SESSION['user_account_id'];
             $menuGroupID = htmlspecialchars($_POST['menu_group_id'], ENT_QUOTES, 'UTF-8');
 
             $checkMenuGroupExist = $this->menuGroupModel->checkMenuGroupExist($menuGroupID);

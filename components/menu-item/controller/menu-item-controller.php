@@ -57,7 +57,7 @@ class MenuItemController {
     # -------------------------------------------------------------
     public function handleRequest(){
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $userID = $_SESSION['user_id'];
+            $userID = $_SESSION['user_account_id'];
             $sessionToken = $_SESSION['session_token'];
 
             $checkLoginCredentialsExist = $this->authenticationModel->checkLoginCredentialsExist($userID, null);
@@ -175,8 +175,8 @@ class MenuItemController {
         }
 
         if (isset($_POST['menu_item_name']) && !empty($_POST['menu_item_name']) && isset($_POST['menu_group']) && !empty($_POST['menu_group']) && isset($_POST['order_sequence']) && !empty($_POST['order_sequence']) && isset($_POST['menu_item_url']) && isset($_POST['menu_item_icon'])) {
-            $userID = $_SESSION['user_id'];
-            $menuItemName = htmlspecialchars($_POST['menu_item_name'], ENT_QUOTES, 'UTF-8');
+            $userID = $_SESSION['user_account_id'];
+            $menuItemName = $_POST['menu_item_name'];
             $orderSequence = htmlspecialchars($_POST['order_sequence'], ENT_QUOTES, 'UTF-8');
             $menuGroup = htmlspecialchars($_POST['menu_group'], ENT_QUOTES, 'UTF-8');
             $parentID = isset($_POST['parent_id']) ? htmlspecialchars($_POST['parent_id'], ENT_QUOTES, 'UTF-8') : null;
@@ -237,9 +237,9 @@ class MenuItemController {
         }
         
         if (isset($_POST['menu_item_id']) && !empty($_POST['menu_item_id']) && isset($_POST['menu_item_name']) && !empty($_POST['menu_item_name']) && isset($_POST['menu_group']) && !empty($_POST['menu_group']) && isset($_POST['order_sequence']) && !empty($_POST['order_sequence']) && isset($_POST['menu_item_url']) && isset($_POST['menu_item_icon'])) {
-            $userID = $_SESSION['user_id'];
+            $userID = $_SESSION['user_account_id'];
             $menuItemID = htmlspecialchars($_POST['menu_item_id'], ENT_QUOTES, 'UTF-8');
-            $menuItemName = htmlspecialchars($_POST['menu_item_name'], ENT_QUOTES, 'UTF-8');
+            $menuItemName = $_POST['menu_item_name'];
             $orderSequence = htmlspecialchars($_POST['order_sequence'], ENT_QUOTES, 'UTF-8');
             $menuGroup = htmlspecialchars($_POST['menu_group'], ENT_QUOTES, 'UTF-8');
             $parentID = isset($_POST['parent_id']) ? htmlspecialchars($_POST['parent_id'], ENT_QUOTES, 'UTF-8') : null;
@@ -432,7 +432,7 @@ class MenuItemController {
         }
     
         if (isset($_POST['menu_item_id']) && !empty($_POST['menu_item_id'])) {
-            $userID = $_SESSION['user_id'];
+            $userID = $_SESSION['user_account_id'];
             $menuItemID = htmlspecialchars($_POST['menu_item_id'], ENT_QUOTES, 'UTF-8');
 
             $checkMenuItemExist = $this->menuItemModel->checkMenuItemExist($menuItemID);

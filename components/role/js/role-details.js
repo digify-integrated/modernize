@@ -910,6 +910,9 @@ function displayDetails(transaction){
                     role_id : role_id, 
                     transaction : transaction
                 },
+                beforeSend: function(){
+                    resetModalForm('role-form');
+                },
                 success: function(response) {
                     if (response.success) {
                         $('#role_name').val(response.roleName);
@@ -938,9 +941,6 @@ function displayDetails(transaction){
                         fullErrorMessage += `, Response: ${xhr.responseText}`;
                     }
                     showErrorDialog(fullErrorMessage);
-                },
-                complete: function(){
-                    resetModalForm('role-form');
                 }
             });
             break;

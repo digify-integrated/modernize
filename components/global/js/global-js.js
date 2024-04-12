@@ -5,7 +5,7 @@
         checkNotification();
         maxLength();
         initializeFilterDaterange();
-        
+
         $(document).on('click','#copy-error-message',function() {
             copyToClipboard('error-dialog');
         });

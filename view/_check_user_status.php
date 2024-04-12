@@ -1,5 +1,5 @@
 <?php
-    $loginCredentialsDetails = $authenticationModel->getLoginCredentials($user_id, null);
+    $loginCredentialsDetails = $authenticationModel->getLoginCredentials($userID, null);
     $userFileAs = $loginCredentialsDetails['file_as'];
     $userEmail = $loginCredentialsDetails['email'];
     $multipleSession = $loginCredentialsDetails['multiple_session'];
