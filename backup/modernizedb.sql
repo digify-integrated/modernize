@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 12, 2024 at 11:33 AM
+-- Generation Time: Apr 19, 2024 at 11:30 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -1002,7 +1002,63 @@ INSERT INTO `audit_log` (`audit_log_id`, `table_name`, `reference_id`, `log`, `c
 (242, 'role_permission', 8, 'Read Access: 0 -> 1<br/>', 2, '2024-04-12 17:18:43'),
 (243, 'role_permission', 8, 'Create Access: 0 -> 1<br/>', 2, '2024-04-12 17:18:43'),
 (244, 'role_permission', 8, 'Write Access: 0 -> 1<br/>', 2, '2024-04-12 17:18:44'),
-(245, 'role_permission', 8, 'Delete Access: 0 -> 1<br/>', 2, '2024-04-12 17:18:45');
+(245, 'role_permission', 8, 'Delete Access: 0 -> 1<br/>', 2, '2024-04-12 17:18:45'),
+(246, 'user_account', 2, 'Last Connection Date: 2024-04-12 10:56:44 -> 2024-04-19 15:50:07<br/>', 2, '2024-04-19 15:50:07'),
+(247, 'user_account', 2, 'Two-Factor Authentication: No -> Yes<br/>', 2, '2024-04-19 16:05:09'),
+(248, 'user_account', 2, 'Two-Factor Authentication: Yes -> No<br/>', 2, '2024-04-19 16:05:10'),
+(249, 'menu_item', 7, 'Menu Item created. <br/><br/>Menu Item Name: Settings<br/>Menu Group: Technical<br/>Menu Item Icon: ti ti-gear<br/>Order Sequence: 19', 2, '2024-04-19 16:10:28'),
+(250, 'role_permission', 9, 'Role permission created. <br/><br/>Role Name: Administrator<br/>Menu Item Name: Settings<br/>Date Assigned: 2024-04-19 16:10:36', 2, '2024-04-19 16:10:36'),
+(251, 'role_permission', 9, 'Read Access: 0 -> 1<br/>', 2, '2024-04-19 16:10:38'),
+(252, 'menu_item', 7, 'Menu Item Icon: ti ti-gear -> ti ti-settings<br/>', 2, '2024-04-19 16:13:18'),
+(253, 'role_permission', 9, 'Menu Item: Settings -> Configurations<br/>', 2, '2024-04-19 16:28:34'),
+(254, 'menu_item', 7, 'Menu Item Name: Settings -> Configurations<br/>Order Sequence: 19 -> 3<br/>', 2, '2024-04-19 16:28:34'),
+(255, 'menu_item', 8, 'Menu Item created. <br/><br/>Menu Item Name: File Type<br/>Menu Item URL: file-type.php<br/>Menu Group: Technical<br/>Parent: Configurations<br/>Order Sequence: 6', 2, '2024-04-19 16:29:21'),
+(256, 'role_permission', 10, 'Role permission created. <br/><br/>Role Name: Administrator<br/>Menu Item Name: File Type<br/>Date Assigned: 2024-04-19 16:29:26', 2, '2024-04-19 16:29:26'),
+(257, 'role_permission', 10, 'Read Access: 0 -> 1<br/>', 2, '2024-04-19 16:29:28'),
+(258, 'role_permission', 10, 'Create Access: 0 -> 1<br/>', 2, '2024-04-19 16:29:29'),
+(259, 'role_permission', 10, 'Write Access: 0 -> 1<br/>', 2, '2024-04-19 16:29:30'),
+(260, 'role_permission', 10, 'Delete Access: 0 -> 1<br/>', 2, '2024-04-19 16:29:30'),
+(261, 'menu_item', 9, 'Menu Item created. <br/><br/>Menu Item Name: File Extension<br/>Menu Item URL: file-extension.php<br/>Menu Group: Technical<br/>Parent: Configurations<br/>Order Sequence: 6', 2, '2024-04-19 16:30:01'),
+(262, 'role_permission', 11, 'Role permission created. <br/><br/>Role Name: Administrator<br/>Menu Item Name: File Extension<br/>Date Assigned: 2024-04-19 16:30:05', 2, '2024-04-19 16:30:05'),
+(263, 'role_permission', 11, 'Read Access: 0 -> 1<br/>', 2, '2024-04-19 16:30:06'),
+(264, 'role_permission', 11, 'Create Access: 0 -> 1<br/>', 2, '2024-04-19 16:30:07'),
+(265, 'role_permission', 11, 'Write Access: 0 -> 1<br/>', 2, '2024-04-19 16:30:08'),
+(266, 'role_permission', 11, 'Delete Access: 0 -> 1<br/>', 2, '2024-04-19 16:30:08'),
+(267, 'menu_item', 1, 'Menu Item Icon: ti ti-layout -> ti ti-template<br/>', 2, '2024-04-19 16:33:07'),
+(268, 'menu_item', 10, 'Menu Item created. <br/><br/>Menu Item Name: Settings<br/>Menu Group: Technical<br/>Menu Item Icon: ti ti-settings-2<br/>Order Sequence: 19', 2, '2024-04-19 16:47:52'),
+(269, 'role_permission', 12, 'Role permission created. <br/><br/>Role Name: Administrator<br/>Menu Item Name: Settings<br/>Date Assigned: 2024-04-19 16:47:58', 2, '2024-04-19 16:47:58'),
+(270, 'role_permission', 12, 'Read Access: 0 -> 1<br/>', 2, '2024-04-19 16:48:00'),
+(271, 'menu_item', 11, 'Menu Item created. <br/><br/>Menu Item Name: Upload Setting<br/>Menu Item URL: upload-setting.php<br/>Menu Group: Technical<br/>Parent: Settings<br/>Order Sequence: 21', 2, '2024-04-19 16:51:43'),
+(272, 'role_permission', 13, 'Role permission created. <br/><br/>Role Name: Administrator<br/>Menu Item Name: Upload Setting<br/>Date Assigned: 2024-04-19 16:51:49', 2, '2024-04-19 16:51:49'),
+(273, 'role_permission', 13, 'Read Access: 0 -> 1<br/>', 2, '2024-04-19 16:51:51'),
+(274, 'role_permission', 13, 'Create Access: 0 -> 1<br/>', 2, '2024-04-19 16:51:52'),
+(275, 'role_permission', 13, 'Write Access: 0 -> 1<br/>', 2, '2024-04-19 16:51:53'),
+(276, 'role_permission', 13, 'Delete Access: 0 -> 1<br/>', 2, '2024-04-19 16:51:53'),
+(277, 'menu_item', 12, 'Menu Item created. <br/><br/>Menu Item Name: Security Setting<br/>Menu Item URL: security-setting.php<br/>Menu Group: Technical<br/>Parent: Settings<br/>Order Sequence: 19', 2, '2024-04-19 16:52:49'),
+(278, 'role_permission', 14, 'Role permission created. <br/><br/>Role Name: Administrator<br/>Menu Item Name: Security Setting<br/>Date Assigned: 2024-04-19 16:52:54', 2, '2024-04-19 16:52:54'),
+(279, 'role_permission', 14, 'Read Access: 0 -> 1<br/>', 2, '2024-04-19 16:52:55'),
+(280, 'role_permission', 14, 'Create Access: 0 -> 1<br/>', 2, '2024-04-19 16:52:56'),
+(281, 'role_permission', 14, 'Write Access: 0 -> 1<br/>', 2, '2024-04-19 16:52:57'),
+(282, 'role_permission', 14, 'Delete Access: 0 -> 1<br/>', 2, '2024-04-19 16:52:57'),
+(283, 'menu_item', 13, 'Menu Item created. <br/><br/>Menu Item Name: Email Setting<br/>Menu Item URL: email-setting.php<br/>Menu Group: Technical<br/>Parent: Settings<br/>Order Sequence: 5', 2, '2024-04-19 16:53:58'),
+(284, 'role_permission', 15, 'Role permission created. <br/><br/>Role Name: Administrator<br/>Menu Item Name: Email Setting<br/>Date Assigned: 2024-04-19 16:54:02', 2, '2024-04-19 16:54:02'),
+(285, 'role_permission', 15, 'Read Access: 0 -> 1<br/>', 2, '2024-04-19 16:54:03'),
+(286, 'role_permission', 15, 'Create Access: 0 -> 1<br/>', 2, '2024-04-19 16:54:04'),
+(287, 'role_permission', 15, 'Write Access: 0 -> 1<br/>', 2, '2024-04-19 16:54:04'),
+(288, 'role_permission', 15, 'Delete Access: 0 -> 1<br/>', 2, '2024-04-19 16:54:05'),
+(289, 'menu_item', 14, 'Menu Item created. <br/><br/>Menu Item Name: Notification Setting<br/>Menu Item URL: notification-setting.php<br/>Menu Group: Technical<br/>Parent: Settings<br/>Order Sequence: 14', 2, '2024-04-19 16:54:41'),
+(290, 'role_permission', 16, 'Role permission created. <br/><br/>Role Name: Administrator<br/>Menu Item Name: Notification Setting<br/>Date Assigned: 2024-04-19 16:54:46', 2, '2024-04-19 16:54:46'),
+(291, 'role_permission', 16, 'Read Access: 0 -> 1<br/>', 2, '2024-04-19 16:54:48'),
+(292, 'role_permission', 16, 'Create Access: 0 -> 1<br/>', 2, '2024-04-19 16:54:49'),
+(293, 'role_permission', 16, 'Write Access: 0 -> 1<br/>', 2, '2024-04-19 16:54:50'),
+(294, 'role_permission', 16, 'Delete Access: 0 -> 1<br/>', 2, '2024-04-19 16:54:50'),
+(295, 'menu_item', 15, 'Menu Item created. <br/><br/>Menu Item Name: System Setting<br/>Menu Item URL: security-setting.php<br/>Menu Group: Technical<br/>Parent: Settings<br/>Order Sequence: 19', 2, '2024-04-19 16:55:47'),
+(296, 'role_permission', 17, 'Role permission created. <br/><br/>Role Name: Administrator<br/>Menu Item Name: System Setting<br/>Date Assigned: 2024-04-19 16:55:51', 2, '2024-04-19 16:55:51'),
+(297, 'role_permission', 17, 'Read Access: 0 -> 1<br/>', 2, '2024-04-19 16:55:53'),
+(298, 'role_permission', 17, 'Create Access: 0 -> 1<br/>', 2, '2024-04-19 16:55:53'),
+(299, 'role_permission', 17, 'Write Access: 0 -> 1<br/>', 2, '2024-04-19 16:55:54'),
+(300, 'role_permission', 17, 'Delete Access: 0 -> 1<br/>', 2, '2024-04-19 16:55:55'),
+(301, 'user_account', 2, 'Last Connection Date: 2024-04-19 15:50:07 -> 2024-04-19 17:04:58<br/>', 2, '2024-04-19 17:04:58');
 
 -- --------------------------------------------------------
 
@@ -1118,12 +1174,21 @@ CREATE TABLE `menu_item` (
 --
 
 INSERT INTO `menu_item` (`menu_item_id`, `menu_item_name`, `menu_item_url`, `menu_group_id`, `menu_group_name`, `parent_id`, `parent_name`, `menu_item_icon`, `order_sequence`, `last_log_by`) VALUES
-(1, 'User Interface', '', 1, 'Technical', NULL, NULL, 'ti ti-layout', 21, 2),
+(1, 'User Interface', '', 1, 'Technical', 0, NULL, 'ti ti-template', 21, 2),
 (2, 'Menu Group', 'menu-group.php', 1, 'Technical', 1, 'User Interface', '', 13, 2),
 (3, 'Menu Item', 'menu-item.php', 1, 'Technical', 1, 'User Interface', '', 13, 2),
 (4, 'System Action', 'system-action.php', 1, 'Technical', 1, 'User Interface', '', 19, 2),
 (5, 'Users & Companies', '', 2, 'Administration', NULL, NULL, 'ti ti-users', 21, 2),
-(6, 'User Account', 'user-account.php', 2, 'Administration', 5, 'Users & Companies', '', 21, 2);
+(6, 'User Account', 'user-account.php', 2, 'Administration', 5, 'Users & Companies', '', 21, 2),
+(7, 'Configurations', '', 1, 'Technical', 0, NULL, 'ti ti-settings', 3, 2),
+(8, 'File Type', 'file-type.php', 1, 'Technical', 7, 'Configurations', '', 6, 2),
+(9, 'File Extension', 'file-extension.php', 1, 'Technical', 7, 'Configurations', '', 6, 2),
+(10, 'Settings', '', 1, 'Technical', 0, NULL, 'ti ti-settings-2', 19, 2),
+(11, 'Upload Setting', 'upload-setting.php', 1, 'Technical', 10, 'Settings', '', 21, 2),
+(12, 'Security Setting', 'security-setting.php', 1, 'Technical', 10, 'Settings', '', 19, 2),
+(13, 'Email Setting', 'email-setting.php', 1, 'Technical', 10, 'Settings', '', 5, 2),
+(14, 'Notification Setting', 'notification-setting.php', 1, 'Technical', 10, 'Settings', '', 14, 2),
+(15, 'System Setting', 'security-setting.php', 1, 'Technical', 10, 'Settings', '', 19, 2);
 
 --
 -- Triggers `menu_item`
@@ -1344,7 +1409,16 @@ INSERT INTO `role_permission` (`role_permission_id`, `role_id`, `role_name`, `me
 (3, 1, 'Administrator', 5, 'Users & Companies', 1, 0, 0, 0, '2024-04-12 15:28:21', 2),
 (6, 1, 'Administrator', 3, 'Menu Item', 1, 1, 1, 1, '2024-04-12 16:21:22', 2),
 (7, 1, 'Administrator', 6, 'User Account', 1, 1, 1, 1, '2024-04-12 17:01:56', 2),
-(8, 1, 'Administrator', 4, 'System Action', 1, 1, 1, 1, '2024-04-12 17:18:42', 2);
+(8, 1, 'Administrator', 4, 'System Action', 1, 1, 1, 1, '2024-04-12 17:18:42', 2),
+(9, 1, 'Administrator', 7, 'Configurations', 1, 0, 0, 0, '2024-04-19 16:10:36', 2),
+(10, 1, 'Administrator', 8, 'File Type', 1, 1, 1, 1, '2024-04-19 16:29:26', 2),
+(11, 1, 'Administrator', 9, 'File Extension', 1, 1, 1, 1, '2024-04-19 16:30:05', 2),
+(12, 1, 'Administrator', 10, 'Settings', 1, 0, 0, 0, '2024-04-19 16:47:58', 2),
+(13, 1, 'Administrator', 11, 'Upload Setting', 1, 1, 1, 1, '2024-04-19 16:51:49', 2),
+(14, 1, 'Administrator', 12, 'Security Setting', 1, 1, 1, 1, '2024-04-19 16:52:54', 2),
+(15, 1, 'Administrator', 13, 'Email Setting', 1, 1, 1, 1, '2024-04-19 16:54:02', 2),
+(16, 1, 'Administrator', 14, 'Notification Setting', 1, 1, 1, 1, '2024-04-19 16:54:46', 2),
+(17, 1, 'Administrator', 15, 'System Setting', 1, 1, 1, 1, '2024-04-19 16:55:51', 2);
 
 --
 -- Triggers `role_permission`
@@ -1677,7 +1751,7 @@ CREATE TABLE `user_account` (
 
 INSERT INTO `user_account` (`user_account_id`, `file_as`, `email`, `password`, `profile_picture`, `locked`, `active`, `last_failed_login_attempt`, `failed_login_attempts`, `last_connection_date`, `password_expiry_date`, `reset_token`, `reset_token_expiry_date`, `receive_notification`, `two_factor_auth`, `otp`, `otp_expiry_date`, `failed_otp_attempts`, `last_password_change`, `account_lock_duration`, `last_password_reset`, `multiple_session`, `session_token`, `last_log_by`) VALUES
 (1, 'CGMI Bot', 'cgmids@christianmotors.ph', 'RYHObc8sNwIxdPDNJwCsO8bXKZJXYx7RjTgEWMC17FY%3D', NULL, 'No', 'Yes', NULL, 0, NULL, '2025-12-30', NULL, NULL, 'Yes', 'No', NULL, NULL, 0, NULL, 0, NULL, 'Yes', NULL, 2),
-(2, 'Administrator', 'lawrenceagulto.317@gmail.com', 'RYHObc8sNwIxdPDNJwCsO8bXKZJXYx7RjTgEWMC17FY%3D', NULL, 'No', 'Yes', NULL, 0, '2024-04-12 10:56:44', '2025-12-30', NULL, NULL, 'Yes', 'No', 'lIT0AN4gu3eEQZNQ4FYhayb83RUOCBEjxDrOx1Hns0U%3D', '2024-04-12 08:40:18', 0, NULL, 0, NULL, 'Yes', 'C5jBEk7R0AkSGVELgNH%2FOTZmS1U1PO2MFtITYxKHaPc%3D', 2),
+(2, 'Administrator', 'lawrenceagulto.317@gmail.com', 'RYHObc8sNwIxdPDNJwCsO8bXKZJXYx7RjTgEWMC17FY%3D', NULL, 'No', 'Yes', NULL, 0, '2024-04-19 17:04:58', '2025-12-30', NULL, NULL, 'Yes', 'No', 'lIT0AN4gu3eEQZNQ4FYhayb83RUOCBEjxDrOx1Hns0U%3D', '2024-04-12 08:40:18', 0, NULL, 0, NULL, 'Yes', 'Q0QRIDVwMcnPIuDzOHg7PZ6wED%2Fx1MBuegRmGkCEnwk%3D', 2),
 (4, 'Christian Edward Baguisa', 'benidickbelizario@christianmotors.ph', 'uAEQIiQf%2FwUa2hVPV89U4PlGBkD%2FtS9pBdl4RB4CVi0%3D', NULL, 'No', 'Yes', NULL, 0, '2024-04-08 12:25:04', '2024-10-05', NULL, NULL, 'Yes', 'No', NULL, NULL, 0, '2024-04-08 12:24:25', 0, NULL, 'Yes', 'hRIvgBlBnoCgxiTo4Jt8dXaKNW5S3CxtiJOpieNNrCM%3D', 2);
 
 --
@@ -1935,7 +2009,7 @@ ALTER TABLE `user_account`
 -- AUTO_INCREMENT for table `audit_log`
 --
 ALTER TABLE `audit_log`
-  MODIFY `audit_log_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=246;
+  MODIFY `audit_log_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=302;
 
 --
 -- AUTO_INCREMENT for table `email_setting`
@@ -1953,7 +2027,7 @@ ALTER TABLE `menu_group`
 -- AUTO_INCREMENT for table `menu_item`
 --
 ALTER TABLE `menu_item`
-  MODIFY `menu_item_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `menu_item_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT for table `notification_setting`
@@ -1977,7 +2051,7 @@ ALTER TABLE `role`
 -- AUTO_INCREMENT for table `role_permission`
 --
 ALTER TABLE `role_permission`
-  MODIFY `role_permission_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `role_permission_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- AUTO_INCREMENT for table `role_system_action_permission`

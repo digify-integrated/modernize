@@ -45,7 +45,7 @@ class GlobalModel {
             foreach ($options as $row) {
                 $menuItemID = $row['menu_item_id'];
                 $menuItemName = $row['menu_item_name'];
-                $menuItemURL = $row['menu_item_url'];
+                $menuItemURL = $row['menu_item_url'] ?? null;
                 $parentID = $row['parent_id'];
                 $menuItemIcon = !empty($row['menu_item_icon']) ? $row['menu_item_icon'] : null;
 
@@ -102,10 +102,12 @@ class GlobalModel {
         $menuItemURL = $menuItemDetails['MENU_ITEM_URL'];
         $children = $menuItemDetails['CHILDREN'];
 
+        $menuItemURL = !empty($menuItemURL) ? $menuItemURL . '?page_id=' . $menuItemID : 'javascript:void(0)';
+
         if ($level === 1) {
             if (empty($children)) {
                 $html .= '<li class="sidebar-item">
-                                <a class="sidebar-link" href="'. $menuItemURL .'?page_id='. $menuItemID .'" aria-expanded="false">
+                                <a class="sidebar-link" href="'. $menuItemURL .'" aria-expanded="false">
                                 <span>
                                     <i class="'. $menuItemIcon .'"></i>
                                 </span>

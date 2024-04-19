@@ -639,7 +639,7 @@
   --bs-font-monospace: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   --bs-gradient: linear-gradient(180deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0));
   --bs-body-font-family: var(--bs-font-sans-serif);
-  --bs-body-font-size: 0.75rem;
+  --bs-body-font-size: 0.813rem;
   --bs-body-font-weight: 400;
   --bs-body-line-height: 1.5;
   --bs-body-color: #5a6a85;
@@ -16240,7 +16240,7 @@ html[data-boxed-layout=boxed] .container-fluid, html[data-boxed-layout=boxed] .c
   line-height: 70px;
   height: 70px;
   padding: 0 15px;
-  font-size: 14px;
+  font-size: 13px;
   color: var(--bs-link-color);
 }
 .topbar .navbar .navbar-nav .nav-item .nav-link i {
@@ -16561,7 +16561,7 @@ html[data-layout=horizontal] .body-wrapper > .container-fluid, html[data-layout=
     position: relative;
   }
   html[data-layout=horizontal] .sidebar-nav #sidebarnav > .sidebar-item .first-level .sidebar-item .sidebar-link {
-    font-size: 14px;
+    font-size: 13px;
     gap: 10px;
   }
   html[data-layout=horizontal] .sidebar-nav #sidebarnav > .sidebar-item .first-level .sidebar-item .sidebar-link:hover {
@@ -16816,7 +16816,7 @@ html[data-card=border] .card {
 }
 
 .card-subtitle {
-  font-size: 14px;
+  font-size: 13px;
   color: var(--bs-card-subtitle-color);
 }
 
@@ -16964,7 +16964,7 @@ html[data-card=border] .card {
 }
 
 .floating-labels select.form-control > option {
-  font-size: 14px;
+  font-size: 13px;
 }
 
 .floating-labels .has-error .form-control {
@@ -22080,7 +22080,7 @@ a.jp-playlist-current:before {
   background-color: var(--bs-white);
   border-color: var(--bs-primary);
   letter-spacing: 1px;
-  font-size: 14px;
+  font-size: 13px;
   color: var(--bs-white);
 }
 .app-calendar .fc .fc-button-primary:not(:disabled).fc-button-active {
@@ -22345,7 +22345,7 @@ body .scrumboard .task-header .dropdown .dropdown-toggle::after {
   display: none;
 }
 body .scrumboard .task-header h4, body .scrumboard .task-header .h4 {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   margin-bottom: 0;
 }
@@ -23675,7 +23675,7 @@ body .apexcharts-tooltip-title {
   width: 100%;
   text-align: center;
   text-indent: 0;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 900;
   color: #67757c;
   top: 7px;

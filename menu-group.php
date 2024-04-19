@@ -4,6 +4,14 @@
 
     $pageTitle = 'Menu Group';
 
+    if (!isset($_GET['page_id']) || empty($_GET['page_id'])) {
+        header('location: dashboard.php');
+        exit;
+    }
+
+    $pageID = $securityModel->decryptData($_GET['page_id']);
+    $menuGroupID = null;
+
     if(isset($_GET['id'])){
         if(empty($_GET['id'])){
             header('location: menu-group.php');
@@ -11,9 +19,6 @@
         }
     
         $menuGroupID = $securityModel->decryptData($_GET['id']);
-    }
-    else{
-        $menuGroupID = null;
     }
     
     $newRecord = isset($_GET['new']);
