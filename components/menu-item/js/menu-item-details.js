@@ -28,6 +28,7 @@
 
         $(document).on('click','#delete-menu-item',function() {
             const menu_item_id = $('#menu-item-id').text();
+            const page_link = document.getElementById('page-link').getAttribute('href');
             const transaction = 'delete menu item';
     
             Swal.fire({
@@ -55,7 +56,7 @@
                         success: function (response) {
                             if (response.success) {
                                 setNotification(response.title, response.message, response.messageType);
-                                window.location = 'menu-item.php';
+                                window.location = page_link;
                             }
                             else {
                                 if (response.isInactive || response.userNotExist || response.userInactive || response.userLocked || response.sessionExpired) {
@@ -64,7 +65,7 @@
                                 }
                                 else if (response.notExist) {
                                     setNotification(response.title, response.message, response.messageType);
-                                    window.location = 'menu-item.php';
+                                    window.location = page_link;
                                 }
                                 else {
                                     showNotification(response.title, response.message, response.messageType);
@@ -508,6 +509,7 @@ function displayDetails(transaction){
     switch (transaction) {
         case 'get menu item details':
             var menu_item_id = $('#menu-item-id').text();
+            const page_link = document.getElementById('page-link').getAttribute('href');
             
             $.ajax({
                 url: 'components/menu-item/controller/menu-item-controller.php',
@@ -544,7 +546,7 @@ function displayDetails(transaction){
                         }
                         else if (response.notExist) {
                             setNotification(response.title, response.message, response.messageType);
-                            window.location = 'menu-item.php';
+                            window.location = page_link;
                         }
                         else {
                             showNotification(response.title, response.message, response.messageType);

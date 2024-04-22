@@ -15,11 +15,12 @@
                         </ul>
                     </div>
                     <div class="card-actions cursor-pointer ms-auto d-flex button-group">
-                        <a href="user-account.php?new" class="btn btn-success d-flex align-items-center mb-0">Create</a>
+                        <a href="<?php echo $pageLink; ?>&new" class="btn btn-success d-flex align-items-center mb-0">Create</a>
                         <button type="button" class="btn btn-warning mb-0 px-4" data-bs-toggle="offcanvas" data-bs-target="#filter-offcanvas" aria-controls="filter-offcanvas">Filter</a>
                     </div>
                 </div>
                 <div class="card-body">
+                    <input type="hidden" id="page_id" value="<?php echo $pageID; ?>">
                     <div class="table-responsive">
                         <table id="user-account-table" class="table border table-striped table-hover align-middle text-nowrap mb-0">
                             <thead class="text-dark">

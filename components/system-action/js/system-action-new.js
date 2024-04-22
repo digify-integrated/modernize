@@ -7,7 +7,8 @@
         }
 
         $(document).on('click','#discard-create',function() {
-            discardCreate('system-action.php');
+            const page_link = document.getElementById('page-link').getAttribute('href');
+            discardCreate(page_link);
         });
     });
 })(jQuery);
@@ -53,6 +54,7 @@ function systemActionForm(){
         },
         submitHandler: function(form) {
             const transaction = 'add system action';
+            const page_link = document.getElementById('page-link').getAttribute('href');
           
             $.ajax({
                 type: 'POST',
@@ -65,7 +67,7 @@ function systemActionForm(){
                 success: function (response) {
                     if (response.success) {
                         setNotification(response.title, response.message, response.messageType);
-                        window.location = 'system-action.php?id=' + response.systemActionID;
+                        window.location = page_link + '&id=' + response.systemActionID;
                     }
                     else {
                         if (response.isInactive || response.notExist || response.userInactive || response.userLocked || response.sessionExpired) {

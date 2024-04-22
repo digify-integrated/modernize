@@ -139,6 +139,8 @@ function systemActionTable(datatable_name, buttons = false, show_all = false){
     toggleHideActionDropdown();
 
     const type = 'system action table';
+    const page_link = document.getElementById('page-link').getAttribute('href');
+
     var settings;
 
     const column = [ 
@@ -160,7 +162,10 @@ function systemActionTable(datatable_name, buttons = false, show_all = false){
             'url' : 'components/system-action/view/_system_action_generation.php',
             'method' : 'POST',
             'dataType': 'json',
-            'data': {'type' : type},
+            'data': {
+                'type' : type,
+                'page_link' : page_link,
+            },
             'dataSrc' : '',
             'error': function(xhr, status, error) {
                 var fullErrorMessage = `XHR status: ${status}, Error: ${error}`;

@@ -7,7 +7,8 @@
         }
 
         $(document).on('click','#discard-create',function() {
-            discardCreate('role.php');
+            const page_link = document.getElementById('page-link').getAttribute('href');
+            discardCreate(page_link);
         });
     });
 })(jQuery);
@@ -53,6 +54,7 @@ function roleForm(){
         },
         submitHandler: function(form) {
             const transaction = 'add role';
+            const page_link = document.getElementById('page-link').getAttribute('href');
           
             $.ajax({
                 type: 'POST',
@@ -65,7 +67,7 @@ function roleForm(){
                 success: function (response) {
                     if (response.success) {
                         setNotification(response.title, response.message, response.messageType);
-                        window.location = 'role.php?id=' + response.roleID;
+                        window.location = page_link + '&id=' + response.roleID;
                     }
                     else {
                         if (response.isInactive || response.notExist || response.userInactive || response.userLocked || response.sessionExpired) {

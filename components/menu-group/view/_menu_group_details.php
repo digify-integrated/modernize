@@ -6,15 +6,22 @@
                 <div class="card-actions cursor-pointer ms-auto d-flex button-group">
                     <button type="button" class="btn btn-dark dropdown-toggle action-dropdown mb-0" data-bs-toggle="dropdown" aria-expanded="false">Action</button>
                     <ul class="dropdown-menu dropdown-menu-end">
-                        <li><a class="dropdown-item" href="menu-group.php?new">Create Menu Group</a></li>
-                        <li><button class="dropdown-item" type="button" id="delete-menu-group">Delete Menu Group</button></li>
-                        <li><hr class="dropdown-divider"></li>
+                        <?php
+                            if($menuGroupCreateAccess['total'] > 0 || $menuGroupDeleteAccess['total'] > 0){
+                                echo $menuGroupCreateAccess['total'] > 0 ? '<li><a class="dropdown-item" href="'. $pageLink .'&new">Create Menu Group</a></li>' : '';
+                                echo $menuGroupDeleteAccess['total'] > 0 ? '<li><button class="dropdown-item" type="button" id="delete-menu-group">Delete Menu Group</button></li>' : '';
+                                
+                                echo '<li><hr class="dropdown-divider"></li>';
+                            }
+                        ?>
                         <li><button class="dropdown-item" type="button" data-bs-toggle="offcanvas" data-bs-target="#log-notes-offcanvas" aria-controls="log-notes-offcanvas" id="view-log-notes">View Log Notes</button></li>
                     </ul>
                 </div>
-                <div class="card-actions cursor-pointer ms-auto d-flex button-group">
-                    <button class="btn btn-info mb-0 px-4" data-bs-toggle="modal" id="edit-details" data-bs-target="#menu-group-modal">Edit</button>
-                </div>
+                <?php
+                    echo $menuGroupWriteAccess['total'] > 0 ? ' <div class="card-actions cursor-pointer ms-auto d-flex button-group">
+                        <button class="btn btn-info mb-0 px-4" data-bs-toggle="modal" id="edit-details" data-bs-target="#menu-group-modal">Edit</button>
+                    </div>' : '';
+                ?>
             </div>
             <div class="card-body">
                 <div class="row">

@@ -6,9 +6,14 @@
                 <div class="card-actions cursor-pointer ms-auto d-flex button-group">
                     <button type="button" class="btn btn-dark dropdown-toggle mb-0" data-bs-toggle="dropdown" aria-expanded="false">Action</button>
                     <ul class="dropdown-menu dropdown-menu-end">
-                        <li><a class="dropdown-item" href="menu-item.php?new">Create Menu Item</a></li>
-                        <li><button class="dropdown-item" type="button" id="delete-menu-item">Delete Menu Item</button></li>
-                        <li><hr class="dropdown-divider"></li>
+                        <?php
+                            if($menuItemCreateAccess['total'] > 0 || $menuItemDeleteAccess['total'] > 0){
+                                echo $menuItemCreateAccess['total'] > 0 ? '<li><a class="dropdown-item" href="'. $pageLink .'&new">Create Menu Item</a></li>' : '';
+                                echo $menuItemDeleteAccess['total'] > 0 ? ' <li><button class="dropdown-item" type="button" id="delete-menu-item">Delete Menu Item</button></li>' : '';
+                                
+                                echo '<li><hr class="dropdown-divider"></li>';
+                            }
+                        ?>
                         <li><button class="dropdown-item" type="button" data-bs-toggle="offcanvas" data-bs-target="#log-notes-offcanvas" aria-controls="log-notes-offcanvas" id="view-log-notes">View Log Notes</button></li>
                     </ul>
                 </div>

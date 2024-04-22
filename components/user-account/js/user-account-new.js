@@ -7,7 +7,8 @@
         }
 
         $(document).on('click','#discard-create',function() {
-            discardCreate('user-account.php');
+            const page_link = document.getElementById('page-link').getAttribute('href');
+            discardCreate(page_link);
         });
     });
 })(jQuery);
@@ -60,6 +61,7 @@ function userAccountForm(){
         },
         submitHandler: function(form) {
             const transaction = 'add user account';
+            const page_link = document.getElementById('page-link').getAttribute('href');
           
             $.ajax({
                 type: 'POST',
@@ -72,7 +74,7 @@ function userAccountForm(){
                 success: function (response) {
                     if (response.success) {
                         setNotification(response.title, response.message, response.messageType);
-                        window.location = 'user-account.php?id=' + response.userAccountID;
+                        window.location = page_link + '&id=' + response.userAccountID;
                     }
                     else {
                         if (response.isInactive || response.notExist || response.userInactive || response.userLocked || response.sessionExpired) {

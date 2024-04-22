@@ -11,10 +11,11 @@
                         </ul>
                     </div>
                     <div class="card-actions cursor-pointer ms-auto d-flex button-group">
-                        <a href="system-action.php?new" class="btn btn-success d-flex align-items-center mb-0">Create</a>
+                        <a href="<?php echo $pageLink; ?>&new" class="btn btn-success d-flex align-items-center mb-0">Create</a>
                     </div>
                 </div>
                 <div class="card-body">
+                    <input type="hidden" id="page_id" value="<?php echo $pageID; ?>">
                     <div class="table-responsive">
                         <table id="system-action-table" class="table border table-striped table-hover align-middle text-wrap mb-0">
                             <thead class="text-dark">

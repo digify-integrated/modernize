@@ -146,6 +146,8 @@ function menuItemTable(datatable_name, buttons = false, show_all = false){
     toggleHideActionDropdown();
 
     const type = 'menu item table';
+    const page_link = document.getElementById('page-link').getAttribute('href');
+
     var filter_by_menu_group = $('input[name="filter-menu-group"]:checked').val();
     var settings;
 
@@ -172,7 +174,11 @@ function menuItemTable(datatable_name, buttons = false, show_all = false){
             'url' : 'components/menu-item/view/_menu_item_generation.php',
             'method' : 'POST',
             'dataType': 'json',
-            'data': {'type' : type, 'filter_by_menu_group' : filter_by_menu_group},
+            'data': {
+                'type' : type,
+                'page_link' : page_link,
+                'filter_by_menu_group' : filter_by_menu_group
+            },
             'dataSrc' : '',
             'error': function(xhr, status, error) {
                 var fullErrorMessage = `XHR status: ${status}, Error: ${error}`;

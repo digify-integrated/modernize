@@ -1,27 +1,12 @@
 <?php
     require('view/_required_php_files.php');
     require('view/_check_user_status.php');
+    require('view/_page_details.php');
 
-    $pageTitle = 'Menu Group';
-
-    if (!isset($_GET['page_id']) || empty($_GET['page_id'])) {
-        header('location: dashboard.php');
-        exit;
-    }
-
-    $pageID = $securityModel->decryptData($_GET['page_id']);
-    $menuGroupID = null;
-
-    if(isset($_GET['id'])){
-        if(empty($_GET['id'])){
-            header('location: menu-group.php');
-            exit;
-        }
-    
-        $menuGroupID = $securityModel->decryptData($_GET['id']);
-    }
-    
-    $newRecord = isset($_GET['new']);
+    $menuGroupReadAccess = $globalModel->checkAccessRights($userID, $pageID, 'read');
+    $menuGroupCreateAccess = $globalModel->checkAccessRights($userID, $pageID, 'create');
+    $menuGroupWriteAccess = $globalModel->checkAccessRights($userID, $pageID, 'write');
+    $menuGroupDeleteAccess = $globalModel->checkAccessRights($userID, $pageID, 'delete');
 ?>
 <!DOCTYPE html>
 <html lang="en" dir="ltr" data-bs-theme="light" data-color-theme="Blue_Theme" data-layout="vertical">
@@ -46,20 +31,19 @@
                                             <div class="col-9">
                                                 <h4 class="fw-semibold mb-8"><?php echo $pageTitle; ?></h4>
                                                 <nav aria-label="breadcrumb">
-                                                <ol class="breadcrumb fs-2">
-                                                    <li class="breadcrumb-item"><a class="text-muted text-decoration-none" href="dashboard.php">Home</a></li>
-                                                    <li class="breadcrumb-item">Technical</li>
-                                                    <li class="breadcrumb-item" aria-current="page"><a class="text-decoration-none" href="menu-group.php"><?php echo $pageTitle; ?></a></li>
-                                                    <?php
-                                                        if(!$newRecord && !empty($menuGroupID)){
-                                                            echo '<li class="breadcrumb-item" id="menu-group-id">'. $menuGroupID .'</li>';
-                                                        }
+                                                    <ol class="breadcrumb fs-2">
+                                                        <?php
+                                                            require('view/_breadcrumb.php');
 
-                                                        if($newRecord){
-                                                            echo '<li class="breadcrumb-item">New</li>';
-                                                        }
-                                                    ?>
-                                                </ol>
+                                                            if(!$newRecord && !empty($detailID)){
+                                                                echo '<li class="breadcrumb-item" id="menu-group-id">'. $detailID .'</li>';
+                                                            }
+
+                                                            if($newRecord){
+                                                                echo '<li class="breadcrumb-item">New</li>';
+                                                            }
+                                                        ?>
+                                                    </ol>
                                                 </nav>
                                             </div>
                                             <div class="col-3">
@@ -76,7 +60,7 @@
                             if($newRecord){
                                 require_once('components/menu-group/view/_menu_group_new.php');
                             }
-                            else if(!empty($menuGroupID)){
+                            else if(!empty($detailID)){
                                 require_once('components/menu-group/view/_menu_group_details.php');
                             }
                             else{
@@ -101,7 +85,7 @@
             if($newRecord){
                 $scriptLink = 'menu-group-new.js';
             }
-            else if(!empty($menuGroupID)){
+            else if(!empty($detailID)){
                 $scriptLink = 'menu-group-details.js';
             }
             else{

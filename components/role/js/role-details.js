@@ -152,6 +152,7 @@
 
         $(document).on('click','#delete-role',function() {
             const role_id = $('#role-id').text();
+            const page_link = document.getElementById('page-link').getAttribute('href');
             const transaction = 'delete role';
     
             Swal.fire({
@@ -179,7 +180,7 @@
                         success: function (response) {
                             if (response.success) {
                                 setNotification(response.title, response.message, response.messageType);
-                                window.location = 'role.php';
+                                window.location = page_link;
                             }
                             else {
                                 if (response.isInactive || response.userNotExist || response.userInactive || response.userLocked || response.sessionExpired) {
@@ -188,7 +189,7 @@
                                 }
                                 else if (response.notExist) {
                                     setNotification(response.title, response.message, response.messageType);
-                                    window.location = 'role.php';
+                                    window.location = page_link;
                                 }
                                 else {
                                     showNotification(response.title, response.message, response.messageType);
@@ -451,6 +452,7 @@ function roleForm(){
         },
         submitHandler: function(form) {
             const role_id = $('#role-id').text();
+            const page_link = document.getElementById('page-link').getAttribute('href');
             const transaction = 'update role';
           
             $.ajax({
@@ -474,7 +476,7 @@ function roleForm(){
                         }
                         else if (response.notExist) {
                             setNotification(response.title, response.message, response.messageType);
-                            window.location = 'role.php';
+                            window.location = page_link;
                         }
                         else {
                             showNotification(response.title, response.message, response.messageType);
@@ -523,6 +525,7 @@ function userAccountAssignmentForm(){
         },
         submitHandler: function(form) {
             const role_id = $('#role-id').text();
+            const page_link = document.getElementById('page-link').getAttribute('href');
             const transaction = 'assign role user account';
           
             $.ajax({
@@ -546,7 +549,7 @@ function userAccountAssignmentForm(){
                         }
                         else if (response.notExist) {
                             setNotification(response.title, response.message, response.messageType);
-                            window.location = 'role.php';
+                            window.location = page_link;
                         }
                         else {
                             showNotification(response.title, response.message, response.messageType);
@@ -595,6 +598,7 @@ function rolePermissionAssignmentForm(){
         },
         submitHandler: function(form) {
             const role_id = $('#role-id').text();
+            const page_link = document.getElementById('page-link').getAttribute('href');
             const transaction = 'assign role permission';
           
             $.ajax({
@@ -618,7 +622,7 @@ function rolePermissionAssignmentForm(){
                         }
                         else if (response.notExist) {
                             setNotification(response.title, response.message, response.messageType);
-                            window.location = 'role.php';
+                            window.location = page_link;
                         }
                         else {
                             showNotification(response.title, response.message, response.messageType);
@@ -667,6 +671,7 @@ function roleSystemActionPermissionAssignmentForm(){
         },
         submitHandler: function(form) {
             const role_id = $('#role-id').text();
+            const page_link = document.getElementById('page-link').getAttribute('href');
             const transaction = 'assign role system action permission';
           
             $.ajax({
@@ -690,7 +695,7 @@ function roleSystemActionPermissionAssignmentForm(){
                         }
                         else if (response.notExist) {
                             setNotification(response.title, response.message, response.messageType);
-                            window.location = 'role.php';
+                            window.location = page_link;
                         }
                         else {
                             showNotification(response.title, response.message, response.messageType);
@@ -901,6 +906,7 @@ function displayDetails(transaction){
     switch (transaction) {
         case 'get role details':
             var role_id = $('#role-id').text();
+            const page_link = document.getElementById('page-link').getAttribute('href');
             
             $.ajax({
                 url: 'components/role/controller/role-controller.php',
@@ -928,7 +934,7 @@ function displayDetails(transaction){
                         }
                         else if (response.notExist) {
                             setNotification(response.title, response.message, response.messageType);
-                            window.location = 'role.php';
+                            window.location = page_link;
                         }
                         else {
                             showNotification(response.title, response.message, response.messageType);

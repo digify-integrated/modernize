@@ -139,6 +139,8 @@ function menuGroupTable(datatable_name, buttons = false, show_all = false){
     toggleHideActionDropdown();
 
     const type = 'menu group table';
+    const page_id = $('#page-id').val();
+    const page_link = document.getElementById('page-link').getAttribute('href'); 
     var settings;
 
     const column = [ 
@@ -162,7 +164,11 @@ function menuGroupTable(datatable_name, buttons = false, show_all = false){
             'url' : 'components/menu-group/view/_menu_group_generation.php',
             'method' : 'POST',
             'dataType': 'json',
-            'data': {'type' : type},
+            'data': {
+                'type' : type,
+                'page_id' : page_id,
+                'page_link' : page_link
+            },
             'dataSrc' : '',
             'error': function(xhr, status, error) {
                 var fullErrorMessage = `XHR status: ${status}, Error: ${error}`;

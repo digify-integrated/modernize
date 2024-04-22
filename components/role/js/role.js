@@ -139,6 +139,7 @@ function roleTable(datatable_name, buttons = false, show_all = false){
     toggleHideActionDropdown();
 
     const type = 'role table';
+    const page_link = document.getElementById('page-link').getAttribute('href');
     var settings;
 
     const column = [ 
@@ -160,7 +161,10 @@ function roleTable(datatable_name, buttons = false, show_all = false){
             'url' : 'components/role/view/_role_generation.php',
             'method' : 'POST',
             'dataType': 'json',
-            'data': {'type' : type},
+            'data': {
+                'type' : type,
+                'page_link' : page_link
+            },
             'dataSrc' : '',
             'error': function(xhr, status, error) {
                 var fullErrorMessage = `XHR status: ${status}, Error: ${error}`;

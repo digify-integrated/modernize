@@ -14,6 +14,7 @@
 
         $(document).on('click','#delete-menu-group',function() {
             const menu_group_id = $('#menu-group-id').text();
+            const page_link = document.getElementById('page-link').getAttribute('href'); 
             const transaction = 'delete menu group';
     
             Swal.fire({
@@ -41,7 +42,7 @@
                         success: function (response) {
                             if (response.success) {
                                 setNotification(response.title, response.message, response.messageType);
-                                window.location = 'menu-group.php';
+                                window.location = page_link;
                             }
                             else {
                                 if (response.isInactive || response.userNotExist || response.userInactive || response.userLocked || response.sessionExpired) {
@@ -50,7 +51,7 @@
                                 }
                                 else if (response.notExist) {
                                     setNotification(response.title, response.message, response.messageType);
-                                    window.location = 'menu-group.php';
+                                    window.location = page_link;
                                 }
                                 else {
                                     showNotification(response.title, response.message, response.messageType);
@@ -121,6 +122,7 @@ function menuGroupForm(){
         },
         submitHandler: function(form) {
             const menu_group_id = $('#menu-group-id').text();
+            const page_link = document.getElementById('page-link').getAttribute('href'); 
             const transaction = 'update menu group';
           
             $.ajax({
@@ -144,7 +146,7 @@ function menuGroupForm(){
                         }
                         else if (response.notExist) {
                             setNotification(response.title, response.message, response.messageType);
-                            window.location = 'menu-group.php';
+                            window.location = page_link;
                         }
                         else {
                             showNotification(response.title, response.message, response.messageType);
@@ -172,6 +174,7 @@ function displayDetails(transaction){
     switch (transaction) {
         case 'get menu group details':
             var menu_group_id = $('#menu-group-id').text();
+            const page_link = document.getElementById('page-link').getAttribute('href'); 
             
             $.ajax({
                 url: 'components/menu-group/controller/menu-group-controller.php',
@@ -199,7 +202,7 @@ function displayDetails(transaction){
                         }
                         else if (response.notExist) {
                             setNotification(response.title, response.message, response.messageType);
-                            window.location = 'menu-group.php';
+                            window.location = page_link;
                         }
                         else {
                             showNotification(response.title, response.message, response.messageType);

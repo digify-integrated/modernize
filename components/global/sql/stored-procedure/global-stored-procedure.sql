@@ -39,4 +39,25 @@ BEGIN
     ORDER BY mi.order_sequence;
 END //
 
+CREATE PROCEDURE checkAccessRights(IN p_user_account_id INT, IN p_menu_item_id INT, IN p_access_type VARCHAR(10))
+BEGIN
+	IF p_access_type = 'read' THEN
+        SELECT COUNT(role_id) AS total
+        FROM role_user_account
+        WHERE user_account_id = p_user_account_id AND role_id IN (SELECT role_id FROM role_permission where read_access = 1 AND menu_item_id = p_menu_item_id);
+    ELSEIF p_access_type = 'write' THEN
+        SELECT COUNT(role_id) AS total
+        FROM role_user_account
+        WHERE user_account_id = p_user_account_id AND role_id IN (SELECT role_id FROM role_permission where write_access = 1 AND menu_item_id = p_menu_item_id);
+    ELSEIF p_access_type = 'create' THEN
+        SELECT COUNT(role_id) AS total
+        FROM role_user_account
+        WHERE user_account_id = p_user_account_id AND role_id IN (SELECT role_id FROM role_permission where create_access = 1 AND menu_item_id = p_menu_item_id);       
+    ELSE
+        SELECT COUNT(role_id) AS total
+        FROM role_user_account
+        WHERE user_account_id = p_user_account_id AND role_id IN (SELECT role_id FROM role_permission where delete_access = 1 AND menu_item_id = p_menu_item_id);
+    END IF;
+END //
+
 /* ----------------------------------------------------------------------------------------------------------------------------- */

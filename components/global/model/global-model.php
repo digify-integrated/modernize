@@ -14,6 +14,33 @@ class GlobalModel {
     }
 
     # -------------------------------------------------------------
+    #   Check methods
+    # -------------------------------------------------------------
+
+    # -------------------------------------------------------------
+    #
+    # Function: checkAccessRights
+    # Description: Checks if the user has access.
+    #
+    # Parameters:
+    # - $p_user_account_id (int): The user account ID.
+    # - $p_menu_item_id (int): The menu item ID.
+    # - $p_access_type (string): The access type.
+    #
+    # Returns: The result of the query as an associative array.
+    #
+    # -------------------------------------------------------------
+    public function checkAccessRights($p_user_account_id, $p_menu_item_id, $p_access_type) {
+        $stmt = $this->db->getConnection()->prepare('CALL checkAccessRights(:p_user_account_id, :p_menu_item_id, :p_access_type)');
+        $stmt->bindValue(':p_user_account_id', $p_user_account_id, PDO::PARAM_INT);
+        $stmt->bindValue(':p_menu_item_id', $p_menu_item_id, PDO::PARAM_INT);
+        $stmt->bindValue(':p_access_type', $p_access_type, PDO::PARAM_STR);
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+    # -------------------------------------------------------------
+
+    # -------------------------------------------------------------
     #   Build methods
     # -------------------------------------------------------------
 
@@ -101,9 +128,9 @@ class GlobalModel {
         $menuItemIcon = $menuItemDetails['MENU_ITEM_ICON'];
         $menuItemURL = $menuItemDetails['MENU_ITEM_URL'];
         $children = $menuItemDetails['CHILDREN'];
-
-        $menuItemURL = !empty($menuItemURL) ? $menuItemURL . '?page_id=' . $menuItemID : 'javascript:void(0)';
-
+    
+        $menuItemURL = !empty($menuItemURL) ? (strpos($menuItemURL, '?page_id=') !== false ? $menuItemURL : $menuItemURL . '?page_id=' . $menuItemID) : 'javascript:void(0)';
+    
         if ($level === 1) {
             if (empty($children)) {
                 $html .= '<li class="sidebar-item">
@@ -114,8 +141,7 @@ class GlobalModel {
                                 <span class="hide-menu">'. $menuItemName .'</span>
                                 </a>
                             </li>';
-            } 
-            else {
+            } else {
                 $html .= ' <li class="sidebar-item">
                                 <a class="sidebar-link has-arrow" href="javascript:void(0)" aria-expanded="false">
                                     <span class="d-flex">
@@ -124,27 +150,25 @@ class GlobalModel {
                                     <span class="hide-menu">'. $menuItemName .'</span>
                                 </a>
                                 <ul aria-expanded="false" class="collapse first-level">';
-
+    
                 foreach ($children as $child) {
                     $html .= $this->buildMenuItemHTML($child, $level + 1);
                 }
-
+    
                 $html .= '</ul>
                         </li>';
             }
-        }
-        else {
+        } else {
             if (empty($children)) {
                 $html .= '<li class="sidebar-item">
-                                <a href="'. $menuItemURL .'?page_id='. $menuItemID .'" class="sidebar-link">
+                                <a href="'. $menuItemURL .'" class="sidebar-link">
                                 <div class="round-16 d-flex align-items-center justify-content-center">
                                     <i class="ti ti-circle"></i>
                                 </div>
                                 <span class="hide-menu">'. $menuItemName .'</span>
                                 </a>
                             </li>';
-            } 
-            else {
+            } else {
                 $html .= '<li class="sidebar-item">
                                 <a class="sidebar-link has-arrow" href="javascript:void(0)" aria-expanded="false">
                                     <div class="round-16 d-flex align-items-center justify-content-center">
@@ -153,18 +177,18 @@ class GlobalModel {
                                     <span class="hide-menu">'. $menuItemName .'</span>
                                 </a>
                                 <ul aria-expanded="false" class="collapse two-level">';
-
+    
                 foreach ($children as $child) {
                     $html .= $this->buildMenuItemHTML($child, $level + 1);
                 }
-
+    
                 $html .= '</ul>
                         </li>';
             }
         }
-
+    
         return $html;
-    }
+    }    
     # -------------------------------------------------------------
 }
 ?>

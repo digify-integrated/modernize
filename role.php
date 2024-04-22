@@ -1,22 +1,12 @@
 <?php
     require('view/_required_php_files.php');
     require('view/_check_user_status.php');
+    require('view/_page_details.php');
 
-    $pageTitle = 'Role';
-
-    if(isset($_GET['id'])){
-        if(empty($_GET['id'])){
-            header('location: role.php');
-            exit;
-        }
-    
-        $roleID = $securityModel->decryptData($_GET['id']);
-    }
-    else{
-        $roleID = null;
-    }
-    
-    $newRecord = isset($_GET['new']);
+    $roleReadAccess = $globalModel->checkAccessRights($userID, $pageID, 'read');
+    $roleCreateAccess = $globalModel->checkAccessRights($userID, $pageID, 'create');
+    $roleWriteAccess = $globalModel->checkAccessRights($userID, $pageID, 'write');
+    $roleDeleteAccess = $globalModel->checkAccessRights($userID, $pageID, 'delete');
 ?>
 <!DOCTYPE html>
 <html lang="en" dir="ltr" data-bs-theme="light" data-color-theme="Blue_Theme" data-layout="vertical">
@@ -43,12 +33,11 @@
                                                 <h4 class="fw-semibold mb-8"><?php echo $pageTitle; ?></h4>
                                                 <nav aria-label="breadcrumb">
                                                 <ol class="breadcrumb fs-2">
-                                                    <li class="breadcrumb-item"><a class="text-muted text-decoration-none" href="dashboard.php">Home</a></li>
-                                                    <li class="breadcrumb-item">Technical</li>
-                                                    <li class="breadcrumb-item" aria-current="page"><a class="text-decoration-none" href="role.php"><?php echo $pageTitle; ?></a></li>
                                                     <?php
-                                                        if(!$newRecord && !empty($roleID)){
-                                                            echo '<li class="breadcrumb-item" id="role-id">'. $roleID .'</li>';
+                                                        require('view/_breadcrumb.php');
+
+                                                        if(!$newRecord && !empty($detailID)){
+                                                            echo '<li class="breadcrumb-item" id="role-id">'. $detailID .'</li>';
                                                         }
 
                                                         if($newRecord){
@@ -72,7 +61,7 @@
                             if($newRecord){
                                 require_once('components/role/view/_role_new.php');
                             }
-                            else if(!empty($roleID)){
+                            else if(!empty($detailID)){
                                 require_once('components/role/view/_role_details.php');
                             }
                             else{
@@ -98,7 +87,7 @@
             if($newRecord){
                 $scriptLink = 'role-new.js';
             }
-            else if(!empty($roleID)){
+            else if(!empty($detailID)){
                 $scriptLink = 'role-details.js';
             }
             else{

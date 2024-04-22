@@ -135,6 +135,7 @@
 
         $(document).on('click','#activate-user-account',function() {
             let user_account_id = [];
+            const page_link = document.getElementById('page-link').getAttribute('href');
             const transaction = 'activate multiple user account';            
 
             $('.datatable-checkbox-children').each((index, element) => {
@@ -177,7 +178,7 @@
                                 }
                                 else if (response.notExist) {
                                     setNotification(response.title, response.message, response.messageType);
-                                    window.location = 'user-account.php';
+                                    window.location = page_link;
                                 }
                                 else {
                                     showNotification(response.title, response.message, response.messageType);
@@ -199,6 +200,7 @@
 
         $(document).on('click','#deactivate-user-account',function() {
             let user_account_id = [];
+            const page_link = document.getElementById('page-link').getAttribute('href');
             const transaction = 'deactivate multiple user account';        
 
             $('.datatable-checkbox-children').each((index, element) => {
@@ -241,7 +243,7 @@
                                 }
                                 else if (response.notExist) {
                                     setNotification(response.title, response.message, response.messageType);
-                                    window.location = 'user-account.php';
+                                    window.location = page_link;
                                 }
                                 else {
                                     showNotification(response.title, response.message, response.messageType);
@@ -263,6 +265,7 @@
 
         $(document).on('click','#lock-user-account',function() {
             let user_account_id = [];
+            const page_link = document.getElementById('page-link').getAttribute('href');
             const transaction = 'lock multiple user account';      
 
             $('.datatable-checkbox-children').each((index, element) => {
@@ -305,7 +308,7 @@
                                 }
                                 else if (response.notExist) {
                                     setNotification(response.title, response.message, response.messageType);
-                                    window.location = 'user-account.php';
+                                    window.location = page_link;
                                 }
                                 else {
                                     showNotification(response.title, response.message, response.messageType);
@@ -327,6 +330,7 @@
 
         $(document).on('click','#unlock-user-account',function() {
             let user_account_id = [];
+            const page_link = document.getElementById('page-link').getAttribute('href');
             const transaction = 'unlock multiple user account';    
 
             $('.datatable-checkbox-children').each((index, element) => {
@@ -369,7 +373,7 @@
                                 }
                                 else if (response.notExist) {
                                     setNotification(response.title, response.message, response.messageType);
-                                    window.location = 'user-account.php';
+                                    window.location = page_link;
                                 }
                                 else {
                                     showNotification(response.title, response.message, response.messageType);
@@ -400,6 +404,7 @@ function userAccountTable(datatable_name, buttons = false, show_all = false){
     toggleHideActionDropdown();
 
     const type = 'user account table';
+    const page_link = document.getElementById('page-link').getAttribute('href');
     var filter_by_user_account_status = $('input[name="filter-user-account-status"]:checked').val();
     var filter_by_user_account_lock_status = $('input[name="filter-user-account-lock-status"]:checked').val();
     var filter_by_password_expiry_date = $('#filter-password-expiry-date').val();
@@ -435,6 +440,7 @@ function userAccountTable(datatable_name, buttons = false, show_all = false){
             'dataType': 'json',
             'data': {
                 'type' : type, 
+                'page_link' : page_link, 
                 'filter_by_user_account_status' : filter_by_user_account_status, 
                 'filter_by_user_account_lock_status' : filter_by_user_account_lock_status,
                 'filter_by_password_expiry_date' : filter_by_password_expiry_date,

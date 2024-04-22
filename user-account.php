@@ -1,30 +1,21 @@
 <?php
     require('view/_required_php_files.php');
     require('view/_check_user_status.php');
-    
+    require('view/_page_details.php');
     require('components/user-account/model/user-account-model.php');
 
     $userAccountModel = new UserAccountModel($databaseModel);
 
-    $pageTitle = 'User Account';
+    $userAccountReadAccess = $globalModel->checkAccessRights($userID, $pageID, 'read');
+    $userAccountCreateAccess = $globalModel->checkAccessRights($userID, $pageID, 'create');
+    $userAccountWriteAccess = $globalModel->checkAccessRights($userID, $pageID, 'write');
+    $userAccountDeleteAccess = $globalModel->checkAccessRights($userID, $pageID, 'delete');
 
     if(isset($_GET['id'])){
-        if(empty($_GET['id'])){
-            header('location: user-account.php');
-            exit;
-        }
-    
-        $userAccountID = $securityModel->decryptData($_GET['id']);
-
-        $userAccountDetails = $userAccountModel->getUserAccount($userAccountID, null);
+        $userAccountDetails = $userAccountModel->getUserAccount($detailID, null);
         $userAccountActive = $userAccountDetails['active'];
         $userAccountLocked = $userAccountDetails['locked'];
     }
-    else{
-        $userAccountID = null;
-    }
-    
-    $newRecord = isset($_GET['new']);
 ?>
 <!DOCTYPE html>
 <html lang="en" dir="ltr" data-bs-theme="light" data-color-theme="Blue_Theme" data-layout="vertical">
@@ -52,12 +43,11 @@
                                                 <h4 class="fw-semibold mb-8"><?php echo $pageTitle; ?></h4>
                                                 <nav aria-label="breadcrumb">
                                                 <ol class="breadcrumb fs-2">
-                                                    <li class="breadcrumb-item"><a class="text-muted text-decoration-none" href="dashboard.php">Home</a></li>
-                                                    <li class="breadcrumb-item">Technical</li>
-                                                    <li class="breadcrumb-item" aria-current="page"><a class="text-decoration-none" href="user-account.php"><?php echo $pageTitle; ?></a></li>
                                                     <?php
-                                                        if(!$newRecord && !empty($userAccountID)){
-                                                            echo '<li class="breadcrumb-item" id="user-account-id">'. $userAccountID .'</li>';
+                                                        require('view/_breadcrumb.php');
+
+                                                        if(!$newRecord && !empty($detailID)){
+                                                            echo '<li class="breadcrumb-item" id="user-account-id">'. $detailID .'</li>';
                                                         }
 
                                                         if($newRecord){
@@ -81,7 +71,7 @@
                             if($newRecord){
                                 require_once('components/user-account/view/_user_account_new.php');
                             }
-                            else if(!empty($userAccountID)){
+                            else if(!empty($detailID)){
                                 require_once('components/user-account/view/_user_account_details.php');
                             }
                             else{
@@ -109,7 +99,7 @@
             if($newRecord){
                 $scriptLink = 'user-account-new.js';
             }
-            else if(!empty($userAccountID)){
+            else if(!empty($detailID)){
                 $scriptLink = 'user-account-details.js';
             }
             else{

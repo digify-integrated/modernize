@@ -10,7 +10,8 @@
         }
 
         $(document).on('click','#discard-create',function() {
-            discardCreate('menu-item.php');
+            const page_link = document.getElementById('page-link').getAttribute('href');
+            discardCreate(page_link);
         });
     });
 })(jQuery);
@@ -62,6 +63,7 @@ function menuItemForm(){
         },
         submitHandler: function(form) {
             const transaction = 'add menu item';
+            const page_link = document.getElementById('page-link').getAttribute('href');
           
             $.ajax({
                 type: 'POST',
@@ -74,7 +76,7 @@ function menuItemForm(){
                 success: function (response) {
                     if (response.success) {
                         setNotification(response.title, response.message, response.messageType);
-                        window.location = 'menu-item.php?id=' + response.menuItemID;
+                        window.location = page_link + '&id=' + response.menuItemID;
                     }
                     else {
                         if (response.isInactive || response.notExist || response.userInactive || response.userLocked || response.sessionExpired) {

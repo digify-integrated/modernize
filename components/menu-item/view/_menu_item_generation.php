@@ -13,6 +13,8 @@ $securityModel = new SecurityModel();
 
 if(isset($_POST['type']) && !empty($_POST['type'])){
     $type = htmlspecialchars($_POST['type'], ENT_QUOTES, 'UTF-8');
+    $pageID = isset($_POST['page_id']) ? $_POST['page_id'] : null;
+    $pageLink = isset($_POST['page_link']) ? $_POST['page_link'] : null;
     $response = [];
     
     switch ($type) {
@@ -35,6 +37,8 @@ if(isset($_POST['type']) && !empty($_POST['type'])){
             $options = $sql->fetchAll(PDO::FETCH_ASSOC);
             $sql->closeCursor();
 
+            $menuItemDeleteAccess = $globalModel->checkAccessRights($userID, $pageID, 'delete');
+
             foreach ($options as $row) {
                 $menuItemID = $row['menu_item_id'];
                 $menuItemName = $row['menu_item_name'];
@@ -43,18 +47,23 @@ if(isset($_POST['type']) && !empty($_POST['type'])){
 
                 $menuItemIDEncrypted = $securityModel->encryptData($menuItemID);
 
+                $deleteButton = '';
+                if($menuItemDeleteAccess['total'] > 0){
+                    $deleteButton = ' <a href="javascript:void(0);" class="text-danger ms-3 delete-menu-item" data-menu-item-id="' . $menuItemID . '" title="Delete Menu Item">
+                                        <i class="ti ti-trash fs-5"></i>
+                                    </a>';
+                }
+
                 $response[] = [
                     'CHECK_BOX' => '<input class="form-check-input datatable-checkbox-children" type="checkbox" value="'. $menuItemID .'">',
                     'MENU_ITEM_NAME' => $menuItemName,
                     'MENU_GROUP_NAME' => $menuGroupName,
                     'ORDER_SEQUENCE' => $orderSequence,
                     'ACTION' => '<div class="action-btn">
-                                    <a href="menu-item.php?id='. $menuItemIDEncrypted .'" class="text-info" title="View Details">
+                                    <a href="'. $pageLink .'&id='. $menuItemIDEncrypted .'" class="text-info" title="View Details">
                                         <i class="ti ti-eye fs-5"></i>
                                     </a>
-                                    <a href="javascript:void(0);" class="text-danger ms-3 delete-menu-item" data-menu-item-id="' . $menuItemID . '" title="Delete Menu Item">
-                                        <i class="ti ti-trash fs-5"></i>
-                                    </a>
+                                   '. $deleteButton .'
                                 </div>'
                 ];
             }

@@ -76,6 +76,7 @@
 
         $(document).on('click','#delete-system-action',function() {
             const system_action_id = $('#system-action-id').text();
+            const page_link = document.getElementById('page-link').getAttribute('href');
             const transaction = 'delete system action';
     
             Swal.fire({
@@ -103,7 +104,7 @@
                         success: function (response) {
                             if (response.success) {
                                 setNotification(response.title, response.message, response.messageType);
-                                window.location = 'system-action.php';
+                                window.location = page_link;
                             }
                             else {
                                 if (response.isInactive || response.userNotExist || response.userInactive || response.userLocked || response.sessionExpired) {
@@ -112,7 +113,7 @@
                                 }
                                 else if (response.notExist) {
                                     setNotification(response.title, response.message, response.messageType);
-                                    window.location = 'system-action.php';
+                                    window.location = page_link;
                                 }
                                 else {
                                     showNotification(response.title, response.message, response.messageType);
@@ -370,6 +371,7 @@ function displayDetails(transaction){
     switch (transaction) {
         case 'get system action details':
             var system_action_id = $('#system-action-id').text();
+            const page_link = document.getElementById('page-link').getAttribute('href');
             
             $.ajax({
                 url: 'components/system-action/controller/system-action-controller.php',
@@ -397,7 +399,7 @@ function displayDetails(transaction){
                         }
                         else if (response.notExist) {
                             setNotification(response.title, response.message, response.messageType);
-                            window.location = 'system-action.php';
+                            window.location = page_link;
                         }
                         else {
                             showNotification(response.title, response.message, response.messageType);

@@ -13,7 +13,7 @@
             <ul id="sidebarnav">
                 <li class="nav-small-cap">
                     <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
-                    <span class="hide-menu">Home</span>
+                    <span class="hide-menu text-primary">Home</span>
                 </li>
                 <li class="sidebar-item">
                     <a class="sidebar-link" href="dashboard.php" aria-expanded="false">
@@ -36,7 +36,7 @@
         
                         $menu .= '<li class="nav-small-cap">
                                         <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
-                                        <span class="hide-menu">'. $menuGroupName .'</span>
+                                        <span class="hide-menu text-primary">'. $menuGroupName .'</span>
                                     </li>';
         
                         $menu .= $globalModel->buildMenuItem($userID, $menuGroupID);

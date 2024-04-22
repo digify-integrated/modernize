@@ -15,6 +15,7 @@ $securityModel = new SecurityModel();
 
 if(isset($_POST['type']) && !empty($_POST['type'])){
     $type = htmlspecialchars($_POST['type'], ENT_QUOTES, 'UTF-8');
+    $pageLink = isset($_POST['page_link']) ? $_POST['page_link'] : null;
     $response = [];
     
     switch ($type) {
@@ -51,7 +52,7 @@ if(isset($_POST['type']) && !empty($_POST['type'])){
                                         </div>
                                     </div>',
                     'ACTION' => '<div class="d-flex gap-2">
-                                    <a href="role.php?id='. $roleIDEncrypted .'" class="text-info" title="View Details">
+                                    <a href="'. $pageLink .'&id='. $roleIDEncrypted .'" class="text-info" title="View Details">
                                         <i class="ti ti-eye fs-5"></i>
                                     </a>
                                     <a href="javascript:void(0);" class="text-danger ms-3 delete-role" data-role-id="' . $roleID . '" title="Delete Role">

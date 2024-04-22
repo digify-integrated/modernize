@@ -7,7 +7,8 @@
         }
 
         $(document).on('click','#discard-create',function() {
-            discardCreate('menu-group.php');
+            const page_link = document.getElementById('page-link').getAttribute('href'); 
+            discardCreate(page_link);
         });
     });
 })(jQuery);
@@ -53,6 +54,7 @@ function menuGroupForm(){
         },
         submitHandler: function(form) {
             const transaction = 'add menu group';
+            const page_link = document.getElementById('page-link').getAttribute('href');
           
             $.ajax({
                 type: 'POST',
@@ -65,7 +67,7 @@ function menuGroupForm(){
                 success: function (response) {
                     if (response.success) {
                         setNotification(response.title, response.message, response.messageType);
-                        window.location = 'menu-group.php?id=' + response.menuGroupID;
+                        window.location = page_link + '&id=' + response.menuGroupID;
                     }
                     else {
                         if (response.isInactive || response.notExist || response.userInactive || response.userLocked || response.sessionExpired) {

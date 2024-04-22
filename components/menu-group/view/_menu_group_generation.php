@@ -5,14 +5,18 @@ require_once '../../global/model/database-model.php';
 require_once '../../global/model/system-model.php';
 require_once '../../menu-group/model/menu-group-model.php';
 require_once '../../global/model/security-model.php';
+require_once '../../global/model/global-model.php';
 
 $databaseModel = new DatabaseModel();
 $systemModel = new SystemModel();
 $menuGroupModel = new MenuGroupModel($databaseModel);
 $securityModel = new SecurityModel();
+$globalModel = new GlobalModel($databaseModel, $securityModel);
 
 if(isset($_POST['type']) && !empty($_POST['type'])){
     $type = htmlspecialchars($_POST['type'], ENT_QUOTES, 'UTF-8');
+    $pageID = isset($_POST['page_id']) ? $_POST['page_id'] : null;
+    $pageLink = isset($_POST['page_link']) ? $_POST['page_link'] : null;
     $response = [];
     
     switch ($type) {
@@ -33,6 +37,8 @@ if(isset($_POST['type']) && !empty($_POST['type'])){
             $options = $sql->fetchAll(PDO::FETCH_ASSOC);
             $sql->closeCursor();
 
+            $menuGroupDeleteAccess = $globalModel->checkAccessRights($userID, $pageID, 'delete');
+
             foreach ($options as $row) {
                 $menuGroupID = $row['menu_group_id'];
                 $menuGroupName = $row['menu_group_name'];
@@ -40,17 +46,22 @@ if(isset($_POST['type']) && !empty($_POST['type'])){
 
                 $menuGroupIDEncrypted = $securityModel->encryptData($menuGroupID);
 
+                $deleteButton = '';
+                if($menuGroupDeleteAccess['total'] > 0){
+                    $deleteButton = '<a href="javascript:void(0);" class="text-danger ms-3 delete-menu-group" data-menu-group-id="' . $menuGroupID . '" title="Delete Menu Group">
+                                    <i class="ti ti-trash fs-5"></i>
+                                </a>';
+                }
+
                 $response[] = [
                     'CHECK_BOX' => '<input class="form-check-input datatable-checkbox-children" type="checkbox" value="'. $menuGroupID .'">',
                     'MENU_GROUP_NAME' => $menuGroupName,
                     'ORDER_SEQUENCE' => $orderSequence,
                     'ACTION' => '<div class="d-flex gap-2">
-                                    <a href="menu-group.php?id='. $menuGroupIDEncrypted .'" class="text-info" title="View Details">
+                                    <a href="'. $pageLink .'&id='. $menuGroupIDEncrypted .'" class="text-info" title="View Details">
                                         <i class="ti ti-eye fs-5"></i>
                                     </a>
-                                    <a href="javascript:void(0);" class="text-danger ms-3 delete-menu-group" data-menu-group-id="' . $menuGroupID . '" title="Delete Menu Group">
-                                        <i class="ti ti-trash fs-5"></i>
-                                    </a>
+                                    '. $deleteButton .'
                                 </div>'
                 ];
             }
@@ -71,7 +82,6 @@ if(isset($_POST['type']) && !empty($_POST['type'])){
         #
         # -------------------------------------------------------------
         case 'menu group options':
-
             $sql = $databaseModel->getConnection()->prepare('CALL generateMenuGroupOptions()');
             $sql->execute();
             $options = $sql->fetchAll(PDO::FETCH_ASSOC);
@@ -108,7 +118,6 @@ if(isset($_POST['type']) && !empty($_POST['type'])){
         #
         # -------------------------------------------------------------
         case 'menu group radio filter':
-
             $sql = $databaseModel->getConnection()->prepare('CALL generateMenuGroupOptions()');
             $sql->execute();
             $options = $sql->fetchAll(PDO::FETCH_ASSOC);

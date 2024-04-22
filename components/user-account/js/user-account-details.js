@@ -26,6 +26,7 @@
 
         $(document).on('click','#delete-user-account',function() {
             const user_account_id = $('#user-account-id').text();
+            const page_link = document.getElementById('page-link').getAttribute('href');
             const transaction = 'delete user account';
     
             Swal.fire({
@@ -53,7 +54,7 @@
                         success: function (response) {
                             if (response.success) {
                                 setNotification(response.title, response.message, response.messageType);
-                                window.location = 'user-account.php';
+                                window.location = page_link;
                             }
                             else {
                                 if (response.isInactive || response.userNotExist || response.userInactive || response.userLocked || response.sessionExpired) {
@@ -62,7 +63,7 @@
                                 }
                                 else if (response.notExist) {
                                     setNotification(response.title, response.message, response.messageType);
-                                    window.location = 'user-account.php';
+                                    window.location = page_link;
                                 }
                                 else {
                                     showNotification(response.title, response.message, response.messageType);
@@ -142,6 +143,7 @@
 
         $(document).on('click','#activate-user-account',function() {
             const user_account_id = $('#user-account-id').text();
+            const page_link = document.getElementById('page-link').getAttribute('href');
             const transaction = 'activate user account';
     
             Swal.fire({
@@ -178,7 +180,7 @@
                                 }
                                 else if (response.notExist) {
                                     setNotification(response.title, response.message, response.messageType);
-                                    window.location = 'user-account.php';
+                                    window.location = page_link;
                                 }
                                 else {
                                     showNotification(response.title, response.message, response.messageType);
@@ -200,6 +202,7 @@
 
         $(document).on('click','#deactivate-user-account',function() {
             const user_account_id = $('#user-account-id').text();
+            const page_link = document.getElementById('page-link').getAttribute('href');
             const transaction = 'deactivate user account';
     
             Swal.fire({
@@ -236,7 +239,7 @@
                                 }
                                 else if (response.notExist) {
                                     setNotification(response.title, response.message, response.messageType);
-                                    window.location = 'user-account.php';
+                                    window.location = page_link;
                                 }
                                 else {
                                     showNotification(response.title, response.message, response.messageType);
@@ -258,6 +261,7 @@
 
         $(document).on('click','#lock-user-account',function() {
             const user_account_id = $('#user-account-id').text();
+            const page_link = document.getElementById('page-link').getAttribute('href');
             const transaction = 'lock user account';
     
             Swal.fire({
@@ -294,7 +298,7 @@
                                 }
                                 else if (response.notExist) {
                                     setNotification(response.title, response.message, response.messageType);
-                                    window.location = 'user-account.php';
+                                    window.location = page_link;
                                 }
                                 else {
                                     showNotification(response.title, response.message, response.messageType);
@@ -316,6 +320,7 @@
 
         $(document).on('click','#unlock-user-account',function() {
             const user_account_id = $('#user-account-id').text();
+            const page_link = document.getElementById('page-link').getAttribute('href');
             const transaction = 'unlock user account';
     
             Swal.fire({
@@ -352,7 +357,7 @@
                                 }
                                 else if (response.notExist) {
                                     setNotification(response.title, response.message, response.messageType);
-                                    window.location = 'user-account.php';
+                                    window.location = page_link;
                                 }
                                 else {
                                     showNotification(response.title, response.message, response.messageType);
@@ -374,6 +379,7 @@
 
         $(document).on('change','#two-factor-authentication',function() {
             const user_account_id = $('#user-account-id').text();
+            const page_link = document.getElementById('page-link').getAttribute('href');
             var checkbox = document.getElementById('two-factor-authentication');
             var transaction = (checkbox).checked ? 'enable two factor authentication' : 'disable two factor authentication';
 
@@ -396,7 +402,7 @@
                         }
                         else if (response.notExist) {
                             setNotification(response.title, response.message, response.messageType);
-                            window.location = 'user-account.php';
+                            window.location = page_link;
                         }
                         else {
                             showNotification(response.title, response.message, response.messageType);
@@ -415,6 +421,7 @@
 
         $(document).on('change','#multiple-login-sessions',function() {
             const user_account_id = $('#user-account-id').text();
+            const page_link = document.getElementById('page-link').getAttribute('href');
             var checkbox = document.getElementById('multiple-login-sessions');
             var transaction = (checkbox).checked ? 'enable multiple login sessions' : 'disable multiple login sessions';
 
@@ -437,7 +444,7 @@
                         }
                         else if (response.notExist) {
                             setNotification(response.title, response.message, response.messageType);
-                            window.location = 'user-account.php';
+                            window.location = page_link;
                         }
                         else {
                             showNotification(response.title, response.message, response.messageType);
@@ -729,6 +736,7 @@ function displayDetails(transaction){
     switch (transaction) {
         case 'get user account details':
             var user_account_id = $('#user-account-id').text();
+            const page_link = document.getElementById('page-link').getAttribute('href');
             
             $.ajax({
                 url: 'components/user-account/controller/user-account-controller.php',
@@ -763,7 +771,7 @@ function displayDetails(transaction){
                         }
                         else if (response.notExist) {
                             setNotification(response.title, response.message, response.messageType);
-                            window.location = 'user-account.php';
+                            window.location = page_link;
                         }
                         else {
                             showNotification(response.title, response.message, response.messageType);
