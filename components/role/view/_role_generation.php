@@ -6,15 +6,18 @@ require_once '../../global/model/system-model.php';
 require_once '../../role/model/role-model.php';
 require_once '../../user-account/model/user-account-model.php';
 require_once '../../global/model/security-model.php';
+require_once '../../global/model/global-model.php';
 
 $databaseModel = new DatabaseModel();
 $systemModel = new SystemModel();
 $roleModel = new RoleModel($databaseModel);
 $userAccountModel = new UserAccountModel($databaseModel);
 $securityModel = new SecurityModel();
+$globalModel = new GlobalModel($databaseModel, $securityModel);
 
 if(isset($_POST['type']) && !empty($_POST['type'])){
     $type = htmlspecialchars($_POST['type'], ENT_QUOTES, 'UTF-8');
+    $pageID = isset($_POST['page_id']) ? $_POST['page_id'] : null;
     $pageLink = isset($_POST['page_link']) ? $_POST['page_link'] : null;
     $response = [];
     
@@ -36,12 +39,21 @@ if(isset($_POST['type']) && !empty($_POST['type'])){
             $options = $sql->fetchAll(PDO::FETCH_ASSOC);
             $sql->closeCursor();
 
+            $roleDeleteAccess = $globalModel->checkAccessRights($userID, $pageID, 'delete');
+
             foreach ($options as $row) {
                 $roleID = $row['role_id'];
                 $roleName = $row['role_name'];
                 $roleDescription = $row['role_description'];
 
                 $roleIDEncrypted = $securityModel->encryptData($roleID);
+                
+                $deleteButton = '';
+                if($roleDeleteAccess['total'] > 0){
+                    $deleteButton = '<a href="javascript:void(0);" class="text-danger ms-3 delete-role" data-role-id="' . $roleID . '" title="Delete Role">
+                                        <i class="ti ti-trash fs-5"></i>
+                                    </a>';
+                }
 
                 $response[] = [
                     'CHECK_BOX' => '<input class="form-check-input datatable-checkbox-children" type="checkbox" value="'. $roleID .'">',
@@ -55,9 +67,7 @@ if(isset($_POST['type']) && !empty($_POST['type'])){
                                     <a href="'. $pageLink .'&id='. $roleIDEncrypted .'" class="text-info" title="View Details">
                                         <i class="ti ti-eye fs-5"></i>
                                     </a>
-                                    <a href="javascript:void(0);" class="text-danger ms-3 delete-role" data-role-id="' . $roleID . '" title="Delete Role">
-                                        <i class="ti ti-trash fs-5"></i>
-                                    </a>
+                                    '. $deleteButton .'
                                 </div>'
                 ];
             }
@@ -87,6 +97,8 @@ if(isset($_POST['type']) && !empty($_POST['type'])){
                 $options = $sql->fetchAll(PDO::FETCH_ASSOC);
                 $sql->closeCursor();
 
+                $deleteRoleUserAccount = $globalModel->checkSystemActionAccessRights($userID, 6);
+
                 foreach ($options as $row) {
                     $roleUserAccountID = $row['role_user_account_id'];
                     $userAccountID = $row['user_account_id'];
@@ -96,6 +108,13 @@ if(isset($_POST['type']) && !empty($_POST['type'])){
                     $email = $userAccountDetails['email'];
                     $profilePicture = $systemModel->checkImage($userAccountDetails['profile_picture'], 'profile');
                     $lastConnectionDate = empty($userAccountDetails['last_connection_date']) ? 'Never Connected' : $systemModel->checkDate('empty', $userAccountDetails['last_connection_date'], '', 'm/d/Y h:i:s a', '');
+
+                    $deleteButton = '';
+                    if($deleteRoleUserAccount['total'] > 0){
+                        $deleteButton = '<a href="javascript:void(0);" class="text-danger ms-3 delete-role-user-account" data-role-user-account-id="' . $roleUserAccountID . '" title="Delete User Account">
+                                            <i class="ti ti-trash fs-5"></i>
+                                        </a>';
+                    }
 
                     $response[] = [
                         'USER_ACCOUNT' => '<div class="d-flex align-items-center">
@@ -113,9 +132,7 @@ if(isset($_POST['type']) && !empty($_POST['type'])){
                                         <a href="javascript:void(0);" class="text-info view-role-user-account-log-notes" data-role-user-account-id="' . $roleUserAccountID . '" data-bs-toggle="offcanvas" data-bs-target="#log-notes-offcanvas" aria-controls="log-notes-offcanvas" title="View Log Notes">
                                             <i class="ti ti-file-text fs-5"></i>
                                         </a>
-                                        <a href="javascript:void(0);" class="text-danger ms-3 delete-role-user-account" data-role-user-account-id="' . $roleUserAccountID . '" title="Delete User Account">
-                                            <i class="ti ti-trash fs-5"></i>
-                                        </a>
+                                        '. $deleteButton .'
                                     </div>'
                     ];
                 }
@@ -147,17 +164,24 @@ if(isset($_POST['type']) && !empty($_POST['type'])){
                 $options = $sql->fetchAll(PDO::FETCH_ASSOC);
                 $sql->closeCursor();
 
+                $deleteRoleUserAccount = $globalModel->checkSystemActionAccessRights($userID, 6);
+
                 foreach ($options as $row) {
                     $roleUserAccountID = $row['role_user_account_id'];
                     $roleName = $row['role_name'];
                     $assignmentDate = $systemModel->checkDate('empty', $row['date_assigned'], '', 'm/d/Y h:i:s a', '');
+
+                    $deleteButton = '';
+                    if($deleteRoleUserAccount['total'] > 0){
+                        $deleteButton = '<button class="btn bg-danger-subtle text-danger delete-role-user-account" data-role-user-account-id="' . $roleUserAccountID . '">Delete</button>';
+                    }
 
                     $table .= '<div class="d-flex align-items-center justify-content-between pb-3">
                                     <div>
                                         <h5 class="fs-4 fw-semibold mb-0">'. $roleName .'</h5>
                                         <small class="mb-0 mt-1">Date Assigned : '. $assignmentDate .'</small>
                                     </div>
-                                    <button class="btn bg-danger-subtle text-danger delete-role-user-account" data-role-user-account-id="' . $roleUserAccountID . '">Delete</button>
+                                    '. $deleteButton .'
                                 </div>';
                 }
 
@@ -271,18 +295,18 @@ if(isset($_POST['type']) && !empty($_POST['type'])){
 
                 foreach ($options as $row) {
                     $roleSystemActionPermissionID = $row['role_system_action_permission_id'];
-                    $systemActionName = $row['system_action_name'];
-                    $systemActionAccess = $row['system_action_access'];
+                    $roleName = $row['system_action_name'];
+                    $roleAccess = $row['system_action_access'];
 
-                    $systemActionAccessChecked = $systemActionAccess ? 'checked' : '';
+                    $roleAccessChecked = $roleAccess ? 'checked' : '';
 
-                    $systemActionAccessButton = '<div class="form-check form-check-inline">
-                                            <input class="form-check-input success update-role-system-action-permission" type="checkbox" data-role-system-action-permission-id="' . $roleSystemActionPermissionID . '" ' . $systemActionAccessChecked . '>
+                    $roleAccessButton = '<div class="form-check form-check-inline">
+                                            <input class="form-check-input success update-role-system-action-permission" type="checkbox" data-role-system-action-permission-id="' . $roleSystemActionPermissionID . '" ' . $roleAccessChecked . '>
                                         </div>';
 
                     $response[] = [
-                        'SYSTEM_ACTION' => $systemActionName,
-                        'SYSTEM_ACTION_ACCESS' => $systemActionAccessButton,
+                        'SYSTEM_ACTION' => $roleName,
+                        'SYSTEM_ACTION_ACCESS' => $roleAccessButton,
                         'ACTION' => '<div class="d-flex gap-2">
                                         <a href="javascript:void(0);" class="text-info view-role-system-action-permission-log-notes" data-role-system-action-permission-id="' . $roleSystemActionPermissionID . '" data-bs-toggle="offcanvas" data-bs-target="#log-notes-offcanvas" aria-controls="log-notes-offcanvas" title="View Log Notes">
                                             <i class="ti ti-file-text fs-5"></i>
@@ -384,10 +408,10 @@ if(isset($_POST['type']) && !empty($_POST['type'])){
         # -------------------------------------------------------------
         case 'assigned role system action permission table':
             if(isset($_POST['system_action_id']) && !empty($_POST['system_action_id'])){
-                $systemActionID = htmlspecialchars($_POST['system_action_id'], ENT_QUOTES, 'UTF-8');
+                $roleID = htmlspecialchars($_POST['system_action_id'], ENT_QUOTES, 'UTF-8');
 
-                $sql = $databaseModel->getConnection()->prepare('CALL generateSystemActionRolePermissionTable(:systemActionID)');
-                $sql->bindValue(':systemActionID', $systemActionID, PDO::PARAM_INT);
+                $sql = $databaseModel->getConnection()->prepare('CALL generateSystemActionRolePermissionTable(:roleID)');
+                $sql->bindValue(':roleID', $roleID, PDO::PARAM_INT);
                 $sql->execute();
                 $options = $sql->fetchAll(PDO::FETCH_ASSOC);
                 $sql->closeCursor();
@@ -395,17 +419,17 @@ if(isset($_POST['type']) && !empty($_POST['type'])){
                 foreach ($options as $row) {
                     $roleSystemActionPermissionID = $row['role_system_action_permission_id'];
                     $roleName = $row['role_name'];
-                    $systemActionAccess = $row['system_action_access'];
+                    $roleAccess = $row['system_action_access'];
 
-                    $systemActionAccessChecked = $systemActionAccess ? 'checked' : '';
+                    $roleAccessChecked = $roleAccess ? 'checked' : '';
 
-                    $systemActionAccessButton = '<div class="form-check form-check-inline">
-                                            <input class="form-check-input success update-role-system-action-permission" type="checkbox" data-role-system-action-permission-id="' . $roleSystemActionPermissionID . '" ' . $systemActionAccessChecked . '>
+                    $roleAccessButton = '<div class="form-check form-check-inline">
+                                            <input class="form-check-input success update-role-system-action-permission" type="checkbox" data-role-system-action-permission-id="' . $roleSystemActionPermissionID . '" ' . $roleAccessChecked . '>
                                         </div>';
 
                     $response[] = [
                         'ROLE' => $roleName,
-                        'SYSTEM_ACTION_ACCESS' => $systemActionAccessButton,
+                        'SYSTEM_ACTION_ACCESS' => $roleAccessButton,
                         'ACTION' => '<div class="d-flex gap-2">
                                         <a href="javascript:void(0);" class="text-info view-role-system-action-permission-log-notes" data-role-system-action-permission-id="' . $roleSystemActionPermissionID . '" data-bs-toggle="offcanvas" data-bs-target="#log-notes-offcanvas" aria-controls="log-notes-offcanvas" title="View Log Notes">
                                             <i class="ti ti-file-text fs-5"></i>
@@ -467,9 +491,9 @@ if(isset($_POST['type']) && !empty($_POST['type'])){
         # -------------------------------------------------------------
         case 'system action role dual listbox options':
             if(isset($_POST['system_action_id']) && !empty($_POST['system_action_id'])){
-                $systemActionID = htmlspecialchars($_POST['system_action_id'], ENT_QUOTES, 'UTF-8');
-                $sql = $databaseModel->getConnection()->prepare('CALL generateSystemActionRoleDualListBoxOptions(:systemActionID)');
-                $sql->bindValue(':systemActionID', $systemActionID, PDO::PARAM_INT);
+                $roleID = htmlspecialchars($_POST['system_action_id'], ENT_QUOTES, 'UTF-8');
+                $sql = $databaseModel->getConnection()->prepare('CALL generateSystemActionRoleDualListBoxOptions(:roleID)');
+                $sql->bindValue(':roleID', $roleID, PDO::PARAM_INT);
                 $sql->execute();
                 $options = $sql->fetchAll(PDO::FETCH_ASSOC);
                 $sql->closeCursor();

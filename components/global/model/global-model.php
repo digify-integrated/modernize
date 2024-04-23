@@ -41,6 +41,27 @@ class GlobalModel {
     # -------------------------------------------------------------
 
     # -------------------------------------------------------------
+    #
+    # Function: checkSystemActionAccessRights
+    # Description: Checks if the user has access.
+    #
+    # Parameters:
+    # - $p_user_account_id (int): The user account ID.
+    # - $p_system_action_id (int): The system action ID.
+    #
+    # Returns: The result of the query as an associative array.
+    #
+    # -------------------------------------------------------------
+    public function checkSystemActionAccessRights($p_user_account_id, $p_system_action_id) {
+        $stmt = $this->db->getConnection()->prepare('CALL checkSystemActionAccessRights(:p_user_account_id, :p_system_action_id)');
+        $stmt->bindValue(':p_user_account_id', $p_user_account_id, PDO::PARAM_INT);
+        $stmt->bindValue(':p_system_action_id', $p_system_action_id, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+    # -------------------------------------------------------------
+
+    # -------------------------------------------------------------
     #   Build methods
     # -------------------------------------------------------------
 

@@ -404,6 +404,7 @@ function userAccountTable(datatable_name, buttons = false, show_all = false){
     toggleHideActionDropdown();
 
     const type = 'user account table';
+    const page_id = $('#page-id').val();
     const page_link = document.getElementById('page-link').getAttribute('href');
     var filter_by_user_account_status = $('input[name="filter-user-account-status"]:checked').val();
     var filter_by_user_account_lock_status = $('input[name="filter-user-account-lock-status"]:checked').val();
@@ -440,6 +441,7 @@ function userAccountTable(datatable_name, buttons = false, show_all = false){
             'dataType': 'json',
             'data': {
                 'type' : type, 
+                'page_id' : page_id, 
                 'page_link' : page_link, 
                 'filter_by_user_account_status' : filter_by_user_account_status, 
                 'filter_by_user_account_lock_status' : filter_by_user_account_lock_status,

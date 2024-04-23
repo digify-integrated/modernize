@@ -146,6 +146,7 @@ function menuItemTable(datatable_name, buttons = false, show_all = false){
     toggleHideActionDropdown();
 
     const type = 'menu item table';
+    const page_id = $('#page-id').val();
     const page_link = document.getElementById('page-link').getAttribute('href');
 
     var filter_by_menu_group = $('input[name="filter-menu-group"]:checked').val();
@@ -176,6 +177,7 @@ function menuItemTable(datatable_name, buttons = false, show_all = false){
             'dataType': 'json',
             'data': {
                 'type' : type,
+                'page_id' : page_id,
                 'page_link' : page_link,
                 'filter_by_menu_group' : filter_by_menu_group
             },

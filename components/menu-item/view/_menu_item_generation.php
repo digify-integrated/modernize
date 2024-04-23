@@ -5,11 +5,13 @@ require_once '../../global/model/database-model.php';
 require_once '../../global/model/system-model.php';
 require_once '../../menu-item/model/menu-item-model.php';
 require_once '../../global/model/security-model.php';
+require_once '../../global/model/global-model.php';
 
 $databaseModel = new DatabaseModel();
 $systemModel = new SystemModel();
 $menuItemModel = new MenuItemModel($databaseModel);
 $securityModel = new SecurityModel();
+$globalModel = new GlobalModel($databaseModel, $securityModel);
 
 if(isset($_POST['type']) && !empty($_POST['type'])){
     $type = htmlspecialchars($_POST['type'], ENT_QUOTES, 'UTF-8');
@@ -49,7 +51,7 @@ if(isset($_POST['type']) && !empty($_POST['type'])){
 
                 $deleteButton = '';
                 if($menuItemDeleteAccess['total'] > 0){
-                    $deleteButton = ' <a href="javascript:void(0);" class="text-danger ms-3 delete-menu-item" data-menu-item-id="' . $menuItemID . '" title="Delete Menu Item">
+                    $deleteButton = '<a href="javascript:void(0);" class="text-danger ms-3 delete-menu-item" data-menu-item-id="' . $menuItemID . '" title="Delete Menu Item">
                                         <i class="ti ti-trash fs-5"></i>
                                     </a>';
                 }

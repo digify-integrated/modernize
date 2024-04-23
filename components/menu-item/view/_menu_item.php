@@ -5,10 +5,12 @@
                 <div class="card-header d-flex align-items-center">
                     <h5 class="card-title mb-0">Menu Item List</h5>
                     <div class="card-actions cursor-pointer ms-auto d-flex button-item">
-                        <button type="button" class="btn btn-dark dropdown-toggle action-dropdown mb-0 d-none" data-bs-toggle="dropdown" aria-expanded="false">Action</button>
+                    <?php
+                        echo $menuItemDeleteAccess['total'] > 0 ? '<button type="button" class="btn btn-dark dropdown-toggle action-dropdown mb-0 d-none" data-bs-toggle="dropdown" aria-expanded="false">Action</button>
                         <ul class="dropdown-menu dropdown-menu-end">
                             <li><button class="dropdown-item" type="button" id="delete-menu-item">Delete Menu Item</button></li>
-                        </ul>
+                        </ul>' : '';
+                    ?>
                     </div>
                     <div class="card-actions cursor-pointer ms-auto d-flex button-group">
                         <?php
@@ -20,7 +22,7 @@
                     </div>
                 </div>
                 <div class="card-body">
-                    <input type="hidden" id="page_id" value="<?php echo $pageID; ?>">
+                    <input type="hidden" id="page-id" value="<?php echo $pageID; ?>">
                     <div class="table-responsive">
                         <table id="menu-item-table" class="table border table-striped table-hover align-middle text-nowrap mb-0">
                             <thead class="text-dark">

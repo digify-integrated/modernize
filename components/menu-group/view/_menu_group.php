@@ -5,16 +5,18 @@
                 <div class="card-header d-flex align-items-center">
                     <h5 class="card-title mb-0">Menu Group List</h5>
                     <div class="card-actions cursor-pointer ms-auto d-flex button-group">
-                        <button type="button" class="btn btn-dark dropdown-toggle action-dropdown mb-0 d-none" data-bs-toggle="dropdown" aria-expanded="false">Action</button>
                         <?php
-                            echo $menuGroupDeleteAccess['total'] > 0 ? '<ul class="dropdown-menu dropdown-menu-end">
+                            echo $menuGroupDeleteAccess['total'] > 0 ? '
+                            <button type="button" class="btn btn-dark dropdown-toggle action-dropdown mb-0 d-none" data-bs-toggle="dropdown" aria-expanded="false">Action</button>
+                            <ul class="dropdown-menu dropdown-menu-end">
                                 <li><button class="dropdown-item" type="button" id="delete-menu-group">Delete Menu Group</button></li>
                             </ul>' : '';
-                        ?>                        
+                        ?>
                     </div>
                     <div class="card-actions cursor-pointer ms-auto d-flex button-group">
                         <?php
-                            echo $menuGroupReadAccess['total'] > 0 ? '<a href="' . $pageLink . '&new" class="btn btn-success d-flex align-items-center mb-0">Create</a>' : '';
+                            echo $menuGroupReadAccess['total'] > 0 ? 
+                            '<a href="' . $pageLink . '&new" class="btn btn-success d-flex align-items-center mb-0">Create</a>' : '';
                         ?>
                     </div>
                 </div>

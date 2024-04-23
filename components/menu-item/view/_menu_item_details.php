@@ -9,7 +9,7 @@
                         <?php
                             if($menuItemCreateAccess['total'] > 0 || $menuItemDeleteAccess['total'] > 0){
                                 echo $menuItemCreateAccess['total'] > 0 ? '<li><a class="dropdown-item" href="'. $pageLink .'&new">Create Menu Item</a></li>' : '';
-                                echo $menuItemDeleteAccess['total'] > 0 ? ' <li><button class="dropdown-item" type="button" id="delete-menu-item">Delete Menu Item</button></li>' : '';
+                                echo $menuItemDeleteAccess['total'] > 0 ? '<li><button class="dropdown-item" type="button" id="delete-menu-item">Delete Menu Item</button></li>' : '';
                                 
                                 echo '<li><hr class="dropdown-divider"></li>';
                             }
@@ -17,9 +17,12 @@
                         <li><button class="dropdown-item" type="button" data-bs-toggle="offcanvas" data-bs-target="#log-notes-offcanvas" aria-controls="log-notes-offcanvas" id="view-log-notes">View Log Notes</button></li>
                     </ul>
                 </div>
-                <div class="card-actions cursor-pointer ms-auto d-flex button-group">
-                    <button class="btn btn-info mb-0 px-4" data-bs-toggle="modal" id="edit-details" data-bs-target="#menu-item-modal" id="edit-details">Edit</button>
-                </div>
+                <?php
+                    echo $menuItemWriteAccess['total'] > 0 ? 
+                    '<div class="card-actions cursor-pointer ms-auto d-flex button-group">
+                        <button class="btn btn-info mb-0 px-4" data-bs-toggle="modal" id="edit-details" data-bs-target="#menu-item-modal" id="edit-details">Edit</button>
+                    </div>' : '';
+                ?>
             </div>
             <div class="card-body">
                 <div class="row">

@@ -6,16 +6,23 @@
                 <div class="card-actions cursor-pointer ms-auto d-flex button-group">
                     <button type="button" class="btn btn-dark dropdown-toggle mb-0" data-bs-toggle="dropdown" aria-expanded="false">Action</button>
                     <ul class="dropdown-menu dropdown-menu-end">
-                        <li><a class="dropdown-item" href="system-action.php?new">Create System Action</a></li>
-                        <li><button class="dropdown-item" type="button" id="delete-system-action">Delete System Action</button></li>
-                        <li><hr class="dropdown-divider"></li>
+                        <?php
+                            if($systemActionCreateAccess['total'] > 0 || $systemActionDeleteAccess['total'] > 0){
+                                echo $systemActionCreateAccess['total'] > 0 ? '<li><a class="dropdown-item" href="'. $pageLink .'&new">Create System Action</a></li>' : '';
+                                echo $systemActionDeleteAccess['total'] > 0 ? '<li><button class="dropdown-item" type="button" id="delete-system-action">Delete System Action</button></li>' : '';
+                                
+                                echo '<li><hr class="dropdown-divider"></li>';
+                            }
+                        ?>
                         <li><button class="dropdown-item" type="button" data-bs-toggle="offcanvas" data-bs-target="#log-notes-offcanvas" aria-controls="log-notes-offcanvas" id="view-log-notes">View Log Notes</button></li>
                     </ul>
                 </div>
-                <div class="card-actions cursor-pointer ms-auto d-flex button-group">
-                    <button class="btn btn-info mb-0 px-4" data-bs-toggle="modal" id="edit-details" data-bs-target="#system-action-modal">Edit</button>
-                    <a href="system-action.php?new" class="btn btn-success d-flex align-items-center mb-0">Create</a>
-                </div>
+                <?php
+                    echo $systemActionWriteAccess['total'] > 0 ? 
+                    '<div class="card-actions cursor-pointer ms-auto d-flex button-group">
+                        <button class="btn btn-info mb-0 px-4" data-bs-toggle="modal" id="edit-details" data-bs-target="#system-action-modal">Edit</button>
+                    </div>' : '';
+                ?>
             </div>
             <div class="card-body">
                 <div class="row">

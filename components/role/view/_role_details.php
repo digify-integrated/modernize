@@ -6,15 +6,23 @@
                 <div class="card-actions cursor-pointer ms-auto d-flex button-group">
                     <button type="button" class="btn btn-dark dropdown-toggle mb-0" data-bs-toggle="dropdown" aria-expanded="false">Action</button>
                     <ul class="dropdown-menu dropdown-menu-end">
-                        <li><a class="dropdown-item" href="role.php?new">Create Role</a></li>
-                        <li><button class="dropdown-item" type="button" id="delete-role">Delete Role</button></li>
-                        <li><hr class="dropdown-divider"></li>
+                        <?php
+                            if($roleCreateAccess['total'] > 0 || $roleDeleteAccess['total'] > 0){
+                                echo $roleCreateAccess['total'] > 0 ? '<li><a class="dropdown-item" href="'. $pageLink .'&new">Create Role</a></li>' : '';
+                                echo $roleDeleteAccess['total'] > 0 ? '<li><button class="dropdown-item" type="button" id="delete-role">Delete Role</button></li>' : '';
+                                
+                                echo '<li><hr class="dropdown-divider"></li>';
+                            }
+                        ?>
                         <li><button class="dropdown-item" type="button" data-bs-toggle="offcanvas" data-bs-target="#log-notes-offcanvas" aria-controls="log-notes-offcanvas" id="view-log-notes">View Log Notes</button></li>
                     </ul>
                 </div>
-                <div class="card-actions cursor-pointer ms-auto d-flex button-group">
-                    <button class="btn btn-info mb-0 px-4" data-bs-toggle="modal" id="edit-details" data-bs-target="#role-modal">Edit</button>
-                </div>
+                <?php
+                    echo $roleWriteAccess['total'] > 0 ? 
+                    '<div class="card-actions cursor-pointer ms-auto d-flex button-group">
+                        <button class="btn btn-info mb-0 px-4" data-bs-toggle="modal" id="edit-details" data-bs-target="#role-modal">Edit</button>
+                    </div>' : '';
+                ?>
             </div>
             <div class="card-body">
                 <div class="row">
@@ -46,9 +54,13 @@
             <div class="card">
                 <div class="card-header d-flex align-items-center">
                     <h5 class="card-title mb-0">User Account</h5>
-                    <div class="card-actions cursor-pointer ms-auto d-flex button-group">
-                        <button class="btn btn-success d-flex align-items-center mb-0" data-bs-toggle="modal" data-bs-target="#user-account-assignment-modal" id="assign-user-account">Assign</button>
-                    </div>
+                    <?php
+                        if($addRoleUserAccount['total'] > 0){
+                            echo '<div class="card-actions cursor-pointer ms-auto d-flex button-group">
+                                    <button class="btn btn-success d-flex align-items-center mb-0" data-bs-toggle="modal" data-bs-target="#user-account-assignment-modal" id="assign-user-account">Assign</button>
+                                </div>';
+                        }
+                    ?>
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">

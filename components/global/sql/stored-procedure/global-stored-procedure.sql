@@ -60,4 +60,11 @@ BEGIN
     END IF;
 END //
 
+CREATE PROCEDURE checkSystemActionAccessRights(IN p_user_account_id INT, IN p_system_action_id INT)
+BEGIN
+    SELECT COUNT(role_id) AS total
+    FROM role_system_action_permission 
+    WHERE system_action_id = p_system_action_id AND system_action_access = 1 AND role_id IN (SELECT role_id FROM role_user_account WHERE user_account_id = p_user_account_id);
+END //
+
 /* ----------------------------------------------------------------------------------------------------------------------------- */

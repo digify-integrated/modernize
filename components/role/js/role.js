@@ -139,6 +139,7 @@ function roleTable(datatable_name, buttons = false, show_all = false){
     toggleHideActionDropdown();
 
     const type = 'role table';
+    const page_id = $('#page-id').val();
     const page_link = document.getElementById('page-link').getAttribute('href');
     var settings;
 
@@ -163,6 +164,7 @@ function roleTable(datatable_name, buttons = false, show_all = false){
             'dataType': 'json',
             'data': {
                 'type' : type,
+                'page_id' : page_id,
                 'page_link' : page_link
             },
             'dataSrc' : '',

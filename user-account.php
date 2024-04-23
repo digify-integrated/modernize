@@ -11,6 +11,12 @@
     $userAccountWriteAccess = $globalModel->checkAccessRights($userID, $pageID, 'write');
     $userAccountDeleteAccess = $globalModel->checkAccessRights($userID, $pageID, 'delete');
 
+    $activateUserAccount = $globalModel->checkSystemActionAccessRights($userID, 1);
+    $deactivateUserAccount = $globalModel->checkSystemActionAccessRights($userID, 2);
+    $lockUserAccount = $globalModel->checkSystemActionAccessRights($userID, 3);
+    $unlockUserAccount = $globalModel->checkSystemActionAccessRights($userID, 4);
+    $addRoleUserAccount = $globalModel->checkSystemActionAccessRights($userID, 5);
+
     if(isset($_GET['id'])){
         $userAccountDetails = $userAccountModel->getUserAccount($detailID, null);
         $userAccountActive = $userAccountDetails['active'];

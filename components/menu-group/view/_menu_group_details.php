@@ -18,7 +18,8 @@
                     </ul>
                 </div>
                 <?php
-                    echo $menuGroupWriteAccess['total'] > 0 ? ' <div class="card-actions cursor-pointer ms-auto d-flex button-group">
+                    echo $menuGroupWriteAccess['total'] > 0 ? 
+                    '<div class="card-actions cursor-pointer ms-auto d-flex button-group">
                         <button class="btn btn-info mb-0 px-4" data-bs-toggle="modal" id="edit-details" data-bs-target="#menu-group-modal">Edit</button>
                     </div>' : '';
                 ?>

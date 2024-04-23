@@ -746,6 +746,9 @@ function displayDetails(transaction){
                     user_account_id : user_account_id, 
                     transaction : transaction
                 },
+                beforeSend: function() {
+                    disableFormSubmitButton('submit-data');
+                },
                 success: function(response) {
                     if (response.success) {
                         $('#file_as').val(response.fileAs);
@@ -784,9 +787,6 @@ function displayDetails(transaction){
                         fullErrorMessage += `, Response: ${xhr.responseText}`;
                     }
                     showErrorDialog(fullErrorMessage);
-                },
-                complete: function(){
-                    resetModalForm('user-account-form');
                 }
             });
             break;

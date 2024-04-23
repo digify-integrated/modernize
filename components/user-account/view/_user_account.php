@@ -5,22 +5,37 @@
                 <div class="card-header d-flex align-items-center">
                     <h5 class="card-title mb-0">User Account List</h5>
                     <div class="card-actions cursor-pointer ms-auto d-flex button-group">
-                        <button type="button" class="btn btn-dark dropdown-toggle action-dropdown mb-0 d-none" data-bs-toggle="dropdown" aria-expanded="false">Action</button>
-                        <ul class="dropdown-menu dropdown-menu-end">
-                            <li><button class="dropdown-item" type="button" id="activate-user-account">Activate User Account</button></li>
-                            <li><button class="dropdown-item" type="button" id="deactivate-user-account">Deactivate User Account</button></li>
-                            <li><button class="dropdown-item" type="button" id="lock-user-account">Lock User Account</button></li>
-                            <li><button class="dropdown-item" type="button" id="unlock-user-account">Unlock User Account</button></li>
-                            <li><button class="dropdown-item" type="button" id="delete-user-account">Delete User Account</button></li>
-                        </ul>
+                        <?php
+                            if($userAccountDeleteAccess['total'] > 0 || $activateUserAccount['total'] > 0 || $deactivateUserAccount['total'] > 0 || $lockUserAccount['total'] > 0 || $unlockUserAccount['total'] > 0){
+                                $dropdown = '<button type="button" class="btn btn-dark dropdown-toggle action-dropdown mb-0 d-none" data-bs-toggle="dropdown" aria-expanded="false">Action</button>
+                                <ul class="dropdown-menu dropdown-menu-end">';
+
+                                $dropdown .= $deactivateUserAccount['total'] > 0 ? '<li><button class="dropdown-item" type="button" id="deactivate-user-account">Deactivate User Account</button></li>' : '';
+
+                                $dropdown .= $activateUserAccount['total'] > 0 ? '<li><button class="dropdown-item" type="button" id="activate-user-account">Activate User Account</button></li>' : '';
+
+                                $dropdown .= $unlockUserAccount['total'] > 0 ? '<li><button class="dropdown-item" type="button" id="unlock-user-account">Unlock User Account</button></li>' : '';
+
+                                $dropdown .= $lockUserAccount['total'] > 0 ? '<li><button class="dropdown-item" type="button" id="lock-user-account">Lock User Account</button></li>' : '';
+
+                                $dropdown .= $userAccountDeleteAccess['total'] > 0 ? '<li><button class="dropdown-item" type="button" id="delete-user-account">Delete User Account</button></li>' : '';
+
+                                $dropdown .= '</ul>';
+
+                                echo $dropdown;
+                            }
+                        ?>                        
                     </div>
                     <div class="card-actions cursor-pointer ms-auto d-flex button-group">
-                        <a href="<?php echo $pageLink; ?>&new" class="btn btn-success d-flex align-items-center mb-0">Create</a>
+                        <?php
+                            echo $userAccountCreateAccess['total'] > 0 ?
+                            '<a href="' . $pageLink . '&new" class="btn btn-success d-flex align-items-center mb-0">Create</a>' : '';
+                        ?>
                         <button type="button" class="btn btn-warning mb-0 px-4" data-bs-toggle="offcanvas" data-bs-target="#filter-offcanvas" aria-controls="filter-offcanvas">Filter</a>
                     </div>
                 </div>
                 <div class="card-body">
-                    <input type="hidden" id="page_id" value="<?php echo $pageID; ?>">
+                    <input type="hidden" id="page-id" value="<?php echo $pageID; ?>">
                     <div class="table-responsive">
                         <table id="user-account-table" class="table border table-striped table-hover align-middle text-nowrap mb-0">
                             <thead class="text-dark">

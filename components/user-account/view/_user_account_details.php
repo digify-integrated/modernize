@@ -33,10 +33,13 @@
                                     <div class="card-body p-4">
                                         <div class="text-center">
                                             <img src="./assets/images/profile/user-1.jpg" alt="" class="img-fluid rounded-circle" width="120" height="120">
-                                            <div class="d-flex align-items-center justify-content-center my-4 gap-6">
-                                                <button class="btn btn-primary">Upload</button>
-                                            </div>
-                                            <p class="mb-0">Allowed JPG, GIF or PNG. Max size of 800K</p>
+                                            <?php
+                                                echo $userAccountWriteAccess['total'] > 0 ? 
+                                                '<div class="d-flex align-items-center justify-content-center my-4 gap-6">
+                                                    <button class="btn btn-primary">Upload</button>
+                                                </div>' : '';
+                                            ?>
+                                            <p class="mb-0 mt-2">Allowed JPG, GIF or PNG. Max size of 800K</p>
                                         </div>
                                     </div>
                                 </div>
@@ -48,19 +51,37 @@
                                         <div class="card-actions cursor-pointer ms-auto d-flex button-group">
                                             <button type="button" class="btn btn-dark dropdown-toggle mb-0" data-bs-toggle="dropdown" aria-expanded="false">Action</button>
                                             <ul class="dropdown-menu dropdown-menu-end">
-                                                <li><a class="dropdown-item" href="user-account.php?new">Create User Account</a></li>
-                                                <li><button class="dropdown-item" type="button" data-bs-toggle="modal" id="change-password" data-bs-target="#change-password-modal">Change Password</button></li>
-
                                                 <?php
-                                                    echo '<li><button class="dropdown-item" type="button" id="' . ($userAccountActive == 'Yes' ? 'deactivate' : 'activate') . '-user-account">' . ($userAccountActive == 'Yes' ? 'Deactivate' : 'Activate') . ' User Account</button></li>';
-                                                    echo '<li><button class="dropdown-item" type="button" id="' . ($userAccountLocked == 'Yes' ? 'unlock' : 'lock') . '-user-account">' . ($userAccountLocked == 'Yes' ? 'Unlock' : 'Lock') . ' User Account</button></li>';
+                                                    if($userAccountCreateAccess['total'] > 0 || $userAccountDeleteAccess['total'] > 0 || $activateUserAccount['total'] > 0 || $deactivateUserAccount['total'] > 0 || $lockUserAccount['total'] > 0 || $unlockUserAccount['total'] > 0){
+                                                        echo $userAccountWriteAccess['total'] > 0 ? '<li><button class="dropdown-item" type="button" data-bs-toggle="modal" id="change-password" data-bs-target="#change-password-modal">Change Password</button></li>' : '';
+                                                        
+                                                        echo $userAccountCreateAccess['total'] > 0 ? '<li><a class="dropdown-item" href="'. $pageLink .'&new">Create User Account</a></li>' : '';
+
+                                                        if($userAccountActive == 'Yes' && $deactivateUserAccount['total'] > 0){
+                                                            echo '<li><button class="dropdown-item" type="button" id="deactivate-user-account">Deactivate User Account</button></li>';
+                                                        }
+                                                        else if($userAccountActive == 'No' && $activateUserAccount['total'] > 0){
+                                                            echo '<li><button class="dropdown-item" type="button" id="activate-user-account">Activate User Account</button></li>';
+                                                        }
+
+                                                        if($userAccountLocked == 'Yes' && $unlockUserAccount['total'] > 0){
+                                                            echo '<li><button class="dropdown-item" type="button" id="unlock-user-account">Unlock User Account</button></li>';
+                                                        }
+                                                        else if($userAccountLocked == 'No' && $lockUserAccount['total'] > 0){
+                                                            echo '<li><button class="dropdown-item" type="button" id="lock-user-account">Lock User Account</button></li>';
+                                                        }
+
+                                                        echo $userAccountDeleteAccess['total'] > 0 ? '<li><button class="dropdown-item" type="button" id="delete-user-account">Delete User Account</button></li>' : '';
+                                                        
+                                                        echo '<li><hr class="dropdown-divider"></li>';
+                                                    }
                                                 ?>
-                                                
-                                                <li><button class="dropdown-item" type="button" id="delete-user-account">Delete User Account</button></li>
-                                                <li><hr class="dropdown-divider"></li>
                                                 <li><button class="dropdown-item" type="button" data-bs-toggle="offcanvas" data-bs-target="#log-notes-offcanvas" aria-controls="log-notes-offcanvas" id="view-log-notes">View Log Notes</button></li>
                                             </ul>
-                                            <button class="btn btn-info mb-0 px-4" data-bs-toggle="modal" id="edit-details" data-bs-target="#user-account-modal">Edit</button>
+                                            <?php
+                                                echo $userAccountWriteAccess['total'] > 0 ? 
+                                                '<button class="btn btn-info mb-0 px-4" data-bs-toggle="modal" id="edit-details" data-bs-target="#user-account-modal">Edit</button>' : '';
+                                            ?>
                                         </div>
                                     </div>
                                     <div class="card-body">
@@ -147,9 +168,13 @@
                                 <div class="card">
                                     <div class="card-header d-flex align-items-center">
                                         <h5 class="card-title mb-0">User Roles</h5>
-                                        <div class="card-actions cursor-pointer ms-auto d-flex button-group">
-                                            <button class="btn btn-success mb-0 px-4" data-bs-toggle="modal" data-bs-target="#user-account-assignment-modal" id="assign-user-account">Assign</button>
-                                        </div>
+                                        <?php
+                                            if($addRoleUserAccount['total'] > 0){
+                                                echo '<div class="card-actions cursor-pointer ms-auto d-flex button-group">
+                                                            <button class="btn btn-success mb-0 px-4" data-bs-toggle="modal" data-bs-target="#user-account-assignment-modal" id="assign-user-account">Assign</button>
+                                                        </div>';        
+                                            }
+                                        ?>
                                     </div>
                                     <div class="card-body p-4" id="role-list"></div>
                                 </div>
@@ -176,7 +201,11 @@
                                                     </div>
                                                 </div>
                                                 <div class="form-check form-switch mb-0">
-                                                    <input class="form-check-input" type="checkbox" role="switch" id="two-factor-authentication">
+                                                    <?php
+                                                        $checkboxAttributes = ($userAccountWriteAccess['total'] > 0) ? '' : 'disabled';
+
+                                                        echo '<input class="form-check-input" type="checkbox" role="switch" id="two-factor-authentication" ' . $checkboxAttributes . '>';
+                                                    ?>
                                                 </div>
                                             </div>
                                             <div class="d-flex align-items-center justify-content-between mb-4">
@@ -190,7 +219,11 @@
                                                     </div>
                                                 </div>
                                                 <div class="form-check form-switch mb-0">
-                                                    <input class="form-check-input" type="checkbox" role="switch" id="multiple-login-sessions">
+                                                    <?php
+                                                        $checkboxAttributes = ($userAccountWriteAccess['total'] > 0) ? '' : 'disabled';
+                                                        
+                                                        echo '<input class="form-check-input" type="checkbox" role="switch" id="multiple-login-sessions" ' . $checkboxAttributes . '>';
+                                                    ?>
                                                 </div>
                                             </div>
                                         </div>

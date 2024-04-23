@@ -139,6 +139,7 @@ function systemActionTable(datatable_name, buttons = false, show_all = false){
     toggleHideActionDropdown();
 
     const type = 'system action table';
+    const page_id = $('#page-id').val();
     const page_link = document.getElementById('page-link').getAttribute('href');
 
     var settings;
@@ -164,7 +165,8 @@ function systemActionTable(datatable_name, buttons = false, show_all = false){
             'dataType': 'json',
             'data': {
                 'type' : type,
-                'page_link' : page_link,
+                'page_id' : page_id,
+                'page_link' : page_link
             },
             'dataSrc' : '',
             'error': function(xhr, status, error) {
