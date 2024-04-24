@@ -3,18 +3,17 @@ session_start();
 
 # -------------------------------------------------------------
 #
-# Function: SystemActionController
+# Function: FileTypeController
 # Description: 
-# The SystemActionController class handles system action related operations and interactions.
+# The FileTypeController class handles file type related operations and interactions.
 #
 # Parameters: None
 #
 # Returns: None
 #
 # -------------------------------------------------------------
-class SystemActionController {
-    private $systemActionModel;
-    private $roleModel;
+class FileTypeController {
+    private $fileTypeModel;
     private $authenticationModel;
     private $securityModel;
 
@@ -22,21 +21,19 @@ class SystemActionController {
     #
     # Function: __construct
     # Description: 
-    # The constructor initializes the object with the provided RoleModel, AuthenticationModel and SecurityModel instances.
-    # These instances are used for role related, user related operations and security related operations, respectively.
+    # The constructor initializes the object with the provided FileTypeModel, AuthenticationModel and SecurityModel instances.
+    # These instances are used for file type related, user related operations and security related operations, respectively.
     #
     # Parameters:
-    # - @param SystemActionModel $systemActionModel     The SystemActionModel instance for system action related operations.
-    # - @param RoleModel $roleModel     The RoleModel instance for role related operations.
+    # - @param FileTypeModel $fileTypeModel     The FileTypeModel instance for file type related operations.
     # - @param AuthenticationModel $authenticationModel     The AuthenticationModel instance for user related operations.
     # - @param SecurityModel $securityModel   The SecurityModel instance for security related operations.
     #
     # Returns: None
     #
     # -------------------------------------------------------------
-    public function __construct(SystemActionModel $systemActionModel, RoleModel $roleModel, AuthenticationModel $authenticationModel, SecurityModel $securityModel) {
-        $this->systemActionModel = $systemActionModel;
-        $this->roleModel = $roleModel;
+    public function __construct(FileTypeModel $fileTypeModel, AuthenticationModel $authenticationModel, SecurityModel $securityModel) {
+        $this->fileTypeModel = $fileTypeModel;
         $this->authenticationModel = $authenticationModel;
         $this->securityModel = $securityModel;
     }
@@ -124,20 +121,20 @@ class SystemActionController {
             $transaction = isset($_POST['transaction']) ? $_POST['transaction'] : null;
 
             switch ($transaction) {
-                case 'add system action':
-                    $this->addSystemAction();
+                case 'add file type':
+                    $this->addFileType();
                     break;
-                case 'update system action':
-                    $this->updateSystemAction();
+                case 'update file type':
+                    $this->updateFileType();
                     break;
-                case 'get system action details':
-                    $this->getSystemActionDetails();
+                case 'get file type details':
+                    $this->getFileTypeDetails();
                     break;
-                case 'delete system action':
-                    $this->deleteSystemAction();
+                case 'delete file type':
+                    $this->deleteFileType();
                     break;
-                case 'delete multiple system action':
-                    $this->deleteMultipleSystemAction();
+                case 'delete multiple file type':
+                    $this->deleteMultipleFileType();
                     break;
                 default:
                     $response = [
@@ -160,32 +157,31 @@ class SystemActionController {
 
     # -------------------------------------------------------------
     #
-    # Function: addSystemAction
+    # Function: addFileType
     # Description: 
-    # Inserts a system action.
+    # Inserts a file type.
     #
     # Parameters: None
     #
     # Returns: Array
     #
     # -------------------------------------------------------------
-    public function addSystemAction() {
+    public function addFileType() {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             return;
         }
 
-        if (isset($_POST['system_action_name']) && !empty($_POST['system_action_name']) && isset($_POST['system_action_description']) && !empty($_POST['system_action_description'])) {
+        if (isset($_POST['file_type_name']) && !empty($_POST['file_type_name'])) {
             $userID = $_SESSION['user_account_id'];
-            $systemActionName = htmlspecialchars($_POST['system_action_name'], ENT_QUOTES, 'UTF-8');
-            $systemActionDescription = htmlspecialchars($_POST['system_action_description'], ENT_QUOTES, 'UTF-8');
-        
-            $systemActionID = $this->systemActionModel->insertSystemAction($systemActionName, $systemActionDescription, $userID);
+            $fileTypeName = htmlspecialchars($_POST['file_type_name'], ENT_QUOTES, 'UTF-8');
+
+            $fileTypeID = $this->fileTypeModel->insertFileType($fileTypeName, $userID);
     
             $response = [
                 'success' => true,
-                'systemActionID' => $this->securityModel->encryptData($systemActionID),
-                'title' => 'Insert System Action Success',
-                'message' => 'The system action has been inserted successfully.',
+                'fileTypeID' => $this->securityModel->encryptData($fileTypeID),
+                'title' => 'Insert File Type Success',
+                'message' => 'The file type has been inserted successfully.',
                 'messageType' => 'success'
             ];
             
@@ -212,35 +208,34 @@ class SystemActionController {
 
     # -------------------------------------------------------------
     #
-    # Function: updateSystemAction
+    # Function: updateFileType
     # Description: 
-    # Updates the system action if it exists; otherwise, return an error message.
+    # Updates the file type if it exists; otherwise, return an error message.
     #
     # Parameters: None
     #
     # Returns: Array
     #
     # -------------------------------------------------------------
-    public function updateSystemAction() {
+    public function updateFileType() {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             return;
         }
         
-        if (isset($_POST['system_action_id']) && !empty($_POST['system_action_id']) && isset($_POST['system_action_name']) && !empty($_POST['system_action_name']) && isset($_POST['system_action_description']) && !empty($_POST['system_action_description'])) {
+        if (isset($_POST['file_type_id']) && !empty($_POST['file_type_id']) && isset($_POST['file_type_name']) && !empty($_POST['file_type_name'])) {
             $userID = $_SESSION['user_account_id'];
-            $systemActionID = htmlspecialchars($_POST['system_action_id'], ENT_QUOTES, 'UTF-8');
-            $systemActionName = htmlspecialchars($_POST['system_action_name'], ENT_QUOTES, 'UTF-8');
-            $systemActionDescription = htmlspecialchars($_POST['system_action_description'], ENT_QUOTES, 'UTF-8');
+            $fileTypeID = htmlspecialchars($_POST['file_type_id'], ENT_QUOTES, 'UTF-8');
+            $fileTypeName = htmlspecialchars($_POST['file_type_name'], ENT_QUOTES, 'UTF-8');
         
-            $checkSystemActionExist = $this->systemActionModel->checkSystemActionExist($systemActionID);
-            $total = $checkSystemActionExist['total'] ?? 0;
+            $checkFileTypeExist = $this->fileTypeModel->checkFileTypeExist($fileTypeID);
+            $total = $checkFileTypeExist['total'] ?? 0;
 
             if($total === 0){
                 $response = [
                     'success' => false,
                     'notExist' => true,
-                    'title' => 'Update System Action Error',
-                    'message' => 'The system action has does not exist.',
+                    'title' => 'Update File Type Error',
+                    'message' => 'The file type has does not exist.',
                     'messageType' => 'error'
                 ];
                 
@@ -248,12 +243,12 @@ class SystemActionController {
                 exit;
             }
 
-            $this->systemActionModel->updateSystemAction($systemActionID, $systemActionName, $systemActionDescription, $userID);
+            $this->fileTypeModel->updateFileType($fileTypeID, $fileTypeName, $userID);
                 
             $response = [
                 'success' => true,
-                'title' => 'Update System Action Success',
-                'message' => 'The system action has been updated successfully.',
+                'title' => 'Update File Type Success',
+                'message' => 'The file type has been updated successfully.',
                 'messageType' => 'success'
             ];
             
@@ -280,32 +275,32 @@ class SystemActionController {
 
     # -------------------------------------------------------------
     #
-    # Function: deleteSystemAction
+    # Function: deleteFileType
     # Description: 
-    # Delete the system action if it exists; otherwise, return an error message.
+    # Delete the file type if it exists; otherwise, return an error message.
     #
     # Parameters: None
     #
     # Returns: Array
     #
     # -------------------------------------------------------------
-    public function deleteSystemAction() {
+    public function deleteFileType() {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             return;
         }
 
-        if (isset($_POST['system_action_id']) && !empty($_POST['system_action_id'])) {
-            $systemActionID = htmlspecialchars($_POST['system_action_id'], ENT_QUOTES, 'UTF-8');
+        if (isset($_POST['file_type_id']) && !empty($_POST['file_type_id'])) {
+            $fileTypeID = htmlspecialchars($_POST['file_type_id'], ENT_QUOTES, 'UTF-8');
         
-            $checkSystemActionExist = $this->systemActionModel->checkSystemActionExist($systemActionID);
-            $total = $checkSystemActionExist['total'] ?? 0;
+            $checkFileTypeExist = $this->fileTypeModel->checkFileTypeExist($fileTypeID);
+            $total = $checkFileTypeExist['total'] ?? 0;
 
             if($total === 0){
                 $response = [
                     'success' => false,
                     'notExist' => true,
-                    'title' => 'Delete System Action Error',
-                    'message' => 'The system action has does not exist.',
+                    'title' => 'Delete File Type Error',
+                    'message' => 'The file type has does not exist.',
                     'messageType' => 'error'
                 ];
                 
@@ -313,12 +308,12 @@ class SystemActionController {
                 exit;
             }
 
-            $this->systemActionModel->deleteSystemAction($systemActionID);
+            $this->fileTypeModel->deleteFileType($fileTypeID);
                 
             $response = [
                 'success' => true,
-                'title' => 'Delete System Action Success',
-                'message' => 'The system action has been deleted successfully.',
+                'title' => 'Delete File Type Success',
+                'message' => 'The file type has been deleted successfully.',
                 'messageType' => 'success'
             ];
             
@@ -341,36 +336,36 @@ class SystemActionController {
 
     # -------------------------------------------------------------
     #
-    # Function: deleteMultipleSystemAction
+    # Function: deleteMultipleFileType
     # Description: 
-    # Delete the selected system actions if it exists; otherwise, skip it.
+    # Delete the selected file types if it exists; otherwise, skip it.
     #
     # Parameters: None
     #
     # Returns: Array
     #
     # -------------------------------------------------------------
-    public function deleteMultipleSystemAction() {
+    public function deleteMultipleFileType() {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             return;
         }
 
-        if (isset($_POST['system_action_id']) && !empty($_POST['system_action_id'])) {
-            $systemActionIDs = $_POST['system_action_id'];
+        if (isset($_POST['file_type_id']) && !empty($_POST['file_type_id'])) {
+            $fileTypeIDs = $_POST['file_type_id'];
     
-            foreach($systemActionIDs as $systemActionID){
-                $checkSystemActionExist = $this->systemActionModel->checkSystemActionExist($systemActionID);
-                $total = $checkSystemActionExist['total'] ?? 0;
+            foreach($fileTypeIDs as $fileTypeID){
+                $checkFileTypeExist = $this->fileTypeModel->checkFileTypeExist($fileTypeID);
+                $total = $checkFileTypeExist['total'] ?? 0;
 
                 if($total > 0){
-                    $this->systemActionModel->deleteSystemAction($systemActionID);
+                    $this->fileTypeModel->deleteFileType($fileTypeID);
                 }
             }
                 
             $response = [
                 'success' => true,
-                'title' => 'Delete Multiple System Action Success',
-                'message' => 'The selected system actions have been deleted successfully.',
+                'title' => 'Delete Multiple File Type Success',
+                'message' => 'The selected file types have been deleted successfully.',
                 'messageType' => 'success'
             ];
             
@@ -397,33 +392,33 @@ class SystemActionController {
 
     # -------------------------------------------------------------
     #
-    # Function: getSystemActionDetails
+    # Function: getFileTypeDetails
     # Description: 
-    # Handles the retrieval of system action details.
+    # Handles the retrieval of file type details.
     #
     # Parameters: None
     #
     # Returns: Array
     #
     # -------------------------------------------------------------
-    public function getSystemActionDetails() {
+    public function getFileTypeDetails() {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             return;
         }
     
-        if (isset($_POST['system_action_id']) && !empty($_POST['system_action_id'])) {
+        if (isset($_POST['file_type_id']) && !empty($_POST['file_type_id'])) {
             $userID = $_SESSION['user_account_id'];
-            $systemActionID = htmlspecialchars($_POST['system_action_id'], ENT_QUOTES, 'UTF-8');
+            $fileTypeID = htmlspecialchars($_POST['file_type_id'], ENT_QUOTES, 'UTF-8');
 
-            $checkSystemActionExist = $this->systemActionModel->checkSystemActionExist($systemActionID);
-            $total = $checkSystemActionExist['total'] ?? 0;
+            $checkFileTypeExist = $this->fileTypeModel->checkFileTypeExist($fileTypeID);
+            $total = $checkFileTypeExist['total'] ?? 0;
 
             if($total === 0){
                 $response = [
                     'success' => false,
                     'notExist' => true,
-                    'title' => 'Get System Action Details Error',
-                    'message' => 'The system action has does not exist.',
+                    'title' => 'Get File Type Details Error',
+                    'message' => 'The file type has does not exist.',
                     'messageType' => 'error'
                 ];
                 
@@ -431,12 +426,11 @@ class SystemActionController {
                 exit;
             }
     
-            $systemActionDetails = $this->systemActionModel->getSystemAction($systemActionID);
+            $fileTypeDetails = $this->fileTypeModel->getFileType($fileTypeID);
 
             $response = [
                 'success' => true,
-                'systemActionName' => $systemActionDetails['system_action_name'] ?? null,
-                'systemActionDescription' => $systemActionDetails['system_action_description'] ?? null
+                'fileTypeName' => $fileTypeDetails['file_type_name'] ?? null
             ];
 
             echo json_encode($response);
@@ -462,11 +456,10 @@ require_once '../../global/config/config.php';
 require_once '../../global/model/database-model.php';
 require_once '../../global/model/security-model.php';
 require_once '../../global/model/system-model.php';
-require_once '../../system-action/model/system-action-model.php';
-require_once '../../role/model/role-model.php';
+require_once '../../file-type/model/file-type-model.php';
 require_once '../../authentication/model/authentication-model.php';
 
-$controller = new SystemActionController(new SystemActionModel(new DatabaseModel), new RoleModel(new DatabaseModel), new AuthenticationModel(new DatabaseModel), new SecurityModel());
+$controller = new FileTypeController(new FileTypeModel(new DatabaseModel), new AuthenticationModel(new DatabaseModel), new SecurityModel());
 $controller->handleRequest();
 
 ?>

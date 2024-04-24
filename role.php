@@ -8,6 +8,8 @@
     $roleWriteAccess = $globalModel->checkAccessRights($userID, $pageID, 'write');
     $roleDeleteAccess = $globalModel->checkAccessRights($userID, $pageID, 'delete');
     $addRoleUserAccount = $globalModel->checkSystemActionAccessRights($userID, 5);
+    $addRoleAccess = $globalModel->checkSystemActionAccessRights($userID, 7);
+    $addRoleSystemActionAccess = $globalModel->checkSystemActionAccessRights($userID, 10);
 ?>
 <!DOCTYPE html>
 <html lang="en" dir="ltr" data-bs-theme="light" data-color-theme="Blue_Theme" data-layout="vertical">

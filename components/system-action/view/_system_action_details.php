@@ -54,9 +54,13 @@
             <div class="card">
                 <div class="card-header d-flex align-items-center">
                     <h5 class="card-title mb-0">Role Permission</h5>
-                    <div class="card-actions cursor-pointer ms-auto d-flex button-group">
-                        <button class="btn btn-success d-flex align-items-center mb-0" data-bs-toggle="modal" data-bs-target="#role-system-action-permission-assignment-modal" id="assign-role-system-action-permission">Assign</button>
-                    </div>
+                    <?php
+                        if($addRoleSystemActionAccess['total'] > 0){
+                            echo '<div class="card-actions cursor-pointer ms-auto d-flex button-group">
+                                        <button class="btn btn-success d-flex align-items-center mb-0" data-bs-toggle="modal" data-bs-target="#role-system-action-permission-assignment-modal" id="assign-role-system-action-permission">Assign</button>
+                                    </div>';
+                        }
+                    ?>
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">

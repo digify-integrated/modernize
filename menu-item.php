@@ -7,6 +7,7 @@
     $menuItemCreateAccess = $globalModel->checkAccessRights($userID, $pageID, 'create');
     $menuItemWriteAccess = $globalModel->checkAccessRights($userID, $pageID, 'write');
     $menuItemDeleteAccess = $globalModel->checkAccessRights($userID, $pageID, 'delete');
+    $addRoleAccess = $globalModel->checkSystemActionAccessRights($userID, 7);
 ?>
 <!DOCTYPE html>
 <html lang="en" dir="ltr" data-bs-theme="light" data-color-theme="Blue_Theme" data-layout="vertical">

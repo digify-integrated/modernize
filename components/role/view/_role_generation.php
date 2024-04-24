@@ -221,6 +221,9 @@ if(isset($_POST['type']) && !empty($_POST['type'])){
                 $options = $sql->fetchAll(PDO::FETCH_ASSOC);
                 $sql->closeCursor();
 
+                $updateRoleAccess = $globalModel->checkSystemActionAccessRights($userID, 8);
+                $deleteRoleAccess = $globalModel->checkSystemActionAccessRights($userID, 9);
+
                 foreach ($options as $row) {
                     $rolePermissionID = $row['role_permission_id'];
                     $menuItemName = $row['menu_item_name'];
@@ -234,20 +237,32 @@ if(isset($_POST['type']) && !empty($_POST['type'])){
                     $createAccessChecked = $createAccess ? 'checked' : '';
                     $deleteAccessChecked = $deleteAccess ? 'checked' : '';
 
+                    $disabled = '';
+                    if($updateRoleAccess['total'] == 0){
+                        $disabled = 'disabled';
+                    }
+                    
+                    $deleteButton = '';
+                    if($deleteRoleAccess['total'] > 0){
+                        $deleteButton = '<a href="javascript:void(0);" class="text-danger ms-3 delete-role-permission" data-role-permission-id="' . $rolePermissionID . '" title="Delete Role Permission">
+                                            <i class="ti ti-trash fs-5"></i>
+                                        </a>';
+                    }
+
                     $readAccessButton = '<div class="form-check form-check-inline">
-                                            <input class="form-check-input success update-role-permission" type="checkbox" data-role-permission-id="' . $rolePermissionID . '" data-access-type="read" ' . $readAccessChecked . '>
+                                            <input class="form-check-input success update-role-permission" type="checkbox" data-role-permission-id="' . $rolePermissionID . '" data-access-type="read" ' . $readAccessChecked . ' '. $disabled .'>
                                         </div>';
 
                     $writeAccessButton = '<div class="form-check form-check-inline">
-                                            <input class="form-check-input success update-role-permission" type="checkbox" data-role-permission-id="' . $rolePermissionID . '" data-access-type="write" ' . $writeAccessChecked . '>
+                                            <input class="form-check-input success update-role-permission" type="checkbox" data-role-permission-id="' . $rolePermissionID . '" data-access-type="write" ' . $writeAccessChecked . ' '. $disabled .'>
                                         </div>';
 
                     $createAccessButton = '<div class="form-check form-check-inline">
-                                            <input class="form-check-input success update-role-permission" type="checkbox" data-role-permission-id="' . $rolePermissionID . '" data-access-type="create" ' . $createAccessChecked . '>
+                                            <input class="form-check-input success update-role-permission" type="checkbox" data-role-permission-id="' . $rolePermissionID . '" data-access-type="create" ' . $createAccessChecked . ' '. $disabled .'>
                                         </div>';
 
                     $deleteAccessButton = '<div class="form-check form-check-inline">
-                                            <input class="form-check-input success update-role-permission" type="checkbox" data-role-permission-id="' . $rolePermissionID . '" data-access-type="delete" ' . $deleteAccessChecked . '>
+                                            <input class="form-check-input success update-role-permission" type="checkbox" data-role-permission-id="' . $rolePermissionID . '" data-access-type="delete" ' . $deleteAccessChecked . ' '. $disabled .'>
                                         </div>';
 
                     $response[] = [
@@ -260,9 +275,7 @@ if(isset($_POST['type']) && !empty($_POST['type'])){
                                         <a href="javascript:void(0);" class="text-info view-role-permission-log-notes" data-role-permission-id="' . $rolePermissionID . '" data-bs-toggle="offcanvas" data-bs-target="#log-notes-offcanvas" aria-controls="log-notes-offcanvas" title="View Log Notes">
                                             <i class="ti ti-file-text fs-5"></i>
                                         </a>
-                                        <a href="javascript:void(0);" class="text-danger ms-3 delete-role-permission" data-role-permission-id="' . $rolePermissionID . '" title="Delete Role Permission">
-                                            <i class="ti ti-trash fs-5"></i>
-                                        </a>
+                                        '. $deleteButton .'
                                     </div>'
                     ];
                 }
@@ -293,6 +306,9 @@ if(isset($_POST['type']) && !empty($_POST['type'])){
                 $options = $sql->fetchAll(PDO::FETCH_ASSOC);
                 $sql->closeCursor();
 
+                $updateRoleSystemActionAccess = $globalModel->checkSystemActionAccessRights($userID, 11);
+                $deleteRoleSystemActionAccess = $globalModel->checkSystemActionAccessRights($userID, 12);
+
                 foreach ($options as $row) {
                     $roleSystemActionPermissionID = $row['role_system_action_permission_id'];
                     $roleName = $row['system_action_name'];
@@ -300,8 +316,20 @@ if(isset($_POST['type']) && !empty($_POST['type'])){
 
                     $roleAccessChecked = $roleAccess ? 'checked' : '';
 
+                    $disabled = '';
+                    if($updateRoleSystemActionAccess['total'] == 0){
+                        $disabled = 'disabled';
+                    }
+                    
+                    $deleteButton = '';
+                    if($deleteRoleSystemActionAccess['total'] > 0){
+                        $deleteButton = '<a href="javascript:void(0);" class="text-danger ms-3 delete-role-system-action-permission" data-role-system-action-permission-id="' . $roleSystemActionPermissionID . '" title="Delete System Action Permission">
+                            <i class="ti ti-trash fs-5"></i>
+                        </a>';
+                    }
+
                     $roleAccessButton = '<div class="form-check form-check-inline">
-                                            <input class="form-check-input success update-role-system-action-permission" type="checkbox" data-role-system-action-permission-id="' . $roleSystemActionPermissionID . '" ' . $roleAccessChecked . '>
+                                            <input class="form-check-input success update-role-system-action-permission" type="checkbox" data-role-system-action-permission-id="' . $roleSystemActionPermissionID . '" ' . $roleAccessChecked . ' '. $disabled .'>
                                         </div>';
 
                     $response[] = [
@@ -311,9 +339,7 @@ if(isset($_POST['type']) && !empty($_POST['type'])){
                                         <a href="javascript:void(0);" class="text-info view-role-system-action-permission-log-notes" data-role-system-action-permission-id="' . $roleSystemActionPermissionID . '" data-bs-toggle="offcanvas" data-bs-target="#log-notes-offcanvas" aria-controls="log-notes-offcanvas" title="View Log Notes">
                                             <i class="ti ti-file-text fs-5"></i>
                                         </a>
-                                        <a href="javascript:void(0);" class="text-danger ms-3 delete-role-system-action-permission" data-role-system-action-permission-id="' . $roleSystemActionPermissionID . '" title="Delete System Action Permission">
-                                            <i class="ti ti-trash fs-5"></i>
-                                        </a>
+                                        '. $deleteButton .'
                                     </div>'
                     ];
                 }
@@ -344,6 +370,9 @@ if(isset($_POST['type']) && !empty($_POST['type'])){
                 $options = $sql->fetchAll(PDO::FETCH_ASSOC);
                 $sql->closeCursor();
 
+                $updateRoleAccess = $globalModel->checkSystemActionAccessRights($userID, 8);
+                $deleteRoleAccess = $globalModel->checkSystemActionAccessRights($userID, 9);
+
                 foreach ($options as $row) {
                     $rolePermissionID = $row['role_permission_id'];
                     $roleName = $row['role_name'];
@@ -357,20 +386,32 @@ if(isset($_POST['type']) && !empty($_POST['type'])){
                     $createAccessChecked = $createAccess ? 'checked' : '';
                     $deleteAccessChecked = $deleteAccess ? 'checked' : '';
 
+                    $disabled = '';
+                    if($updateRoleAccess['total'] == 0){
+                        $disabled = 'disabled';
+                    }
+                    
+                    $deleteButton = '';
+                    if($deleteRoleAccess['total'] > 0){
+                        $deleteButton = '<a href="javascript:void(0);" class="text-danger ms-3 delete-role-permission" data-role-permission-id="' . $rolePermissionID . '" title="Delete Role Permission">
+                                            <i class="ti ti-trash fs-5"></i>
+                                        </a>';
+                    }
+
                     $readAccessButton = '<div class="form-check form-check-inline">
-                                            <input class="form-check-input success update-role-permission" type="checkbox" data-role-permission-id="' . $rolePermissionID . '" data-access-type="read" ' . $readAccessChecked . '>
+                                            <input class="form-check-input success update-role-permission" type="checkbox" data-role-permission-id="' . $rolePermissionID . '" data-access-type="read" ' . $readAccessChecked . ' '. $disabled .'>
                                         </div>';
 
                     $writeAccessButton = '<div class="form-check form-check-inline">
-                                            <input class="form-check-input success update-role-permission" type="checkbox" data-role-permission-id="' . $rolePermissionID . '" data-access-type="write" ' . $writeAccessChecked . '>
+                                            <input class="form-check-input success update-role-permission" type="checkbox" data-role-permission-id="' . $rolePermissionID . '" data-access-type="write" ' . $writeAccessChecked . ' '. $disabled .'>
                                         </div>';
 
                     $createAccessButton = '<div class="form-check form-check-inline">
-                                            <input class="form-check-input success update-role-permission" type="checkbox" data-role-permission-id="' . $rolePermissionID . '" data-access-type="create" ' . $createAccessChecked . '>
+                                            <input class="form-check-input success update-role-permission" type="checkbox" data-role-permission-id="' . $rolePermissionID . '" data-access-type="create" ' . $createAccessChecked . ' '. $disabled .'>
                                         </div>';
 
                     $deleteAccessButton = '<div class="form-check form-check-inline">
-                                            <input class="form-check-input success update-role-permission" type="checkbox" data-role-permission-id="' . $rolePermissionID . '" data-access-type="delete" ' . $deleteAccessChecked . '>
+                                            <input class="form-check-input success update-role-permission" type="checkbox" data-role-permission-id="' . $rolePermissionID . '" data-access-type="delete" ' . $deleteAccessChecked . ' '. $disabled .'>
                                         </div>';
 
                     $response[] = [
@@ -383,9 +424,7 @@ if(isset($_POST['type']) && !empty($_POST['type'])){
                                         <a href="javascript:void(0);" class="text-info view-role-permission-log-notes" data-role-permission-id="' . $rolePermissionID . '" data-bs-toggle="offcanvas" data-bs-target="#log-notes-offcanvas" aria-controls="log-notes-offcanvas" title="View Log Notes">
                                             <i class="ti ti-file-text fs-5"></i>
                                         </a>
-                                        <a href="javascript:void(0);" class="text-danger ms-3 delete-role-permission" data-role-permission-id="' . $rolePermissionID . '" title="Delete Role Permission">
-                                            <i class="ti ti-trash fs-5"></i>
-                                        </a>
+                                        '. $deleteButton .'
                                     </div>'
                     ];
                 }
@@ -416,6 +455,9 @@ if(isset($_POST['type']) && !empty($_POST['type'])){
                 $options = $sql->fetchAll(PDO::FETCH_ASSOC);
                 $sql->closeCursor();
 
+                $updateRoleSystemActionAccess = $globalModel->checkSystemActionAccessRights($userID, 11);
+                $deleteRoleSystemActionAccess = $globalModel->checkSystemActionAccessRights($userID, 12);
+
                 foreach ($options as $row) {
                     $roleSystemActionPermissionID = $row['role_system_action_permission_id'];
                     $roleName = $row['role_name'];
@@ -423,8 +465,20 @@ if(isset($_POST['type']) && !empty($_POST['type'])){
 
                     $roleAccessChecked = $roleAccess ? 'checked' : '';
 
+                    $disabled = '';
+                    if($updateRoleSystemActionAccess['total'] == 0){
+                        $disabled = 'disabled';
+                    }
+                    
+                    $deleteButton = '';
+                    if($deleteRoleSystemActionAccess['total'] > 0){
+                        $deleteButton = '<a href="javascript:void(0);" class="text-danger ms-3 delete-role-system-action-permission" data-role-system-action-permission-id="' . $roleSystemActionPermissionID . '" title="Delete System Action Permission">
+                                            <i class="ti ti-trash fs-5"></i>
+                                        </a>';
+                    }
+
                     $roleAccessButton = '<div class="form-check form-check-inline">
-                                            <input class="form-check-input success update-role-system-action-permission" type="checkbox" data-role-system-action-permission-id="' . $roleSystemActionPermissionID . '" ' . $roleAccessChecked . '>
+                                            <input class="form-check-input success update-role-system-action-permission" type="checkbox" data-role-system-action-permission-id="' . $roleSystemActionPermissionID . '" ' . $roleAccessChecked . ' '. $disabled .'>
                                         </div>';
 
                     $response[] = [
@@ -434,9 +488,7 @@ if(isset($_POST['type']) && !empty($_POST['type'])){
                                         <a href="javascript:void(0);" class="text-info view-role-system-action-permission-log-notes" data-role-system-action-permission-id="' . $roleSystemActionPermissionID . '" data-bs-toggle="offcanvas" data-bs-target="#log-notes-offcanvas" aria-controls="log-notes-offcanvas" title="View Log Notes">
                                             <i class="ti ti-file-text fs-5"></i>
                                         </a>
-                                        <a href="javascript:void(0);" class="text-danger ms-3 delete-role-system-action-permission" data-role-system-action-permission-id="' . $roleSystemActionPermissionID . '" title="Delete System Action Permission">
-                                            <i class="ti ti-trash fs-5"></i>
-                                        </a>
+                                        '. $deleteButton .'
                                     </div>'
                     ];
                 }

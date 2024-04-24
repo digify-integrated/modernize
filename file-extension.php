@@ -3,18 +3,17 @@
     require('view/_check_user_status.php');
     require('view/_page_details.php');
 
-    $systemActionReadAccess = $globalModel->checkAccessRights($userID, $pageID, 'read');
-    $systemActionCreateAccess = $globalModel->checkAccessRights($userID, $pageID, 'create');
-    $systemActionWriteAccess = $globalModel->checkAccessRights($userID, $pageID, 'write');
-    $systemActionDeleteAccess = $globalModel->checkAccessRights($userID, $pageID, 'delete');
-    $addRoleSystemActionAccess = $globalModel->checkSystemActionAccessRights($userID, 10);
+    $fileExtensionReadAccess = $globalModel->checkAccessRights($userID, $pageID, 'read');
+    $fileExtensionCreateAccess = $globalModel->checkAccessRights($userID, $pageID, 'create');
+    $fileExtensionWriteAccess = $globalModel->checkAccessRights($userID, $pageID, 'write');
+    $fileExtensionDeleteAccess = $globalModel->checkAccessRights($userID, $pageID, 'delete');
 ?>
 <!DOCTYPE html>
 <html lang="en" dir="ltr" data-bs-theme="light" data-color-theme="Blue_Theme" data-layout="vertical">
     <head>
         <?php include_once('view/_head.php'); ?>
         <link rel="stylesheet" href="./assets/libs/datatables.net-bs5/css/dataTables.bootstrap5.min.css" />
-        <link rel="stylesheet" href="./assets/libs/bootstrap-duallistbox/dist/bootstrap-duallistbox.min.css">
+        <link rel="stylesheet" href="./assets/libs/select2/dist/css/select2.min.css">
     </head>
 
     <body>
@@ -38,7 +37,7 @@
                                                         require('view/_breadcrumb.php');
 
                                                         if(!$newRecord && !empty($detailID)){
-                                                            echo '<li class="breadcrumb-item" id="system-action-id">'. $detailID .'</li>';
+                                                            echo '<li class="breadcrumb-item" id="file-extension-id">'. $detailID .'</li>';
                                                         }
 
                                                         if($newRecord){
@@ -60,13 +59,13 @@
                         </div>
                         <?php
                             if($newRecord){
-                                require_once('components/system-action/view/_system_action_new.php');
+                                require_once('components/file-extension/view/_file_extension_new.php');
                             }
                             else if(!empty($detailID)){
-                                require_once('components/system-action/view/_system_action_details.php');
+                                require_once('components/file-extension/view/_file_extension_details.php');
                             }
                             else{
-                                require_once('components/system-action/view/_system_action.php');
+                                require_once('components/file-extension/view/_file_extension.php');
                             }
                         ?>
                     </div>
@@ -82,20 +81,21 @@
         
         <script src="./assets/libs/max-length/bootstrap-maxlength.min.js"></script>
         <script src="./assets/libs/datatables.net/js/jquery.dataTables.min.js"></script>
-        <script src="./assets/libs/bootstrap-duallistbox/dist/jquery.bootstrap-duallistbox.min.js"></script>
+        <script src="./assets/libs/select2/dist/js/select2.full.min.js"></script>
+        <script src="./assets/libs/select2/dist/js/select2.min.js"></script>
 
         <?php 
             if($newRecord){
-                $scriptLink = 'system-action-new.js';
+                $scriptLink = 'file-extension-new.js';
             }
             else if(!empty($detailID)){
-                $scriptLink = 'system-action-details.js';
+                $scriptLink = 'file-extension-details.js';
             }
             else{
-                $scriptLink = 'system-action.js';
+                $scriptLink = 'file-extension.js';
             }
 
-            echo '<script src="./components/system-action/js/'. $scriptLink .'?v=' . rand() .'"></script>';
+            echo '<script src="./components/file-extension/js/'. $scriptLink .'?v=' . rand() .'"></script>';
         ?>
     </body>
 </html>

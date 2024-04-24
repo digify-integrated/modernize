@@ -43,6 +43,24 @@ CREATE INDEX role_permission_index_role_permission_id ON role_permission(role_pe
 CREATE INDEX role_permission_index_menu_item_id ON role_permission(menu_item_id);
 CREATE INDEX role_permission_index_role_id ON role_permission(role_id);
 
+INSERT INTO role_permission (role_id, role_name, menu_item_id, menu_item_name, read_access, write_access, create_access, delete_access, date_assigned, last_log_by) VALUES (1, 'Administrator', 1, 'User Interface', 1, 0, 0, 0, CURRENT_TIMESTAMP, '1');
+INSERT INTO role_permission (role_id, role_name, menu_item_id, menu_item_name, read_access, write_access, create_access, delete_access, date_assigned, last_log_by) VALUES (1, 'Administrator', 2, 'Menu Group', 1, 1, 1, 1, CURRENT_TIMESTAMP, '1');
+INSERT INTO role_permission (role_id, role_name, menu_item_id, menu_item_name, read_access, write_access, create_access, delete_access, date_assigned, last_log_by) VALUES (1, 'Administrator', 3, 'Menu Item', 1, 1, 1, 1, CURRENT_TIMESTAMP, '1');
+INSERT INTO role_permission (role_id, role_name, menu_item_id, menu_item_name, read_access, write_access, create_access, delete_access, date_assigned, last_log_by) VALUES (1, 'Administrator', 4, 'System Action', 1, 1, 1, 1, CURRENT_TIMESTAMP, '1');
+INSERT INTO role_permission (role_id, role_name, menu_item_id, menu_item_name, read_access, write_access, create_access, delete_access, date_assigned, last_log_by) VALUES (1, 'Administrator', 5, 'Users & Companies', 1, 0, 0, 0, CURRENT_TIMESTAMP, '1');
+INSERT INTO role_permission (role_id, role_name, menu_item_id, menu_item_name, read_access, write_access, create_access, delete_access, date_assigned, last_log_by) VALUES (1, 'Administrator', 6, 'User Account', 1, 1, 1, 1, CURRENT_TIMESTAMP, '1');
+INSERT INTO role_permission (role_id, role_name, menu_item_id, menu_item_name, read_access, write_access, create_access, delete_access, date_assigned, last_log_by) VALUES (1, 'Administrator', 7, 'Role', 1, 1, 1, 1, CURRENT_TIMESTAMP, '1');
+INSERT INTO role_permission (role_id, role_name, menu_item_id, menu_item_name, read_access, write_access, create_access, delete_access, date_assigned, last_log_by) VALUES (1, 'Administrator', 8, 'Company', 1, 1, 1, 1, CURRENT_TIMESTAMP, '1');
+INSERT INTO role_permission (role_id, role_name, menu_item_id, menu_item_name, read_access, write_access, create_access, delete_access, date_assigned, last_log_by) VALUES (1, 'Administrator', 9, 'Settings', 1, 0, 0, 0, CURRENT_TIMESTAMP, '1');
+INSERT INTO role_permission (role_id, role_name, menu_item_id, menu_item_name, read_access, write_access, create_access, delete_access, date_assigned, last_log_by) VALUES (1, 'Administrator', 10, 'Upload Setting', 1, 1, 1, 1, CURRENT_TIMESTAMP, '1');
+INSERT INTO role_permission (role_id, role_name, menu_item_id, menu_item_name, read_access, write_access, create_access, delete_access, date_assigned, last_log_by) VALUES (1, 'Administrator', 11, 'Security Setting', 1, 1, 1, 1, CURRENT_TIMESTAMP, '1');
+INSERT INTO role_permission (role_id, role_name, menu_item_id, menu_item_name, read_access, write_access, create_access, delete_access, date_assigned, last_log_by) VALUES (1, 'Administrator', 12, 'Email Setting', 1, 1, 1, 1, CURRENT_TIMESTAMP, '1');
+INSERT INTO role_permission (role_id, role_name, menu_item_id, menu_item_name, read_access, write_access, create_access, delete_access, date_assigned, last_log_by) VALUES (1, 'Administrator', 13, 'Notification Setting', 1, 1, 1, 1, CURRENT_TIMESTAMP, '1');
+INSERT INTO role_permission (role_id, role_name, menu_item_id, menu_item_name, read_access, write_access, create_access, delete_access, date_assigned, last_log_by) VALUES (1, 'Administrator', 14, 'System Setting', 1, 1, 1, 1, CURRENT_TIMESTAMP, '1');
+INSERT INTO role_permission (role_id, role_name, menu_item_id, menu_item_name, read_access, write_access, create_access, delete_access, date_assigned, last_log_by) VALUES (1, 'Administrator', 15, 'Configurations', 1, 0, 0, 0, CURRENT_TIMESTAMP, '1');
+INSERT INTO role_permission (role_id, role_name, menu_item_id, menu_item_name, read_access, write_access, create_access, delete_access, date_assigned, last_log_by) VALUES (1, 'Administrator', 16, 'File Type', 1, 1, 1, 1, CURRENT_TIMESTAMP, '1');
+INSERT INTO role_permission (role_id, role_name, menu_item_id, menu_item_name, read_access, write_access, create_access, delete_access, date_assigned, last_log_by) VALUES (1, 'Administrator', 17, 'File Extension', 1, 1, 1, 1, CURRENT_TIMESTAMP, '1');
+
 /* ----------------------------------------------------------------------------------------------------------------------------- */
 
 /* Role System Action Permission Table */
@@ -65,6 +83,19 @@ CREATE INDEX role_system_action_permission_index_system_action_permission_id ON 
 CREATE INDEX role_system_action_permission_index_system_action_id ON role_system_action_permission(system_action_id);
 CREATE INDEX role_system_action_permissionn_index_role_id ON role_system_action_permission(role_id);
 
+INSERT INTO role_system_action_permission (role_id, role_name, system_action_id, system_action_name, system_action_access, date_assigned, last_log_by) VALUES (1, 'Administrator', 1, 'Activate User Account', 1, CURRENT_TIMESTAMP, '1');
+INSERT INTO role_system_action_permission (role_id, role_name, system_action_id, system_action_name, system_action_access, date_assigned, last_log_by) VALUES (1, 'Administrator', 2, 'Deactivate User Account', 1, CURRENT_TIMESTAMP, '1');
+INSERT INTO role_system_action_permission (role_id, role_name, system_action_id, system_action_name, system_action_access, date_assigned, last_log_by) VALUES (1, 'Administrator', 3, 'Lock User Account', 1, CURRENT_TIMESTAMP, '1');
+INSERT INTO role_system_action_permission (role_id, role_name, system_action_id, system_action_name, system_action_access, date_assigned, last_log_by) VALUES (1, 'Administrator', 4, 'Unlock User Account', 1, CURRENT_TIMESTAMP, '1');
+INSERT INTO role_system_action_permission (role_id, role_name, system_action_id, system_action_name, system_action_access, date_assigned, last_log_by) VALUES (1, 'Administrator', 5, 'Add Role User Account', 1, CURRENT_TIMESTAMP, '1');
+INSERT INTO role_system_action_permission (role_id, role_name, system_action_id, system_action_name, system_action_access, date_assigned, last_log_by) VALUES (1, 'Administrator', 6, 'Delete Role User Account', 1, CURRENT_TIMESTAMP, '1');
+INSERT INTO role_system_action_permission (role_id, role_name, system_action_id, system_action_name, system_action_access, date_assigned, last_log_by) VALUES (1, 'Administrator', 7, 'Add Role Access', 1, CURRENT_TIMESTAMP, '1');
+INSERT INTO role_system_action_permission (role_id, role_name, system_action_id, system_action_name, system_action_access, date_assigned, last_log_by) VALUES (1, 'Administrator', 8, 'Update Role Access', 1, CURRENT_TIMESTAMP, '1');
+INSERT INTO role_system_action_permission (role_id, role_name, system_action_id, system_action_name, system_action_access, date_assigned, last_log_by) VALUES (1, 'Administrator', 9, 'Delete Role Access', 1, CURRENT_TIMESTAMP, '1');
+INSERT INTO role_system_action_permission (role_id, role_name, system_action_id, system_action_name, system_action_access, date_assigned, last_log_by) VALUES (1, 'Administrator', 10, 'Add Role System Action Access', 1, CURRENT_TIMESTAMP, '1');
+INSERT INTO role_system_action_permission (role_id, role_name, system_action_id, system_action_name, system_action_access, date_assigned, last_log_by) VALUES (1, 'Administrator', 11, 'Update Role System Action Access', 1, CURRENT_TIMESTAMP, '1');
+INSERT INTO role_system_action_permission (role_id, role_name, system_action_id, system_action_name, system_action_access, date_assigned, last_log_by) VALUES (1, 'Administrator', 12, 'Delete Role System Action Access', 1, CURRENT_TIMESTAMP, '1');
+
 /* ----------------------------------------------------------------------------------------------------------------------------- */
 
 /* Role User Account Table */
@@ -85,5 +116,7 @@ CREATE TABLE role_user_account(
 CREATE INDEX role_user_account_index_role_user_account_id ON role_user_account(role_user_account_id);
 CREATE INDEX role_user_account_permission_index_user_account_id ON role_user_account(user_account_id);
 CREATE INDEX role_user_account_permissionn_index_role_id ON role_user_account(role_id);
+
+INSERT INTO role_user_account (role_id, role_name, user_account_id, file_as, date_assigned, last_log_by) VALUES (1, 'Administrator', 2, 'Administrator', CURRENT_TIMESTAMP, '1');
 
 /* ----------------------------------------------------------------------------------------------------------------------------- */

@@ -10,6 +10,7 @@ CREATE TABLE menu_group (
 
 CREATE INDEX menu_group_index_menu_group_id ON menu_group(menu_group_id);
 
-INSERT INTO menu_group (menu_group_name, order_sequence, last_log_by) VALUES ('Technical', '100', '1');
+INSERT INTO menu_group (menu_group_name, order_sequence, last_log_by) VALUES ('Technical', '999', '1');
+INSERT INTO menu_group (menu_group_name, order_sequence, last_log_by) VALUES ('Administration', '100', '1');
 
 /* ----------------------------------------------------------------------------------------------------------------------------- */

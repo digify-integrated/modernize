@@ -3,18 +3,18 @@ session_start();
 
 # -------------------------------------------------------------
 #
-# Function: SystemActionController
+# Function: MenuItemController
 # Description: 
-# The SystemActionController class handles system action related operations and interactions.
+# The MenuItemController class handles menu item related operations and interactions.
 #
 # Parameters: None
 #
 # Returns: None
 #
 # -------------------------------------------------------------
-class SystemActionController {
-    private $systemActionModel;
-    private $roleModel;
+class MenuItemController {
+    private $menuItemModel;
+    private $menuGroupModel;
     private $authenticationModel;
     private $securityModel;
 
@@ -22,21 +22,21 @@ class SystemActionController {
     #
     # Function: __construct
     # Description: 
-    # The constructor initializes the object with the provided RoleModel, AuthenticationModel and SecurityModel instances.
-    # These instances are used for role related, user related operations and security related operations, respectively.
+    # The constructor initializes the object with the provided menuItemModel, AuthenticationModel and SecurityModel instances.
+    # These instances are used for menu item related, user related operations and security related operations, respectively.
     #
     # Parameters:
-    # - @param SystemActionModel $systemActionModel     The SystemActionModel instance for system action related operations.
-    # - @param RoleModel $roleModel     The RoleModel instance for role related operations.
+    # - @param menuItemModel $menuItemModel     The menuItemModel instance for menu item related operations.
+    # - @param MenuGroupModel $menuGroupModel     The menuGroupModel instance for menu group related operations.
     # - @param AuthenticationModel $authenticationModel     The AuthenticationModel instance for user related operations.
     # - @param SecurityModel $securityModel   The SecurityModel instance for security related operations.
     #
     # Returns: None
     #
     # -------------------------------------------------------------
-    public function __construct(SystemActionModel $systemActionModel, RoleModel $roleModel, AuthenticationModel $authenticationModel, SecurityModel $securityModel) {
-        $this->systemActionModel = $systemActionModel;
-        $this->roleModel = $roleModel;
+    public function __construct(MenuItemModel $menuItemModel, MenuGroupModel $menuGroupModel, AuthenticationModel $authenticationModel, SecurityModel $securityModel) {
+        $this->menuItemModel = $menuItemModel;
+        $this->menuGroupModel = $menuGroupModel;
         $this->authenticationModel = $authenticationModel;
         $this->securityModel = $securityModel;
     }
@@ -124,20 +124,20 @@ class SystemActionController {
             $transaction = isset($_POST['transaction']) ? $_POST['transaction'] : null;
 
             switch ($transaction) {
-                case 'add system action':
-                    $this->addSystemAction();
+                case 'add menu item':
+                    $this->addMenuItem();
                     break;
-                case 'update system action':
-                    $this->updateSystemAction();
+                case 'update menu item':
+                    $this->updateMenuItem();
                     break;
-                case 'get system action details':
-                    $this->getSystemActionDetails();
+                case 'get menu item details':
+                    $this->getMenuItemDetails();
                     break;
-                case 'delete system action':
-                    $this->deleteSystemAction();
+                case 'delete menu item':
+                    $this->deleteMenuItem();
                     break;
-                case 'delete multiple system action':
-                    $this->deleteMultipleSystemAction();
+                case 'delete multiple menu item':
+                    $this->deleteMultipleMenuItem();
                     break;
                 default:
                     $response = [
@@ -160,32 +160,42 @@ class SystemActionController {
 
     # -------------------------------------------------------------
     #
-    # Function: addSystemAction
+    # Function: addMenuItem
     # Description: 
-    # Inserts a system action.
+    # Inserts a menu item.
     #
     # Parameters: None
     #
     # Returns: Array
     #
     # -------------------------------------------------------------
-    public function addSystemAction() {
+    public function addMenuItem() {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             return;
         }
 
-        if (isset($_POST['system_action_name']) && !empty($_POST['system_action_name']) && isset($_POST['system_action_description']) && !empty($_POST['system_action_description'])) {
+        if (isset($_POST['menu_item_name']) && !empty($_POST['menu_item_name']) && isset($_POST['menu_group']) && !empty($_POST['menu_group']) && isset($_POST['order_sequence']) && !empty($_POST['order_sequence']) && isset($_POST['menu_item_url']) && isset($_POST['menu_item_icon'])) {
             $userID = $_SESSION['user_account_id'];
-            $systemActionName = htmlspecialchars($_POST['system_action_name'], ENT_QUOTES, 'UTF-8');
-            $systemActionDescription = htmlspecialchars($_POST['system_action_description'], ENT_QUOTES, 'UTF-8');
+            $menuItemName = $_POST['menu_item_name'];
+            $orderSequence = htmlspecialchars($_POST['order_sequence'], ENT_QUOTES, 'UTF-8');
+            $menuGroup = htmlspecialchars($_POST['menu_group'], ENT_QUOTES, 'UTF-8');
+            $parentID = isset($_POST['parent_id']) ? htmlspecialchars($_POST['parent_id'], ENT_QUOTES, 'UTF-8') : null;
+            $menuItemURL = htmlspecialchars($_POST['menu_item_url'], ENT_QUOTES, 'UTF-8');
+            $menuItemIcon = htmlspecialchars($_POST['menu_item_icon'], ENT_QUOTES, 'UTF-8');
+
+            $menuGroupDetails = $this->menuGroupModel->getMenuGroup($menuGroup);
+            $menuGroupName = $menuGroupDetails['menu_group_name'] ?? null;
+
+            $parentMenuItemDetails = $this->menuItemModel->getMenuItem($parentID);
+            $parentName = $parentMenuItemDetails['menu_item_name'] ?? null;
         
-            $systemActionID = $this->systemActionModel->insertSystemAction($systemActionName, $systemActionDescription, $userID);
+            $menuItemID = $this->menuItemModel->insertMenuItem($menuItemName, $menuItemURL, $menuGroup, $menuGroupName, $parentID, $parentName, $menuItemIcon, $orderSequence, $userID);
     
             $response = [
                 'success' => true,
-                'systemActionID' => $this->securityModel->encryptData($systemActionID),
-                'title' => 'Insert System Action Success',
-                'message' => 'The system action has been inserted successfully.',
+                'menuItemID' => $this->securityModel->encryptData($menuItemID),
+                'title' => 'Insert Menu Item Success',
+                'message' => 'The menu item has been inserted successfully.',
                 'messageType' => 'success'
             ];
             
@@ -212,35 +222,39 @@ class SystemActionController {
 
     # -------------------------------------------------------------
     #
-    # Function: updateSystemAction
+    # Function: updateMenuItem
     # Description: 
-    # Updates the system action if it exists; otherwise, return an error message.
+    # Updates the menu item if it exists; otherwise, return an error message.
     #
     # Parameters: None
     #
     # Returns: Array
     #
     # -------------------------------------------------------------
-    public function updateSystemAction() {
+    public function updateMenuItem() {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             return;
         }
         
-        if (isset($_POST['system_action_id']) && !empty($_POST['system_action_id']) && isset($_POST['system_action_name']) && !empty($_POST['system_action_name']) && isset($_POST['system_action_description']) && !empty($_POST['system_action_description'])) {
+        if (isset($_POST['menu_item_id']) && !empty($_POST['menu_item_id']) && isset($_POST['menu_item_name']) && !empty($_POST['menu_item_name']) && isset($_POST['menu_group']) && !empty($_POST['menu_group']) && isset($_POST['order_sequence']) && !empty($_POST['order_sequence']) && isset($_POST['menu_item_url']) && isset($_POST['menu_item_icon'])) {
             $userID = $_SESSION['user_account_id'];
-            $systemActionID = htmlspecialchars($_POST['system_action_id'], ENT_QUOTES, 'UTF-8');
-            $systemActionName = htmlspecialchars($_POST['system_action_name'], ENT_QUOTES, 'UTF-8');
-            $systemActionDescription = htmlspecialchars($_POST['system_action_description'], ENT_QUOTES, 'UTF-8');
+            $menuItemID = htmlspecialchars($_POST['menu_item_id'], ENT_QUOTES, 'UTF-8');
+            $menuItemName = $_POST['menu_item_name'];
+            $orderSequence = htmlspecialchars($_POST['order_sequence'], ENT_QUOTES, 'UTF-8');
+            $menuGroup = htmlspecialchars($_POST['menu_group'], ENT_QUOTES, 'UTF-8');
+            $parentID = isset($_POST['parent_id']) ? htmlspecialchars($_POST['parent_id'], ENT_QUOTES, 'UTF-8') : null;
+            $menuItemURL = htmlspecialchars($_POST['menu_item_url'], ENT_QUOTES, 'UTF-8');
+            $menuItemIcon = htmlspecialchars($_POST['menu_item_icon'], ENT_QUOTES, 'UTF-8');
         
-            $checkSystemActionExist = $this->systemActionModel->checkSystemActionExist($systemActionID);
-            $total = $checkSystemActionExist['total'] ?? 0;
+            $checkMenuItemExist = $this->menuItemModel->checkMenuItemExist($menuItemID);
+            $total = $checkMenuItemExist['total'] ?? 0;
 
             if($total === 0){
                 $response = [
                     'success' => false,
                     'notExist' => true,
-                    'title' => 'Update System Action Error',
-                    'message' => 'The system action has does not exist.',
+                    'title' => 'Update Menu Item Error',
+                    'message' => 'The menu item has does not exist.',
                     'messageType' => 'error'
                 ];
                 
@@ -248,12 +262,18 @@ class SystemActionController {
                 exit;
             }
 
-            $this->systemActionModel->updateSystemAction($systemActionID, $systemActionName, $systemActionDescription, $userID);
+            $menuGroupDetails = $this->menuGroupModel->getMenuGroup($menuGroup);
+            $menuGroupName = $menuGroupDetails['menu_group_name'] ?? null;
+
+            $parentMenuItemDetails = $this->menuItemModel->getMenuItem($parentID);
+            $parentName = $parentMenuItemDetails['menu_item_name'] ?? null;
+
+            $this->menuItemModel->updateMenuItem($menuItemID, $menuItemName, $menuItemURL, $menuGroup, $menuGroupName, $parentID, $parentName, $menuItemIcon, $orderSequence, $userID);
                 
             $response = [
                 'success' => true,
-                'title' => 'Update System Action Success',
-                'message' => 'The system action has been updated successfully.',
+                'title' => 'Update Menu Item Success',
+                'message' => 'The menu item has been updated successfully.',
                 'messageType' => 'success'
             ];
             
@@ -280,32 +300,32 @@ class SystemActionController {
 
     # -------------------------------------------------------------
     #
-    # Function: deleteSystemAction
+    # Function: deleteMenuItem
     # Description: 
-    # Delete the system action if it exists; otherwise, return an error message.
+    # Delete the menu item if it exists; otherwise, return an error message.
     #
     # Parameters: None
     #
     # Returns: Array
     #
     # -------------------------------------------------------------
-    public function deleteSystemAction() {
+    public function deleteMenuItem() {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             return;
         }
 
-        if (isset($_POST['system_action_id']) && !empty($_POST['system_action_id'])) {
-            $systemActionID = htmlspecialchars($_POST['system_action_id'], ENT_QUOTES, 'UTF-8');
+        if (isset($_POST['menu_item_id']) && !empty($_POST['menu_item_id'])) {
+            $menuItemID = htmlspecialchars($_POST['menu_item_id'], ENT_QUOTES, 'UTF-8');
         
-            $checkSystemActionExist = $this->systemActionModel->checkSystemActionExist($systemActionID);
-            $total = $checkSystemActionExist['total'] ?? 0;
+            $checkMenuItemExist = $this->menuItemModel->checkMenuItemExist($menuItemID);
+            $total = $checkMenuItemExist['total'] ?? 0;
 
             if($total === 0){
                 $response = [
                     'success' => false,
                     'notExist' => true,
-                    'title' => 'Delete System Action Error',
-                    'message' => 'The system action has does not exist.',
+                    'title' => 'Delete Menu Item Error',
+                    'message' => 'The menu item has does not exist.',
                     'messageType' => 'error'
                 ];
                 
@@ -313,12 +333,12 @@ class SystemActionController {
                 exit;
             }
 
-            $this->systemActionModel->deleteSystemAction($systemActionID);
+            $this->menuItemModel->deleteMenuItem($menuItemID);
                 
             $response = [
                 'success' => true,
-                'title' => 'Delete System Action Success',
-                'message' => 'The system action has been deleted successfully.',
+                'title' => 'Delete Menu Item Success',
+                'message' => 'The menu item has been deleted successfully.',
                 'messageType' => 'success'
             ];
             
@@ -341,36 +361,36 @@ class SystemActionController {
 
     # -------------------------------------------------------------
     #
-    # Function: deleteMultipleSystemAction
+    # Function: deleteMultipleMenuItem
     # Description: 
-    # Delete the selected system actions if it exists; otherwise, skip it.
+    # Delete the selected menu items if it exists; otherwise, skip it.
     #
     # Parameters: None
     #
     # Returns: Array
     #
     # -------------------------------------------------------------
-    public function deleteMultipleSystemAction() {
+    public function deleteMultipleMenuItem() {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             return;
         }
 
-        if (isset($_POST['system_action_id']) && !empty($_POST['system_action_id'])) {
-            $systemActionIDs = $_POST['system_action_id'];
+        if (isset($_POST['menu_item_id']) && !empty($_POST['menu_item_id'])) {
+            $menuItemIDs = $_POST['menu_item_id'];
     
-            foreach($systemActionIDs as $systemActionID){
-                $checkSystemActionExist = $this->systemActionModel->checkSystemActionExist($systemActionID);
-                $total = $checkSystemActionExist['total'] ?? 0;
+            foreach($menuItemIDs as $menuItemID){
+                $checkMenuItemExist = $this->menuItemModel->checkMenuItemExist($menuItemID);
+                $total = $checkMenuItemExist['total'] ?? 0;
 
                 if($total > 0){
-                    $this->systemActionModel->deleteSystemAction($systemActionID);
+                    $this->menuItemModel->deleteMenuItem($menuItemID);
                 }
             }
                 
             $response = [
                 'success' => true,
-                'title' => 'Delete Multiple System Action Success',
-                'message' => 'The selected system actions have been deleted successfully.',
+                'title' => 'Delete Multiple Menu Item Success',
+                'message' => 'The selected menu items have been deleted successfully.',
                 'messageType' => 'success'
             ];
             
@@ -397,33 +417,33 @@ class SystemActionController {
 
     # -------------------------------------------------------------
     #
-    # Function: getSystemActionDetails
+    # Function: getMenuItemDetails
     # Description: 
-    # Handles the retrieval of system action details.
+    # Handles the retrieval of menu item details.
     #
     # Parameters: None
     #
     # Returns: Array
     #
     # -------------------------------------------------------------
-    public function getSystemActionDetails() {
+    public function getMenuItemDetails() {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             return;
         }
     
-        if (isset($_POST['system_action_id']) && !empty($_POST['system_action_id'])) {
+        if (isset($_POST['menu_item_id']) && !empty($_POST['menu_item_id'])) {
             $userID = $_SESSION['user_account_id'];
-            $systemActionID = htmlspecialchars($_POST['system_action_id'], ENT_QUOTES, 'UTF-8');
+            $menuItemID = htmlspecialchars($_POST['menu_item_id'], ENT_QUOTES, 'UTF-8');
 
-            $checkSystemActionExist = $this->systemActionModel->checkSystemActionExist($systemActionID);
-            $total = $checkSystemActionExist['total'] ?? 0;
+            $checkMenuItemExist = $this->menuItemModel->checkMenuItemExist($menuItemID);
+            $total = $checkMenuItemExist['total'] ?? 0;
 
             if($total === 0){
                 $response = [
                     'success' => false,
                     'notExist' => true,
-                    'title' => 'Get System Action Details Error',
-                    'message' => 'The system action has does not exist.',
+                    'title' => 'Get menu item Details Error',
+                    'message' => 'The menu item has does not exist.',
                     'messageType' => 'error'
                 ];
                 
@@ -431,12 +451,18 @@ class SystemActionController {
                 exit;
             }
     
-            $systemActionDetails = $this->systemActionModel->getSystemAction($systemActionID);
+            $menuItemDetails = $this->menuItemModel->getMenuItem($menuItemID);
 
             $response = [
                 'success' => true,
-                'systemActionName' => $systemActionDetails['system_action_name'] ?? null,
-                'systemActionDescription' => $systemActionDetails['system_action_description'] ?? null
+                'menuItemName' => $menuItemDetails['menu_item_name'] ?? null,
+                'menuItemURL' => $menuItemDetails['menu_item_url'] ?? null,
+                'menuGroupID' => $menuItemDetails['menu_group_id'] ?? null,
+                'menuGroupName' => $menuItemDetails['menu_group_name'] ?? null,
+                'parentID' => $menuItemDetails['parent_id'] ?? null,
+                'parentName' => $menuItemDetails['parent_name'] ?? null,
+                'menuItemIcon' => $menuItemDetails['menu_item_icon'] ?? null,
+                'orderSequence' => $menuItemDetails['order_sequence'] ?? null
             ];
 
             echo json_encode($response);
@@ -462,11 +488,11 @@ require_once '../../global/config/config.php';
 require_once '../../global/model/database-model.php';
 require_once '../../global/model/security-model.php';
 require_once '../../global/model/system-model.php';
-require_once '../../system-action/model/system-action-model.php';
-require_once '../../role/model/role-model.php';
+require_once '../../menu-item/model/menu-item-model.php';
+require_once '../../menu-group/model/menu-group-model.php';
 require_once '../../authentication/model/authentication-model.php';
 
-$controller = new SystemActionController(new SystemActionModel(new DatabaseModel), new RoleModel(new DatabaseModel), new AuthenticationModel(new DatabaseModel), new SecurityModel());
+$controller = new MenuItemController(new menuItemModel(new DatabaseModel), new MenuGroupModel(new DatabaseModel), new AuthenticationModel(new DatabaseModel), new SecurityModel());
 $controller->handleRequest();
 
 ?>

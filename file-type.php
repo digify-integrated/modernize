@@ -3,18 +3,16 @@
     require('view/_check_user_status.php');
     require('view/_page_details.php');
 
-    $systemActionReadAccess = $globalModel->checkAccessRights($userID, $pageID, 'read');
-    $systemActionCreateAccess = $globalModel->checkAccessRights($userID, $pageID, 'create');
-    $systemActionWriteAccess = $globalModel->checkAccessRights($userID, $pageID, 'write');
-    $systemActionDeleteAccess = $globalModel->checkAccessRights($userID, $pageID, 'delete');
-    $addRoleSystemActionAccess = $globalModel->checkSystemActionAccessRights($userID, 10);
+    $fileTypeReadAccess = $globalModel->checkAccessRights($userID, $pageID, 'read');
+    $fileTypeCreateAccess = $globalModel->checkAccessRights($userID, $pageID, 'create');
+    $fileTypeWriteAccess = $globalModel->checkAccessRights($userID, $pageID, 'write');
+    $fileTypeDeleteAccess = $globalModel->checkAccessRights($userID, $pageID, 'delete');
 ?>
 <!DOCTYPE html>
 <html lang="en" dir="ltr" data-bs-theme="light" data-color-theme="Blue_Theme" data-layout="vertical">
     <head>
         <?php include_once('view/_head.php'); ?>
         <link rel="stylesheet" href="./assets/libs/datatables.net-bs5/css/dataTables.bootstrap5.min.css" />
-        <link rel="stylesheet" href="./assets/libs/bootstrap-duallistbox/dist/bootstrap-duallistbox.min.css">
     </head>
 
     <body>
@@ -33,19 +31,19 @@
                                             <div class="col-9">
                                                 <h4 class="fw-semibold mb-8"><?php echo $pageTitle; ?></h4>
                                                 <nav aria-label="breadcrumb">
-                                                <ol class="breadcrumb fs-2">
-                                                    <?php
-                                                        require('view/_breadcrumb.php');
+                                                    <ol class="breadcrumb fs-2">
+                                                        <?php
+                                                            require('view/_breadcrumb.php');
 
-                                                        if(!$newRecord && !empty($detailID)){
-                                                            echo '<li class="breadcrumb-item" id="system-action-id">'. $detailID .'</li>';
-                                                        }
+                                                            if(!$newRecord && !empty($detailID)){
+                                                                echo '<li class="breadcrumb-item" id="file-type-id">'. $detailID .'</li>';
+                                                            }
 
-                                                        if($newRecord){
-                                                            echo '<li class="breadcrumb-item">New</li>';
-                                                        }
-                                                    ?>
-                                                </ol>
+                                                            if($newRecord){
+                                                                echo '<li class="breadcrumb-item">New</li>';
+                                                            }
+                                                        ?>
+                                                    </ol>
                                                 </nav>
                                             </div>
                                             <div class="col-3">
@@ -60,13 +58,13 @@
                         </div>
                         <?php
                             if($newRecord){
-                                require_once('components/system-action/view/_system_action_new.php');
+                                require_once('components/file-type/view/_file_type_new.php');
                             }
                             else if(!empty($detailID)){
-                                require_once('components/system-action/view/_system_action_details.php');
+                                require_once('components/file-type/view/_file_type_details.php');
                             }
                             else{
-                                require_once('components/system-action/view/_system_action.php');
+                                require_once('components/file-type/view/_file_type.php');
                             }
                         ?>
                     </div>
@@ -82,20 +80,19 @@
         
         <script src="./assets/libs/max-length/bootstrap-maxlength.min.js"></script>
         <script src="./assets/libs/datatables.net/js/jquery.dataTables.min.js"></script>
-        <script src="./assets/libs/bootstrap-duallistbox/dist/jquery.bootstrap-duallistbox.min.js"></script>
 
         <?php 
             if($newRecord){
-                $scriptLink = 'system-action-new.js';
+                $scriptLink = 'file-type-new.js';
             }
             else if(!empty($detailID)){
-                $scriptLink = 'system-action-details.js';
+                $scriptLink = 'file-type-details.js';
             }
             else{
-                $scriptLink = 'system-action.js';
+                $scriptLink = 'file-type.js';
             }
 
-            echo '<script src="./components/system-action/js/'. $scriptLink .'?v=' . rand() .'"></script>';
+            echo '<script src="./components/file-type/js/'. $scriptLink .'?v=' . rand() .'"></script>';
         ?>
     </body>
 </html>
