@@ -36,13 +36,22 @@
                     </div>
                     <div class="col-md-6">
                         <div class="form-group row">
+                            <label class="form-label col-md-5">File Extension:</label>
+                            <div class="col-md-7">
+                                <p class="form-control-static" id="file_extension_summary">--</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group row">
                             <label class="form-label col-md-5">File Type:</label>
                             <div class="col-md-7">
                                 <p class="form-control-static" id="file_type_summary">--</p>
                             </div>
                         </div>
                     </div>
-                </div>
                 </div>
             </div>
         </div>
@@ -59,13 +68,21 @@
             <div class="modal-body">
                 <form id="file-extension-form" method="post" action="#">
                     <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-lg-6">
                             <div class="mb-3">
                                 <label class="form-label" for="file_extension_name">Display Name <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control maxlength" id="file_extension_name" name="file_extension_name" maxlength="100" autocomplete="off">
                             </div>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-lg-6">
+                            <div class="mb-3">
+                                <label class="form-label" for="file_extension">File Extension <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control maxlength" id="file_extension" name="file_extension" maxlength="10" autocomplete="off">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-6">
                             <label class="form-label" for="file_type">File Type <span class="text-danger">*</span></label>
                             <div class="mb-3">
                                 <select id="file_type" name="file_type" class="select2 form-control"></select>

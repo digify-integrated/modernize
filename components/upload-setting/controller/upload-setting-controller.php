@@ -3,18 +3,18 @@ session_start();
 
 # -------------------------------------------------------------
 #
-# Function: FileExtensionController
+# Function: MenuItemController
 # Description: 
-# The FileExtensionController class handles file extension related operations and interactions.
+# The MenuItemController class handles menu item related operations and interactions.
 #
 # Parameters: None
 #
 # Returns: None
 #
 # -------------------------------------------------------------
-class FileExtensionController {
-    private $fileExtensionModel;
-    private $fileTypeModel;
+class MenuItemController {
+    private $menuItemModel;
+    private $menuGroupModel;
     private $authenticationModel;
     private $securityModel;
 
@@ -22,21 +22,21 @@ class FileExtensionController {
     #
     # Function: __construct
     # Description: 
-    # The constructor initializes the object with the provided fileExtensionModel, AuthenticationModel and SecurityModel instances.
-    # These instances are used for file extension related, user related operations and security related operations, respectively.
+    # The constructor initializes the object with the provided menuItemModel, AuthenticationModel and SecurityModel instances.
+    # These instances are used for menu item related, user related operations and security related operations, respectively.
     #
     # Parameters:
-    # - @param fileExtensionModel $fileExtensionModel     The fileExtensionModel instance for file extension related operations.
-    # - @param FileTypeModel $fileTypeModel     The fileTypeModel instance for menu group related operations.
+    # - @param menuItemModel $menuItemModel     The menuItemModel instance for menu item related operations.
+    # - @param MenuGroupModel $menuGroupModel     The menuGroupModel instance for menu group related operations.
     # - @param AuthenticationModel $authenticationModel     The AuthenticationModel instance for user related operations.
     # - @param SecurityModel $securityModel   The SecurityModel instance for security related operations.
     #
     # Returns: None
     #
     # -------------------------------------------------------------
-    public function __construct(FileExtensionModel $fileExtensionModel, FileTypeModel $fileTypeModel, AuthenticationModel $authenticationModel, SecurityModel $securityModel) {
-        $this->fileExtensionModel = $fileExtensionModel;
-        $this->fileTypeModel = $fileTypeModel;
+    public function __construct(MenuItemModel $menuItemModel, MenuGroupModel $menuGroupModel, AuthenticationModel $authenticationModel, SecurityModel $securityModel) {
+        $this->menuItemModel = $menuItemModel;
+        $this->menuGroupModel = $menuGroupModel;
         $this->authenticationModel = $authenticationModel;
         $this->securityModel = $securityModel;
     }
@@ -124,20 +124,20 @@ class FileExtensionController {
             $transaction = isset($_POST['transaction']) ? $_POST['transaction'] : null;
 
             switch ($transaction) {
-                case 'add file extension':
-                    $this->addFileExtension();
+                case 'add menu item':
+                    $this->addMenuItem();
                     break;
-                case 'update file extension':
-                    $this->updateFileExtension();
+                case 'update menu item':
+                    $this->updateMenuItem();
                     break;
-                case 'get file extension details':
-                    $this->getFileExtensionDetails();
+                case 'get menu item details':
+                    $this->getMenuItemDetails();
                     break;
-                case 'delete file extension':
-                    $this->deleteFileExtension();
+                case 'delete menu item':
+                    $this->deleteMenuItem();
                     break;
-                case 'delete multiple file extension':
-                    $this->deleteMultipleFileExtension();
+                case 'delete multiple menu item':
+                    $this->deleteMultipleMenuItem();
                     break;
                 default:
                     $response = [
@@ -160,36 +160,42 @@ class FileExtensionController {
 
     # -------------------------------------------------------------
     #
-    # Function: addFileExtension
+    # Function: addMenuItem
     # Description: 
-    # Inserts a file extension.
+    # Inserts a menu item.
     #
     # Parameters: None
     #
     # Returns: Array
     #
     # -------------------------------------------------------------
-    public function addFileExtension() {
+    public function addMenuItem() {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             return;
         }
 
-        if (isset($_POST['file_extension_name']) && !empty($_POST['file_extension_name']) && isset($_POST['file_type']) && !empty($_POST['file_type']) && isset($_POST['file_extension']) && !empty($_POST['file_extension'])) {
+        if (isset($_POST['menu_item_name']) && !empty($_POST['menu_item_name']) && isset($_POST['menu_group']) && !empty($_POST['menu_group']) && isset($_POST['order_sequence']) && !empty($_POST['order_sequence']) && isset($_POST['menu_item_url']) && isset($_POST['menu_item_icon'])) {
             $userID = $_SESSION['user_account_id'];
-            $fileExtensionName = $_POST['file_extension_name'];
-            $fileExtension = htmlspecialchars($_POST['file_extension'], ENT_QUOTES, 'UTF-8');
-            $fileType = htmlspecialchars($_POST['file_type'], ENT_QUOTES, 'UTF-8');
+            $menuItemName = $_POST['menu_item_name'];
+            $orderSequence = htmlspecialchars($_POST['order_sequence'], ENT_QUOTES, 'UTF-8');
+            $menuGroup = htmlspecialchars($_POST['menu_group'], ENT_QUOTES, 'UTF-8');
+            $parentID = isset($_POST['parent_id']) ? htmlspecialchars($_POST['parent_id'], ENT_QUOTES, 'UTF-8') : null;
+            $menuItemURL = htmlspecialchars($_POST['menu_item_url'], ENT_QUOTES, 'UTF-8');
+            $menuItemIcon = htmlspecialchars($_POST['menu_item_icon'], ENT_QUOTES, 'UTF-8');
 
-            $fileTypeDetails = $this->fileTypeModel->getFileType($fileType);
-            $fileTypeName = $fileTypeDetails['file_type_name'] ?? null;
+            $menuGroupDetails = $this->menuGroupModel->getMenuGroup($menuGroup);
+            $menuGroupName = $menuGroupDetails['menu_group_name'] ?? null;
+
+            $parentMenuItemDetails = $this->menuItemModel->getMenuItem($parentID);
+            $parentName = $parentMenuItemDetails['menu_item_name'] ?? null;
         
-            $fileExtensionID = $this->fileExtensionModel->insertFileExtension($fileExtensionName, $fileExtension, $fileType, $fileTypeName, $userID);
+            $menuItemID = $this->menuItemModel->insertMenuItem($menuItemName, $menuItemURL, $menuGroup, $menuGroupName, $parentID, $parentName, $menuItemIcon, $orderSequence, $userID);
     
             $response = [
                 'success' => true,
-                'fileExtensionID' => $this->securityModel->encryptData($fileExtensionID),
-                'title' => 'Insert File Extension Success',
-                'message' => 'The file extension has been inserted successfully.',
+                'menuItemID' => $this->securityModel->encryptData($menuItemID),
+                'title' => 'Insert Menu Item Success',
+                'message' => 'The menu item has been inserted successfully.',
                 'messageType' => 'success'
             ];
             
@@ -216,36 +222,39 @@ class FileExtensionController {
 
     # -------------------------------------------------------------
     #
-    # Function: updateFileExtension
+    # Function: updateMenuItem
     # Description: 
-    # Updates the file extension if it exists; otherwise, return an error message.
+    # Updates the menu item if it exists; otherwise, return an error message.
     #
     # Parameters: None
     #
     # Returns: Array
     #
     # -------------------------------------------------------------
-    public function updateFileExtension() {
+    public function updateMenuItem() {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             return;
         }
         
-        if (isset($_POST['file_extension_id']) && !empty($_POST['file_extension_id']) && isset($_POST['file_extension_name']) && !empty($_POST['file_extension_name']) && isset($_POST['file_type']) && !empty($_POST['file_type']) && isset($_POST['file_extension']) && !empty($_POST['file_extension'])) {
+        if (isset($_POST['menu_item_id']) && !empty($_POST['menu_item_id']) && isset($_POST['menu_item_name']) && !empty($_POST['menu_item_name']) && isset($_POST['menu_group']) && !empty($_POST['menu_group']) && isset($_POST['order_sequence']) && !empty($_POST['order_sequence']) && isset($_POST['menu_item_url']) && isset($_POST['menu_item_icon'])) {
             $userID = $_SESSION['user_account_id'];
-            $fileExtensionID = htmlspecialchars($_POST['file_extension_id'], ENT_QUOTES, 'UTF-8');
-            $fileExtensionName = $_POST['file_extension_name'];
-            $fileExtension = htmlspecialchars($_POST['file_extension'], ENT_QUOTES, 'UTF-8');
-            $fileType = htmlspecialchars($_POST['file_type'], ENT_QUOTES, 'UTF-8');
+            $menuItemID = htmlspecialchars($_POST['menu_item_id'], ENT_QUOTES, 'UTF-8');
+            $menuItemName = $_POST['menu_item_name'];
+            $orderSequence = htmlspecialchars($_POST['order_sequence'], ENT_QUOTES, 'UTF-8');
+            $menuGroup = htmlspecialchars($_POST['menu_group'], ENT_QUOTES, 'UTF-8');
+            $parentID = isset($_POST['parent_id']) ? htmlspecialchars($_POST['parent_id'], ENT_QUOTES, 'UTF-8') : null;
+            $menuItemURL = htmlspecialchars($_POST['menu_item_url'], ENT_QUOTES, 'UTF-8');
+            $menuItemIcon = htmlspecialchars($_POST['menu_item_icon'], ENT_QUOTES, 'UTF-8');
         
-            $checkFileExtensionExist = $this->fileExtensionModel->checkFileExtensionExist($fileExtensionID);
-            $total = $checkFileExtensionExist['total'] ?? 0;
+            $checkMenuItemExist = $this->menuItemModel->checkMenuItemExist($menuItemID);
+            $total = $checkMenuItemExist['total'] ?? 0;
 
             if($total === 0){
                 $response = [
                     'success' => false,
                     'notExist' => true,
-                    'title' => 'Update File Extension Error',
-                    'message' => 'The file extension has does not exist.',
+                    'title' => 'Update Menu Item Error',
+                    'message' => 'The menu item has does not exist.',
                     'messageType' => 'error'
                 ];
                 
@@ -253,15 +262,18 @@ class FileExtensionController {
                 exit;
             }
 
-            $fileTypeDetails = $this->fileTypeModel->getFileType($fileType);
-            $fileTypeName = $fileTypeDetails['file_type_name'] ?? null;
+            $menuGroupDetails = $this->menuGroupModel->getMenuGroup($menuGroup);
+            $menuGroupName = $menuGroupDetails['menu_group_name'] ?? null;
 
-            $this->fileExtensionModel->updateFileExtension($fileExtensionID, $fileExtensionName, $fileExtension, $fileType, $fileTypeName, $userID);
+            $parentMenuItemDetails = $this->menuItemModel->getMenuItem($parentID);
+            $parentName = $parentMenuItemDetails['menu_item_name'] ?? null;
+
+            $this->menuItemModel->updateMenuItem($menuItemID, $menuItemName, $menuItemURL, $menuGroup, $menuGroupName, $parentID, $parentName, $menuItemIcon, $orderSequence, $userID);
                 
             $response = [
                 'success' => true,
-                'title' => 'Update File Extension Success',
-                'message' => 'The file extension has been updated successfully.',
+                'title' => 'Update Menu Item Success',
+                'message' => 'The menu item has been updated successfully.',
                 'messageType' => 'success'
             ];
             
@@ -288,32 +300,32 @@ class FileExtensionController {
 
     # -------------------------------------------------------------
     #
-    # Function: deleteFileExtension
+    # Function: deleteMenuItem
     # Description: 
-    # Delete the file extension if it exists; otherwise, return an error message.
+    # Delete the menu item if it exists; otherwise, return an error message.
     #
     # Parameters: None
     #
     # Returns: Array
     #
     # -------------------------------------------------------------
-    public function deleteFileExtension() {
+    public function deleteMenuItem() {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             return;
         }
 
-        if (isset($_POST['file_extension_id']) && !empty($_POST['file_extension_id'])) {
-            $fileExtensionID = htmlspecialchars($_POST['file_extension_id'], ENT_QUOTES, 'UTF-8');
+        if (isset($_POST['menu_item_id']) && !empty($_POST['menu_item_id'])) {
+            $menuItemID = htmlspecialchars($_POST['menu_item_id'], ENT_QUOTES, 'UTF-8');
         
-            $checkFileExtensionExist = $this->fileExtensionModel->checkFileExtensionExist($fileExtensionID);
-            $total = $checkFileExtensionExist['total'] ?? 0;
+            $checkMenuItemExist = $this->menuItemModel->checkMenuItemExist($menuItemID);
+            $total = $checkMenuItemExist['total'] ?? 0;
 
             if($total === 0){
                 $response = [
                     'success' => false,
                     'notExist' => true,
-                    'title' => 'Delete File Extension Error',
-                    'message' => 'The file extension has does not exist.',
+                    'title' => 'Delete Menu Item Error',
+                    'message' => 'The menu item has does not exist.',
                     'messageType' => 'error'
                 ];
                 
@@ -321,12 +333,12 @@ class FileExtensionController {
                 exit;
             }
 
-            $this->fileExtensionModel->deleteFileExtension($fileExtensionID);
+            $this->menuItemModel->deleteMenuItem($menuItemID);
                 
             $response = [
                 'success' => true,
-                'title' => 'Delete File Extension Success',
-                'message' => 'The file extension has been deleted successfully.',
+                'title' => 'Delete Menu Item Success',
+                'message' => 'The menu item has been deleted successfully.',
                 'messageType' => 'success'
             ];
             
@@ -349,36 +361,36 @@ class FileExtensionController {
 
     # -------------------------------------------------------------
     #
-    # Function: deleteMultipleFileExtension
+    # Function: deleteMultipleMenuItem
     # Description: 
-    # Delete the selected file extensions if it exists; otherwise, skip it.
+    # Delete the selected menu items if it exists; otherwise, skip it.
     #
     # Parameters: None
     #
     # Returns: Array
     #
     # -------------------------------------------------------------
-    public function deleteMultipleFileExtension() {
+    public function deleteMultipleMenuItem() {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             return;
         }
 
-        if (isset($_POST['file_extension_id']) && !empty($_POST['file_extension_id'])) {
-            $fileExtensionIDs = $_POST['file_extension_id'];
+        if (isset($_POST['menu_item_id']) && !empty($_POST['menu_item_id'])) {
+            $menuItemIDs = $_POST['menu_item_id'];
     
-            foreach($fileExtensionIDs as $fileExtensionID){
-                $checkFileExtensionExist = $this->fileExtensionModel->checkFileExtensionExist($fileExtensionID);
-                $total = $checkFileExtensionExist['total'] ?? 0;
+            foreach($menuItemIDs as $menuItemID){
+                $checkMenuItemExist = $this->menuItemModel->checkMenuItemExist($menuItemID);
+                $total = $checkMenuItemExist['total'] ?? 0;
 
                 if($total > 0){
-                    $this->fileExtensionModel->deleteFileExtension($fileExtensionID);
+                    $this->menuItemModel->deleteMenuItem($menuItemID);
                 }
             }
                 
             $response = [
                 'success' => true,
-                'title' => 'Delete Multiple File Extension Success',
-                'message' => 'The selected file extensions have been deleted successfully.',
+                'title' => 'Delete Multiple Menu Item Success',
+                'message' => 'The selected menu items have been deleted successfully.',
                 'messageType' => 'success'
             ];
             
@@ -405,33 +417,33 @@ class FileExtensionController {
 
     # -------------------------------------------------------------
     #
-    # Function: getFileExtensionDetails
+    # Function: getMenuItemDetails
     # Description: 
-    # Handles the retrieval of file extension details.
+    # Handles the retrieval of menu item details.
     #
     # Parameters: None
     #
     # Returns: Array
     #
     # -------------------------------------------------------------
-    public function getFileExtensionDetails() {
+    public function getMenuItemDetails() {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             return;
         }
     
-        if (isset($_POST['file_extension_id']) && !empty($_POST['file_extension_id'])) {
+        if (isset($_POST['menu_item_id']) && !empty($_POST['menu_item_id'])) {
             $userID = $_SESSION['user_account_id'];
-            $fileExtensionID = htmlspecialchars($_POST['file_extension_id'], ENT_QUOTES, 'UTF-8');
+            $menuItemID = htmlspecialchars($_POST['menu_item_id'], ENT_QUOTES, 'UTF-8');
 
-            $checkFileExtensionExist = $this->fileExtensionModel->checkFileExtensionExist($fileExtensionID);
-            $total = $checkFileExtensionExist['total'] ?? 0;
+            $checkMenuItemExist = $this->menuItemModel->checkMenuItemExist($menuItemID);
+            $total = $checkMenuItemExist['total'] ?? 0;
 
             if($total === 0){
                 $response = [
                     'success' => false,
                     'notExist' => true,
-                    'title' => 'Get file extension Details Error',
-                    'message' => 'The file extension has does not exist.',
+                    'title' => 'Get menu item Details Error',
+                    'message' => 'The menu item has does not exist.',
                     'messageType' => 'error'
                 ];
                 
@@ -439,14 +451,18 @@ class FileExtensionController {
                 exit;
             }
     
-            $fileExtensionDetails = $this->fileExtensionModel->getFileExtension($fileExtensionID);
+            $menuItemDetails = $this->menuItemModel->getMenuItem($menuItemID);
 
             $response = [
                 'success' => true,
-                'fileExtensionName' => $fileExtensionDetails['file_extension_name'] ?? null,
-                'fileExtension' => $fileExtensionDetails['file_extension'] ?? null,
-                'fileTypeID' => $fileExtensionDetails['file_type_id'] ?? null,
-                'fileTypeName' => $fileExtensionDetails['file_type_name'] ?? null
+                'menuItemName' => $menuItemDetails['menu_item_name'] ?? null,
+                'menuItemURL' => $menuItemDetails['menu_item_url'] ?? null,
+                'menuGroupID' => $menuItemDetails['menu_group_id'] ?? null,
+                'menuGroupName' => $menuItemDetails['menu_group_name'] ?? null,
+                'parentID' => $menuItemDetails['parent_id'] ?? null,
+                'parentName' => $menuItemDetails['parent_name'] ?? null,
+                'menuItemIcon' => $menuItemDetails['menu_item_icon'] ?? null,
+                'orderSequence' => $menuItemDetails['order_sequence'] ?? null
             ];
 
             echo json_encode($response);
@@ -472,11 +488,11 @@ require_once '../../global/config/config.php';
 require_once '../../global/model/database-model.php';
 require_once '../../global/model/security-model.php';
 require_once '../../global/model/system-model.php';
-require_once '../../file-extension/model/file-extension-model.php';
-require_once '../../file-type/model/file-type-model.php';
+require_once '../../menu-item/model/menu-item-model.php';
+require_once '../../menu-group/model/menu-group-model.php';
 require_once '../../authentication/model/authentication-model.php';
 
-$controller = new FileExtensionController(new fileExtensionModel(new DatabaseModel), new FileTypeModel(new DatabaseModel), new AuthenticationModel(new DatabaseModel), new SecurityModel());
+$controller = new MenuItemController(new menuItemModel(new DatabaseModel), new MenuGroupModel(new DatabaseModel), new AuthenticationModel(new DatabaseModel), new SecurityModel());
 $controller->handleRequest();
 
 ?>

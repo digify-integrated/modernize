@@ -2,30 +2,30 @@ DELIMITER //
 
 /* Check Stored Procedure */
 
-CREATE PROCEDURE checkMenuItemExist(IN p_menu_item_id INT)
+CREATE PROCEDURE checkFileExtensionExist(IN p_file_extension_id INT)
 BEGIN
 	SELECT COUNT(*) AS total
-    FROM menu_item
-    WHERE menu_item_id = p_menu_item_id;
+    FROM file_extension
+    WHERE file_extension_id = p_file_extension_id;
 END //
 
 /* ----------------------------------------------------------------------------------------------------------------------------- */
 
 /* Insert Stored Procedure */
 
-CREATE PROCEDURE insertMenuItem(IN p_menu_item_name VARCHAR(100), IN p_menu_item_url VARCHAR(50), IN p_menu_group_id INT, IN p_menu_group_name VARCHAR(100), IN p_parent_id INT, IN p_parent_name VARCHAR(100), IN p_menu_item_icon VARCHAR(50), IN p_order_sequence TINYINT(10), IN p_last_log_by INT, OUT p_menu_item_id INT)
+CREATE PROCEDURE insertFileExtension(IN p_file_extension_name VARCHAR(100), IN p_file_extension VARCHAR(10), IN p_file_type_id INT, IN p_file_type_name VARCHAR(100), IN p_last_log_by INT, OUT p_file_extension_id INT)
 BEGIN
-    INSERT INTO menu_item (menu_item_name, menu_item_url, menu_group_id, menu_group_name, parent_id, parent_name, menu_item_icon, order_sequence, last_log_by) 
-	VALUES(p_menu_item_name, p_menu_item_url, p_menu_group_id, p_menu_group_name, p_parent_id, p_parent_name, p_menu_item_icon, p_order_sequence, p_last_log_by);
+    INSERT INTO file_extension (file_extension_name, file_extension, file_type_id, file_type_name, last_log_by) 
+	VALUES(p_file_extension_name, p_file_extension, p_file_type_id, p_file_type_name, p_last_log_by);
 	
-    SET p_menu_item_id = LAST_INSERT_ID();
+    SET p_file_extension_id = LAST_INSERT_ID();
 END //
 
 /* ----------------------------------------------------------------------------------------------------------------------------- */
 
 /* Update Stored Procedure */
 
-CREATE PROCEDURE updateMenuItem(IN p_menu_item_id INT, IN p_menu_item_name VARCHAR(100), IN p_menu_item_url VARCHAR(50), IN p_menu_group_id INT, IN p_menu_group_name VARCHAR(100), IN p_parent_id INT, IN p_parent_name VARCHAR(100), IN p_menu_item_icon VARCHAR(50), IN p_order_sequence TINYINT(10), IN p_last_log_by INT)
+CREATE PROCEDURE updateFileExtension(IN p_file_extension_id INT, IN p_file_extension_name VARCHAR(100), IN p_file_extension VARCHAR(10), IN p_file_type_id INT, IN p_file_type_name VARCHAR(100), IN p_last_log_by INT)
 BEGIN
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
     BEGIN
@@ -34,22 +34,19 @@ BEGIN
 
     START TRANSACTION;
 
-    UPDATE role_permission
-    SET menu_item_name = p_menu_item_name,
+    UPDATE upload_setting_file_extension
+    SET file_extension_name = p_file_extension_name,
+        file_extension = p_file_extension,
         last_log_by = p_last_log_by
-    WHERE menu_item_id = p_menu_item_id;
+    WHERE file_extension_id = p_file_extension_id;
 
-    UPDATE menu_item
-    SET menu_item_name = p_menu_item_name,
-        menu_item_url = p_menu_item_url,
-        menu_group_id = p_menu_group_id,
-        menu_group_name = p_menu_group_name,
-        parent_id = p_parent_id,
-        parent_name = p_parent_name,
-        menu_item_icon = p_menu_item_icon,
-        order_sequence = p_order_sequence,
+    UPDATE file_extension
+    SET file_extension_name = p_file_extension_name,
+        file_extension = p_file_extension,
+        file_type_id = p_file_type_id,
+        file_type_name = p_file_type_name,
         last_log_by = p_last_log_by
-    WHERE menu_item_id = p_menu_item_id;
+    WHERE file_extension_id = p_file_extension_id;
 
     COMMIT;
 END //
@@ -58,7 +55,7 @@ END //
 
 /* Delete Stored Procedure */
 
-CREATE PROCEDURE deleteMenuItem(IN p_menu_item_id INT)
+CREATE PROCEDURE deleteFileExtension(IN p_file_extension_id INT)
 BEGIN
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
     BEGIN
@@ -67,8 +64,8 @@ BEGIN
 
     START TRANSACTION;
 
-    DELETE FROM role_permission WHERE menu_item_id = p_menu_item_id;
-    DELETE FROM menu_item WHERE menu_item_id = p_menu_item_id;
+    DELETE FROM upload_setting_file_extension WHERE file_extension_id = p_file_extension_id;
+    DELETE FROM file_extension WHERE file_extension_id = p_file_extension_id;
 
     COMMIT;
 END //
@@ -77,55 +74,42 @@ END //
 
 /* Get Stored Procedure */
 
-CREATE PROCEDURE getMenuItem(IN p_menu_item_id INT)
+CREATE PROCEDURE getFileExtension(IN p_file_extension_id INT)
 BEGIN
-	SELECT * FROM menu_item
-	WHERE menu_item_id = p_menu_item_id;
+	SELECT * FROM file_extension
+	WHERE file_extension_id = p_file_extension_id;
 END //
 
 /* ----------------------------------------------------------------------------------------------------------------------------- */
 
 /* Generate Stored Procedure */
 
-CREATE PROCEDURE generateMenuItemTable(IN p_filter_by_menu_group INT)
+CREATE PROCEDURE generateFileExtensionTable(IN p_filter_by_file_type INT)
 BEGIN
     DECLARE query VARCHAR(5000);
 
     SET query = CONCAT('
-        SELECT menu_item_id, menu_item_name, menu_group_name, order_sequence 
-        FROM menu_item 
+        SELECT file_extension_id, file_extension_name, file_extension, file_type_name 
+        FROM file_extension 
         WHERE 1');
 
-    IF p_filter_by_menu_group IS NOT NULL THEN
-        SET query = CONCAT(query, ' AND menu_group_id = ', p_filter_by_menu_group);
+    IF p_filter_by_file_type IS NOT NULL THEN
+        SET query = CONCAT(query, ' AND file_type_id = ', p_filter_by_file_type);
     END IF;
 
-    SET query = CONCAT(query, ' ORDER BY menu_item_name');
+    SET query = CONCAT(query, ' ORDER BY file_extension_name');
 
     PREPARE stmt FROM query;
     EXECUTE stmt;
     DEALLOCATE PREPARE stmt;
 END //
 
-CREATE PROCEDURE generateSubmenuItemTable(IN p_parent_id INT)
+CREATE PROCEDURE generateFileExtensionDualListBoxOptions(IN p_upload_setting_file_extension_id INT)
 BEGIN
-	SELECT * FROM menu_item
-	WHERE parent_id = p_parent_id AND parent_id IS NOT NULL;
-END //
-
-CREATE PROCEDURE generateMenuItemOptions()
-BEGIN
-	SELECT menu_item_id, menu_item_name 
-    FROM menu_item 
-    ORDER BY menu_item_name;
-END //
-
-CREATE PROCEDURE generateRoleMenuItemDualListBoxOptions(IN p_role_id INT)
-BEGIN
-	SELECT menu_item_id, menu_item_name 
-    FROM menu_item 
-    WHERE menu_item_id NOT IN (SELECT menu_item_id FROM role_permission WHERE role_id = p_role_id)
-    ORDER BY menu_item_name;
+	SELECT file_extension_id, file_extension_name, file_extension
+    FROM file_extension 
+    WHERE file_extension_id NOT IN (SELECT file_extension_id FROM upload_setting_file_extension WHERE upload_setting_file_extension_id = p_upload_setting_file_extension_id)
+    ORDER BY file_extension_name;
 END //
 
 /* ----------------------------------------------------------------------------------------------------------------------------- */

@@ -4,12 +4,12 @@
             <div class="card-header d-flex align-items-center">
                 <h5 class="card-title mb-0">File Type Form</h5>
                 <div class="card-actions cursor-pointer ms-auto d-flex button-group">
-                    <button type="submit" form="menu-group-form" class="btn btn-success mb-0" id="submit-data">Save</button>
+                    <button type="submit" form="file-type-form" class="btn btn-success mb-0" id="submit-data">Save</button>
                     <button type="button" id="discard-create" class="btn btn-outline-danger mb-0">Discard</button>
                 </div>
             </div>
             <div class="card-body">
-                <form id="menu-group-form" method="post" action="#">
+                <form id="file-type-form" method="post" action="#">
                     <div class="row">
                         <div class="col-lg-12">
                             <div class="mb-3">

@@ -22,16 +22,16 @@ if(isset($_POST['type']) && !empty($_POST['type'])){
     switch ($type) {
         # -------------------------------------------------------------
         #
-        # Type: file type table
+        # Type: file extension table
         # Description:
-        # Generates the file type table.
+        # Generates the file extension table.
         #
         # Parameters: None
         #
         # Returns: Array
         #
         # -------------------------------------------------------------
-        case 'file type table':
+        case 'file extension table':
             $filterByFileType = isset($_POST['filter_by_file_type']) ? htmlspecialchars($_POST['filter_by_file_type'], ENT_QUOTES, 'UTF-8') : null;
             $sql = $databaseModel->getConnection()->prepare('CALL generateFileExtensionTable(:filterByFileType)');
             $sql->bindValue(':filterByFileType', $filterByFileType, PDO::PARAM_INT);
@@ -44,6 +44,7 @@ if(isset($_POST['type']) && !empty($_POST['type'])){
             foreach ($options as $row) {
                 $fileExtensionID = $row['file_extension_id'];
                 $fileExtensionName = $row['file_extension_name'];
+                $fileExtension = $row['file_extension'];
                 $fileTypeName = $row['file_type_name'];
 
                 $fileExtensionIDEncrypted = $securityModel->encryptData($fileExtensionID);
@@ -57,7 +58,7 @@ if(isset($_POST['type']) && !empty($_POST['type'])){
 
                 $response[] = [
                     'CHECK_BOX' => '<input class="form-check-input datatable-checkbox-children" type="checkbox" value="'. $fileExtensionID .'">',
-                    'FILE_EXTENSION_NAME' => $fileExtensionName,
+                    'FILE_EXTENSION_NAME' => $fileExtensionName . ' (' . $fileExtension . ')',
                     'FILE_TYPE_NAME' => $fileTypeName,
                     'ACTION' => '<div class="action-btn">
                                     <a href="'. $pageLink .'&id='. $fileExtensionIDEncrypted .'" class="text-info" title="View Details">
@@ -74,20 +75,20 @@ if(isset($_POST['type']) && !empty($_POST['type'])){
 
         # -------------------------------------------------------------
         #
-        # Type: role file type dual listbox options
+        # Type: role file extension dual listbox options
         # Description:
-        # Generates the role file type dual listbox options.
+        # Generates the role file extension dual listbox options.
         #
         # Parameters: None
         #
         # Returns: Array
         #
         # -------------------------------------------------------------
-        case 'role file type dual listbox options':
-            if(isset($_POST['role_id']) && !empty($_POST['role_id'])){
-                $roleID = htmlspecialchars($_POST['role_id'], ENT_QUOTES, 'UTF-8');
-                $sql = $databaseModel->getConnection()->prepare('CALL generateRoleFileExtensionDualListBoxOptions(:roleID)');
-                $sql->bindValue(':roleID', $roleID, PDO::PARAM_INT);
+        case 'file extension dual listbox options':
+            if(isset($_POST['upload_setting_file_extension_id']) && !empty($_POST['upload_setting_file_extension_id'])){
+                $uploadeSettingFileExtensionID = htmlspecialchars($_POST['upload_setting_file_extension_id'], ENT_QUOTES, 'UTF-8');
+                $sql = $databaseModel->getConnection()->prepare('CALL generateFileExtensionDualListBoxOptions(:roleID)');
+                $sql->bindValue(':uploadeSettingFileExtensionID', $uploadeSettingFileExtensionID, PDO::PARAM_INT);
                 $sql->execute();
                 $options = $sql->fetchAll(PDO::FETCH_ASSOC);
                 $sql->closeCursor();
@@ -95,7 +96,7 @@ if(isset($_POST['type']) && !empty($_POST['type'])){
                 foreach ($options as $row) {
                     $response[] = [
                         'id' => $row['file_extension_id'],
-                        'text' => $row['file_extension_name']
+                        'text' => $row['file_extension_name'] . ' (' . $row['file_extension'] . ')'
                     ];
                 }
 

@@ -2,10 +2,11 @@
     'use strict';
 
     $(function() {
-        generateDropdownOptions('file type options');
+        generateDropdownOptions('menu group options');
+        generateDropdownOptions('menu item options');
 
-        if($('#file-extension-form').length){
-            fileExtensionForm();
+        if($('#menu-item-form').length){
+            menuItemForm();
         }
 
         $(document).on('click','#discard-create',function() {
@@ -15,28 +16,28 @@
     });
 })(jQuery);
 
-function fileExtensionForm(){
-    $('#file-extension-form').validate({
+function menuItemForm(){
+    $('#menu-item-form').validate({
         rules: {
-            file_extension_name: {
+            menu_item_name: {
                 required: true
             },
-            file_extension: {
+            menu_group: {
                 required: true
             },
-            file_type: {
+            order_sequence: {
                 required: true
             }
         },
         messages: {
-            file_extension_name: {
+            menu_item_name: {
                 required: 'Please enter the display name'
             },
-            file_extension: {
-                required: 'Please enter the file extension'
+            menu_group: {
+                required: 'Please choose the menu group'
             },
-            file_type: {
-                required: 'Please choose the file type'
+            order_sequence: {
+                required: 'Please enter the order sequence'
             }
         },
         errorPlacement: function (error, element) {
@@ -61,12 +62,12 @@ function fileExtensionForm(){
             }
         },
         submitHandler: function(form) {
-            const transaction = 'add file extension';
+            const transaction = 'add menu item';
             const page_link = document.getElementById('page-link').getAttribute('href');
           
             $.ajax({
                 type: 'POST',
-                url: 'components/file-extension/controller/file-extension-controller.php',
+                url: 'components/menu-item/controller/menu-item-controller.php',
                 data: $(form).serialize() + '&transaction=' + transaction,
                 dataType: 'json',
                 beforeSend: function() {
@@ -75,7 +76,7 @@ function fileExtensionForm(){
                 success: function (response) {
                     if (response.success) {
                         setNotification(response.title, response.message, response.messageType);
-                        window.location = page_link + '&id=' + response.fileExtensionID;
+                        window.location = page_link + '&id=' + response.menuItemID;
                     }
                     else {
                         if (response.isInactive || response.notExist || response.userInactive || response.userLocked || response.sessionExpired) {
@@ -106,17 +107,42 @@ function fileExtensionForm(){
 
 function generateDropdownOptions(type){
     switch (type) {
-        case 'file type options':
+        case 'menu group options':
             
             $.ajax({
-                url: 'components/file-type/view/_file_type_generation.php',
+                url: 'components/menu-group/view/_menu_group_generation.php',
                 method: 'POST',
                 dataType: 'json',
                 data: {
                     type : type
                 },
                 success: function(response) {
-                    $('#file_type').select2({
+                    $('#menu_group').select2({
+                        data: response
+                    }).on('change', function (e) {
+                        $(this).valid()
+                    });
+                },
+                error: function(xhr, status, error) {
+                    var fullErrorMessage = `XHR status: ${status}, Error: ${error}`;
+                    if (xhr.responseText) {
+                        fullErrorMessage += `, Response: ${xhr.responseText}`;
+                    }
+                    showErrorDialog(fullErrorMessage);
+                }
+            });
+            break;
+        case 'menu item options':
+            
+            $.ajax({
+                url: 'components/menu-item/view/_menu_item_generation.php',
+                method: 'POST',
+                dataType: 'json',
+                data: {
+                    type : type
+                },
+                success: function(response) {
+                    $('#parent_id').select2({
                         data: response
                     }).on('change', function (e) {
                         $(this).valid()

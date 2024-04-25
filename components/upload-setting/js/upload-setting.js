@@ -2,19 +2,19 @@
     'use strict';
 
     $(function() {
-        generateFilterOptions('file type radio filter');
+        generateFilterOptions('menu group radio filter');
 
-        if($('#file-extension-table').length){
-            menuItemTable('#file-extension-table');
+        if($('#menu-item-table').length){
+            menuItemTable('#menu-item-table');
         }
 
-        $(document).on('click','.delete-file-extension',function() {
-            const file_extension_id = $(this).data('file-extension-id');
-            const transaction = 'delete file extension';
+        $(document).on('click','.delete-menu-item',function() {
+            const menu_item_id = $(this).data('menu-item-id');
+            const transaction = 'delete menu item';
     
             Swal.fire({
-                title: 'Confirm File Extension Deletion',
-                text: 'Are you sure you want to delete this file extension?',
+                title: 'Confirm Menu Item Deletion',
+                text: 'Are you sure you want to delete this menu item?',
                 icon: 'warning',
                 showCancelButton: !0,
                 confirmButtonText: 'Delete',
@@ -28,16 +28,16 @@
                 if (result.value) {
                     $.ajax({
                         type: 'POST',
-                        url: 'components/file-extension/controller/file-extension-controller.php',
+                        url: 'components/menu-item/controller/menu-item-controller.php',
                         dataType: 'json',
                         data: {
-                            file_extension_id : file_extension_id, 
+                            menu_item_id : menu_item_id, 
                             transaction : transaction
                         },
                         success: function (response) {
                             if (response.success) {
                                 showNotification(response.title, response.message, response.messageType);
-                                reloadDatatable('#file-extension-table');
+                                reloadDatatable('#menu-item-table');
                             }
                             else {
                                 if (response.isInactive || response.userNotExist || response.userInactive || response.userLocked || response.sessionExpired) {
@@ -46,7 +46,7 @@
                                 }
                                 else if (response.notExist) {
                                     setNotification(response.title, response.message, response.messageType);
-                                    reloadDatatable('#file-extension-table');
+                                    reloadDatatable('#menu-item-table');
                                 }
                                 else {
                                     showNotification(response.title, response.message, response.messageType);
@@ -66,20 +66,20 @@
             });
         });
 
-        $(document).on('click','#delete-file-extension',function() {
-            let file_extension_id = [];
-            const transaction = 'delete multiple file extension';
+        $(document).on('click','#delete-menu-item',function() {
+            let menu_item_id = [];
+            const transaction = 'delete multiple menu item';
 
             $('.datatable-checkbox-children').each((index, element) => {
                 if ($(element).is(':checked')) {
-                    file_extension_id.push(element.value);
+                    menu_item_id.push(element.value);
                 }
             });
     
-            if(file_extension_id.length > 0){
+            if(menu_item_id.length > 0){
                 Swal.fire({
-                    title: 'Confirm Multiple File Extensions Deletion',
-                    text: 'Are you sure you want to delete these file extensions?',
+                    title: 'Confirm Multiple Menu Items Deletion',
+                    text: 'Are you sure you want to delete these menu items?',
                     icon: 'warning',
                     showCancelButton: !0,
                     confirmButtonText: 'Delete',
@@ -93,16 +93,16 @@
                     if (result.value) {
                         $.ajax({
                             type: 'POST',
-                            url: 'components/file-extension/controller/file-extension-controller.php',
+                            url: 'components/menu-item/controller/menu-item-controller.php',
                             dataType: 'json',
                             data: {
-                                file_extension_id: file_extension_id,
+                                menu_item_id: menu_item_id,
                                 transaction : transaction
                             },
                             success: function (response) {
                                 if (response.success) {
                                     showNotification(response.title, response.message, response.messageType);
-                                    reloadDatatable('#file-extension-table');
+                                    reloadDatatable('#menu-item-table');
                                 }
                                 else {
                                     if (response.isInactive || response.userNotExist || response.userInactive || response.userLocked || response.sessionExpired) {
@@ -131,12 +131,12 @@
                 });
             }
             else{
-                showNotification('Deletion Multiple File Extension Error', 'Please select the file extensions you wish to delete.', 'danger');
+                showNotification('Deletion Multiple Menu Item Error', 'Please select the menu items you wish to delete.', 'danger');
             }
         });
 
         $(document).on('click','#apply-filter',function() {
-            menuItemTable('#file-extension-table');
+            menuItemTable('#menu-item-table');
             $('#filter-offcanvas').offcanvas('hide');
         });
     });
@@ -145,17 +145,18 @@
 function menuItemTable(datatable_name, buttons = false, show_all = false){
     toggleHideActionDropdown();
 
-    const type = 'file extension table';
+    const type = 'menu item table';
     const page_id = $('#page-id').val();
     const page_link = document.getElementById('page-link').getAttribute('href');
 
-    var filter_by_file_type = $('input[name="filter-file-type"]:checked').val();
+    var filter_by_menu_group = $('input[name="filter-menu-group"]:checked').val();
     var settings;
 
     const column = [ 
         { 'data' : 'CHECK_BOX' },
-        { 'data' : 'FILE_EXTENSION_NAME' },
-        { 'data' : 'FILE_TYPE_NAME' },
+        { 'data' : 'MENU_ITEM_NAME' },
+        { 'data' : 'MENU_GROUP_NAME' },
+        { 'data' : 'ORDER_SEQUENCE' },
         { 'data' : 'ACTION' }
     ];
 
@@ -163,21 +164,22 @@ function menuItemTable(datatable_name, buttons = false, show_all = false){
         { 'width': '1%','bSortable': false, 'aTargets': 0 },
         { 'width': 'auto', 'aTargets': 1 },
         { 'width': 'auto', 'aTargets': 2 },
-        { 'width': '15%','bSortable': false, 'aTargets': 3 }
+        { 'width': 'auto', 'aTargets': 3 },
+        { 'width': '15%','bSortable': false, 'aTargets': 4 }
     ];
 
     const length_menu = show_all ? [[-1], ['All']] : [[10, 25, 50, 100, -1], [10, 25, 50, 100, 'All']];
 
     settings = {
         'ajax': { 
-            'url' : 'components/file-extension/view/_file_extension_generation.php',
+            'url' : 'components/menu-item/view/_menu_item_generation.php',
             'method' : 'POST',
             'dataType': 'json',
             'data': {
                 'type' : type,
                 'page_id' : page_id,
                 'page_link' : page_link,
-                'filter_by_file_type' : filter_by_file_type
+                'filter_by_menu_group' : filter_by_menu_group
             },
             'dataSrc' : '',
             'error': function(xhr, status, error) {
@@ -215,17 +217,17 @@ function menuItemTable(datatable_name, buttons = false, show_all = false){
 
 function generateFilterOptions(type){
     switch (type) {
-        case 'file type radio filter':
+        case 'menu group radio filter':
             
             $.ajax({
-                url: 'components/file-type/view/_file_type_generation.php',
+                url: 'components/menu-group/view/_menu_group_generation.php',
                 method: 'POST',
                 dataType: 'json',
                 data: {
                     type : type
                 },
                 success: function(response) {
-                    document.getElementById('file-type-filter').innerHTML = response[0].filterOptions;
+                    document.getElementById('menu-group-filter').innerHTML = response[0].filterOptions;
                 },
                 error: function(xhr, status, error) {
                     var fullErrorMessage = `XHR status: ${status}, Error: ${error}`;

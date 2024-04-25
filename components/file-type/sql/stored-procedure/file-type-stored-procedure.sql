@@ -60,6 +60,8 @@ BEGIN
 
     START TRANSACTION;
 
+    DELETE FROM upload_setting_file_extension WHERE file_extension_id IN (SELECT file_extension_id FROM file_extension WHERE file_type_id = p_file_type_id);
+    DELETE FROM file_extension WHERE file_type_id = p_file_type_id;
     DELETE FROM file_type WHERE file_type_id = p_file_type_id;
 
     COMMIT;

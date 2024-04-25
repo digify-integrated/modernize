@@ -1,10 +1,10 @@
 <?php
 /**
-* Class MenuItemModel
+* Class FileExtensionModel
 *
-* The MenuItemModel class handles menu item related operations and interactions.
+* The FileExtensionModel class handles file extension related operations and interactions.
 */
-class MenuItemModel {
+class FileExtensionModel {
     public $db;
 
     public function __construct(DatabaseModel $db) {
@@ -17,35 +17,27 @@ class MenuItemModel {
 
     # -------------------------------------------------------------
     #
-    # Function: updateMenuItem
-    # Description: Updates the menu item.
+    # Function: updateFileExtension
+    # Description: Updates the file extension.
     #
     # Parameters:
-    # - $p_menu_item_id (int): The menu item ID.
-    # - $p_menu_item_name (string): The menu item name.
-    # - $p_menu_item_url (string): The menu item URL.
-    # - $p_menu_group_id (int): The menu group ID.
-    # - $p_menu_group_name (string): The menu group name.
-    # - $p_parent_id (int): The parent ID.
-    # - $p_parent_name (string): The parent name.
-    # - $p_menu_item_icon (string): The parent name.
-    # - $p_order_sequence (int): The order sequence of menu item.
+    # - $p_file_extension_id (int): The file extension ID.
+    # - $p_file_extension_name (string): The file extension name.
+    # - $p_file_extension (string): The file extension.
+    # - $p_file_type_id (int): The file type ID.
+    # - $p_file_type_name (string): The file type name.
     # - $p_last_log_by (int): The last logged user.
     #
     # Returns: None
     #
     # -------------------------------------------------------------
-    public function updateMenuItem($p_menu_item_id, $p_menu_item_name, $p_menu_item_url, $p_menu_group_id, $p_menu_group_name, $p_parent_id, $p_parent_name, $p_menu_item_icon, $p_order_sequence, $p_last_log_by) {
-        $stmt = $this->db->getConnection()->prepare('CALL updateMenuItem(:p_menu_item_id, :p_menu_item_name, :p_menu_item_url, :p_menu_group_id, :p_menu_group_name, :p_parent_id, :p_parent_name, :p_menu_item_icon, :p_order_sequence, :p_last_log_by)');
-        $stmt->bindValue(':p_menu_item_id', $p_menu_item_id, PDO::PARAM_INT);
-        $stmt->bindValue(':p_menu_item_name', $p_menu_item_name, PDO::PARAM_STR);
-        $stmt->bindValue(':p_menu_item_url', $p_menu_item_url, PDO::PARAM_STR);
-        $stmt->bindValue(':p_menu_group_id', $p_menu_group_id, PDO::PARAM_INT);
-        $stmt->bindValue(':p_menu_group_name', $p_menu_group_name, PDO::PARAM_STR);
-        $stmt->bindValue(':p_parent_id', $p_parent_id, PDO::PARAM_INT);
-        $stmt->bindValue(':p_parent_name', $p_parent_name, PDO::PARAM_STR);
-        $stmt->bindValue(':p_menu_item_icon', $p_menu_item_icon, PDO::PARAM_STR);
-        $stmt->bindValue(':p_order_sequence', $p_order_sequence, PDO::PARAM_INT);
+    public function updateFileExtension($p_file_extension_id, $p_file_extension_name, $p_file_extension, $p_file_type_id, $p_file_type_name, $p_last_log_by) {
+        $stmt = $this->db->getConnection()->prepare('CALL updateFileExtension(:p_file_extension_id, :p_file_extension_name, :p_file_extension, :p_file_type_id, :p_file_type_name, :p_last_log_by)');
+        $stmt->bindValue(':p_file_extension_id', $p_file_extension_id, PDO::PARAM_INT);
+        $stmt->bindValue(':p_file_extension_name', $p_file_extension_name, PDO::PARAM_STR);
+        $stmt->bindValue(':p_file_extension', $p_file_extension, PDO::PARAM_STR);
+        $stmt->bindValue(':p_file_type_id', $p_file_type_id, PDO::PARAM_INT);
+        $stmt->bindValue(':p_file_type_name', $p_file_type_name, PDO::PARAM_STR);
         $stmt->bindValue(':p_last_log_by', $p_last_log_by, PDO::PARAM_INT);
         $stmt->execute();
     }
@@ -57,39 +49,30 @@ class MenuItemModel {
 
     # -------------------------------------------------------------
     #
-    # Function: insertMenuItem
-    # Description: Inserts the menu item.
+    # Function: insertFileExtension
+    # Description: Inserts the file extension.
     #
     # Parameters:
-    # - $p_menu_item_name (string): The menu item name.
-    # - $p_menu_item_url (string): The menu item URL.
-    # - $p_menu_group_id (int): The menu group ID.
-    # - $p_menu_group_name (string): The menu group name.
-    # - $p_parent_id (int): The parent ID.
-    # - $p_parent_name (string): The parent name.
-    # - $p_menu_item_icon (string): The parent name.
-    # - $p_order_sequence (int): The order sequence of menu item.
+    # - $p_file_extension_name (string): The file extension name.
+    # - $p_file_extension (string): The file extension.
+    # - $p_file_type_id (int): The file type ID.
+    # - $p_file_type_name (string): The file type name.
     # - $p_last_log_by (int): The last logged user.
     #
     # Returns: String
     #
     # -------------------------------------------------------------
-    public function insertMenuItem($p_menu_item_name, $p_menu_item_url, $p_menu_group_id, $p_menu_group_name, $p_parent_id, $p_parent_name, $p_menu_item_icon, $p_order_sequence, $p_last_log_by) {
-        $stmt = $this->db->getConnection()->prepare('CALL insertMenuItem(:p_menu_item_name, :p_menu_item_url, :p_menu_group_id, :p_menu_group_name, :p_parent_id, :p_parent_name, :p_menu_item_icon, :p_order_sequence, :p_last_log_by, @p_menu_item_id)');
-        $stmt->bindValue(':p_menu_item_name', $p_menu_item_name, PDO::PARAM_STR);
-        $stmt->bindValue(':p_menu_item_name', $p_menu_item_name, PDO::PARAM_STR);
-        $stmt->bindValue(':p_menu_item_url', $p_menu_item_url, PDO::PARAM_STR);
-        $stmt->bindValue(':p_menu_group_id', $p_menu_group_id, PDO::PARAM_INT);
-        $stmt->bindValue(':p_menu_group_name', $p_menu_group_name, PDO::PARAM_STR);
-        $stmt->bindValue(':p_parent_id', $p_parent_id, PDO::PARAM_INT);
-        $stmt->bindValue(':p_parent_name', $p_parent_name, PDO::PARAM_STR);
-        $stmt->bindValue(':p_menu_item_icon', $p_menu_item_icon, PDO::PARAM_STR);
-        $stmt->bindValue(':p_order_sequence', $p_order_sequence, PDO::PARAM_INT);
+    public function insertFileExtension($p_file_extension_name, $p_file_extension, $p_file_type_id, $p_file_type_name, $p_last_log_by) {
+        $stmt = $this->db->getConnection()->prepare('CALL insertFileExtension(:p_file_extension_name, :p_file_extension, :p_file_type_id, :p_file_type_name, :p_last_log_by, @p_file_extension_id)');
+        $stmt->bindValue(':p_file_extension_name', $p_file_extension_name, PDO::PARAM_STR);
+        $stmt->bindValue(':p_file_extension', $p_file_extension, PDO::PARAM_STR);
+        $stmt->bindValue(':p_file_type_id', $p_file_type_id, PDO::PARAM_INT);
+        $stmt->bindValue(':p_file_type_name', $p_file_type_name, PDO::PARAM_STR);
         $stmt->bindValue(':p_last_log_by', $p_last_log_by, PDO::PARAM_INT);
         $stmt->execute();
         
-        $result = $this->db->getConnection()->query('SELECT @p_menu_item_id AS menu_item_id');
-        $menuItemID = $result->fetch(PDO::FETCH_ASSOC)['menu_item_id'];
+        $result = $this->db->getConnection()->query('SELECT @p_file_extension_id AS file_extension_id');
+        $menuItemID = $result->fetch(PDO::FETCH_ASSOC)['file_extension_id'];
         
         return $menuItemID;
     }
@@ -101,18 +84,18 @@ class MenuItemModel {
 
     # -------------------------------------------------------------
     #
-    # Function: checkMenuItemExist
-    # Description: Checks if a menu item exists.
+    # Function: checkFileExtensionExist
+    # Description: Checks if a file extension exists.
     #
     # Parameters:
-    # - $p_menu_item_id (int): The menu item ID.
+    # - $p_file_extension_id (int): The file extension ID.
     #
     # Returns: The result of the query as an associative array.
     #
     # -------------------------------------------------------------
-    public function checkMenuItemExist($p_menu_item_id) {
-        $stmt = $this->db->getConnection()->prepare('CALL checkMenuItemExist(:p_menu_item_id)');
-        $stmt->bindValue(':p_menu_item_id', $p_menu_item_id, PDO::PARAM_INT);
+    public function checkFileExtensionExist($p_file_extension_id) {
+        $stmt = $this->db->getConnection()->prepare('CALL checkFileExtensionExist(:p_file_extension_id)');
+        $stmt->bindValue(':p_file_extension_id', $p_file_extension_id, PDO::PARAM_INT);
         $stmt->execute();
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
@@ -124,18 +107,18 @@ class MenuItemModel {
 
     # -------------------------------------------------------------
     #
-    # Function: deleteMenuItem
-    # Description: Deletes the menu item.
+    # Function: deleteFileExtension
+    # Description: Deletes the file extension.
     #
     # Parameters:
-    # - $p_menu_item_id (int): The menu item ID.
+    # - $p_file_extension_id (int): The file extension ID.
     #
     # Returns: None
     #
     # -------------------------------------------------------------
-    public function deleteMenuItem($p_menu_item_id) {
-        $stmt = $this->db->getConnection()->prepare('CALL deleteMenuItem(:p_menu_item_id)');
-        $stmt->bindValue(':p_menu_item_id', $p_menu_item_id, PDO::PARAM_INT);
+    public function deleteFileExtension($p_file_extension_id) {
+        $stmt = $this->db->getConnection()->prepare('CALL deleteFileExtension(:p_file_extension_id)');
+        $stmt->bindValue(':p_file_extension_id', $p_file_extension_id, PDO::PARAM_INT);
         $stmt->execute();
     }
     # -------------------------------------------------------------
@@ -146,52 +129,21 @@ class MenuItemModel {
 
     # -------------------------------------------------------------
     #
-    # Function: getMenuItem
-    # Description: Retrieves the details of a menu item.
+    # Function: getFileExtension
+    # Description: Retrieves the details of a file extension.
     #
     # Parameters:
-    # - $p_menu_item_id (int): The menu item ID.
+    # - $p_file_extension_id (int): The file extension ID.
     #
     # Returns:
-    # - An array containing the menu item details.
+    # - An array containing the file extension details.
     #
     # -------------------------------------------------------------
-    public function getMenuItem($p_menu_item_id) {
-        $stmt = $this->db->getConnection()->prepare('CALL getMenuItem(:p_menu_item_id)');
-        $stmt->bindValue(':p_menu_item_id', $p_menu_item_id, PDO::PARAM_INT);
+    public function getFileExtension($p_file_extension_id) {
+        $stmt = $this->db->getConnection()->prepare('CALL getFileExtension(:p_file_extension_id)');
+        $stmt->bindValue(':p_file_extension_id', $p_file_extension_id, PDO::PARAM_INT);
         $stmt->execute();
         return $stmt->fetch(PDO::FETCH_ASSOC);
-    }
-    # -------------------------------------------------------------
-
-    # -------------------------------------------------------------
-    #   Generate methods
-    # -------------------------------------------------------------
-
-    # -------------------------------------------------------------
-    #
-    # Function: generateMenuItemOptions
-    # Description: Generates the menu item options.
-    #
-    # Parameters:None
-    #
-    # Returns: String.
-    #
-    # -------------------------------------------------------------
-    public function generateMenuItemOptions() {
-        $stmt = $this->db->getConnection()->prepare('CALL generateMenuItemOptions()');
-        $stmt->execute();
-        $options = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-        $htmlOptions = '';
-        foreach ($options as $row) {
-            $menuItemID = $row['menu_item_id'];
-            $menuItemName = $row['menu_item_name'];
-
-            $htmlOptions .= '<option value="' . htmlspecialchars($menuItemID, ENT_QUOTES) . '">' . htmlspecialchars($menuItemName, ENT_QUOTES) . '</option>';
-        }
-
-        return $htmlOptions;
     }
     # -------------------------------------------------------------
 }
