@@ -2,19 +2,17 @@
     'use strict';
 
     $(function() {
-        generateFilterOptions('menu group radio filter');
-
-        if($('#menu-item-table').length){
-            menuItemTable('#menu-item-table');
+        if($('#upload-setting-table').length){
+            uploadSettingTable('#upload-setting-table');
         }
 
-        $(document).on('click','.delete-menu-item',function() {
-            const menu_item_id = $(this).data('menu-item-id');
-            const transaction = 'delete menu item';
+        $(document).on('click','.delete-upload-setting',function() {
+            const upload_setting_id = $(this).data('upload-setting-id');
+            const transaction = 'delete upload setting';
     
             Swal.fire({
-                title: 'Confirm Menu Item Deletion',
-                text: 'Are you sure you want to delete this menu item?',
+                title: 'Confirm Upload Setting Deletion',
+                text: 'Are you sure you want to delete this upload setting?',
                 icon: 'warning',
                 showCancelButton: !0,
                 confirmButtonText: 'Delete',
@@ -28,16 +26,16 @@
                 if (result.value) {
                     $.ajax({
                         type: 'POST',
-                        url: 'components/menu-item/controller/menu-item-controller.php',
+                        url: 'components/upload-setting/controller/upload-setting-controller.php',
                         dataType: 'json',
                         data: {
-                            menu_item_id : menu_item_id, 
+                            upload_setting_id : upload_setting_id, 
                             transaction : transaction
                         },
                         success: function (response) {
                             if (response.success) {
                                 showNotification(response.title, response.message, response.messageType);
-                                reloadDatatable('#menu-item-table');
+                                reloadDatatable('#upload-setting-table');
                             }
                             else {
                                 if (response.isInactive || response.userNotExist || response.userInactive || response.userLocked || response.sessionExpired) {
@@ -46,7 +44,7 @@
                                 }
                                 else if (response.notExist) {
                                     setNotification(response.title, response.message, response.messageType);
-                                    reloadDatatable('#menu-item-table');
+                                    reloadDatatable('#upload-setting-table');
                                 }
                                 else {
                                     showNotification(response.title, response.message, response.messageType);
@@ -66,20 +64,20 @@
             });
         });
 
-        $(document).on('click','#delete-menu-item',function() {
-            let menu_item_id = [];
-            const transaction = 'delete multiple menu item';
+        $(document).on('click','#delete-upload-setting',function() {
+            let upload_setting_id = [];
+            const transaction = 'delete multiple upload setting';
 
             $('.datatable-checkbox-children').each((index, element) => {
                 if ($(element).is(':checked')) {
-                    menu_item_id.push(element.value);
+                    upload_setting_id.push(element.value);
                 }
             });
     
-            if(menu_item_id.length > 0){
+            if(upload_setting_id.length > 0){
                 Swal.fire({
-                    title: 'Confirm Multiple Menu Items Deletion',
-                    text: 'Are you sure you want to delete these menu items?',
+                    title: 'Confirm Multiple Upload Settings Deletion',
+                    text: 'Are you sure you want to delete these upload settings?',
                     icon: 'warning',
                     showCancelButton: !0,
                     confirmButtonText: 'Delete',
@@ -93,16 +91,16 @@
                     if (result.value) {
                         $.ajax({
                             type: 'POST',
-                            url: 'components/menu-item/controller/menu-item-controller.php',
+                            url: 'components/upload-setting/controller/upload-setting-controller.php',
                             dataType: 'json',
                             data: {
-                                menu_item_id: menu_item_id,
+                                upload_setting_id: upload_setting_id,
                                 transaction : transaction
                             },
                             success: function (response) {
                                 if (response.success) {
                                     showNotification(response.title, response.message, response.messageType);
-                                    reloadDatatable('#menu-item-table');
+                                    reloadDatatable('#upload-setting-table');
                                 }
                                 else {
                                     if (response.isInactive || response.userNotExist || response.userInactive || response.userLocked || response.sessionExpired) {
@@ -131,32 +129,25 @@
                 });
             }
             else{
-                showNotification('Deletion Multiple Menu Item Error', 'Please select the menu items you wish to delete.', 'danger');
+                showNotification('Deletion Multiple Upload Setting Error', 'Please select the upload settings you wish to delete.', 'danger');
             }
-        });
-
-        $(document).on('click','#apply-filter',function() {
-            menuItemTable('#menu-item-table');
-            $('#filter-offcanvas').offcanvas('hide');
         });
     });
 })(jQuery);
 
-function menuItemTable(datatable_name, buttons = false, show_all = false){
+function uploadSettingTable(datatable_name, buttons = false, show_all = false){
     toggleHideActionDropdown();
 
-    const type = 'menu item table';
+    const type = 'upload setting table';
     const page_id = $('#page-id').val();
     const page_link = document.getElementById('page-link').getAttribute('href');
 
-    var filter_by_menu_group = $('input[name="filter-menu-group"]:checked').val();
     var settings;
 
     const column = [ 
         { 'data' : 'CHECK_BOX' },
-        { 'data' : 'MENU_ITEM_NAME' },
-        { 'data' : 'MENU_GROUP_NAME' },
-        { 'data' : 'ORDER_SEQUENCE' },
+        { 'data' : 'UPLOAD_SETTING' },
+        { 'data' : 'MAX_FILE_SIZE' },
         { 'data' : 'ACTION' }
     ];
 
@@ -164,22 +155,20 @@ function menuItemTable(datatable_name, buttons = false, show_all = false){
         { 'width': '1%','bSortable': false, 'aTargets': 0 },
         { 'width': 'auto', 'aTargets': 1 },
         { 'width': 'auto', 'aTargets': 2 },
-        { 'width': 'auto', 'aTargets': 3 },
-        { 'width': '15%','bSortable': false, 'aTargets': 4 }
+        { 'width': '15%','bSortable': false, 'aTargets': 3 }
     ];
 
     const length_menu = show_all ? [[-1], ['All']] : [[10, 25, 50, 100, -1], [10, 25, 50, 100, 'All']];
 
     settings = {
         'ajax': { 
-            'url' : 'components/menu-item/view/_menu_item_generation.php',
+            'url' : 'components/upload-setting/view/_upload_setting_generation.php',
             'method' : 'POST',
             'dataType': 'json',
             'data': {
                 'type' : type,
                 'page_id' : page_id,
-                'page_link' : page_link,
-                'filter_by_menu_group' : filter_by_menu_group
+                'page_link' : page_link
             },
             'dataSrc' : '',
             'error': function(xhr, status, error) {
@@ -213,30 +202,4 @@ function menuItemTable(datatable_name, buttons = false, show_all = false){
     destroyDatatable(datatable_name);
 
     $(datatable_name).dataTable(settings);
-}
-
-function generateFilterOptions(type){
-    switch (type) {
-        case 'menu group radio filter':
-            
-            $.ajax({
-                url: 'components/menu-group/view/_menu_group_generation.php',
-                method: 'POST',
-                dataType: 'json',
-                data: {
-                    type : type
-                },
-                success: function(response) {
-                    document.getElementById('menu-group-filter').innerHTML = response[0].filterOptions;
-                },
-                error: function(xhr, status, error) {
-                    var fullErrorMessage = `XHR status: ${status}, Error: ${error}`;
-                    if (xhr.responseText) {
-                        fullErrorMessage += `, Response: ${xhr.responseText}`;
-                    }
-                    showErrorDialog(fullErrorMessage);
-                }
-            });
-            break;
-    }
 }

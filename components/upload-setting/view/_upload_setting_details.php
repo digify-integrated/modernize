@@ -2,14 +2,14 @@
     <div class="col-md-12">
         <div class="card">
             <div class="card-header d-flex align-items-center">
-                <h5 class="card-title mb-0">Menu Item</h5>
+                <h5 class="card-title mb-0">Upload Setting</h5>
                 <div class="card-actions cursor-pointer ms-auto d-flex button-group">
                     <button type="button" class="btn btn-dark dropdown-toggle mb-0" data-bs-toggle="dropdown" aria-expanded="false">Action</button>
                     <ul class="dropdown-menu dropdown-menu-end">
                         <?php
-                            if($menuItemCreateAccess['total'] > 0 || $menuItemDeleteAccess['total'] > 0){
-                                echo $menuItemCreateAccess['total'] > 0 ? '<li><a class="dropdown-item" href="'. $pageLink .'&new">Create Menu Item</a></li>' : '';
-                                echo $menuItemDeleteAccess['total'] > 0 ? '<li><button class="dropdown-item" type="button" id="delete-menu-item">Delete Menu Item</button></li>' : '';
+                            if($uploadSettingCreateAccess['total'] > 0 || $uploadSettingDeleteAccess['total'] > 0){
+                                echo $uploadSettingCreateAccess['total'] > 0 ? '<li><a class="dropdown-item" href="'. $pageLink .'&new">Create Upload Setting</a></li>' : '';
+                                echo $uploadSettingDeleteAccess['total'] > 0 ? '<li><button class="dropdown-item" type="button" id="delete-upload-setting">Delete Upload Setting</button></li>' : '';
                                 
                                 echo '<li><hr class="dropdown-divider"></li>';
                             }
@@ -18,9 +18,9 @@
                     </ul>
                 </div>
                 <?php
-                    echo $menuItemWriteAccess['total'] > 0 ? 
+                    echo $uploadSettingWriteAccess['total'] > 0 ? 
                     '<div class="card-actions cursor-pointer ms-auto d-flex button-group">
-                        <button class="btn btn-info mb-0 px-4" data-bs-toggle="modal" id="edit-details" data-bs-target="#menu-item-modal" id="edit-details">Edit</button>
+                        <button class="btn btn-info mb-0 px-4" data-bs-toggle="modal" id="edit-details" data-bs-target="#upload-setting-modal" id="edit-details">Edit</button>
                     </div>' : '';
                 ?>
             </div>
@@ -30,33 +30,15 @@
                         <div class="form-group row">
                             <label class="form-label col-md-5">Display Name:</label>
                             <div class="col-md-7">
-                                <p class="form-control-static" id="menu_item_name_summary">--</p>
+                                <p class="form-control-static" id="upload_setting_name_summary">--</p>
                             </div>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-group row">
-                            <label class="form-label col-md-5">Menu Group:</label>
+                            <label class="form-label col-md-5">Max File Size:</label>
                             <div class="col-md-7">
-                                <p class="form-control-static" id="menu_group_summary">--</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group row">
-                            <label class="form-label col-md-5">Order Sequence:</label>
-                            <div class="col-md-7">
-                                <p class="form-control-static" id="order_sequence_summary">--</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-group row">
-                            <label class="form-label col-md-5">Parent Menu Item:</label>
-                            <div class="col-md-7">
-                                <p class="form-control-static" id="parent_menu_item_summary">--</p>
+                                <p class="form-control-static" id="max_file_size_summary">--</p>
                             </div>
                         </div>
                     </div>
@@ -64,17 +46,9 @@
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group row">
-                            <label class="form-label col-md-5">URL:</label>
+                            <label class="form-label col-md-5">Description:</label>
                             <div class="col-md-7">
-                                <p class="form-control-static" id="menu_item_url_summary">--</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-group row">
-                            <label class="form-label col-md-5">Menu Icon:</label>
-                            <div class="col-md-7">
-                                <p class="form-control-static" id="menu_item_icon_summary">--</p>
+                                <p class="form-control-static" id="upload_setting_description_summary">--</p>
                             </div>
                         </div>
                     </div>
@@ -86,53 +60,24 @@
 
 <div class="datatables">
     <div class="row">
-        <div class="col-md-12">
-            <div class="card">
-                <div class="card-header d-flex align-items-center">
-                    <h5 class="card-title mb-0">Sub Menu Item List</h5>
-                </div>
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <table id="submenu-item-table" class="table border table-striped table-hover align-middle text-nowrap mb-0">
-                            <thead class="text-dark">
-                                <tr>
-                                    <th>Submenu Item</th>
-                                    <th>Order Sequence</th>
-                                </tr>
-                            </thead>
-                            <tbody></tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div  class="datatables">
-    <div class="row">
         <div class="col-12">
             <div class="card">
                 <div class="card-header d-flex align-items-center">
-                    <h5 class="card-title mb-0">Role Permission</h5>
+                    <h5 class="card-title mb-0">File Extension</h5>
                     <?php
-                        if($addRoleAccess['total'] > 0){
+                        if($addFileExtensionAccess['total'] > 0){
                             echo '<div class="card-actions cursor-pointer ms-auto d-flex button-group">
-                                        <button class="btn btn-success d-flex align-items-center mb-0" data-bs-toggle="modal" data-bs-target="#role-permission-assignment-modal" id="assign-role-permission">Assign</button>
+                                        <button class="btn btn-success d-flex align-items-center mb-0" data-bs-toggle="modal" data-bs-target="#file-extension-assignment-modal" id="assign-file-extension">Assign</button>
                                     </div>';
                         }
                     ?>
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
-                        <table id="assigned-role-permission-table" class="table border table-striped table-hover align-middle text-wrap mb-0">
+                        <table id="assigned-file-extension-table" class="table border table-striped table-hover align-middle text-wrap mb-0">
                             <thead class="text-dark">
                                 <tr>
-                                    <th>Role</th>
-                                    <th>Read Access</th>
-                                    <th>Create Access</th>
-                                    <th>Write Access</th>
-                                    <th>Delete Access</th>
+                                    <th>File Extension</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
@@ -145,54 +90,37 @@
     </div>
 </div>
 
-<div id="menu-item-modal" class="modal fade" tabindex="-1" aria-labelledby="menu-item-modal" aria-hidden="true">
+<div id="upload-setting-modal" class="modal fade" tabindex="-1" aria-labelledby="upload-setting-modal" aria-hidden="true">
     <div class="modal-dialog modal-dialog-scrollable modal-r">
         <div class="modal-content">
             <div class="modal-header border-bottom">
-                <h5 class="modal-title fw-8">Edit Menu Item Details</h5>
+                <h5 class="modal-title fw-8">Edit Upload Setting Details</h5>
                 <button type="button" class="btn-close fs-2" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form id="menu-item-form" method="post" action="#">
+                <form id="upload-setting-form" method="post" action="#">
                     <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-lg-6">
                             <div class="mb-3">
-                                <label class="form-label" for="menu_item_name">Display Name <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control maxlength" id="menu_item_name" name="menu_item_name" maxlength="100" autocomplete="off">
+                                <label class="form-label" for="upload_setting_name">Display Name <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control maxlength" id="upload_setting_name" name="upload_setting_name" maxlength="100" autocomplete="off">
                             </div>
                         </div>
-                        <div class="col-md-6">
-                            <label class="form-label" for="menu_group">Menu Group <span class="text-danger">*</span></label>
+                        <div class="col-lg-6">
                             <div class="mb-3">
-                                <select id="menu_group" name="menu_group" class="select2 form-control"></select>
+                                <label class="form-label" for="max_file_size">Max File Size <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control" id="max_file_size" name="max_file_size" min="1">
+                                    <span class="input-group-text">kb</span>
+                                </div>
                             </div>
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-lg-6">
                             <div class="mb-3">
-                                <label class="form-label" for="order_sequence">Order Sequence <span class="text-danger">*</span></label>
-                                <input type="number" class="form-control" id="order_sequence" name="order_sequence" min="0">
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label" for="parent_id">Parent Menu Item</label>
-                            <div class="mb-3">
-                                <select id="parent_id" name="parent_id" class="select2 form-control"></select>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label class="form-label" for="menu_item_url">URL</label>
-                                <input type="text" class="form-control maxlength" id="menu_item_url" name="menu_item_url" maxlength="50" autocomplete="off">
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label class="form-label" for="menu_item_icon">Menu Icon</label>
-                                <input type="text" class="form-control maxlength" id="menu_item_icon" name="menu_item_icon" maxlength="50" autocomplete="off">
+                                <label class="form-label" for="upload_setting_description">Description <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control maxlength" id="upload_setting_description" name="upload_setting_description" maxlength="200" autocomplete="off">
                             </div>
                         </div>
                     </div>
@@ -200,31 +128,31 @@
             </div>
             <div class="modal-footer border-top">
                 <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Close</button>
-                <button type="submit" form="menu-item-form" class="btn btn-success" id="submit-data">Save changes</button>
+                <button type="submit" form="upload-setting-form" class="btn btn-success" id="submit-data">Save changes</button>
             </div>
         </div>
     </div>
 </div>
 
-<div id="role-permission-assignment-modal" class="modal fade" tabindex="-1" aria-labelledby="role-permission-assignment-modal" aria-hidden="true">
+<div id="file-extension-assignment-modal" class="modal fade" tabindex="-1" aria-labelledby="file-extension-assignment-modal" aria-hidden="true">
     <div class="modal-dialog modal-dialog-scrollable modal-lg">
         <div class="modal-content">
             <div class="modal-header border-bottom">
-                <h5 class="modal-title fw-8">Assign Role Permission</h5>
+                <h5 class="modal-title fw-8">Assign File Extension</h5>
                 <button type="button" class="btn-close fs-2" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form id="role-permission-assignment-form" method="post" action="#">
+                <form id="file-extension-form" method="post" action="#">
                     <div class="row">
                         <div class="col-12">
-                            <select multiple="multiple" size="20" id="role_id" name="role_id[]"></select>
+                            <select multiple="multiple" size="20" id="file_extension_id" name="file_extension_id[]"></select>
                         </div>
                     </div>
                 </form>
             </div>
             <div class="modal-footer border-top">
                 <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Close</button>
-                <button type="submit" form="role-permission-assignment-form" class="btn btn-success" id="submit-assignment">Save changes</button>
+                <button type="submit" form="file-extension-form" class="btn btn-success" id="submit-assignment">Save changes</button>
             </div>
         </div>
     </div>

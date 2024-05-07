@@ -20,6 +20,7 @@ INSERT INTO upload_setting (upload_setting_name, upload_setting_description, max
 CREATE TABLE upload_setting_file_extension(
     upload_setting_file_extension_id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY NOT NULL,
 	upload_setting_id INT UNSIGNED NOT NULL,
+	upload_setting_name VARCHAR(100) NOT NULL,
 	file_extension_id INT UNSIGNED NOT NULL,
 	file_extension_name VARCHAR(100) NOT NULL,
 	file_extension VARCHAR(10) NOT NULL,

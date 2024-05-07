@@ -62,13 +62,11 @@ $(document).ready(function () {
                     } 
                     else {
                         showNotification(response.title, response.message, response.messageType);
+                        enableFormSubmitButton('signin');
                     }
                 },
                 error: function(xhr, status, error) {
                     handleSystemError(xhr, status, error);
-                },
-                complete: function() {
-                    enableFormSubmitButton('signin');
                 }
             });
     

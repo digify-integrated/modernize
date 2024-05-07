@@ -2,38 +2,32 @@
     'use strict';
 
     $(function() {
-        generateDropdownOptions('menu group options');
-        generateDropdownOptions('menu item options');
-        displayDetails('get menu item details');
+        displayDetails('get upload setting details');
 
-        if($('#menu-item-form').length){
-            menuItemForm();
+        if($('#upload-setting-form').length){
+            uploadSettingForm();
         }
 
-        if($('#role-permission-assignment-form').length){
-            rolePermissionAssignmentForm();
+        if($('#file-extension-assignment-form').length){
+            fileExtensionAssignmentForm();
         }
 
-        if($('#assigned-role-permission-table').length){
-            assignedRolePermissionTable('#assigned-role-permission-table');
+        if($('#assigned-file-extension-table').length){
+            assignedFileExtensionTable('#assigned-file-extension-table');
         }
 
         $(document).on('click','#edit-details',function() {
-            displayDetails('get menu item details');
+            displayDetails('get upload setting details');
         });
 
-        if($('#submenu-item-table').length){
-            submenuItemTable('#submenu-item-table');
-        }
-
-        $(document).on('click','#delete-menu-item',function() {
-            const menu_item_id = $('#menu-item-id').text();
+        $(document).on('click','#delete-upload-setting',function() {
+            const upload_setting_id = $('#upload-setting-id').text();
             const page_link = document.getElementById('page-link').getAttribute('href');
-            const transaction = 'delete menu item';
+            const transaction = 'delete upload setting';
     
             Swal.fire({
-                title: 'Confirm Menu Item Deletion',
-                text: 'Are you sure you want to delete this menu item?',
+                title: 'Confirm Upload Setting Deletion',
+                text: 'Are you sure you want to delete this upload setting?',
                 icon: 'warning',
                 showCancelButton: !0,
                 confirmButtonText: 'Delete',
@@ -47,10 +41,10 @@
                 if (result.value) {
                     $.ajax({
                         type: 'POST',
-                        url: 'components/menu-item/controller/menu-item-controller.php',
+                        url: 'components/upload-setting/controller/upload-setting-controller.php',
                         dataType: 'json',
                         data: {
-                            menu_item_id : menu_item_id, 
+                            upload_setting_id : upload_setting_id, 
                             transaction : transaction
                         },
                         success: function (response) {
@@ -85,14 +79,14 @@
             });
         });
 
-        $(document).on('click','#assign-role-permission',function() {
-            generateDropdownOptions('menu item role dual listbox options');
+        $(document).on('click','#assign-file-extension',function() {
+            generateDropdownOptions('file extension upload setting dual listbox options');
         });
 
-        $(document).on('click','.update-role-permission',function() {
-            const role_permission_id = $(this).data('role-permission-id');
+        $(document).on('click','.update-file-extension',function() {
+            const upload_setting_file_extension_id = $(this).data('file-extension-id');
             const access_type = $(this).data('access-type');
-            const transaction = 'update role permission';
+            const transaction = 'update file extension';
             var access;
 
             if ($(this).is(':checked')){  
@@ -107,7 +101,7 @@
                 url: 'components/role/controller/role-controller.php',
                 dataType: 'json',
                 data: {
-                    role_permission_id : role_permission_id, 
+                    upload_setting_file_extension_id : upload_setting_file_extension_id, 
                     access_type : access_type,
                     access : access,
                     transaction : transaction
@@ -115,7 +109,7 @@
                 success: function (response) {
                     if (response.success) {
                         showNotification(response.title, response.message, response.messageType);
-                        reloadDatatable('#assigned-role-permission-table');
+                        reloadDatatable('#assigned-file-extension-table');
                     }
                     else {
                         if (response.isInactive || response.userNotExist || response.userInactive || response.userLocked || response.sessionExpired) {
@@ -124,7 +118,7 @@
                         }
                         else if (response.notExist) {
                             setNotification(response.title, response.message, response.messageType);
-                            reloadDatatable('#assigned-role-permission-table');
+                            reloadDatatable('#assigned-file-extension-table');
                         }
                         else {
                             showNotification(response.title, response.message, response.messageType);
@@ -141,13 +135,13 @@
             });
         });
 
-        $(document).on('click','.delete-role-permission',function() {
-            const role_permission_id = $(this).data('role-permission-id');
-            const transaction = 'delete role permission';
+        $(document).on('click','.delete-file-extension',function() {
+            const upload_setting_file_extension_id = $(this).data('file-extension-id');
+            const transaction = 'delete file extension';
     
             Swal.fire({
                 title: 'Confirm Role Permission Deletion',
-                text: 'Are you sure you want to delete this role permission?',
+                text: 'Are you sure you want to delete this file extension?',
                 icon: 'warning',
                 showCancelButton: !0,
                 confirmButtonText: 'Delete',
@@ -164,13 +158,13 @@
                         url: 'components/role/controller/role-controller.php',
                         dataType: 'json',
                         data: {
-                            role_permission_id : role_permission_id, 
+                            upload_setting_file_extension_id : upload_setting_file_extension_id, 
                             transaction : transaction
                         },
                         success: function (response) {
                             if (response.success) {
                                 showNotification(response.title, response.message, response.messageType);
-                                reloadDatatable('#assigned-role-permission-table');
+                                reloadDatatable('#assigned-file-extension-table');
                             }
                             else {
                                 if (response.isInactive || response.userNotExist || response.userInactive || response.userLocked || response.sessionExpired) {
@@ -179,7 +173,7 @@
                                 }
                                 else if (response.notExist) {
                                     setNotification(response.title, response.message, response.messageType);
-                                    reloadDatatable('#assigned-role-permission-table');
+                                    reloadDatatable('#assigned-file-extension-table');
                                 }
                                 else {
                                     showNotification(response.title, response.message, response.messageType);
@@ -201,42 +195,42 @@
 
         if($('#log-notes-offcanvas').length && $('#view-log-notes').length){
             $(document).on('click','#view-log-notes',function() {
-                const menu_item_id = $('#menu-item-id').text();
+                const upload_setting_id = $('#upload-setting-id').text();
 
-                logNotes('menu_item', menu_item_id);
+                logNotes('upload_setting', upload_setting_id);
             });
 
-            $(document).on('click','.view-role-permission-log-notes',function() {
-                const role_permission_id = $(this).data('role-permission-id');
+            $(document).on('click','.view-file-extension-log-notes',function() {
+                const upload_setting_file_extension_id = $(this).data('upload-setting-file-extension-id');
 
-                logNotes('role_permission', role_permission_id);
+                logNotes('upload_setting_file_extension', upload_setting_file_extension_id);
             });
         }
     });
 })(jQuery);
 
-function menuItemForm(){
-    $('#menu-item-form').validate({
+function uploadSettingForm(){
+    $('#upload-setting-form').validate({
         rules: {
-            menu_item_name: {
+            upload_setting_name: {
                 required: true
             },
-            menu_group: {
+            max_file_size: {
                 required: true
             },
-            order_sequence: {
+            upload_setting_description: {
                 required: true
             }
         },
         messages: {
-            menu_item_name: {
+            upload_setting_name: {
                 required: 'Please enter the display name'
             },
-            menu_group: {
-                required: 'Please choose the menu group'
+            max_file_size: {
+                required: 'Please enter the max file size'
             },
-            order_sequence: {
-                required: 'Please enter the order sequence'
+            upload_setting_description: {
+                required: 'Please enter the description'
             }
         },
         errorPlacement: function (error, element) {
@@ -261,14 +255,14 @@ function menuItemForm(){
             }
         },
         submitHandler: function(form) {
-            const menu_item_id = $('#menu-item-id').text();
+            const upload_setting_id = $('#upload-setting-id').text();
             const page_link = document.getElementById('page-link').getAttribute('href'); 
-            const transaction = 'update menu item';
+            const transaction = 'update upload setting';
           
             $.ajax({
                 type: 'POST',
-                url: 'components/menu-item/controller/menu-item-controller.php',
-                data: $(form).serialize() + '&transaction=' + transaction + '&menu_item_id=' + menu_item_id,
+                url: 'components/upload-setting/controller/upload-setting-controller.php',
+                data: $(form).serialize() + '&transaction=' + transaction + '&upload_setting_id=' + upload_setting_id,
                 dataType: 'json',
                 beforeSend: function() {
                     disableFormSubmitButton('submit-data');
@@ -276,8 +270,8 @@ function menuItemForm(){
                 success: function (response) {
                     if (response.success) {
                         showNotification(response.title, response.message, response.messageType);
-                        displayDetails('get menu item details');
-                        $('#menu-item-modal').modal('hide');
+                        displayDetails('get upload setting details');
+                        $('#upload-setting-modal').modal('hide');
                     }
                     else {
                         if (response.isInactive || response.userNotExist || response.userInactive || response.userLocked || response.sessionExpired) {
@@ -310,8 +304,8 @@ function menuItemForm(){
     });
 }
 
-function rolePermissionAssignmentForm(){
-    $('#role-permission-assignment-form').validate({
+function fileExtensionAssignmentForm(){
+    $('#file-extension-assignment-form').validate({
         errorPlacement: function (error, element) {
             showNotification('Attention Required: Error Found', error, 'error', 1500);
         },
@@ -334,13 +328,13 @@ function rolePermissionAssignmentForm(){
             }
         },
         submitHandler: function(form) {
-            const menu_item_id = $('#menu-item-id').text();
-            const transaction = 'assign menu item role permission';
+            const upload_setting_id = $('#upload-setting-id').text();
+            const transaction = 'assign upload setting file extension';
           
             $.ajax({
                 type: 'POST',
-                url: 'components/role/controller/role-controller.php',
-                data: $(form).serialize() + '&transaction=' + transaction + '&menu_item_id=' + menu_item_id,
+                url: 'components/upload-setting/controller/upload-setting-controller.php',
+                data: $(form).serialize() + '&transaction=' + transaction + '&upload_setting_id=' + upload_setting_id,
                 dataType: 'json',
                 beforeSend: function() {
                     disableFormSubmitButton('submit-data');
@@ -348,8 +342,8 @@ function rolePermissionAssignmentForm(){
                 success: function (response) {
                     if (response.success) {
                         showNotification(response.title, response.message, response.messageType);
-                        reloadDatatable('#assigned-role-permission-table');
-                        $('#role-permission-assignment-modal').modal('hide');
+                        reloadDatatable('#assigned-file-extension-table');
+                        $('#file-extension-assignment-modal').modal('hide');
                     }
                     else {
                         if (response.isInactive || response.userNotExist || response.userInactive || response.userLocked || response.sessionExpired) {
@@ -382,11 +376,11 @@ function rolePermissionAssignmentForm(){
     });
 }
 
-function submenuItemTable(datatable_name, buttons = false, show_all = false){
+function subuploadSettingTable(datatable_name, buttons = false, show_all = false){
     toggleHideActionDropdown();
 
-    const type = 'submenu item table';
-    const menu_item_id = $('#menu-item-id').text();
+    const type = 'subupload setting table';
+    const upload_setting_id = $('#upload-setting-id').text();
     var settings;
 
     const column = [ 
@@ -403,10 +397,10 @@ function submenuItemTable(datatable_name, buttons = false, show_all = false){
 
     settings = {
         'ajax': { 
-            'url' : 'components/menu-item/view/_menu_item_generation.php',
+            'url' : 'components/upload-setting/view/_upload_setting_generation.php',
             'method' : 'POST',
             'dataType': 'json',
-            'data': {'type' : type, 'menu_item_id' : menu_item_id},
+            'data': {'type' : type, 'upload_setting_id' : upload_setting_id},
             'dataSrc' : '',
             'error': function(xhr, status, error) {
                 var fullErrorMessage = `XHR status: ${status}, Error: ${error}`;
@@ -441,37 +435,29 @@ function submenuItemTable(datatable_name, buttons = false, show_all = false){
     $(datatable_name).dataTable(settings);
 }
 
-function assignedRolePermissionTable(datatable_name, buttons = false, show_all = false){
-    const menu_item_id = $('#menu-item-id').text();
-    const type = 'assigned role permission table';
+function assignedFileExtensionTable(datatable_name, buttons = false, show_all = false){
+    const upload_setting_id = $('#upload-setting-id').text();
+    const type = 'assigned file extension table';
     var settings;
 
     const column = [ 
-        { 'data' : 'ROLE' },
-        { 'data' : 'READ_ACCESS' },
-        { 'data' : 'CREATE_ACCESS' },
-        { 'data' : 'WRITE_ACCESS' },
-        { 'data' : 'DELETE_ACCESS' },
+        { 'data' : 'FILE_EXTENSION' },
         { 'data' : 'ACTION' }
     ];
 
     const column_definition = [
         { 'width': 'auto', 'aTargets': 0 },
-        { 'width': 'auto', 'bSortable': false, 'aTargets': 1 },
-        { 'width': 'auto', 'bSortable': false, 'aTargets': 2 },
-        { 'width': 'auto', 'bSortable': false, 'aTargets': 3 },
-        { 'width': 'auto', 'bSortable': false, 'aTargets': 4 },
-        { 'width': '15%', 'bSortable': false, 'aTargets': 5 }
+        { 'width': '15%', 'bSortable': false, 'aTargets': 1 }
     ];
 
     const length_menu = show_all ? [[-1], ['All']] : [[10, 25, 50, 100, -1], [10, 25, 50, 100, 'All']];
 
     settings = {
         'ajax': { 
-            'url' : 'components/role/view/_role_generation.php',
+            'url' : 'components/file-extension/view/_file_extension_generation.php',
             'method' : 'POST',
             'dataType': 'json',
-            'data': {'type' : type, 'menu_item_id' : menu_item_id},
+            'data': {'type' : type, 'upload_setting_id' : upload_setting_id},
             'dataSrc' : '',
             'error': function(xhr, status, error) {
                 var fullErrorMessage = `XHR status: ${status}, Error: ${error}`;
@@ -508,37 +494,30 @@ function assignedRolePermissionTable(datatable_name, buttons = false, show_all =
 
 function displayDetails(transaction){
     switch (transaction) {
-        case 'get menu item details':
-            var menu_item_id = $('#menu-item-id').text();
+        case 'get upload setting details':
+            var upload_setting_id = $('#upload-setting-id').text();
             const page_link = document.getElementById('page-link').getAttribute('href');
             
             $.ajax({
-                url: 'components/menu-item/controller/menu-item-controller.php',
+                url: 'components/upload-setting/controller/upload-setting-controller.php',
                 method: 'POST',
                 dataType: 'json',
                 data: {
-                    menu_item_id : menu_item_id, 
+                    upload_setting_id : upload_setting_id, 
                     transaction : transaction
                 },
                 beforeSend: function(){
-                    resetModalForm('menu-item-form');
+                    resetModalForm('upload-setting-form');
                 },
                 success: function(response) {
                     if (response.success) {
-                        $('#menu_item_name').val(response.menuItemName);
-                        $('#menu_item_url').val(response.menuItemURL);
-                        $('#menu_item_icon').val(response.menuItemIcon);
-                        $('#order_sequence').val(response.orderSequence);
+                        $('#upload_setting_name').val(response.uploadSettingName);
+                        $('#max_file_size').val(response.maxFileSize);
+                        $('#upload_setting_description').val(response.uploadSettingDescription);
                         
-                        $('#menu_group').val(response.menuGroupID).trigger('change');
-                        $('#parent_id').val(response.parentID).trigger('change');
-                        
-                        $('#menu_item_name_summary').text(response.menuItemName);
-                        $('#menu_group_summary').text(response.menuGroupName);
-                        $('#parent_menu_item_summary').text(response.parentName);
-                        $('#menu_item_url_summary').text(response.menuItemURL);
-                        $('#menu_item_icon_summary').text(response.menuItemIcon);
-                        $('#order_sequence_summary').text(response.orderSequence);
+                        $('#upload_setting_name_summary').text(response.uploadSettingName);
+                        $('#max_file_size_summary').text(response.maxFileSize + ' kb');
+                        $('#upload_setting_description_summary').text(response.uploadSettingDescription);
                     } 
                     else {
                         if (response.isInactive || response.userNotExist || response.userInactive || response.userLocked || response.sessionExpired) {
@@ -568,71 +547,19 @@ function displayDetails(transaction){
 
 function generateDropdownOptions(type){
     switch (type) {
-        case 'menu group options':
-            
-            $.ajax({
-                url: 'components/menu-group/view/_menu_group_generation.php',
-                method: 'POST',
-                dataType: 'json',
-                data: {
-                    type : type
-                },
-                success: function(response) {
-                    $('#menu_group').select2({
-                        dropdownParent: $('#menu-item-modal'),
-                        data: response
-                    }).on('change', function (e) {
-                        $(this).valid()
-                    });
-                },
-                error: function(xhr, status, error) {
-                    var fullErrorMessage = `XHR status: ${status}, Error: ${error}`;
-                    if (xhr.responseText) {
-                        fullErrorMessage += `, Response: ${xhr.responseText}`;
-                    }
-                    showErrorDialog(fullErrorMessage);
-                }
-            });
-            break;
-        case 'menu item options':
-            
-            $.ajax({
-                url: 'components/menu-item/view/_menu_item_generation.php',
-                method: 'POST',
-                dataType: 'json',
-                data: {
-                    type : type
-                },
-                success: function(response) {
-                    $('#parent_id').select2({
-                        dropdownParent: $('#menu-item-modal'),
-                        data: response
-                    }).on('change', function (e) {
-                        $(this).valid()
-                    });
-                },
-                error: function(xhr, status, error) {
-                    var fullErrorMessage = `XHR status: ${status}, Error: ${error}`;
-                    if (xhr.responseText) {
-                        fullErrorMessage += `, Response: ${xhr.responseText}`;
-                    }
-                    showErrorDialog(fullErrorMessage);
-                }
-            });
-            break;
-        case 'menu item role dual listbox options':
-            const menu_item_id = $('#menu-item-id').text();
+        case 'file extension upload setting dual listbox options':
+            const upload_setting_id = $('#upload-setting-id').text();
     
             $.ajax({
-                url: 'components/role/view/_role_generation.php',
+                url: 'components/file-extension/view/_file_extension_generation.php',
                 method: 'POST',
                 dataType: 'json',
                 data: {
                     type : type,
-                    menu_item_id : menu_item_id
+                    upload_setting_id : upload_setting_id
                 },
                 success: function(response) {
-                    var select = document.getElementById('role_id');
+                    var select = document.getElementById('file_extension_id');
     
                     select.options.length = 0;
     
@@ -649,8 +576,8 @@ function generateDropdownOptions(type){
                      showErrorDialog(fullErrorMessage);
                 },
                 complete: function(){
-                    if($('#role_id').length){
-                        $('#role_id').bootstrapDualListbox({
+                    if($('#file_extension_id').length){
+                        $('#file_extension_id').bootstrapDualListbox({
                             nonSelectedListLabel: 'Non-selected',
                             selectedListLabel: 'Selected',
                             preserveSelectionOnMove: 'moved',
@@ -658,7 +585,7 @@ function generateDropdownOptions(type){
                             helperSelectNamePostfix: false
                         });
     
-                        $('#role_id').bootstrapDualListbox('refresh', true);
+                        $('#file_extension_id').bootstrapDualListbox('refresh', true);
     
                         initializeDualListBoxIcon();
                     }

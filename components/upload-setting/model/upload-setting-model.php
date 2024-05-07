@@ -1,10 +1,10 @@
 <?php
 /**
-* Class MenuItemModel
+* Class UploadSettingModel
 *
-* The MenuItemModel class handles menu item related operations and interactions.
+* The UploadSettingModel class handles upload setting related operations and interactions.
 */
-class MenuItemModel {
+class UploadSettingModel {
     public $db;
 
     public function __construct(DatabaseModel $db) {
@@ -17,35 +17,25 @@ class MenuItemModel {
 
     # -------------------------------------------------------------
     #
-    # Function: updateMenuItem
-    # Description: Updates the menu item.
+    # Function: updateUploadSetting
+    # Description: Updates the upload setting.
     #
     # Parameters:
-    # - $p_menu_item_id (int): The menu item ID.
-    # - $p_menu_item_name (string): The menu item name.
-    # - $p_menu_item_url (string): The menu item URL.
-    # - $p_menu_group_id (int): The menu group ID.
-    # - $p_menu_group_name (string): The menu group name.
-    # - $p_parent_id (int): The parent ID.
-    # - $p_parent_name (string): The parent name.
-    # - $p_menu_item_icon (string): The parent name.
-    # - $p_order_sequence (int): The order sequence of menu item.
+    # - $p_upload_setting_id (int): The upload setting ID.
+    # - $p_upload_setting_name (string): The upload setting name.
+    # - $p_upload_setting_description (string): The upload setting description.
+    # - $p_max_file_size (int): The menu group ID.
     # - $p_last_log_by (int): The last logged user.
     #
     # Returns: None
     #
     # -------------------------------------------------------------
-    public function updateMenuItem($p_menu_item_id, $p_menu_item_name, $p_menu_item_url, $p_menu_group_id, $p_menu_group_name, $p_parent_id, $p_parent_name, $p_menu_item_icon, $p_order_sequence, $p_last_log_by) {
-        $stmt = $this->db->getConnection()->prepare('CALL updateMenuItem(:p_menu_item_id, :p_menu_item_name, :p_menu_item_url, :p_menu_group_id, :p_menu_group_name, :p_parent_id, :p_parent_name, :p_menu_item_icon, :p_order_sequence, :p_last_log_by)');
-        $stmt->bindValue(':p_menu_item_id', $p_menu_item_id, PDO::PARAM_INT);
-        $stmt->bindValue(':p_menu_item_name', $p_menu_item_name, PDO::PARAM_STR);
-        $stmt->bindValue(':p_menu_item_url', $p_menu_item_url, PDO::PARAM_STR);
-        $stmt->bindValue(':p_menu_group_id', $p_menu_group_id, PDO::PARAM_INT);
-        $stmt->bindValue(':p_menu_group_name', $p_menu_group_name, PDO::PARAM_STR);
-        $stmt->bindValue(':p_parent_id', $p_parent_id, PDO::PARAM_INT);
-        $stmt->bindValue(':p_parent_name', $p_parent_name, PDO::PARAM_STR);
-        $stmt->bindValue(':p_menu_item_icon', $p_menu_item_icon, PDO::PARAM_STR);
-        $stmt->bindValue(':p_order_sequence', $p_order_sequence, PDO::PARAM_INT);
+    public function updateUploadSetting($p_upload_setting_id, $p_upload_setting_name, $p_upload_setting_description, $p_max_file_size, $p_last_log_by) {
+        $stmt = $this->db->getConnection()->prepare('CALL updateUploadSetting(:p_upload_setting_id, :p_upload_setting_name, :p_upload_setting_description, :p_max_file_size, :p_last_log_by)');
+        $stmt->bindValue(':p_upload_setting_id', $p_upload_setting_id, PDO::PARAM_INT);
+        $stmt->bindValue(':p_upload_setting_name', $p_upload_setting_name, PDO::PARAM_STR);
+        $stmt->bindValue(':p_upload_setting_description', $p_upload_setting_description, PDO::PARAM_STR);
+        $stmt->bindValue(':p_max_file_size', $p_max_file_size, PDO::PARAM_STR);
         $stmt->bindValue(':p_last_log_by', $p_last_log_by, PDO::PARAM_INT);
         $stmt->execute();
     }
@@ -57,38 +47,28 @@ class MenuItemModel {
 
     # -------------------------------------------------------------
     #
-    # Function: insertMenuItem
-    # Description: Inserts the menu item.
+    # Function: insertUploadSetting
+    # Description: Inserts the upload setting.
     #
     # Parameters:
-    # - $p_menu_item_name (string): The menu item name.
-    # - $p_menu_item_url (string): The menu item URL.
-    # - $p_menu_group_id (int): The menu group ID.
-    # - $p_menu_group_name (string): The menu group name.
-    # - $p_parent_id (int): The parent ID.
-    # - $p_parent_name (string): The parent name.
-    # - $p_menu_item_icon (string): The parent name.
-    # - $p_order_sequence (int): The order sequence of menu item.
+    # - $p_upload_setting_name (string): The upload setting name.
+    # - $p_upload_setting_description (string): The upload setting description.
+    # - $p_max_file_size (int): The menu group ID.
     # - $p_last_log_by (int): The last logged user.
     #
     # Returns: String
     #
     # -------------------------------------------------------------
-    public function insertMenuItem($p_menu_item_name, $p_menu_item_url, $p_menu_group_id, $p_menu_group_name, $p_parent_id, $p_parent_name, $p_menu_item_icon, $p_order_sequence, $p_last_log_by) {
-        $stmt = $this->db->getConnection()->prepare('CALL insertMenuItem(:p_menu_item_name, :p_menu_item_url, :p_menu_group_id, :p_menu_group_name, :p_parent_id, :p_parent_name, :p_menu_item_icon, :p_order_sequence, :p_last_log_by, @p_menu_item_id)');
-        $stmt->bindValue(':p_menu_item_name', $p_menu_item_name, PDO::PARAM_STR);
-        $stmt->bindValue(':p_menu_item_url', $p_menu_item_url, PDO::PARAM_STR);
-        $stmt->bindValue(':p_menu_group_id', $p_menu_group_id, PDO::PARAM_INT);
-        $stmt->bindValue(':p_menu_group_name', $p_menu_group_name, PDO::PARAM_STR);
-        $stmt->bindValue(':p_parent_id', $p_parent_id, PDO::PARAM_INT);
-        $stmt->bindValue(':p_parent_name', $p_parent_name, PDO::PARAM_STR);
-        $stmt->bindValue(':p_menu_item_icon', $p_menu_item_icon, PDO::PARAM_STR);
-        $stmt->bindValue(':p_order_sequence', $p_order_sequence, PDO::PARAM_INT);
+    public function insertUploadSetting($p_upload_setting_name, $p_upload_setting_description, $p_max_file_size, $p_last_log_by) {
+        $stmt = $this->db->getConnection()->prepare('CALL insertUploadSetting(:p_upload_setting_name, :p_upload_setting_description, :p_max_file_size, :p_last_log_by, @p_upload_setting_id)');
+        $stmt->bindValue(':p_upload_setting_name', $p_upload_setting_name, PDO::PARAM_STR);
+        $stmt->bindValue(':p_upload_setting_description', $p_upload_setting_description, PDO::PARAM_STR);
+        $stmt->bindValue(':p_max_file_size', $p_max_file_size, PDO::PARAM_STR);
         $stmt->bindValue(':p_last_log_by', $p_last_log_by, PDO::PARAM_INT);
         $stmt->execute();
         
-        $result = $this->db->getConnection()->query('SELECT @p_menu_item_id AS menu_item_id');
-        $menuItemID = $result->fetch(PDO::FETCH_ASSOC)['menu_item_id'];
+        $result = $this->db->getConnection()->query('SELECT @p_upload_setting_id AS upload_setting_id');
+        $menuItemID = $result->fetch(PDO::FETCH_ASSOC)['upload_setting_id'];
         
         return $menuItemID;
     }
@@ -100,18 +80,18 @@ class MenuItemModel {
 
     # -------------------------------------------------------------
     #
-    # Function: checkMenuItemExist
-    # Description: Checks if a menu item exists.
+    # Function: checkUploadSettingExist
+    # Description: Checks if a upload setting exists.
     #
     # Parameters:
-    # - $p_menu_item_id (int): The menu item ID.
+    # - $p_upload_setting_id (int): The upload setting ID.
     #
     # Returns: The result of the query as an associative array.
     #
     # -------------------------------------------------------------
-    public function checkMenuItemExist($p_menu_item_id) {
-        $stmt = $this->db->getConnection()->prepare('CALL checkMenuItemExist(:p_menu_item_id)');
-        $stmt->bindValue(':p_menu_item_id', $p_menu_item_id, PDO::PARAM_INT);
+    public function checkUploadSettingExist($p_upload_setting_id) {
+        $stmt = $this->db->getConnection()->prepare('CALL checkUploadSettingExist(:p_upload_setting_id)');
+        $stmt->bindValue(':p_upload_setting_id', $p_upload_setting_id, PDO::PARAM_INT);
         $stmt->execute();
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
@@ -123,18 +103,18 @@ class MenuItemModel {
 
     # -------------------------------------------------------------
     #
-    # Function: deleteMenuItem
-    # Description: Deletes the menu item.
+    # Function: deleteUploadSetting
+    # Description: Deletes the upload setting.
     #
     # Parameters:
-    # - $p_menu_item_id (int): The menu item ID.
+    # - $p_upload_setting_id (int): The upload setting ID.
     #
     # Returns: None
     #
     # -------------------------------------------------------------
-    public function deleteMenuItem($p_menu_item_id) {
-        $stmt = $this->db->getConnection()->prepare('CALL deleteMenuItem(:p_menu_item_id)');
-        $stmt->bindValue(':p_menu_item_id', $p_menu_item_id, PDO::PARAM_INT);
+    public function deleteUploadSetting($p_upload_setting_id) {
+        $stmt = $this->db->getConnection()->prepare('CALL deleteUploadSetting(:p_upload_setting_id)');
+        $stmt->bindValue(':p_upload_setting_id', $p_upload_setting_id, PDO::PARAM_INT);
         $stmt->execute();
     }
     # -------------------------------------------------------------
@@ -145,52 +125,21 @@ class MenuItemModel {
 
     # -------------------------------------------------------------
     #
-    # Function: getMenuItem
-    # Description: Retrieves the details of a menu item.
+    # Function: getUploadSetting
+    # Description: Retrieves the details of a upload setting.
     #
     # Parameters:
-    # - $p_menu_item_id (int): The menu item ID.
+    # - $p_upload_setting_id (int): The upload setting ID.
     #
     # Returns:
-    # - An array containing the menu item details.
+    # - An array containing the upload setting details.
     #
     # -------------------------------------------------------------
-    public function getMenuItem($p_menu_item_id) {
-        $stmt = $this->db->getConnection()->prepare('CALL getMenuItem(:p_menu_item_id)');
-        $stmt->bindValue(':p_menu_item_id', $p_menu_item_id, PDO::PARAM_INT);
+    public function getUploadSetting($p_upload_setting_id) {
+        $stmt = $this->db->getConnection()->prepare('CALL getUploadSetting(:p_upload_setting_id)');
+        $stmt->bindValue(':p_upload_setting_id', $p_upload_setting_id, PDO::PARAM_INT);
         $stmt->execute();
         return $stmt->fetch(PDO::FETCH_ASSOC);
-    }
-    # -------------------------------------------------------------
-
-    # -------------------------------------------------------------
-    #   Generate methods
-    # -------------------------------------------------------------
-
-    # -------------------------------------------------------------
-    #
-    # Function: generateMenuItemOptions
-    # Description: Generates the menu item options.
-    #
-    # Parameters:None
-    #
-    # Returns: String.
-    #
-    # -------------------------------------------------------------
-    public function generateMenuItemOptions() {
-        $stmt = $this->db->getConnection()->prepare('CALL generateMenuItemOptions()');
-        $stmt->execute();
-        $options = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-        $htmlOptions = '';
-        foreach ($options as $row) {
-            $menuItemID = $row['menu_item_id'];
-            $menuItemName = $row['menu_item_name'];
-
-            $htmlOptions .= '<option value="' . htmlspecialchars($menuItemID, ENT_QUOTES) . '">' . htmlspecialchars($menuItemName, ENT_QUOTES) . '</option>';
-        }
-
-        return $htmlOptions;
     }
     # -------------------------------------------------------------
 }

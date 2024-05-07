@@ -3,13 +3,13 @@ require_once '../../../session.php';
 require_once '../../global/config/config.php';
 require_once '../../global/model/database-model.php';
 require_once '../../global/model/system-model.php';
-require_once '../../menu-item/model/menu-item-model.php';
+require_once '../../upload-setting/model/upload-setting-model.php';
 require_once '../../global/model/security-model.php';
 require_once '../../global/model/global-model.php';
 
 $databaseModel = new DatabaseModel();
 $systemModel = new SystemModel();
-$menuItemModel = new MenuItemModel($databaseModel);
+$uploadSettingModel = new UploadSettingModel($databaseModel);
 $securityModel = new SecurityModel();
 $globalModel = new GlobalModel($databaseModel, $securityModel);
 
@@ -22,47 +22,52 @@ if(isset($_POST['type']) && !empty($_POST['type'])){
     switch ($type) {
         # -------------------------------------------------------------
         #
-        # Type: menu item table
+        # Type: upload setting table
         # Description:
-        # Generates the menu item table.
+        # Generates the upload setting table.
         #
         # Parameters: None
         #
         # Returns: Array
         #
         # -------------------------------------------------------------
-        case 'menu item table':
-            $filterByMenuGroup = isset($_POST['filter_by_menu_group']) ? htmlspecialchars($_POST['filter_by_menu_group'], ENT_QUOTES, 'UTF-8') : null;
-            $sql = $databaseModel->getConnection()->prepare('CALL generateMenuItemTable(:filterByMenuGroup)');
-            $sql->bindValue(':filterByMenuGroup', $filterByMenuGroup, PDO::PARAM_INT);
+        case 'upload setting table':
+            $sql = $databaseModel->getConnection()->prepare('CALL generateUploadSettingTable()');
             $sql->execute();
             $options = $sql->fetchAll(PDO::FETCH_ASSOC);
             $sql->closeCursor();
 
-            $menuItemDeleteAccess = $globalModel->checkAccessRights($userID, $pageID, 'delete');
+            $uploadSettingDeleteAccess = $globalModel->checkAccessRights($userID, $pageID, 'delete');
 
             foreach ($options as $row) {
-                $menuItemID = $row['menu_item_id'];
-                $menuItemName = $row['menu_item_name'];
-                $menuGroupName = $row['menu_group_name'];
-                $orderSequence = $row['order_sequence'];
+                $uploadSettingID = $row['upload_setting_id'];
+                $uploadSettingName = $row['upload_setting_name'];
+                $description = $row['description'];
+                $maxFileSize = $row['max_file_size'];
 
-                $menuItemIDEncrypted = $securityModel->encryptData($menuItemID);
+                $uploadSettingIDEncrypted = $securityModel->encryptData($uploadSettingID);
 
                 $deleteButton = '';
-                if($menuItemDeleteAccess['total'] > 0){
-                    $deleteButton = '<a href="javascript:void(0);" class="text-danger ms-3 delete-menu-item" data-menu-item-id="' . $menuItemID . '" title="Delete Menu Item">
+                if($uploadSettingDeleteAccess['total'] > 0){
+                    $deleteButton = '<a href="javascript:void(0);" class="text-danger ms-3 delete-upload-setting" data-upload-setting-id="' . $uploadSettingID . '" title="Delete Menu Item">
                                         <i class="ti ti-trash fs-5"></i>
                                     </a>';
                 }
 
                 $response[] = [
-                    'CHECK_BOX' => '<input class="form-check-input datatable-checkbox-children" type="checkbox" value="'. $menuItemID .'">',
-                    'MENU_ITEM_NAME' => $menuItemName,
-                    'MENU_GROUP_NAME' => $menuGroupName,
-                    'ORDER_SEQUENCE' => $orderSequence,
+                    'CHECK_BOX' => '<input class="form-check-input datatable-checkbox-children" type="checkbox" value="'. $uploadSettingID .'">',
+                    'UPLOAD_SETTING' => '<div class="d-flex align-items-center">
+                                                <div class="ms-3">
+                                                    <div class="user-meta-info">
+                                                        <h6 class="user-name mb-0">'. $uploadSettingName .'</h6>
+                                                        <small>'. $description .'</small>
+                                                    </div>
+                                                </div>
+                                            </a>
+                                        </div>',
+                    'MAX_FILE_SIZE' => $maxFileSize . ' kb',
                     'ACTION' => '<div class="action-btn">
-                                    <a href="'. $pageLink .'&id='. $menuItemIDEncrypted .'" class="text-info" title="View Details">
+                                    <a href="'. $pageLink .'&id='. $uploadSettingIDEncrypted .'" class="text-info" title="View Details">
                                         <i class="ti ti-eye fs-5"></i>
                                     </a>
                                    '. $deleteButton .'
@@ -76,32 +81,32 @@ if(isset($_POST['type']) && !empty($_POST['type'])){
 
         # -------------------------------------------------------------
         #
-        # Type: submenu item table
+        # Type: subupload setting table
         # Description:
-        # Generates the submenu item table.
+        # Generates the subupload setting table.
         #
         # Parameters: None
         #
         # Returns: Array
         #
         # -------------------------------------------------------------
-        case 'submenu item table':
-            if(isset($_POST['menu_item_id']) && !empty($_POST['menu_item_id'])){
-                $menuItemID = htmlspecialchars($_POST['menu_item_id'], ENT_QUOTES, 'UTF-8');
-                $sql = $databaseModel->getConnection()->prepare('CALL generateSubmenuItemTable(:menuItemID)');
-                $sql->bindValue(':menuItemID', $menuItemID, PDO::PARAM_INT);
+        case 'subupload setting table':
+            if(isset($_POST['upload_setting_id']) && !empty($_POST['upload_setting_id'])){
+                $uploadSettingID = htmlspecialchars($_POST['upload_setting_id'], ENT_QUOTES, 'UTF-8');
+                $sql = $databaseModel->getConnection()->prepare('CALL generateSubuploadSettingTable(:uploadSettingID)');
+                $sql->bindValue(':uploadSettingID', $uploadSettingID, PDO::PARAM_INT);
                 $sql->execute();
                 $options = $sql->fetchAll(PDO::FETCH_ASSOC);
                 $sql->closeCursor();
     
                 foreach ($options as $row) {
-                    $menuItemName = $row['menu_item_name'];
+                    $uploadSettingName = $row['upload_setting_name'];
                     $orderSequence = $row['order_sequence'];
     
-                    $menuItemIDEncrypted = $securityModel->encryptData($menuItemID);
+                    $uploadSettingIDEncrypted = $securityModel->encryptData($uploadSettingID);
     
                     $response[] = [
-                        'MENU_ITEM_NAME' => $menuItemName,
+                        'MENU_ITEM_NAME' => $uploadSettingName,
                         'ORDER_SEQUENCE' => $orderSequence,
                     ];
                 }
@@ -113,17 +118,17 @@ if(isset($_POST['type']) && !empty($_POST['type'])){
 
         # -------------------------------------------------------------
         #
-        # Type: menu item options
+        # Type: upload setting options
         # Description:
-        # Generates the menu item options.
+        # Generates the upload setting options.
         #
         # Parameters: None
         #
         # Returns: Array
         #
         # -------------------------------------------------------------
-        case 'menu item options':
-            $sql = $databaseModel->getConnection()->prepare('CALL generateMenuItemOptions()');
+        case 'upload setting options':
+            $sql = $databaseModel->getConnection()->prepare('CALL generateUploadSettingOptions()');
             $sql->execute();
             $options = $sql->fetchAll(PDO::FETCH_ASSOC);
             $sql->closeCursor();
@@ -134,12 +139,12 @@ if(isset($_POST['type']) && !empty($_POST['type'])){
             ];
 
             foreach ($options as $row) {
-                $menuItemID = $row['menu_item_id'];
-                $menuItemName = $row['menu_item_name'];
+                $uploadSettingID = $row['upload_setting_id'];
+                $uploadSettingName = $row['upload_setting_name'];
 
                 $response[] = [
-                    'id' => $row['menu_item_id'],
-                    'text' => $row['menu_item_name']
+                    'id' => $row['upload_setting_id'],
+                    'text' => $row['upload_setting_name']
                 ];
             }
 
@@ -149,19 +154,19 @@ if(isset($_POST['type']) && !empty($_POST['type'])){
 
         # -------------------------------------------------------------
         #
-        # Type: role menu item dual listbox options
+        # Type: role upload setting dual listbox options
         # Description:
-        # Generates the role menu item dual listbox options.
+        # Generates the role upload setting dual listbox options.
         #
         # Parameters: None
         #
         # Returns: Array
         #
         # -------------------------------------------------------------
-        case 'role menu item dual listbox options':
+        case 'role upload setting dual listbox options':
             if(isset($_POST['role_id']) && !empty($_POST['role_id'])){
                 $roleID = htmlspecialchars($_POST['role_id'], ENT_QUOTES, 'UTF-8');
-                $sql = $databaseModel->getConnection()->prepare('CALL generateRoleMenuItemDualListBoxOptions(:roleID)');
+                $sql = $databaseModel->getConnection()->prepare('CALL generateRoleUploadSettingDualListBoxOptions(:roleID)');
                 $sql->bindValue(':roleID', $roleID, PDO::PARAM_INT);
                 $sql->execute();
                 $options = $sql->fetchAll(PDO::FETCH_ASSOC);
@@ -169,8 +174,8 @@ if(isset($_POST['type']) && !empty($_POST['type'])){
 
                 foreach ($options as $row) {
                     $response[] = [
-                        'id' => $row['menu_item_id'],
-                        'text' => $row['menu_item_name']
+                        'id' => $row['upload_setting_id'],
+                        'text' => $row['upload_setting_name']
                     ];
                 }
 

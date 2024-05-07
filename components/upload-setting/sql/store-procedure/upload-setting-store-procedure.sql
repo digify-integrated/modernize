@@ -2,30 +2,30 @@ DELIMITER //
 
 /* Check Stored Procedure */
 
-CREATE PROCEDURE checkMenuItemExist(IN p_menu_item_id INT)
+CREATE PROCEDURE checkUploadSettingExist(IN p_upload_setting_id INT)
 BEGIN
 	SELECT COUNT(*) AS total
-    FROM menu_item
-    WHERE menu_item_id = p_menu_item_id;
+    FROM upload_setting
+    WHERE upload_setting_id = p_upload_setting_id;
 END //
 
 /* ----------------------------------------------------------------------------------------------------------------------------- */
 
 /* Insert Stored Procedure */
 
-CREATE PROCEDURE insertMenuItem(IN p_menu_item_name VARCHAR(100), IN p_menu_item_url VARCHAR(50), IN p_menu_group_id INT, IN p_menu_group_name VARCHAR(100), IN p_parent_id INT, IN p_parent_name VARCHAR(100), IN p_menu_item_icon VARCHAR(50), IN p_order_sequence TINYINT(10), IN p_last_log_by INT, OUT p_menu_item_id INT)
+CREATE PROCEDURE insertUploadSetting(IN p_upload_setting_name VARCHAR(100), IN p_upload_setting_description VARCHAR(200), IN p_max_file_size DOUBLE, IN p_last_log_by INT, OUT p_upload_setting_id INT)
 BEGIN
-    INSERT INTO menu_item (menu_item_name, menu_item_url, menu_group_id, menu_group_name, parent_id, parent_name, menu_item_icon, order_sequence, last_log_by) 
-	VALUES(p_menu_item_name, p_menu_item_url, p_menu_group_id, p_menu_group_name, p_parent_id, p_parent_name, p_menu_item_icon, p_order_sequence, p_last_log_by);
+    INSERT INTO upload_setting (upload_setting_name, upload_setting_description, max_file_size, last_log_by) 
+	VALUES(p_upload_setting_name, p_upload_setting_description, p_max_file_size, p_last_log_by);
 	
-    SET p_menu_item_id = LAST_INSERT_ID();
+    SET p_upload_setting_id = LAST_INSERT_ID();
 END //
 
 /* ----------------------------------------------------------------------------------------------------------------------------- */
 
 /* Update Stored Procedure */
 
-CREATE PROCEDURE updateMenuItem(IN p_menu_item_id INT, IN p_menu_item_name VARCHAR(100), IN p_menu_item_url VARCHAR(50), IN p_menu_group_id INT, IN p_menu_group_name VARCHAR(100), IN p_parent_id INT, IN p_parent_name VARCHAR(100), IN p_menu_item_icon VARCHAR(50), IN p_order_sequence TINYINT(10), IN p_last_log_by INT)
+CREATE PROCEDURE updateUploadSetting(IN p_upload_setting_id INT, IN p_upload_setting_name VARCHAR(100), IN p_upload_setting_description VARCHAR(200), IN p_max_file_size DOUBLE, IN p_last_log_by INT)
 BEGIN
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
     BEGIN
@@ -34,22 +34,17 @@ BEGIN
 
     START TRANSACTION;
 
-    UPDATE role_permission
-    SET menu_item_name = p_menu_item_name,
+    UPDATE upload_setting_file_extension
+    SET upload_setting_name = p_upload_setting_name,
         last_log_by = p_last_log_by
-    WHERE menu_item_id = p_menu_item_id;
+    WHERE upload_setting_id = p_upload_setting_id;
 
-    UPDATE menu_item
-    SET menu_item_name = p_menu_item_name,
-        menu_item_url = p_menu_item_url,
-        menu_group_id = p_menu_group_id,
-        menu_group_name = p_menu_group_name,
-        parent_id = p_parent_id,
-        parent_name = p_parent_name,
-        menu_item_icon = p_menu_item_icon,
-        order_sequence = p_order_sequence,
+    UPDATE upload_setting
+    SET upload_setting_name = p_upload_setting_name,
+        upload_setting_description = p_upload_setting_description,
+        max_file_size = p_max_file_size,
         last_log_by = p_last_log_by
-    WHERE menu_item_id = p_menu_item_id;
+    WHERE upload_setting_id = p_upload_setting_id;
 
     COMMIT;
 END //
@@ -58,7 +53,7 @@ END //
 
 /* Delete Stored Procedure */
 
-CREATE PROCEDURE deleteMenuItem(IN p_menu_item_id INT)
+CREATE PROCEDURE deleteUploadSetting(IN p_upload_setting_id INT)
 BEGIN
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
     BEGIN
@@ -67,8 +62,8 @@ BEGIN
 
     START TRANSACTION;
 
-    DELETE FROM role_permission WHERE menu_item_id = p_menu_item_id;
-    DELETE FROM menu_item WHERE menu_item_id = p_menu_item_id;
+    DELETE FROM upload_setting_file_extension WHERE upload_setting_id = p_upload_setting_id;
+    DELETE FROM upload_setting WHERE upload_setting_id = p_upload_setting_id;
 
     COMMIT;
 END //
@@ -77,55 +72,21 @@ END //
 
 /* Get Stored Procedure */
 
-CREATE PROCEDURE getMenuItem(IN p_menu_item_id INT)
+CREATE PROCEDURE getUploadSetting(IN p_upload_setting_id INT)
 BEGIN
-	SELECT * FROM menu_item
-	WHERE menu_item_id = p_menu_item_id;
+	SELECT * FROM upload_setting
+	WHERE upload_setting_id = p_upload_setting_id;
 END //
 
 /* ----------------------------------------------------------------------------------------------------------------------------- */
 
 /* Generate Stored Procedure */
 
-CREATE PROCEDURE generateMenuItemTable(IN p_filter_by_menu_group INT)
+CREATE PROCEDURE generateUploadSettingTable()
 BEGIN
-    DECLARE query VARCHAR(5000);
-
-    SET query = CONCAT('
-        SELECT menu_item_id, menu_item_name, menu_group_name, order_sequence 
-        FROM menu_item 
-        WHERE 1');
-
-    IF p_filter_by_menu_group IS NOT NULL THEN
-        SET query = CONCAT(query, ' AND menu_group_id = ', p_filter_by_menu_group);
-    END IF;
-
-    SET query = CONCAT(query, ' ORDER BY menu_item_name');
-
-    PREPARE stmt FROM query;
-    EXECUTE stmt;
-    DEALLOCATE PREPARE stmt;
-END //
-
-CREATE PROCEDURE generateSubmenuItemTable(IN p_parent_id INT)
-BEGIN
-	SELECT * FROM menu_item
-	WHERE parent_id = p_parent_id AND parent_id IS NOT NULL;
-END //
-
-CREATE PROCEDURE generateMenuItemOptions()
-BEGIN
-	SELECT menu_item_id, menu_item_name 
-    FROM menu_item 
-    ORDER BY menu_item_name;
-END //
-
-CREATE PROCEDURE generateRoleMenuItemDualListBoxOptions(IN p_role_id INT)
-BEGIN
-	SELECT menu_item_id, menu_item_name 
-    FROM menu_item 
-    WHERE menu_item_id NOT IN (SELECT menu_item_id FROM role_permission WHERE role_id = p_role_id)
-    ORDER BY menu_item_name;
+    SELECT upload_setting_id, upload_setting_name, upload_setting_description, max_file_size 
+    FROM upload_setting
+    ORDER BY upload_setting_name;
 END //
 
 /* ----------------------------------------------------------------------------------------------------------------------------- */

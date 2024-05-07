@@ -104,6 +104,14 @@ BEGIN
     DEALLOCATE PREPARE stmt;
 END //
 
+CREATE PROCEDURE generateUploadSettingFileExtensionTable(IN p_upload_setting_id INT)
+BEGIN
+    SELECT upload_setting_file_extension_id, file_extension_name, file_extension 
+    FROM upload_setting_file_extension 
+    WHERE upload_setting_file_extension_id = p_upload_setting_id
+    ORDER BY file_extension_name;
+END //
+
 CREATE PROCEDURE generateFileExtensionDualListBoxOptions(IN p_upload_setting_file_extension_id INT)
 BEGIN
 	SELECT file_extension_id, file_extension_name, file_extension

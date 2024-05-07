@@ -51,19 +51,64 @@ if(isset($_POST['type']) && !empty($_POST['type'])){
 
                 $deleteButton = '';
                 if($fileExtensionDeleteAccess['total'] > 0){
-                    $deleteButton = '<a href="javascript:void(0);" class="text-danger ms-3 delete-file-extension" data-file-extension-id="' . $fileExtensionID . '" title="Delete Menu Item">
+                    $deleteButton = '<a href="javascript:void(0);" class="text-danger ms-3 delete-file-extension" data-file-extension-id="' . $fileExtensionID . '" title="Delete File Extension">
                                         <i class="ti ti-trash fs-5"></i>
                                     </a>';
                 }
 
                 $response[] = [
                     'CHECK_BOX' => '<input class="form-check-input datatable-checkbox-children" type="checkbox" value="'. $fileExtensionID .'">',
-                    'FILE_EXTENSION_NAME' => $fileExtensionName . ' (' . $fileExtension . ')',
+                    'FILE_EXTENSION_NAME' => $fileExtensionName . ' (.' . $fileExtension . ')',
                     'FILE_TYPE_NAME' => $fileTypeName,
                     'ACTION' => '<div class="action-btn">
                                     <a href="'. $pageLink .'&id='. $fileExtensionIDEncrypted .'" class="text-info" title="View Details">
                                         <i class="ti ti-eye fs-5"></i>
                                     </a>
+                                   '. $deleteButton .'
+                                </div>'
+                ];
+            }
+
+            echo json_encode($response);
+        break;
+        # -------------------------------------------------------------
+
+        # -------------------------------------------------------------
+        #
+        # Type: assigned file extension table
+        # Description:
+        # Generates the assigned file extension table.
+        #
+        # Parameters: None
+        #
+        # Returns: Array
+        #
+        # -------------------------------------------------------------
+        case 'assigned file extension table':
+            $uploadSettingID = isset($_POST['upload_setting_id']) ? htmlspecialchars($_POST['upload_setting_id'], ENT_QUOTES, 'UTF-8') : null;
+            $sql = $databaseModel->getConnection()->prepare('CALL generateUploadSettingFileExtensionTable(:uploadSettingID)');
+            $sql->bindValue(':uploadSettingID', $uploadSettingID, PDO::PARAM_INT);
+            $sql->execute();
+            $options = $sql->fetchAll(PDO::FETCH_ASSOC);
+            $sql->closeCursor();
+
+            $deleteFileExtensionAccess = $globalModel->checkSystemActionAccessRights($userID, 14);
+
+            foreach ($options as $row) {
+                $uploadSettingFileExtensionID = $row['upload_setting_file_extension_id'];
+                $fileExtensionName = $row['file_extension_name'];
+                $fileExtension = $row['file_extension'];
+
+                $deleteButton = '';
+                if($deleteFileExtensionAccess['total'] > 0){
+                    $deleteButton = '<a href="javascript:void(0);" class="text-danger ms-3 delete-file-extension" data-upload-setting-file-extension-id="' . $uploadSettingFileExtensionID . '" title="Delete File Extension">
+                                        <i class="ti ti-trash fs-5"></i>
+                                    </a>';
+                }
+
+                $response[] = [
+                    'FILE_EXTENSION' => $fileExtensionName . ' (.' . $fileExtension . ')',
+                    'ACTION' => '<div class="action-btn">
                                    '. $deleteButton .'
                                 </div>'
                 ];
@@ -84,11 +129,12 @@ if(isset($_POST['type']) && !empty($_POST['type'])){
         # Returns: Array
         #
         # -------------------------------------------------------------
-        case 'file extension dual listbox options':
-            if(isset($_POST['upload_setting_file_extension_id']) && !empty($_POST['upload_setting_file_extension_id'])){
-                $uploadeSettingFileExtensionID = htmlspecialchars($_POST['upload_setting_file_extension_id'], ENT_QUOTES, 'UTF-8');
-                $sql = $databaseModel->getConnection()->prepare('CALL generateFileExtensionDualListBoxOptions(:roleID)');
-                $sql->bindValue(':uploadeSettingFileExtensionID', $uploadeSettingFileExtensionID, PDO::PARAM_INT);
+        case 'file extension upload setting dual listbox options':
+            if(isset($_POST['upload_setting_id']) && !empty($_POST['upload_setting_id'])){
+                $uploadSettingID = htmlspecialchars($_POST['upload_setting_id'], ENT_QUOTES, 'UTF-8');
+
+                $sql = $databaseModel->getConnection()->prepare('CALL generateFileExtensionDualListBoxOptions(:uploadSettingID)');
+                $sql->bindValue(':uploadSettingID', $uploadSettingID, PDO::PARAM_INT);
                 $sql->execute();
                 $options = $sql->fetchAll(PDO::FETCH_ASSOC);
                 $sql->closeCursor();

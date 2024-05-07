@@ -2,11 +2,8 @@
     'use strict';
 
     $(function() {
-        generateDropdownOptions('menu group options');
-        generateDropdownOptions('menu item options');
-
-        if($('#menu-item-form').length){
-            menuItemForm();
+        if($('#upload-setting-form').length){
+            uploadSettingForm();
         }
 
         $(document).on('click','#discard-create',function() {
@@ -16,28 +13,28 @@
     });
 })(jQuery);
 
-function menuItemForm(){
-    $('#menu-item-form').validate({
+function uploadSettingForm(){
+    $('#upload-setting-form').validate({
         rules: {
-            menu_item_name: {
+            upload_setting_name: {
                 required: true
             },
-            menu_group: {
+            max_file_size: {
                 required: true
             },
-            order_sequence: {
+            upload_setting_description: {
                 required: true
             }
         },
         messages: {
-            menu_item_name: {
+            upload_setting_name: {
                 required: 'Please enter the display name'
             },
-            menu_group: {
-                required: 'Please choose the menu group'
+            max_file_size: {
+                required: 'Please enter the max file size'
             },
-            order_sequence: {
-                required: 'Please enter the order sequence'
+            upload_setting_description: {
+                required: 'Please enter the description'
             }
         },
         errorPlacement: function (error, element) {
@@ -62,12 +59,12 @@ function menuItemForm(){
             }
         },
         submitHandler: function(form) {
-            const transaction = 'add menu item';
+            const transaction = 'add upload setting';
             const page_link = document.getElementById('page-link').getAttribute('href');
           
             $.ajax({
                 type: 'POST',
-                url: 'components/menu-item/controller/menu-item-controller.php',
+                url: 'components/upload-setting/controller/upload-setting-controller.php',
                 data: $(form).serialize() + '&transaction=' + transaction,
                 dataType: 'json',
                 beforeSend: function() {
@@ -76,7 +73,7 @@ function menuItemForm(){
                 success: function (response) {
                     if (response.success) {
                         setNotification(response.title, response.message, response.messageType);
-                        window.location = page_link + '&id=' + response.menuItemID;
+                        window.location = page_link + '&id=' + response.uploadSettingID;
                     }
                     else {
                         if (response.isInactive || response.notExist || response.userInactive || response.userLocked || response.sessionExpired) {
@@ -103,59 +100,4 @@ function menuItemForm(){
             return false;
         }
     });
-}
-
-function generateDropdownOptions(type){
-    switch (type) {
-        case 'menu group options':
-            
-            $.ajax({
-                url: 'components/menu-group/view/_menu_group_generation.php',
-                method: 'POST',
-                dataType: 'json',
-                data: {
-                    type : type
-                },
-                success: function(response) {
-                    $('#menu_group').select2({
-                        data: response
-                    }).on('change', function (e) {
-                        $(this).valid()
-                    });
-                },
-                error: function(xhr, status, error) {
-                    var fullErrorMessage = `XHR status: ${status}, Error: ${error}`;
-                    if (xhr.responseText) {
-                        fullErrorMessage += `, Response: ${xhr.responseText}`;
-                    }
-                    showErrorDialog(fullErrorMessage);
-                }
-            });
-            break;
-        case 'menu item options':
-            
-            $.ajax({
-                url: 'components/menu-item/view/_menu_item_generation.php',
-                method: 'POST',
-                dataType: 'json',
-                data: {
-                    type : type
-                },
-                success: function(response) {
-                    $('#parent_id').select2({
-                        data: response
-                    }).on('change', function (e) {
-                        $(this).valid()
-                    });
-                },
-                error: function(xhr, status, error) {
-                    var fullErrorMessage = `XHR status: ${status}, Error: ${error}`;
-                    if (xhr.responseText) {
-                        fullErrorMessage += `, Response: ${xhr.responseText}`;
-                    }
-                    showErrorDialog(fullErrorMessage);
-                }
-            });
-            break;
-    }
 }

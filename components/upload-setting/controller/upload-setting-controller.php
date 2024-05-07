@@ -3,18 +3,18 @@ session_start();
 
 # -------------------------------------------------------------
 #
-# Function: MenuItemController
+# Function: UploadSettingController
 # Description: 
-# The MenuItemController class handles menu item related operations and interactions.
+# The UploadSettingController class handles upload setting related operations and interactions.
 #
 # Parameters: None
 #
 # Returns: None
 #
 # -------------------------------------------------------------
-class MenuItemController {
-    private $menuItemModel;
-    private $menuGroupModel;
+class UploadSettingController {
+    private $uploadSettingModel;
+    private $fileExtensionModel;
     private $authenticationModel;
     private $securityModel;
 
@@ -22,21 +22,21 @@ class MenuItemController {
     #
     # Function: __construct
     # Description: 
-    # The constructor initializes the object with the provided menuItemModel, AuthenticationModel and SecurityModel instances.
-    # These instances are used for menu item related, user related operations and security related operations, respectively.
+    # The constructor initializes the object with the provided uploadSettingModel, AuthenticationModel and SecurityModel instances.
+    # These instances are used for upload setting related, user related operations and security related operations, respectively.
     #
     # Parameters:
-    # - @param menuItemModel $menuItemModel     The menuItemModel instance for menu item related operations.
-    # - @param MenuGroupModel $menuGroupModel     The menuGroupModel instance for menu group related operations.
+    # - @param uploadSettingModel $uploadSettingModel     The uploadSettingModel instance for upload setting related operations.
+    # - @param FileExtensionModel $fileExtensionModel     The fileExtensionModel instance for file extension related operations.
     # - @param AuthenticationModel $authenticationModel     The AuthenticationModel instance for user related operations.
     # - @param SecurityModel $securityModel   The SecurityModel instance for security related operations.
     #
     # Returns: None
     #
     # -------------------------------------------------------------
-    public function __construct(MenuItemModel $menuItemModel, MenuGroupModel $menuGroupModel, AuthenticationModel $authenticationModel, SecurityModel $securityModel) {
-        $this->menuItemModel = $menuItemModel;
-        $this->menuGroupModel = $menuGroupModel;
+    public function __construct(UploadSettingModel $uploadSettingModel, FileExtensionModel $fileExtensionModel, AuthenticationModel $authenticationModel, SecurityModel $securityModel) {
+        $this->uploadSettingModel = $uploadSettingModel;
+        $this->fileExtensionModel = $fileExtensionModel;
         $this->authenticationModel = $authenticationModel;
         $this->securityModel = $securityModel;
     }
@@ -124,20 +124,20 @@ class MenuItemController {
             $transaction = isset($_POST['transaction']) ? $_POST['transaction'] : null;
 
             switch ($transaction) {
-                case 'add menu item':
-                    $this->addMenuItem();
+                case 'add upload setting':
+                    $this->addUploadSetting();
                     break;
-                case 'update menu item':
-                    $this->updateMenuItem();
+                case 'update upload setting':
+                    $this->updateUploadSetting();
                     break;
-                case 'get menu item details':
-                    $this->getMenuItemDetails();
+                case 'get upload setting details':
+                    $this->getUploadSettingDetails();
                     break;
-                case 'delete menu item':
-                    $this->deleteMenuItem();
+                case 'delete upload setting':
+                    $this->deleteUploadSetting();
                     break;
-                case 'delete multiple menu item':
-                    $this->deleteMultipleMenuItem();
+                case 'delete multiple upload setting':
+                    $this->deleteMultipleUploadSetting();
                     break;
                 default:
                     $response = [
@@ -160,42 +160,33 @@ class MenuItemController {
 
     # -------------------------------------------------------------
     #
-    # Function: addMenuItem
+    # Function: addUploadSetting
     # Description: 
-    # Inserts a menu item.
+    # Inserts a upload setting.
     #
     # Parameters: None
     #
     # Returns: Array
     #
     # -------------------------------------------------------------
-    public function addMenuItem() {
+    public function addUploadSetting() {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             return;
         }
 
-        if (isset($_POST['menu_item_name']) && !empty($_POST['menu_item_name']) && isset($_POST['menu_group']) && !empty($_POST['menu_group']) && isset($_POST['order_sequence']) && !empty($_POST['order_sequence']) && isset($_POST['menu_item_url']) && isset($_POST['menu_item_icon'])) {
+        if (isset($_POST['upload_setting_name']) && !empty($_POST['upload_setting_name']) && isset($_POST['upload_setting_description']) && !empty($_POST['upload_setting_description']) && isset($_POST['max_file_size']) && !empty($_POST['max_file_size'])) {
             $userID = $_SESSION['user_account_id'];
-            $menuItemName = $_POST['menu_item_name'];
-            $orderSequence = htmlspecialchars($_POST['order_sequence'], ENT_QUOTES, 'UTF-8');
-            $menuGroup = htmlspecialchars($_POST['menu_group'], ENT_QUOTES, 'UTF-8');
-            $parentID = isset($_POST['parent_id']) ? htmlspecialchars($_POST['parent_id'], ENT_QUOTES, 'UTF-8') : null;
-            $menuItemURL = htmlspecialchars($_POST['menu_item_url'], ENT_QUOTES, 'UTF-8');
-            $menuItemIcon = htmlspecialchars($_POST['menu_item_icon'], ENT_QUOTES, 'UTF-8');
-
-            $menuGroupDetails = $this->menuGroupModel->getMenuGroup($menuGroup);
-            $menuGroupName = $menuGroupDetails['menu_group_name'] ?? null;
-
-            $parentMenuItemDetails = $this->menuItemModel->getMenuItem($parentID);
-            $parentName = $parentMenuItemDetails['menu_item_name'] ?? null;
+            $uploadSettingName = htmlspecialchars($_POST['upload_setting_name'], ENT_QUOTES, 'UTF-8');
+            $uploadSettingDescription = htmlspecialchars($_POST['upload_setting_description'], ENT_QUOTES, 'UTF-8');
+            $maxFileSize = htmlspecialchars($_POST['max_file_size'], ENT_QUOTES, 'UTF-8');
         
-            $menuItemID = $this->menuItemModel->insertMenuItem($menuItemName, $menuItemURL, $menuGroup, $menuGroupName, $parentID, $parentName, $menuItemIcon, $orderSequence, $userID);
+            $uploadSettingID = $this->uploadSettingModel->insertUploadSetting($uploadSettingName, $uploadSettingDescription, $maxFileSize, $userID);
     
             $response = [
                 'success' => true,
-                'menuItemID' => $this->securityModel->encryptData($menuItemID),
-                'title' => 'Insert Menu Item Success',
-                'message' => 'The menu item has been inserted successfully.',
+                'uploadSettingID' => $this->securityModel->encryptData($uploadSettingID),
+                'title' => 'Insert Upload Setting Success',
+                'message' => 'The upload setting has been inserted successfully.',
                 'messageType' => 'success'
             ];
             
@@ -222,39 +213,36 @@ class MenuItemController {
 
     # -------------------------------------------------------------
     #
-    # Function: updateMenuItem
+    # Function: updateUploadSetting
     # Description: 
-    # Updates the menu item if it exists; otherwise, return an error message.
+    # Updates the upload setting if it exists; otherwise, return an error message.
     #
     # Parameters: None
     #
     # Returns: Array
     #
     # -------------------------------------------------------------
-    public function updateMenuItem() {
+    public function updateUploadSetting() {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             return;
         }
         
-        if (isset($_POST['menu_item_id']) && !empty($_POST['menu_item_id']) && isset($_POST['menu_item_name']) && !empty($_POST['menu_item_name']) && isset($_POST['menu_group']) && !empty($_POST['menu_group']) && isset($_POST['order_sequence']) && !empty($_POST['order_sequence']) && isset($_POST['menu_item_url']) && isset($_POST['menu_item_icon'])) {
+        if (isset($_POST['upload_setting_id']) && !empty($_POST['upload_setting_id']) && isset($_POST['upload_setting_name']) && !empty($_POST['upload_setting_name']) && isset($_POST['upload_setting_description']) && !empty($_POST['upload_setting_description']) && isset($_POST['max_file_size']) && !empty($_POST['max_file_size'])) {
             $userID = $_SESSION['user_account_id'];
-            $menuItemID = htmlspecialchars($_POST['menu_item_id'], ENT_QUOTES, 'UTF-8');
-            $menuItemName = $_POST['menu_item_name'];
-            $orderSequence = htmlspecialchars($_POST['order_sequence'], ENT_QUOTES, 'UTF-8');
-            $menuGroup = htmlspecialchars($_POST['menu_group'], ENT_QUOTES, 'UTF-8');
-            $parentID = isset($_POST['parent_id']) ? htmlspecialchars($_POST['parent_id'], ENT_QUOTES, 'UTF-8') : null;
-            $menuItemURL = htmlspecialchars($_POST['menu_item_url'], ENT_QUOTES, 'UTF-8');
-            $menuItemIcon = htmlspecialchars($_POST['menu_item_icon'], ENT_QUOTES, 'UTF-8');
+            $uploadSettingID = htmlspecialchars($_POST['upload_setting_id'], ENT_QUOTES, 'UTF-8');
+            $uploadSettingName = htmlspecialchars($_POST['upload_setting_name'], ENT_QUOTES, 'UTF-8');
+            $uploadSettingDescription = htmlspecialchars($_POST['upload_setting_description'], ENT_QUOTES, 'UTF-8');
+            $maxFileSize = htmlspecialchars($_POST['max_file_size'], ENT_QUOTES, 'UTF-8');
         
-            $checkMenuItemExist = $this->menuItemModel->checkMenuItemExist($menuItemID);
-            $total = $checkMenuItemExist['total'] ?? 0;
+            $checkUploadSettingExist = $this->uploadSettingModel->checkUploadSettingExist($uploadSettingID);
+            $total = $checkUploadSettingExist['total'] ?? 0;
 
             if($total === 0){
                 $response = [
                     'success' => false,
                     'notExist' => true,
-                    'title' => 'Update Menu Item Error',
-                    'message' => 'The menu item has does not exist.',
+                    'title' => 'Update Upload Setting Error',
+                    'message' => 'The upload setting has does not exist.',
                     'messageType' => 'error'
                 ];
                 
@@ -262,18 +250,12 @@ class MenuItemController {
                 exit;
             }
 
-            $menuGroupDetails = $this->menuGroupModel->getMenuGroup($menuGroup);
-            $menuGroupName = $menuGroupDetails['menu_group_name'] ?? null;
-
-            $parentMenuItemDetails = $this->menuItemModel->getMenuItem($parentID);
-            $parentName = $parentMenuItemDetails['menu_item_name'] ?? null;
-
-            $this->menuItemModel->updateMenuItem($menuItemID, $menuItemName, $menuItemURL, $menuGroup, $menuGroupName, $parentID, $parentName, $menuItemIcon, $orderSequence, $userID);
+            $this->uploadSettingModel->updateUploadSetting($uploadSettingID, $uploadSettingName, $uploadSettingDescription, $maxFileSize, $userID);
                 
             $response = [
                 'success' => true,
-                'title' => 'Update Menu Item Success',
-                'message' => 'The menu item has been updated successfully.',
+                'title' => 'Update Upload Setting Success',
+                'message' => 'The upload setting has been updated successfully.',
                 'messageType' => 'success'
             ];
             
@@ -300,32 +282,32 @@ class MenuItemController {
 
     # -------------------------------------------------------------
     #
-    # Function: deleteMenuItem
+    # Function: deleteUploadSetting
     # Description: 
-    # Delete the menu item if it exists; otherwise, return an error message.
+    # Delete the upload setting if it exists; otherwise, return an error message.
     #
     # Parameters: None
     #
     # Returns: Array
     #
     # -------------------------------------------------------------
-    public function deleteMenuItem() {
+    public function deleteUploadSetting() {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             return;
         }
 
-        if (isset($_POST['menu_item_id']) && !empty($_POST['menu_item_id'])) {
-            $menuItemID = htmlspecialchars($_POST['menu_item_id'], ENT_QUOTES, 'UTF-8');
+        if (isset($_POST['upload_setting_id']) && !empty($_POST['upload_setting_id'])) {
+            $uploadSettingID = htmlspecialchars($_POST['upload_setting_id'], ENT_QUOTES, 'UTF-8');
         
-            $checkMenuItemExist = $this->menuItemModel->checkMenuItemExist($menuItemID);
-            $total = $checkMenuItemExist['total'] ?? 0;
+            $checkUploadSettingExist = $this->uploadSettingModel->checkUploadSettingExist($uploadSettingID);
+            $total = $checkUploadSettingExist['total'] ?? 0;
 
             if($total === 0){
                 $response = [
                     'success' => false,
                     'notExist' => true,
-                    'title' => 'Delete Menu Item Error',
-                    'message' => 'The menu item has does not exist.',
+                    'title' => 'Delete Upload Setting Error',
+                    'message' => 'The upload setting has does not exist.',
                     'messageType' => 'error'
                 ];
                 
@@ -333,12 +315,12 @@ class MenuItemController {
                 exit;
             }
 
-            $this->menuItemModel->deleteMenuItem($menuItemID);
+            $this->uploadSettingModel->deleteUploadSetting($uploadSettingID);
                 
             $response = [
                 'success' => true,
-                'title' => 'Delete Menu Item Success',
-                'message' => 'The menu item has been deleted successfully.',
+                'title' => 'Delete Upload Setting Success',
+                'message' => 'The upload setting has been deleted successfully.',
                 'messageType' => 'success'
             ];
             
@@ -361,36 +343,36 @@ class MenuItemController {
 
     # -------------------------------------------------------------
     #
-    # Function: deleteMultipleMenuItem
+    # Function: deleteMultipleUploadSetting
     # Description: 
-    # Delete the selected menu items if it exists; otherwise, skip it.
+    # Delete the selected upload settings if it exists; otherwise, skip it.
     #
     # Parameters: None
     #
     # Returns: Array
     #
     # -------------------------------------------------------------
-    public function deleteMultipleMenuItem() {
+    public function deleteMultipleUploadSetting() {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             return;
         }
 
-        if (isset($_POST['menu_item_id']) && !empty($_POST['menu_item_id'])) {
-            $menuItemIDs = $_POST['menu_item_id'];
+        if (isset($_POST['upload_setting_id']) && !empty($_POST['upload_setting_id'])) {
+            $uploadSettingIDs = $_POST['upload_setting_id'];
     
-            foreach($menuItemIDs as $menuItemID){
-                $checkMenuItemExist = $this->menuItemModel->checkMenuItemExist($menuItemID);
-                $total = $checkMenuItemExist['total'] ?? 0;
+            foreach($uploadSettingIDs as $uploadSettingID){
+                $checkUploadSettingExist = $this->uploadSettingModel->checkUploadSettingExist($uploadSettingID);
+                $total = $checkUploadSettingExist['total'] ?? 0;
 
                 if($total > 0){
-                    $this->menuItemModel->deleteMenuItem($menuItemID);
+                    $this->uploadSettingModel->deleteUploadSetting($uploadSettingID);
                 }
             }
                 
             $response = [
                 'success' => true,
-                'title' => 'Delete Multiple Menu Item Success',
-                'message' => 'The selected menu items have been deleted successfully.',
+                'title' => 'Delete Multiple Upload Setting Success',
+                'message' => 'The selected upload settings have been deleted successfully.',
                 'messageType' => 'success'
             ];
             
@@ -417,33 +399,33 @@ class MenuItemController {
 
     # -------------------------------------------------------------
     #
-    # Function: getMenuItemDetails
+    # Function: getUploadSettingDetails
     # Description: 
-    # Handles the retrieval of menu item details.
+    # Handles the retrieval of upload setting details.
     #
     # Parameters: None
     #
     # Returns: Array
     #
     # -------------------------------------------------------------
-    public function getMenuItemDetails() {
+    public function getUploadSettingDetails() {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             return;
         }
     
-        if (isset($_POST['menu_item_id']) && !empty($_POST['menu_item_id'])) {
+        if (isset($_POST['upload_setting_id']) && !empty($_POST['upload_setting_id'])) {
             $userID = $_SESSION['user_account_id'];
-            $menuItemID = htmlspecialchars($_POST['menu_item_id'], ENT_QUOTES, 'UTF-8');
+            $uploadSettingID = htmlspecialchars($_POST['upload_setting_id'], ENT_QUOTES, 'UTF-8');
 
-            $checkMenuItemExist = $this->menuItemModel->checkMenuItemExist($menuItemID);
-            $total = $checkMenuItemExist['total'] ?? 0;
+            $checkUploadSettingExist = $this->uploadSettingModel->checkUploadSettingExist($uploadSettingID);
+            $total = $checkUploadSettingExist['total'] ?? 0;
 
             if($total === 0){
                 $response = [
                     'success' => false,
                     'notExist' => true,
-                    'title' => 'Get menu item Details Error',
-                    'message' => 'The menu item has does not exist.',
+                    'title' => 'Get upload setting Details Error',
+                    'message' => 'The upload setting has does not exist.',
                     'messageType' => 'error'
                 ];
                 
@@ -451,18 +433,13 @@ class MenuItemController {
                 exit;
             }
     
-            $menuItemDetails = $this->menuItemModel->getMenuItem($menuItemID);
+            $uploadSettingDetails = $this->uploadSettingModel->getUploadSetting($uploadSettingID);
 
             $response = [
                 'success' => true,
-                'menuItemName' => $menuItemDetails['menu_item_name'] ?? null,
-                'menuItemURL' => $menuItemDetails['menu_item_url'] ?? null,
-                'menuGroupID' => $menuItemDetails['menu_group_id'] ?? null,
-                'menuGroupName' => $menuItemDetails['menu_group_name'] ?? null,
-                'parentID' => $menuItemDetails['parent_id'] ?? null,
-                'parentName' => $menuItemDetails['parent_name'] ?? null,
-                'menuItemIcon' => $menuItemDetails['menu_item_icon'] ?? null,
-                'orderSequence' => $menuItemDetails['order_sequence'] ?? null
+                'uploadSettingName' => $uploadSettingDetails['upload_setting_name'] ?? null,
+                'uploadSettingDescription' => $uploadSettingDetails['upload_setting_description'] ?? null,
+                'maxFileSize' => $uploadSettingDetails['max_file_size'] ?? null
             ];
 
             echo json_encode($response);
@@ -488,11 +465,11 @@ require_once '../../global/config/config.php';
 require_once '../../global/model/database-model.php';
 require_once '../../global/model/security-model.php';
 require_once '../../global/model/system-model.php';
-require_once '../../menu-item/model/menu-item-model.php';
-require_once '../../menu-group/model/menu-group-model.php';
+require_once '../../upload-setting/model/upload-setting-model.php';
+require_once '../../file-extension/model/file-extension-model.php';
 require_once '../../authentication/model/authentication-model.php';
 
-$controller = new MenuItemController(new menuItemModel(new DatabaseModel), new MenuGroupModel(new DatabaseModel), new AuthenticationModel(new DatabaseModel), new SecurityModel());
+$controller = new UploadSettingController(new uploadSettingModel(new DatabaseModel), new FileExtensionModel(new DatabaseModel), new AuthenticationModel(new DatabaseModel), new SecurityModel());
 $controller->handleRequest();
 
 ?>
