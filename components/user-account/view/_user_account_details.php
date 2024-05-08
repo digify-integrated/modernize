@@ -35,11 +35,11 @@
                                             <img src="./assets/images/profile/user-1.jpg" alt="" class="img-fluid rounded-circle" width="120" height="120">
                                             <?php
                                                 echo $userAccountWriteAccess['total'] > 0 ? 
-                                                '<div class="d-flex align-items-center justify-content-center my-4 gap-6">
+                                                '<div class="d-flex align-items-center justify-content-center my-4 gap-6" data-bs-toggle="modal" id="update-user-account-profile-picture" data-bs-target="#user-account-profile-picture-modal">
                                                     <button class="btn btn-primary">Upload</button>
                                                 </div>' : '';
                                             ?>
-                                            <p class="mb-0 mt-2">Allowed JPG, GIF or PNG. Max size of 800K</p>
+                                            <p class="mb-0 mt-2">Allowed JPG, JPEG or PNG. Max size of 500kb</p>
                                         </div>
                                     </div>
                                 </div>
@@ -268,6 +268,30 @@
             <div class="modal-footer border-top">
                 <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Close</button>
                 <button type="submit" form="user-account-form" class="btn btn-success" id="submit-data">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="user-account-profile-picture-modal" class="modal fade" tabindex="-1" aria-labelledby="user-account-profile-picture-modal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-r">
+        <div class="modal-content">
+            <div class="modal-header border-bottom">
+                <h5 class="modal-title fw-8">Edit User Account Profile Picture</h5>
+                <button type="button" class="btn-close fs-2" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="user-account-profile-picture-form" method="post" action="#">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <input type="file" class="form-control" id="profile_picture" name="profile_picture">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer border-top">
+                <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Close</button>
+                <button type="submit" form="user-account-profile-picture-form" class="btn btn-success" id="submit-profile-picture">Save changes</button>
             </div>
         </div>
     </div>

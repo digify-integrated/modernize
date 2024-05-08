@@ -142,7 +142,7 @@
                 <button type="button" class="btn-close fs-2" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form id="file-extension-form" method="post" action="#">
+                <form id="file-extension-assignment-form" method="post" action="#">
                     <div class="row">
                         <div class="col-12">
                             <select multiple="multiple" size="20" id="file_extension_id" name="file_extension_id[]"></select>
@@ -152,7 +152,7 @@
             </div>
             <div class="modal-footer border-top">
                 <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Close</button>
-                <button type="submit" form="file-extension-form" class="btn btn-success" id="submit-assignment">Save changes</button>
+                <button type="submit" form="file-extension-assignment-form" class="btn btn-success" id="submit-assignment">Save changes</button>
             </div>
         </div>
     </div>

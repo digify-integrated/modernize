@@ -83,64 +83,12 @@
             generateDropdownOptions('file extension upload setting dual listbox options');
         });
 
-        $(document).on('click','.update-file-extension',function() {
-            const upload_setting_file_extension_id = $(this).data('file-extension-id');
-            const access_type = $(this).data('access-type');
-            const transaction = 'update file extension';
-            var access;
-
-            if ($(this).is(':checked')){  
-                access = '1';
-            }
-            else{
-                access = '0';
-            }
-            
-            $.ajax({
-                type: 'POST',
-                url: 'components/role/controller/role-controller.php',
-                dataType: 'json',
-                data: {
-                    upload_setting_file_extension_id : upload_setting_file_extension_id, 
-                    access_type : access_type,
-                    access : access,
-                    transaction : transaction
-                },
-                success: function (response) {
-                    if (response.success) {
-                        showNotification(response.title, response.message, response.messageType);
-                        reloadDatatable('#assigned-file-extension-table');
-                    }
-                    else {
-                        if (response.isInactive || response.userNotExist || response.userInactive || response.userLocked || response.sessionExpired) {
-                            setNotification(response.title, response.message, response.messageType);
-                            window.location = 'logout.php?logout';
-                        }
-                        else if (response.notExist) {
-                            setNotification(response.title, response.message, response.messageType);
-                            reloadDatatable('#assigned-file-extension-table');
-                        }
-                        else {
-                            showNotification(response.title, response.message, response.messageType);
-                        }
-                    }
-                },
-                error: function(xhr, status, error) {
-                    var fullErrorMessage = `XHR status: ${status}, Error: ${error}`;
-                    if (xhr.responseText) {
-                      fullErrorMessage += `, Response: ${xhr.responseText}`;
-                    }
-                    showErrorDialog(fullErrorMessage);
-                }
-            });
-        });
-
         $(document).on('click','.delete-file-extension',function() {
-            const upload_setting_file_extension_id = $(this).data('file-extension-id');
+            const upload_setting_file_extension_id = $(this).data('upload-setting-file-extension-id');
             const transaction = 'delete file extension';
     
             Swal.fire({
-                title: 'Confirm Role Permission Deletion',
+                title: 'Confirm File Extension Deletion',
                 text: 'Are you sure you want to delete this file extension?',
                 icon: 'warning',
                 showCancelButton: !0,
@@ -155,7 +103,7 @@
                 if (result.value) {
                     $.ajax({
                         type: 'POST',
-                        url: 'components/role/controller/role-controller.php',
+                        url: 'components/upload-setting/controller/upload-setting-controller.php',
                         dataType: 'json',
                         data: {
                             upload_setting_file_extension_id : upload_setting_file_extension_id, 

@@ -16,6 +16,10 @@
             userAccountAssignmentForm();
         }
 
+        if($('#user-account-profile-picture-form').length){
+            updateUserAccountProfilPictureForm();
+        }
+
         $(document).on('click','#edit-details',function() {
             displayDetails('get user account details');
         });
@@ -642,6 +646,84 @@ function changePasswordForm(){
     
             return false;
         }
+    });
+}
+
+function updateUserAccountProfilPictureForm(){
+    $('#user-account-profile-picture-form').validate({
+        rules: {
+            profile_picture: {
+                required: true
+            }
+        },
+        messages: {
+            profile_picture: {
+                required: 'Please choose the profile picture'
+            }
+        },
+        errorPlacement: function (error, element) {
+            showNotification('Attention Required: Error Found', error, 'error', 1500);
+        },
+        highlight: function(element) {
+            var inputElement = $(element);
+            if (inputElement.hasClass('select2-hidden-accessible')) {
+                inputElement.next().find('.select2-selection__rendered').addClass('is-invalid');
+            }
+            else {
+                inputElement.addClass('is-invalid');
+            }
+        },
+        unhighlight: function(element) {
+            var inputElement = $(element);
+            if (inputElement.hasClass('select2-hidden-accessible')) {
+                inputElement.next().find('.select2-selection__rendered').removeClass('is-invalid');
+            }
+            else {
+                inputElement.removeClass('is-invalid');
+            }
+        },
+        submitHandler: function(form) {
+            const user_account_id = $('#user-account-id').text();
+            const transaction = 'update user account profile picture';
+            var formData = new FormData(form);
+            formData.append('user_account_id', user_account_id);
+            formData.append('transaction', transaction);
+        
+            $.ajax({
+                type: 'POST',
+                url: 'components/user-account/controller/user-account-controller.php',
+                data: formData,
+                processData: false,
+                contentType: false,
+                dataType: 'json',
+                beforeSend: function() {
+                    disableFormSubmitButton('submit-profile-picture');
+                },
+                success: function (response) {
+                    if (response.success) {
+                        showNotification(response.title, response.message, response.messageType);
+                        $('#user-account-profile-picture-modal').modal('hide');
+                    }
+                    else {
+                        if (response.isInactive || response.notExist || response.userInactive || response.userLocked || response.sessionExpired) {
+                            setNotification(response.title, response.message, response.messageType);
+                            window.location = 'logout.php?logout';
+                        }
+                        else {
+                            showNotification(response.title, response.message, response.messageType);
+                        }
+                    }
+                },
+                error: function(xhr, status, error) {
+                    handleSystemError(xhr, status, error);
+                },
+                complete: function() {
+                    enableFormSubmitButton('submit-profile-picture');
+                }
+            });
+        
+            return false;
+0        }
     });
 }
 

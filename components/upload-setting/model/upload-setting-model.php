@@ -75,6 +75,34 @@ class UploadSettingModel {
     # -------------------------------------------------------------
 
     # -------------------------------------------------------------
+    #
+    # Function: insertUploadSettingFileExtension
+    # Description: Inserts the upload setting file extension.
+    #
+    # Parameters:
+    # - $p_upload_setting_id (int): The upload setting name.
+    # - $p_upload_setting_name (string): The upload setting description.
+    # - $p_file_extension_id (int): The file extension ID.
+    # - $p_file_extension_name (string): The file extension name.
+    # - $p_file_extension (string): The file extension.
+    # - $p_last_log_by (int): The last logged user.
+    #
+    # Returns: String
+    #
+    # -------------------------------------------------------------
+    public function insertUploadSettingFileExtension($p_upload_setting_id, $p_upload_setting_name, $p_file_extension_id, $p_file_extension_name, $p_file_extension, $p_last_log_by) {
+        $stmt = $this->db->getConnection()->prepare('CALL insertUploadSettingFileExtension(:p_upload_setting_id, :p_upload_setting_name, :p_file_extension_id, :p_file_extension_name, :p_file_extension, :p_last_log_by)');
+        $stmt->bindValue(':p_upload_setting_id', $p_upload_setting_id, PDO::PARAM_INT);
+        $stmt->bindValue(':p_upload_setting_name', $p_upload_setting_name, PDO::PARAM_STR);
+        $stmt->bindValue(':p_file_extension_id', $p_file_extension_id, PDO::PARAM_INT);
+        $stmt->bindValue(':p_file_extension_name', $p_file_extension_name, PDO::PARAM_STR);
+        $stmt->bindValue(':p_file_extension', $p_file_extension, PDO::PARAM_STR);
+        $stmt->bindValue(':p_last_log_by', $p_last_log_by, PDO::PARAM_INT);
+        $stmt->execute();
+    }
+    # -------------------------------------------------------------
+
+    # -------------------------------------------------------------
     #   Check exist methods
     # -------------------------------------------------------------
 
@@ -98,6 +126,25 @@ class UploadSettingModel {
     # -------------------------------------------------------------
 
     # -------------------------------------------------------------
+    #
+    # Function: checkUploadSettingFileExtensionExist
+    # Description: Checks if a upload setting exists.
+    #
+    # Parameters:
+    # - $p_upload_setting_file_extension_id (int): The upload setting file extension ID.
+    #
+    # Returns: The result of the query as an associative array.
+    #
+    # -------------------------------------------------------------
+    public function checkUploadSettingFileExtensionExist($p_upload_setting_file_extension_id) {
+        $stmt = $this->db->getConnection()->prepare('CALL checkUploadSettingFileExtensionExist(:p_upload_setting_file_extension_id)');
+        $stmt->bindValue(':p_upload_setting_file_extension_id', $p_upload_setting_file_extension_id, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+    # -------------------------------------------------------------
+
+    # -------------------------------------------------------------
     #   Delete methods
     # -------------------------------------------------------------
 
@@ -115,6 +162,24 @@ class UploadSettingModel {
     public function deleteUploadSetting($p_upload_setting_id) {
         $stmt = $this->db->getConnection()->prepare('CALL deleteUploadSetting(:p_upload_setting_id)');
         $stmt->bindValue(':p_upload_setting_id', $p_upload_setting_id, PDO::PARAM_INT);
+        $stmt->execute();
+    }
+    # -------------------------------------------------------------
+
+    # -------------------------------------------------------------
+    #
+    # Function: deleteUploadSettingFileExtension
+    # Description: Deletes the upload setting file extension.
+    #
+    # Parameters:
+    # - $p_upload_setting_file_extension_id (int): The upload setting file extension ID.
+    #
+    # Returns: None
+    #
+    # -------------------------------------------------------------
+    public function deleteUploadSettingFileExtension($p_upload_setting_file_extension_id) {
+        $stmt = $this->db->getConnection()->prepare('CALL deleteUploadSettingFileExtension(:p_upload_setting_file_extension_id)');
+        $stmt->bindValue(':p_upload_setting_file_extension_id', $p_upload_setting_file_extension_id, PDO::PARAM_INT);
         $stmt->execute();
     }
     # -------------------------------------------------------------

@@ -109,6 +109,9 @@ if(isset($_POST['type']) && !empty($_POST['type'])){
                 $response[] = [
                     'FILE_EXTENSION' => $fileExtensionName . ' (.' . $fileExtension . ')',
                     'ACTION' => '<div class="action-btn">
+                                    <a href="javascript:void(0);" class="text-info view-file-extension-log-notes" data-upload-setting-file-extension-id="' . $uploadSettingFileExtensionID . '" data-bs-toggle="offcanvas" data-bs-target="#log-notes-offcanvas" aria-controls="log-notes-offcanvas" title="View Log Notes">
+                                        <i class="ti ti-file-text fs-5"></i>
+                                    </a>
                                    '. $deleteButton .'
                                 </div>'
                 ];

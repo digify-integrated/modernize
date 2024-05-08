@@ -42,7 +42,7 @@ if(isset($_POST['type']) && !empty($_POST['type'])){
             foreach ($options as $row) {
                 $uploadSettingID = $row['upload_setting_id'];
                 $uploadSettingName = $row['upload_setting_name'];
-                $description = $row['description'];
+                $description = $row['upload_setting_description'];
                 $maxFileSize = $row['max_file_size'];
 
                 $uploadSettingIDEncrypted = $securityModel->encryptData($uploadSettingID);
@@ -81,43 +81,6 @@ if(isset($_POST['type']) && !empty($_POST['type'])){
 
         # -------------------------------------------------------------
         #
-        # Type: subupload setting table
-        # Description:
-        # Generates the subupload setting table.
-        #
-        # Parameters: None
-        #
-        # Returns: Array
-        #
-        # -------------------------------------------------------------
-        case 'subupload setting table':
-            if(isset($_POST['upload_setting_id']) && !empty($_POST['upload_setting_id'])){
-                $uploadSettingID = htmlspecialchars($_POST['upload_setting_id'], ENT_QUOTES, 'UTF-8');
-                $sql = $databaseModel->getConnection()->prepare('CALL generateSubuploadSettingTable(:uploadSettingID)');
-                $sql->bindValue(':uploadSettingID', $uploadSettingID, PDO::PARAM_INT);
-                $sql->execute();
-                $options = $sql->fetchAll(PDO::FETCH_ASSOC);
-                $sql->closeCursor();
-    
-                foreach ($options as $row) {
-                    $uploadSettingName = $row['upload_setting_name'];
-                    $orderSequence = $row['order_sequence'];
-    
-                    $uploadSettingIDEncrypted = $securityModel->encryptData($uploadSettingID);
-    
-                    $response[] = [
-                        'MENU_ITEM_NAME' => $uploadSettingName,
-                        'ORDER_SEQUENCE' => $orderSequence,
-                    ];
-                }
-    
-                echo json_encode($response);
-            }
-        break;
-        # -------------------------------------------------------------
-
-        # -------------------------------------------------------------
-        #
         # Type: upload setting options
         # Description:
         # Generates the upload setting options.
@@ -149,38 +112,6 @@ if(isset($_POST['type']) && !empty($_POST['type'])){
             }
 
             echo json_encode($response);
-        break;
-        # -------------------------------------------------------------
-
-        # -------------------------------------------------------------
-        #
-        # Type: role upload setting dual listbox options
-        # Description:
-        # Generates the role upload setting dual listbox options.
-        #
-        # Parameters: None
-        #
-        # Returns: Array
-        #
-        # -------------------------------------------------------------
-        case 'role upload setting dual listbox options':
-            if(isset($_POST['role_id']) && !empty($_POST['role_id'])){
-                $roleID = htmlspecialchars($_POST['role_id'], ENT_QUOTES, 'UTF-8');
-                $sql = $databaseModel->getConnection()->prepare('CALL generateRoleUploadSettingDualListBoxOptions(:roleID)');
-                $sql->bindValue(':roleID', $roleID, PDO::PARAM_INT);
-                $sql->execute();
-                $options = $sql->fetchAll(PDO::FETCH_ASSOC);
-                $sql->closeCursor();
-
-                foreach ($options as $row) {
-                    $response[] = [
-                        'id' => $row['upload_setting_id'],
-                        'text' => $row['upload_setting_name']
-                    ];
-                }
-
-                echo json_encode($response);
-            }
         break;
         # -------------------------------------------------------------
     }

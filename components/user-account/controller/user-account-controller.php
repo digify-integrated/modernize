@@ -17,6 +17,7 @@ class UserAccountController {
     private $roleModel;
     private $authenticationModel;
     private $securitySettingModel;
+    private $uploadSettingModel;
     private $securityModel;
     private $systemModel;
 
@@ -32,17 +33,19 @@ class UserAccountController {
     # - @param RoleModel $roleModel     The RoleModel instance for role related operations.
     # - @param AuthenticationModel $authenticationModel     The AuthenticationModel instance for user related operations.
     # - @param SecuritySettingModel $securitySettingModel     The securitySettingModel instance for security setting related operations.
+    # - @param UploadSettingModel $uploadSettingModel     The uploadSettingModel instance for upload setting related operations.
     # - @param SecurityModel $securityModel   The SecurityModel instance for security related operations.
     # - @param SystemModel $systemModel   The SystemModel instance for system related operations.
     #
     # Returns: None
     #
     # -------------------------------------------------------------
-    public function __construct(UserAccountModel $userAccountModel, RoleModel $roleModel, AuthenticationModel $authenticationModel, SecuritySettingModel $securitySettingModel, SecurityModel $securityModel, SystemModel $systemModel) {
+    public function __construct(UserAccountModel $userAccountModel, RoleModel $roleModel, AuthenticationModel $authenticationModel, SecuritySettingModel $securitySettingModel, UploadSettingModel $uploadSettingModel, SecurityModel $securityModel, SystemModel $systemModel) {
         $this->userAccountModel = $userAccountModel;
         $this->roleModel = $roleModel;
         $this->authenticationModel = $authenticationModel;
         $this->securitySettingModel = $securitySettingModel;
+        $this->uploadSettingModel = $uploadSettingModel;
         $this->securityModel = $securityModel;
         $this->systemModel = $systemModel;
     }
@@ -138,6 +141,9 @@ class UserAccountController {
                     break;
                 case 'change password':
                     $this->updateUserAccountPassword();
+                    break;
+                case 'update user account profile picture':
+                    $this->updateUserAccountProfilePicture();
                     break;
                 case 'get user account details':
                     $this->getUserAccountDetails();
@@ -354,6 +360,148 @@ class UserAccountController {
             echo json_encode($response);
             exit;
         }
+    }
+    # -------------------------------------------------------------
+
+    # -------------------------------------------------------------
+    #
+    # Function: updateUserAccountProfilePicture
+    # Description: 
+    # Handles the update of the user account profile picture.
+    #
+    # Parameters: None
+    #
+    # Returns: Array
+    #
+    # -------------------------------------------------------------
+    public function updateUserAccountProfilePicture() {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            return;
+        }
+
+        if (isset($_POST['user_account_id']) && !empty($_POST['user_account_id'])) {
+            $userID = $_SESSION['user_account_id'];
+
+            $userAccountID = htmlspecialchars($_POST['user_account_id'], ENT_QUOTES, 'UTF-8');
+
+            $checkUserAccountExist = $this->userAccountModel->checkUserAccountExist($userAccountID);
+            $total = $checkUserAccountExist['total'] ?? 0;
+
+            if($total === 0){
+                $response = [
+                    'success' => false,
+                    'notExist' => true,
+                    'title' => 'Update User Account Profile Picture Error',
+                    'message' => 'The user account profile picture has does not exist.',
+                    'messageType' => 'error'
+                ];
+                
+                echo json_encode($response);
+                exit;
+            }
+
+            $profilePictureFileName = $_FILES['profile_picture']['name'];
+            $profilePictureFileSize = $_FILES['profile_picture']['size'];
+            $profilePictureFileError = $_FILES['profile_picture']['error'];
+            $profilePictureTempName = $_FILES['profile_picture']['tmp_name'];
+            $profilePictureFileExtension = explode('.', $profilePictureFileName);
+            $profilePictureActualFileExtension = strtolower(end($profilePictureFileExtension));
+
+            $uploadSetting = $this->uploadSettingModel->getUploadSetting(6);
+            $maxFileSize = $uploadSetting['max_file_size'];
+
+            $uploadSettingFileExtension = $this->uploadSettingModel->getUploadSettingFileExtension(6);
+            $allowedFileExtensions = [];
+
+            foreach ($uploadSettingFileExtension as $row) {
+                $allowedFileExtensions[] = $row['file_extension'];
+            }
+
+            if (!in_array($profilePictureActualFileExtension, $allowedFileExtensions)) {
+                $response = [
+                    'success' => false,
+                    'title' => 'Update User Account Profile Picture Error',
+                    'message' => 'The file uploaded is not supported.',
+                    'messageType' => 'error'
+                ];
+                
+                echo json_encode($response);
+                exit;
+            }
+            
+            if(empty($profilePictureTempName)){
+                $response = [
+                    'success' => false,
+                    'title' => 'Update User Account Profile Picture Error',
+                    'message' => 'The Please choose the profile picture.',
+                    'messageType' => 'error'
+                ];
+                
+                echo json_encode($response);
+                exit;
+            }
+            
+            if($profilePictureFileError){
+                $response = [
+                    'success' => false,
+                    'title' => 'Update User Account Profile Picture Error',
+                    'message' => 'An error occurred while uploading the file.',
+                    'messageType' => 'error'
+                ];
+                
+                echo json_encode($response);
+                exit;
+            }
+            
+            if($profilePictureFileSize > ($maxFileSize * 1024)){
+                $response = [
+                    'success' => false,
+                    'title' => 'Update User Account Profile Picture Error',
+                    'message' => 'The document file exceeds the maximum allowed size of ' . $maxFileSize . ' kb.',
+                    'messageType' => 'error'
+                ];
+                
+                echo json_encode($response);
+                exit;
+            }
+
+            $fileName = $this->securityModel->generateFileName();
+            $fileNew = $fileName . '.' . $profilePictureActualFileExtension;
+        }
+
+       
+
+        $directory = DEFAULT_DOCUMENT_RELATIVE_PATH_FILE . 'current_version/';
+        $fileDestination = $_SERVER['DOCUMENT_ROOT'] . DEFAULT_DOCUMENT_FULL_PATH_FILE . 'current_version/' . $fileNew;
+        $filePath = $directory . $fileNew;
+
+        $directoryChecker = $this->securityModel->directoryChecker('.' . $directory);
+
+        if(!$directoryChecker){
+            echo json_encode(['success' => false, 'message' => $directoryChecker]);
+            exit;
+        }
+
+        $documentDetails = $this->userAccountModel->getDocument($documentID);
+        $documentVersion = $documentDetails['document_version'] + 1;
+        $documentPath = !empty($documentDetails['document_path']) ? '.' . $documentDetails['document_path'] : null;
+
+        if(file_exists($documentPath)){
+            if (!unlink($documentPath)) {
+                echo json_encode(['success' => false, 'message' => 'Document file cannot be deleted due to an error.']);
+                exit;
+            }
+        }
+
+        if(!move_uploaded_file($profilePictureTempName, $fileDestination)){
+            echo json_encode(['success' => false, 'message' => 'There was an error uploading your file.']);
+            exit;
+        }
+
+        $this->userAccountModel->updateDocumentFile($documentID, $filePath, $documentVersion, $userID);
+
+        echo json_encode(['success' => true]);
+        exit;
     }
     # -------------------------------------------------------------
 
@@ -1515,9 +1663,10 @@ require_once '../../global/model/system-model.php';
 require_once '../../user-account/model/user-account-model.php';
 require_once '../../role/model/role-model.php';
 require_once '../../authentication/model/authentication-model.php';
+require_once '../../upload-setting/model/upload-setting-model.php';
 require_once '../../security-setting/model/security-setting-model.php';
 
-$controller = new UserAccountController(new UserAccountModel(new DatabaseModel), new RoleModel(new DatabaseModel), new AuthenticationModel(new DatabaseModel), new SecuritySettingModel(new DatabaseModel), new SecurityModel(), new SystemModel());
+$controller = new UserAccountController(new UserAccountModel(new DatabaseModel), new RoleModel(new DatabaseModel), new AuthenticationModel(new DatabaseModel), new SecuritySettingModel(new DatabaseModel), new UploadSettingModel(new DatabaseModel), new SecurityModel(), new SystemModel());
 $controller->handleRequest();
 
 ?>

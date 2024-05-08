@@ -9,6 +9,13 @@ BEGIN
     WHERE upload_setting_id = p_upload_setting_id;
 END //
 
+CREATE PROCEDURE checkUploadSettingFileExtensionExist(IN p_upload_setting_file_extension_id INT)
+BEGIN
+	SELECT COUNT(*) AS total
+    FROM upload_setting_file_extension
+    WHERE upload_setting_file_extension_id = p_upload_setting_file_extension_id;
+END //
+
 /* ----------------------------------------------------------------------------------------------------------------------------- */
 
 /* Insert Stored Procedure */
@@ -19,6 +26,12 @@ BEGIN
 	VALUES(p_upload_setting_name, p_upload_setting_description, p_max_file_size, p_last_log_by);
 	
     SET p_upload_setting_id = LAST_INSERT_ID();
+END //
+
+CREATE PROCEDURE insertUploadSettingFileExtension(IN p_upload_setting_id INT, IN p_upload_setting_name VARCHAR(100), IN p_file_extension_id INT, IN p_file_extension_name VARCHAR(100), IN p_file_extension VARCHAR(10), IN p_last_log_by INT)
+BEGIN
+    INSERT INTO upload_setting_file_extension (upload_setting_id, upload_setting_name, file_extension_id, file_extension_name, file_extension, last_log_by) 
+	VALUES(p_upload_setting_id, p_upload_setting_name, p_file_extension_id, p_file_extension_name, p_file_extension, p_last_log_by);
 END //
 
 /* ----------------------------------------------------------------------------------------------------------------------------- */
@@ -66,6 +79,11 @@ BEGIN
     DELETE FROM upload_setting WHERE upload_setting_id = p_upload_setting_id;
 
     COMMIT;
+END //
+
+CREATE PROCEDURE deleteUploadSettingFileExtension(IN p_upload_setting_file_extension_id INT)
+BEGIN
+    DELETE FROM upload_setting_file_extension WHERE upload_setting_file_extension_id = p_upload_setting_file_extension_id;
 END //
 
 /* ----------------------------------------------------------------------------------------------------------------------------- */

@@ -130,6 +130,9 @@ class UploadSettingController {
                 case 'update upload setting':
                     $this->updateUploadSetting();
                     break;
+                case 'assign upload setting file extension':
+                    $this->assignUploadSettingFileExtension();
+                    break;
                 case 'get upload setting details':
                     $this->getUploadSettingDetails();
                     break;
@@ -138,6 +141,9 @@ class UploadSettingController {
                     break;
                 case 'delete multiple upload setting':
                     $this->deleteMultipleUploadSetting();
+                    break;
+                case 'delete file extension':
+                    $this->deleteUploadSettingFileExtension();
                     break;
                 default:
                     $response = [
@@ -277,6 +283,78 @@ class UploadSettingController {
     # -------------------------------------------------------------
 
     # -------------------------------------------------------------
+    #   Assign methods
+    # -------------------------------------------------------------
+
+    # -------------------------------------------------------------
+    #
+    # Function: assignUploadSettingFileExtension
+    # Description: 
+    # Assigns a file extension on upload setting.
+    #
+    # Parameters: None
+    #
+    # Returns: Array
+    #
+    # -------------------------------------------------------------
+    public function assignUploadSettingFileExtension() {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            return;
+        }
+
+        if (isset($_POST['upload_setting_id']) && !empty($_POST['upload_setting_id'])) {
+            if(!isset($_POST['file_extension_id']) || empty($_POST['file_extension_id'])){
+                $response = [
+                    'success' => false,
+                    'title' => 'File Extension Selection Required',
+                    'message' => 'Please select the file extension(s) you wish to assign to the upload setting.',
+                    'messageType' => 'error'
+                ];
+                
+                echo json_encode($response);
+                exit;
+            }
+
+            $userID = $_SESSION['user_account_id'];
+            $uploadSettingID = htmlspecialchars($_POST['upload_setting_id'], ENT_QUOTES, 'UTF-8');
+            $fileExtensionIDs = $_POST['file_extension_id'];
+            
+            $uploadSettingDetails = $this->uploadSettingModel->getUploadSetting($uploadSettingID);
+            $uploadSettingName = $uploadSettingDetails['upload_setting_name'] ?? null;
+
+            foreach ($fileExtensionIDs as $fileExtensionID) {
+                $fileExtensionDetails = $this->fileExtensionModel->getFileExtension($fileExtensionID);
+                $fileExtensionName = $fileExtensionDetails['file_extension_name'] ?? null;
+                $fileExtension = $fileExtensionDetails['file_extension'] ?? null;
+
+                $this->uploadSettingModel->insertUploadSettingFileExtension($uploadSettingID, $uploadSettingName, $fileExtensionID, $fileExtensionName, $fileExtension, $userID);
+            }
+    
+            $response = [
+                'success' => true,
+                'title' => 'Assign File Extension Success',
+                'message' => 'The file extension has been assigned successfully.',
+                'messageType' => 'success'
+            ];
+            
+            echo json_encode($response);
+            exit;
+        }
+        else{
+            $response = [
+                'success' => false,
+                'title' => 'Transaction Error',
+                'message' => 'Something went wrong. Please try again later. If the issue persists, please contact support for assistance.',
+                'messageType' => 'error'
+            ];
+            
+            echo json_encode($response);
+            exit;
+        }
+    }
+    # -------------------------------------------------------------
+
+    # -------------------------------------------------------------
     #   Delete methods
     # -------------------------------------------------------------
 
@@ -321,6 +399,67 @@ class UploadSettingController {
                 'success' => true,
                 'title' => 'Delete Upload Setting Success',
                 'message' => 'The upload setting has been deleted successfully.',
+                'messageType' => 'success'
+            ];
+            
+            echo json_encode($response);
+            exit;
+        }
+        else{
+            $response = [
+                'success' => false,
+                'title' => 'Transaction Error',
+                'message' => 'Something went wrong. Please try again later. If the issue persists, please contact support for assistance.',
+                'messageType' => 'error'
+            ];
+            
+            echo json_encode($response);
+            exit;
+        }
+    }
+    # -------------------------------------------------------------
+
+    # -------------------------------------------------------------
+    #
+    # Function: deleteUploadSettingFileExtension
+    # Description: 
+    # Delete the upload setting if it exists; otherwise, return an error message.
+    #
+    # Parameters: None
+    #
+    # Returns: Array
+    #
+    # -------------------------------------------------------------
+    public function deleteUploadSettingFileExtension() {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            return;
+        }
+
+        if (isset($_POST['upload_setting_file_extension_id']) && !empty($_POST['upload_setting_file_extension_id'])) {
+            $uploadSettingFileExtensionID = htmlspecialchars($_POST['upload_setting_file_extension_id'], ENT_QUOTES, 'UTF-8');
+        
+            $checkUploadSettingFileExtensionExist = $this->uploadSettingModel->checkUploadSettingFileExtensionExist($uploadSettingFileExtensionID);
+            $total = $checkUploadSettingFileExtensionExist['total'] ?? 0;
+
+            if($total === 0){
+                $response = [
+                    'success' => false,
+                    'notExist' => true,
+                    'title' => 'Delete File Extension Error',
+                    'message' => 'The file extension has does not exist.',
+                    'messageType' => 'error'
+                ];
+                
+                echo json_encode($response);
+                exit;
+            }
+
+            $this->uploadSettingModel->deleteUploadSettingFileExtension($uploadSettingFileExtensionID);
+                
+            $response = [
+                'success' => true,
+                'title' => 'Delete File Extension Success',
+                'message' => 'The file extension has been deleted successfully.',
                 'messageType' => 'success'
             ];
             
