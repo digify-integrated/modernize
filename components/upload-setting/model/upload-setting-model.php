@@ -207,5 +207,25 @@ class UploadSettingModel {
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
     # -------------------------------------------------------------
+
+    # -------------------------------------------------------------
+    #
+    # Function: getUploadSettingFileExtension
+    # Description: Retrieves the details of a upload setting file extension.
+    #
+    # Parameters:
+    # - $p_upload_setting_id (int): The upload setting ID.
+    #
+    # Returns:
+    # - An array containing the upload setting file extension details.
+    #
+    # -------------------------------------------------------------
+    public function getUploadSettingFileExtension($p_upload_setting_id) {
+        $stmt = $this->db->getConnection()->prepare('CALL getUploadSettingFileExtension(:p_upload_setting_id)');
+        $stmt->bindValue(':p_upload_setting_id', $p_upload_setting_id, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+    # -------------------------------------------------------------
 }
 ?>

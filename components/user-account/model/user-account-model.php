@@ -154,6 +154,28 @@ class UserAccountModel {
     # -------------------------------------------------------------
 
     # -------------------------------------------------------------
+    #
+    # Function: updateUserAccountProfilePicture
+    # Description: Updates the user account multiple login sessions.
+    #
+    # Parameters:
+    # - $p_user_account_id (int): The user account ID.
+    # - $p_profile_picture (string): The profile picture path file.
+    # - $p_last_log_by (int): The last logged user.
+    #
+    # Returns: None
+    #
+    # -------------------------------------------------------------
+    public function updateUserAccountProfilePicture($p_user_account_id, $p_profile_picture, $p_last_log_by) {
+        $stmt = $this->db->getConnection()->prepare('CALL updateUserAccountProfilePicture(:p_user_account_id, :p_profile_picture, :p_last_log_by)');
+        $stmt->bindValue(':p_user_account_id', $p_user_account_id, PDO::PARAM_INT);
+        $stmt->bindValue(':p_profile_picture', $p_profile_picture, PDO::PARAM_STR);
+        $stmt->bindValue(':p_last_log_by', $p_last_log_by, PDO::PARAM_INT);
+        $stmt->execute();
+    }
+    # -------------------------------------------------------------
+
+    # -------------------------------------------------------------
     #   Insert methods
     # -------------------------------------------------------------
 

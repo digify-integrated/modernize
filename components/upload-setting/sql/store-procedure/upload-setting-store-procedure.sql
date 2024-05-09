@@ -96,6 +96,12 @@ BEGIN
 	WHERE upload_setting_id = p_upload_setting_id;
 END //
 
+CREATE PROCEDURE getUploadSettingFileExtension(IN p_upload_setting_id INT)
+BEGIN
+	SELECT * FROM upload_setting_file_extension
+	WHERE upload_setting_id = p_upload_setting_id;
+END //
+
 /* ----------------------------------------------------------------------------------------------------------------------------- */
 
 /* Generate Stored Procedure */

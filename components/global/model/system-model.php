@@ -213,7 +213,7 @@ class SystemModel {
     public function checkImage($image, $type){
         $image = $image ?? '';
         
-        return (empty($image) || (!file_exists('.' . $image) && !file_exists($image))) ? $this->getDefaultImage($type) : $image;
+        return (empty($image) || (!file_exists(str_replace('./components/', '../../', $image)) && !file_exists($image))) ? $this->getDefaultImage($type) : $image;
     }
     # -------------------------------------------------------------
 

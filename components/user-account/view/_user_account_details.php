@@ -32,7 +32,7 @@
                                     </div>
                                     <div class="card-body p-4">
                                         <div class="text-center">
-                                            <img src="./assets/images/profile/user-1.jpg" alt="" class="img-fluid rounded-circle" width="120" height="120">
+                                            <img src="./assets/images/profile/user-1.jpg" alt="" id="user_account_profile_picture" class="img-fluid rounded-circle" width="120" height="120">
                                             <?php
                                                 echo $userAccountWriteAccess['total'] > 0 ? 
                                                 '<div class="d-flex align-items-center justify-content-center my-4 gap-6" data-bs-toggle="modal" id="update-user-account-profile-picture" data-bs-target="#user-account-profile-picture-modal">

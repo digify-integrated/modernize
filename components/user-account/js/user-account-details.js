@@ -845,6 +845,7 @@ function displayDetails(transaction){
                         $('#last_connection_date_summary').text(response.lastConnectionDate);
                         $('#last_password_reset_summary').text(response.lastPasswordReset);
                         $('#account_lock_duration_summary').text(response.accountLockDuration);
+                        document.getElementById('user_account_profile_picture').src = response.profilePicture;
 
                         document.getElementById('two-factor-authentication').checked = response.twoFactorAuthentication === 'Yes';
                         document.getElementById('multiple-login-sessions').checked = response.multipleSession === 'Yes';

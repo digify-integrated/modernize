@@ -104,6 +104,14 @@ BEGIN
     WHERE user_account_id = p_user_account_id;
 END //
 
+CREATE PROCEDURE updateUserAccountProfilePicture(IN p_user_account_id INT, IN p_profile_picture VARCHAR(500), IN p_last_log_by INT)
+BEGIN
+    UPDATE user_account
+    SET profile_picture = p_profile_picture,
+        last_log_by = p_last_log_by
+    WHERE user_account_id = p_user_account_id;
+END //
+
 /* ----------------------------------------------------------------------------------------------------------------------------- */
 
 /* Delete Stored Procedures */

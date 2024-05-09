@@ -407,10 +407,10 @@ class UserAccountController {
             $profilePictureFileExtension = explode('.', $profilePictureFileName);
             $profilePictureActualFileExtension = strtolower(end($profilePictureFileExtension));
 
-            $uploadSetting = $this->uploadSettingModel->getUploadSetting(6);
+            $uploadSetting = $this->uploadSettingModel->getUploadSetting(1);
             $maxFileSize = $uploadSetting['max_file_size'];
 
-            $uploadSettingFileExtension = $this->uploadSettingModel->getUploadSettingFileExtension(6);
+            $uploadSettingFileExtension = $this->uploadSettingModel->getUploadSettingFileExtension(1);
             $allowedFileExtensions = [];
 
             foreach ($uploadSettingFileExtension as $row) {
@@ -467,41 +467,63 @@ class UserAccountController {
 
             $fileName = $this->securityModel->generateFileName();
             $fileNew = $fileName . '.' . $profilePictureActualFileExtension;
-        }
+            define('PROJECT_BASE_DIR', dirname(__DIR__));
 
-       
+            define('USER_ACCOUNT_PROFILE_PICTURE_DIR', 'image/profile_image/');
 
-        $directory = DEFAULT_DOCUMENT_RELATIVE_PATH_FILE . 'current_version/';
-        $fileDestination = $_SERVER['DOCUMENT_ROOT'] . DEFAULT_DOCUMENT_FULL_PATH_FILE . 'current_version/' . $fileNew;
-        $filePath = $directory . $fileNew;
 
-        $directoryChecker = $this->securityModel->directoryChecker('.' . $directory);
+            $directory = PROJECT_BASE_DIR. '/'. USER_ACCOUNT_PROFILE_PICTURE_DIR. $userAccountID. '/';
+            $fileDestination = $directory. $fileNew;
+            $filePath = './components/user-account/image/profile_image/'. $userAccountID . '/' . $fileNew;
 
-        if(!$directoryChecker){
-            echo json_encode(['success' => false, 'message' => $directoryChecker]);
-            exit;
-        }
+            $directoryChecker = $this->securityModel->directoryChecker(str_replace('./', '../../', $directory));
 
-        $documentDetails = $this->userAccountModel->getDocument($documentID);
-        $documentVersion = $documentDetails['document_version'] + 1;
-        $documentPath = !empty($documentDetails['document_path']) ? '.' . $documentDetails['document_path'] : null;
-
-        if(file_exists($documentPath)){
-            if (!unlink($documentPath)) {
-                echo json_encode(['success' => false, 'message' => 'Document file cannot be deleted due to an error.']);
+            if(!$directoryChecker){
+                $response = [
+                    'success' => false,
+                    'title' => 'Update User Account Profile Picture Error',
+                    'message' => $directoryChecker,
+                    'messageType' => 'error'
+                ];
+                
+                echo json_encode($response);
                 exit;
             }
-        }
 
-        if(!move_uploaded_file($profilePictureTempName, $fileDestination)){
-            echo json_encode(['success' => false, 'message' => 'There was an error uploading your file.']);
+            $userAccountDetails = $this->userAccountModel->getUserAccount($userAccountID, null);
+            $userAccountProfilePiturePath = !empty($userAccountDetails['profile_picture']) ? str_replace('./', '../../', $userAccountDetails['profile_picture']) : null;
+
+            if(file_exists($userAccountProfilePiturePath)){
+                if (!unlink($userAccountProfilePiturePath)) {
+                    $response = [
+                        'success' => false,
+                        'title' => 'Update User Account Profile Picture Error',
+                        'message' => 'The user account profile picture cannot be deleted due to an error.',
+                        'messageType' => 'error'
+                    ];
+                    
+                    echo json_encode($response);
+                    exit;                    
+                }
+            }
+
+            if(!move_uploaded_file($profilePictureTempName, $fileDestination)){
+                $response = [
+                    'success' => false,
+                    'title' => 'Update User Account Profile Picture Error',
+                    'message' => 'The user account profile picture cannot be uploaded due to an error.',
+                    'messageType' => 'error'
+                ];
+                
+                echo json_encode($response);
+                exit;           
+            }
+
+            $this->userAccountModel->updateUserAccountProfilePicture($userAccountID, $filePath, $userID);
+
+            echo json_encode(['success' => true]);
             exit;
         }
-
-        $this->userAccountModel->updateDocumentFile($documentID, $filePath, $documentVersion, $userID);
-
-        echo json_encode(['success' => true]);
-        exit;
     }
     # -------------------------------------------------------------
 
