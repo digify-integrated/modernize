@@ -52,7 +52,7 @@ if(isset($_POST['type']) && !empty($_POST['type'])){
                     
                     $logNote .= ' <div class="d-flex flex-row comment-row border-bottom p-3 gap-3">
                                     <div>
-                                        <span class=""><img src="'. $profilePicture .'" class="rounded-circle" alt="user" width="50" /></span>
+                                        <span class=""><img src="'. $profilePicture .'" class="rounded-circle" alt="user" width="50" height="50" /></span>
                                     </div>
                                     <div class="comment-text w-100">
                                         <h6 class="font-weight-medium">'. $fileAs .'</h6>

@@ -49,7 +49,7 @@
         <div class="fixed-profile p-3 mx-4 mb-2 bg-secondary-subtle rounded mt-3">
           <div class="hstack gap-3">
             <div class="john-img">
-              <img src="./assets/images/profile/user-1.jpg" class="rounded-circle" width="40" height="40" alt="modernize-img">
+              <img src="<?php echo $profilePicture; ?>" class="rounded-circle" width="40" height="40" alt="modernize-img">
             </div>
             <div class="john-title">
               <h6 class="mb-0 fs-4 fw-semibold">Lawrence</h6>

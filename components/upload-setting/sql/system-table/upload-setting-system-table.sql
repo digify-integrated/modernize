@@ -11,7 +11,7 @@ CREATE TABLE upload_setting(
 
 CREATE INDEX upload_setting_index_upload_setting_id ON upload_setting(upload_setting_id);
 
-INSERT INTO upload_setting (upload_setting_name, upload_setting_description, max_file_size, last_log_by) VALUES ('User Account Image', 'Sets the upload setting when uploading user account image.', 5, '1');
+INSERT INTO upload_setting (upload_setting_name, upload_setting_description, max_file_size, last_log_by) VALUES ('User Account Profile Picture', 'Sets the upload setting when uploading user account profile picture.', 800, '1');
 
 /* ----------------------------------------------------------------------------------------------------------------------------- */
 
@@ -32,5 +32,9 @@ CREATE TABLE upload_setting_file_extension(
 CREATE INDEX upload_setting_file_ext_index_upload_setting_file_extension_id ON upload_setting_file_extension(upload_setting_file_extension_id);
 CREATE INDEX upload_setting_file_ext_index_upload_setting_id ON upload_setting_file_extension(upload_setting_id);
 CREATE INDEX upload_setting_file_ext_index_file_extension_id ON upload_setting_file_extension(file_extension_id);
+
+INSERT INTO upload_setting_file_extension (upload_setting_id, upload_setting_name, file_extension_id, file_extension_name, file_extension, last_log_by) VALUES (1, 'User Account Profile Picture', 1, 'PNG', 'png', '1');
+INSERT INTO upload_setting_file_extension (upload_setting_id, upload_setting_name, file_extension_id, file_extension_name, file_extension, last_log_by) VALUES (1, 'User Account Profile Picture', 2, 'JPG', 'jpg', '1');
+INSERT INTO upload_setting_file_extension (upload_setting_id, upload_setting_name, file_extension_id, file_extension_name, file_extension, last_log_by) VALUES (1, 'User Account Profile Picture', 3, 'JPEG', 'jpeg', '1');
 
 /* ----------------------------------------------------------------------------------------------------------------------------- */

@@ -40,7 +40,7 @@
                             <a class="nav-link pe-0" href="javascript:void(0)" id="drop1" data-bs-toggle="dropdown" aria-expanded="false">
                                 <div class="d-flex align-items-center">
                                     <div class="user-profile-img">
-                                        <img src="./assets/images/profile/user-1.jpg" class="rounded-circle" width="35" height="35" alt=""/>
+                                        <img src="<?php echo $profilePicture; ?>" class="rounded-circle" width="35" height="35" alt=""/>
                                     </div>
                                 </div>
                             </a>
@@ -50,7 +50,7 @@
                                         <h5 class="mb-0 fs-5 fw-semibold">User Profile</h5>
                                     </div>
                                     <div class="d-flex align-items-center py-9 mx-7 border-bottom">
-                                        <img src="./assets/images/profile/user-1.jpg" class="rounded-circle" width="80" height="80" alt=""/>
+                                        <img src="<?php echo $profilePicture; ?>" class="rounded-circle" width="80" height="80" alt=""/>
                                         <div class="ms-3 text-truncate">
                                             <h5 class="mb-1 fs-4"><?php echo $userFileAs; ?></h5>
                                             <h5 class="mb-1 fs-2"><?php echo $userEmail; ?></h5>

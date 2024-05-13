@@ -28,6 +28,10 @@
             resetModalForm('change-password-form');
         });
 
+        $(document).on('click','#update-user-account-profile-picture',function() {
+            resetModalForm('user-account-profile-picture-form');
+        });
+
         $(document).on('click','#delete-user-account',function() {
             const user_account_id = $('#user-account-id').text();
             const page_link = document.getElementById('page-link').getAttribute('href');
@@ -625,6 +629,7 @@ function changePasswordForm(){
                     if (response.success) {
                         showNotification(response.title, response.message, response.messageType);
                         $('#change-password-modal').modal('hide');
+                        
                     }
                     else {
                         if (response.isInactive || response.notExist || response.userInactive || response.userLocked || response.sessionExpired) {
@@ -702,6 +707,7 @@ function updateUserAccountProfilPictureForm(){
                 success: function (response) {
                     if (response.success) {
                         showNotification(response.title, response.message, response.messageType);
+                        displayDetails('get user account details');
                         $('#user-account-profile-picture-modal').modal('hide');
                     }
                     else {
@@ -845,6 +851,7 @@ function displayDetails(transaction){
                         $('#last_connection_date_summary').text(response.lastConnectionDate);
                         $('#last_password_reset_summary').text(response.lastPasswordReset);
                         $('#account_lock_duration_summary').text(response.accountLockDuration);
+
                         document.getElementById('user_account_profile_picture').src = response.profilePicture;
 
                         document.getElementById('two-factor-authentication').checked = response.twoFactorAuthentication === 'Yes';

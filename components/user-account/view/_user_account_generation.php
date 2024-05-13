@@ -81,7 +81,7 @@ if(isset($_POST['type']) && !empty($_POST['type'])){
                 $response[] = [
                     'CHECK_BOX' => '<input class="form-check-input datatable-checkbox-children" type="checkbox" value="'. $userAccountID .'">',
                     'USER_ACCOUNT' => '<div class="d-flex align-items-center">
-                                                <img src="'. $profilePicture .'" alt="avatar" class="rounded-circle" width="35" />
+                                                <img src="'. $profilePicture .'" alt="avatar" class="rounded-circle" width="35" height="35" />
                                                 <div class="ms-3">
                                                     <div class="user-meta-info">
                                                         <h6 class="user-name mb-0">'. $fileAs .'</h6>

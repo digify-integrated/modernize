@@ -5,7 +5,7 @@ CREATE TABLE email_setting(
 	email_setting_name VARCHAR(100) NOT NULL,
 	email_setting_description VARCHAR(200) NOT NULL,
 	mail_host VARCHAR(100) NOT NULL,
-	port INT NOT NULL,
+	port VARCHAR(10) NOT NULL,
 	smtp_auth INT(1) NOT NULL,
 	smtp_auto_tls INT(1) NOT NULL,
 	mail_username VARCHAR(200) NOT NULL,

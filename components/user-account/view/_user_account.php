@@ -45,7 +45,7 @@
                                             <input class="form-check-input" id="datatable-checkbox" type="checkbox">
                                         </div>
                                     </th>
-                                    <th>User Account</th>
+                                    <th class="min-phone-l">User Account</th>
                                     <th>Status</th>
                                     <th>Locked</th>
                                     <th>Password Expiry Date</th>

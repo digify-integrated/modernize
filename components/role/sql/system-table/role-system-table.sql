@@ -95,6 +95,8 @@ INSERT INTO role_system_action_permission (role_id, role_name, system_action_id,
 INSERT INTO role_system_action_permission (role_id, role_name, system_action_id, system_action_name, system_action_access, date_assigned, last_log_by) VALUES (1, 'Administrator', 10, 'Add Role System Action Access', 1, CURRENT_TIMESTAMP, '1');
 INSERT INTO role_system_action_permission (role_id, role_name, system_action_id, system_action_name, system_action_access, date_assigned, last_log_by) VALUES (1, 'Administrator', 11, 'Update Role System Action Access', 1, CURRENT_TIMESTAMP, '1');
 INSERT INTO role_system_action_permission (role_id, role_name, system_action_id, system_action_name, system_action_access, date_assigned, last_log_by) VALUES (1, 'Administrator', 12, 'Delete Role System Action Access', 1, CURRENT_TIMESTAMP, '1');
+INSERT INTO role_system_action_permission (role_id, role_name, system_action_id, system_action_name, system_action_access, date_assigned, last_log_by) VALUES (1, 'Administrator', 13, 'Add File Extension Access', 1, CURRENT_TIMESTAMP, '1');
+INSERT INTO role_system_action_permission (role_id, role_name, system_action_id, system_action_name, system_action_access, date_assigned, last_log_by) VALUES (1, 'Administrator', 14, 'Delete File Extension Access', 1, CURRENT_TIMESTAMP, '1');
 
 /* ----------------------------------------------------------------------------------------------------------------------------- */
 

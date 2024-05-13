@@ -324,65 +324,6 @@ function fileExtensionAssignmentForm(){
     });
 }
 
-function subuploadSettingTable(datatable_name, buttons = false, show_all = false){
-    toggleHideActionDropdown();
-
-    const type = 'subupload setting table';
-    const upload_setting_id = $('#upload-setting-id').text();
-    var settings;
-
-    const column = [ 
-        { 'data' : 'MENU_ITEM_NAME' },
-        { 'data' : 'ORDER_SEQUENCE' },
-    ];
-
-    const column_definition = [
-        { 'width': 'auto', 'aTargets': 0 },
-        { 'width': 'auto', 'aTargets': 1 }
-    ];
-
-    const length_menu = show_all ? [[-1], ['All']] : [[10, 25, 50, 100, -1], [10, 25, 50, 100, 'All']];
-
-    settings = {
-        'ajax': { 
-            'url' : 'components/upload-setting/view/_upload_setting_generation.php',
-            'method' : 'POST',
-            'dataType': 'json',
-            'data': {'type' : type, 'upload_setting_id' : upload_setting_id},
-            'dataSrc' : '',
-            'error': function(xhr, status, error) {
-                var fullErrorMessage = `XHR status: ${status}, Error: ${error}`;
-                if (xhr.responseText) {
-                    fullErrorMessage += `, Response: ${xhr.responseText}`;
-                }
-                showErrorDialog(fullErrorMessage);
-            }
-        },
-        'order': [[ 1, 'asc' ]],
-        'columns' : column,
-        'fnDrawCallback': function( oSettings ) {
-            readjustDatatableColumn();
-        },
-        'columnDefs': column_definition,
-        'lengthMenu': length_menu,
-        'language': {
-            'emptyTable': 'No data found',
-            'searchPlaceholder': 'Search...',
-            'search': '',
-            'loadingRecords': 'Just a moment while we fetch your data...'
-        },
-    };
-
-    if (buttons) {
-        settings.dom = "<'row'<'col-sm-6'f><'col-sm-6 text-right'B>>" + "<'row'<'col-sm-12'tr>>" + "<'row'<'col-sm-5'i><'col-sm-7'p>>";
-        settings.buttons = ['csv', 'excel', 'pdf'];
-    }
-
-    destroyDatatable(datatable_name);
-
-    $(datatable_name).dataTable(settings);
-}
-
 function assignedFileExtensionTable(datatable_name, buttons = false, show_all = false){
     const upload_setting_id = $('#upload-setting-id').text();
     const type = 'assigned file extension table';

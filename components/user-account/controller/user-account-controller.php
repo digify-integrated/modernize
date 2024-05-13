@@ -467,6 +467,7 @@ class UserAccountController {
 
             $fileName = $this->securityModel->generateFileName();
             $fileNew = $fileName . '.' . $profilePictureActualFileExtension;
+            
             define('PROJECT_BASE_DIR', dirname(__DIR__));
 
             define('USER_ACCOUNT_PROFILE_PICTURE_DIR', 'image/profile_image/');
@@ -491,7 +492,7 @@ class UserAccountController {
             }
 
             $userAccountDetails = $this->userAccountModel->getUserAccount($userAccountID, null);
-            $userAccountProfilePiturePath = !empty($userAccountDetails['profile_picture']) ? str_replace('./', '../../', $userAccountDetails['profile_picture']) : null;
+            $userAccountProfilePiturePath = !empty($userAccountDetails['profile_picture']) ? str_replace('./components/', '../../', $userAccountDetails['profile_picture']) : null;
 
             if(file_exists($userAccountProfilePiturePath)){
                 if (!unlink($userAccountProfilePiturePath)) {
@@ -521,7 +522,14 @@ class UserAccountController {
 
             $this->userAccountModel->updateUserAccountProfilePicture($userAccountID, $filePath, $userID);
 
-            echo json_encode(['success' => true]);
+            $response = [
+                'success' => true,
+                'title' => 'Update User Account Profile Picture Success',
+                'message' => 'The user account profile picture has been updated successfully.',
+                'messageType' => 'success'
+            ];
+
+            echo json_encode($response);
             exit;
         }
     }

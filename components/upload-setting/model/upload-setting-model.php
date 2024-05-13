@@ -24,7 +24,7 @@ class UploadSettingModel {
     # - $p_upload_setting_id (int): The upload setting ID.
     # - $p_upload_setting_name (string): The upload setting name.
     # - $p_upload_setting_description (string): The upload setting description.
-    # - $p_max_file_size (int): The menu group ID.
+    # - $p_max_file_size (int): The max file size.
     # - $p_last_log_by (int): The last logged user.
     #
     # Returns: None
@@ -53,7 +53,7 @@ class UploadSettingModel {
     # Parameters:
     # - $p_upload_setting_name (string): The upload setting name.
     # - $p_upload_setting_description (string): The upload setting description.
-    # - $p_max_file_size (int): The menu group ID.
+    # - $p_max_file_size (int): The max file size.
     # - $p_last_log_by (int): The last logged user.
     #
     # Returns: String

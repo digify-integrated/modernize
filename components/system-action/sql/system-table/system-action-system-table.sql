@@ -22,5 +22,7 @@ INSERT INTO system_action (system_action_name, system_action_description, last_l
 INSERT INTO system_action (system_action_name, system_action_description, last_log_by) VALUES ('Add Role System Action Access', 'Access to add the role system action access.', '1');
 INSERT INTO system_action (system_action_name, system_action_description, last_log_by) VALUES ('Update Role System Action Access', 'Access to update the role system action access.', '1');
 INSERT INTO system_action (system_action_name, system_action_description, last_log_by) VALUES ('Delete Role System Action Access', 'Access to delete the role system action access.', '1');
+INSERT INTO system_action (system_action_name, system_action_description, last_log_by) VALUES ('Add File Extension Access', 'Access to assign the file extension to the upload setting.', '1');
+INSERT INTO system_action (system_action_name, system_action_description, last_log_by) VALUES ('Delete File Extension Access', 'Access to delete the file extension to the upload setting.', '1');
 
 /* ----------------------------------------------------------------------------------------------------------------------------- */

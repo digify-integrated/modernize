@@ -13,6 +13,9 @@ CREATE TABLE file_extension (
 CREATE INDEX file_extension_index_file_extension_id ON file_extension(file_extension_id);
 CREATE INDEX file_extension_index_file_type_id ON file_extension(file_type_id);
 
-INSERT INTO file_extension (file_extension_name, file_extension_url, file_type_id, file_type_name, parent_id, parent_name, file_extension_icon, order_sequence, last_log_by) VALUES ('User Interface', '', 1, 'Technical', 0, '', 'ti ti-template', 21, 1);
+INSERT INTO file_extension (file_extension_name, file_extension, file_type_id, file_type_name, last_log_by) VALUES ('PNG', 'png', 1, 'Image', 1);
+INSERT INTO file_extension (file_extension_name, file_extension, file_type_id, file_type_name, last_log_by) VALUES ('JPG', 'jpg', 1, 'Image', 1);
+INSERT INTO file_extension (file_extension_name, file_extension, file_type_id, file_type_name, last_log_by) VALUES ('JPEG', 'jpeg', 1, 'Image', 1);
+INSERT INTO file_extension (file_extension_name, file_extension, file_type_id, file_type_name, last_log_by) VALUES ('PDF', 'pdf', 2, 'Document', 1);
 
 /* ----------------------------------------------------------------------------------------------------------------------------- */

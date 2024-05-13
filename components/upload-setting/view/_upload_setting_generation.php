@@ -78,42 +78,6 @@ if(isset($_POST['type']) && !empty($_POST['type'])){
             echo json_encode($response);
         break;
         # -------------------------------------------------------------
-
-        # -------------------------------------------------------------
-        #
-        # Type: upload setting options
-        # Description:
-        # Generates the upload setting options.
-        #
-        # Parameters: None
-        #
-        # Returns: Array
-        #
-        # -------------------------------------------------------------
-        case 'upload setting options':
-            $sql = $databaseModel->getConnection()->prepare('CALL generateUploadSettingOptions()');
-            $sql->execute();
-            $options = $sql->fetchAll(PDO::FETCH_ASSOC);
-            $sql->closeCursor();
-
-            $response[] = [
-                'id' => '',
-                'text' => '--'
-            ];
-
-            foreach ($options as $row) {
-                $uploadSettingID = $row['upload_setting_id'];
-                $uploadSettingName = $row['upload_setting_name'];
-
-                $response[] = [
-                    'id' => $row['upload_setting_id'],
-                    'text' => $row['upload_setting_name']
-                ];
-            }
-
-            echo json_encode($response);
-        break;
-        # -------------------------------------------------------------
     }
 }
 
