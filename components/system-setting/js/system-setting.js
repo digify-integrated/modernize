@@ -146,7 +146,7 @@ function systemSettingTable(datatable_name, buttons = false, show_all = false){
 
     const column = [ 
         { 'data' : 'CHECK_BOX' },
-        { 'data' : 'SECURITY_SETTING' },
+        { 'data' : 'SYSTEM_SETTING' },
         { 'data' : 'VALUE' },
         { 'data' : 'ACTION' }
     ];

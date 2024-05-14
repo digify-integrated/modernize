@@ -55,7 +55,7 @@
               <h6 class="mb-0 fs-4 fw-semibold">Lawrence</h6>
               <span class="fs-2">Online</span>
             </div>
-            <a href="logout.php?logout" class="border-0 bg-transparent text-primary ms-auto" tabindex="0" aria-label="logout" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="logout">
+            <a href="logout.php?logout" class="border-0 bg-transparent text-primary ms-auto" tabindex="0" aria-label="logout" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Log Out">
               <i class="ti ti-power fs-6"></i>
             </button>
           </div>

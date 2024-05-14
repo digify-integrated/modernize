@@ -15,7 +15,7 @@ session_start();
 class SystemSettingController {
     private $systemSettingModel;
     private $authenticationModel;
-    private $systemModel;
+    private $securityModel;
 
     # -------------------------------------------------------------
     #
@@ -27,15 +27,15 @@ class SystemSettingController {
     # Parameters:
     # - @param systemSettingModel $systemSettingModel     The systemSettingModel instance for system setting related operations.
     # - @param AuthenticationModel $authenticationModel     The AuthenticationModel instance for user related operations.
-    # - @param SystemModel $systemModel   The SystemModel instance for system related operations.
+    # - @param SecurityModel $securityModel   The SecurityModel instance for security related operations.
     #
     # Returns: None
     #
     # -------------------------------------------------------------
-    public function __construct(SystemSettingModel $systemSettingModel, AuthenticationModel $authenticationModel, SystemModel $systemModel) {
+    public function __construct(SystemSettingModel $systemSettingModel, AuthenticationModel $authenticationModel, SecurityModel $securityModel) {
         $this->systemSettingModel = $systemSettingModel;
         $this->authenticationModel = $authenticationModel;
-        $this->systemModel = $systemModel;
+        $this->securityModel = $securityModel;
     }
     # -------------------------------------------------------------
 
@@ -77,7 +77,7 @@ class SystemSettingController {
             $active = $loginCredentialsDetails['active'];
             $locked = $loginCredentialsDetails['locked'];
             $multipleSession = $loginCredentialsDetails['multiple_session'];
-            $sessionToken = $this->systemModel->decryptData($loginCredentialsDetails['session_token']);
+            $sessionToken = $this->securityModel->decryptData($loginCredentialsDetails['session_token']);
 
             if ($active === 'No') {
                 $response = [
@@ -181,7 +181,7 @@ class SystemSettingController {
     
             $response = [
                 'success' => true,
-                'systemSettingID' => $this->systemModel->encryptData($systemSettingID),
+                'systemSettingID' => $this->securityModel->encryptData($systemSettingID),
                 'title' => 'Insert System Setting Success',
                 'message' => 'The system setting has been inserted successfully.',
                 'messageType' => 'success'
@@ -465,12 +465,12 @@ class SystemSettingController {
 
 require_once '../../global/config/config.php';
 require_once '../../global/model/database-model.php';
-require_once '../../global/model/system-model.php';
+require_once '../../global/model/security-model.php';
 require_once '../../global/model/system-model.php';
 require_once '../../system-setting/model/system-setting-model.php';
 require_once '../../authentication/model/authentication-model.php';
 
-$controller = new SystemSettingController(new systemSettingModel(new DatabaseModel), new AuthenticationModel(new DatabaseModel), new SystemModel());
+$controller = new SystemSettingController(new systemSettingModel(new DatabaseModel), new AuthenticationModel(new DatabaseModel), new SecurityModel());
 $controller->handleRequest();
 
 ?>

@@ -2,7 +2,7 @@
 require_once '../../../session.php';
 require_once '../../global/config/config.php';
 require_once '../../global/model/database-model.php';
-require_once '../../global/model/system-model.php';
+require_once '../../global/model/security-model.php';
 require_once '../../system-setting/model/system-setting-model.php';
 require_once '../../global/model/system-model.php';
 require_once '../../global/model/global-model.php';
@@ -10,8 +10,8 @@ require_once '../../global/model/global-model.php';
 $databaseModel = new DatabaseModel();
 $systemModel = new SystemModel();
 $systemSettingModel = new SystemSettingModel($databaseModel);
-$systemModel = new SystemModel();
-$globalModel = new GlobalModel($databaseModel, $systemModel);
+$securityModel = new SecurityModel();
+$globalModel = new GlobalModel($databaseModel, $securityModel);
 
 if(isset($_POST['type']) && !empty($_POST['type'])){
     $type = htmlspecialchars($_POST['type'], ENT_QUOTES, 'UTF-8');
@@ -45,7 +45,7 @@ if(isset($_POST['type']) && !empty($_POST['type'])){
                 $description = $row['system_setting_description'];
                 $value = $row['value'];
 
-                $systemSettingIDEncrypted = $systemModel->encryptData($systemSettingID);
+                $systemSettingIDEncrypted = $securityModel->encryptData($systemSettingID);
 
                 $deleteButton = '';
                 if($systemSettingDeleteAccess['total'] > 0){
@@ -56,7 +56,7 @@ if(isset($_POST['type']) && !empty($_POST['type'])){
 
                 $response[] = [
                     'CHECK_BOX' => '<input class="form-check-input datatable-checkbox-children" type="checkbox" value="'. $systemSettingID .'">',
-                    'SECURITY_SETTING' => '<div class="d-flex align-items-center">
+                    'SYSTEM_SETTING' => '<div class="d-flex align-items-center">
                                                 <div class="ms-3">
                                                     <div class="user-meta-info">
                                                         <h6 class="user-name mb-0">'. $systemSettingName .'</h6>
