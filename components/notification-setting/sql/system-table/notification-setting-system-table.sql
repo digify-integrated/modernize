@@ -1,3 +1,5 @@
+/* Notification Setting Table */
+
 CREATE TABLE notification_setting(
 	notification_setting_id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY NOT NULL,
 	notification_setting_name VARCHAR(100) NOT NULL,
@@ -5,16 +7,53 @@ CREATE TABLE notification_setting(
 	system_notification INT(1) NOT NULL DEFAULT 1,
 	email_notification INT(1) NOT NULL DEFAULT 0,
 	sms_notification INT(1) NOT NULL DEFAULT 0,
-	system_notification_title VARCHAR(200),
-	system_notification_message VARCHAR(200),
-	email_notification_subject VARCHAR(200),
-	email_notification_body LONGTEXT,
-	sms_notification_message VARCHAR(500),
     last_log_by INT UNSIGNED NOT NULL,
     FOREIGN KEY (last_log_by) REFERENCES user_account(user_account_id)
 );
 
 CREATE INDEX notification_setting_index_notification_setting_id ON notification_setting(notification_setting_id);
+
+CREATE TABLE notification_setting_email_template(
+	notification_setting_email_id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY NOT NULL,
+	notification_setting_id INT UNSIGNED NOT NULL,
+	email_notification_subject VARCHAR(200) NOT NULL,
+	email_notification_body LONGTEXT NOT NULL,
+    last_log_by INT UNSIGNED NOT NULL,
+    FOREIGN KEY (notification_setting_id) REFERENCES notification_setting(notification_setting_id),
+    FOREIGN KEY (last_log_by) REFERENCES user_account(user_account_id)
+);
+
+CREATE INDEX notification_setting_email_index_notification_setting_email_id ON notification_setting_email_template(notification_setting_email_id);
+CREATE INDEX notification_setting_email_index_notification_setting_id ON notification_setting_email_template(notification_setting_id);
+
+CREATE TABLE notification_setting_system_template(
+	notification_setting_system_id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY NOT NULL,
+	notification_setting_id INT UNSIGNED NOT NULL,
+	system_notification_title VARCHAR(200) NOT NULL,
+	system_notification_message VARCHAR(200) NOT NULL,
+    last_log_by INT UNSIGNED NOT NULL,
+    FOREIGN KEY (notification_setting_id) REFERENCES notification_setting(notification_setting_id),
+    FOREIGN KEY (last_log_by) REFERENCES user_account(user_account_id)
+);
+
+CREATE INDEX notification_setting_system_index_notification_setting_system_id ON notification_setting_system_template(notification_setting_system_id);
+CREATE INDEX notification_setting_system_index_notification_setting_id ON notification_setting_system_template(notification_setting_id);
+
+CREATE TABLE notification_setting_sms_template(
+	notification_setting_sms_id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY NOT NULL,
+	notification_setting_id INT UNSIGNED NOT NULL,
+	sms_notification_message VARCHAR(500) NOT NULL,
+    last_log_by INT UNSIGNED NOT NULL,
+    FOREIGN KEY (notification_setting_id) REFERENCES notification_setting(notification_setting_id),
+    FOREIGN KEY (last_log_by) REFERENCES user_account(user_account_id)
+);
+
+CREATE INDEX notification_setting_sms_index_notification_setting_sms_id ON notification_setting_sms_template(notification_setting_sms_id);
+CREATE INDEX notification_setting_sms_index_notification_setting_id ON notification_setting_sms_template(notification_setting_id);
+
+/* ----------------------------------------------------------------------------------------------------------------------------- */
+
+
 
 INSERT INTO `notification_setting` (`notification_setting_id`, `notification_setting_name`, `notification_setting_description`, `system_notification`, `email_notification`, `sms_notification`, `system_notification_title`, `system_notification_message`, `email_notification_subject`, `email_notification_body`, `sms_notification_message`, `last_log_by`) VALUES
 (1, 'Login OTP', 'Notification setting for Login OTP received by the users.', 0, 1, 0, NULL, NULL, 'Login OTP - Secure Access to Your Account', '<p>To ensure the security of your account, we have generated a unique One-Time Password (OTP) for you to use during the login process. Please use the following OTP to access your account:</p>\r\n<p>OTP: <strong>{OTP_CODE}</strong></p>\r\n<p>Please note that this OTP is valid for &lt;strong&gt;5 minutes&lt;/strong&gt;. Once you have logged in successfully, we recommend enabling two-factor authentication for an added layer of security.</p>\r\n<p>If you did not initiate this login or believe it was sent to you in error, please disregard this email and delete it immediately. Your account\'s security remains our utmost priority.</p>\r\n<p>&nbsp;</p>\r\n<p>Note: This is an automatically generated email. Please do not reply to this address.</p>', NULL, 1),
