@@ -40,6 +40,72 @@ class NotificationSettingModel {
     # -------------------------------------------------------------
 
     # -------------------------------------------------------------
+    #
+    # Function: updateSystemNotificationChannelStatus
+    # Description: Updates the system notification setting channel.
+    #
+    # Parameters:
+    # - $p_notification_setting_id (int): The notification setting ID.
+    # - $p_system_notification (int): The system notification setting.
+    # - $p_last_log_by (int): The last logged user.
+    #
+    # Returns: None
+    #
+    # -------------------------------------------------------------
+    public function updateSystemNotificationChannelStatus($p_notification_setting_id, $p_system_notification, $p_last_log_by) {
+        $stmt = $this->db->getConnection()->prepare('CALL updateSystemNotificationChannelStatus(:p_notification_setting_id, :p_system_notification, :p_last_log_by)');
+        $stmt->bindValue(':p_notification_setting_id', $p_notification_setting_id, PDO::PARAM_INT);
+        $stmt->bindValue(':p_system_notification', $p_system_notification, PDO::PARAM_STR);
+        $stmt->bindValue(':p_last_log_by', $p_last_log_by, PDO::PARAM_INT);
+        $stmt->execute();
+    }
+    # -------------------------------------------------------------
+
+    # -------------------------------------------------------------
+    #
+    # Function: updateEmailNotificationChannelStatus
+    # Description: Updates the email notification setting channel.
+    #
+    # Parameters:
+    # - $p_notification_setting_id (int): The notification setting ID.
+    # - $p_email_notification (int): The email notification setting.
+    # - $p_last_log_by (int): The last logged user.
+    #
+    # Returns: None
+    #
+    # -------------------------------------------------------------
+    public function updateEmailNotificationChannelStatus($p_notification_setting_id, $p_email_notification, $p_last_log_by) {
+        $stmt = $this->db->getConnection()->prepare('CALL updateEmailNotificationChannelStatus(:p_notification_setting_id, :p_email_notification, :p_last_log_by)');
+        $stmt->bindValue(':p_notification_setting_id', $p_notification_setting_id, PDO::PARAM_INT);
+        $stmt->bindValue(':p_email_notification', $p_email_notification, PDO::PARAM_STR);
+        $stmt->bindValue(':p_last_log_by', $p_last_log_by, PDO::PARAM_INT);
+        $stmt->execute();
+    }
+    # -------------------------------------------------------------
+
+    # -------------------------------------------------------------
+    #
+    # Function: updateSMSNotificationChannelStatus
+    # Description: Updates the SMS notification setting channel.
+    #
+    # Parameters:
+    # - $p_notification_setting_id (int): The notification setting ID.
+    # - $p_sms_notification (int): The SMS notification setting.
+    # - $p_last_log_by (int): The last logged user.
+    #
+    # Returns: None
+    #
+    # -------------------------------------------------------------
+    public function updateSMSNotificationChannelStatus($p_notification_setting_id, $p_sms_notification, $p_last_log_by) {
+        $stmt = $this->db->getConnection()->prepare('CALL updateSMSNotificationChannelStatus(:p_notification_setting_id, :p_sms_notification, :p_last_log_by)');
+        $stmt->bindValue(':p_notification_setting_id', $p_notification_setting_id, PDO::PARAM_INT);
+        $stmt->bindValue(':p_sms_notification', $p_sms_notification, PDO::PARAM_STR);
+        $stmt->bindValue(':p_last_log_by', $p_last_log_by, PDO::PARAM_INT);
+        $stmt->execute();
+    }
+    # -------------------------------------------------------------
+
+    # -------------------------------------------------------------
     #   Insert methods
     # -------------------------------------------------------------
 

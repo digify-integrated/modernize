@@ -10,8 +10,14 @@
                 </li>
                 <li class="nav-item" role="presentation">
                     <button  class="nav-link position-relative rounded-0 d-flex align-items-center justify-content-center bg-transparent fs-3 py-4" id="notification-channel-tab" data-bs-toggle="pill" data-bs-target="#notification-channel" type="button" role="tab" aria-controls="notification-channel" aria-selected="false">
-                        <i class="ti ti-device-tv me-2 fs-6"></i>
+                        <i class="ti ti-notification me-2 fs-6"></i>
                         <span class="d-none d-md-block">Notification Channel</span>
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button  class="nav-link position-relative rounded-0 d-flex align-items-center justify-content-center bg-transparent fs-3 py-4" id="notification-template-tab" data-bs-toggle="pill" data-bs-target="#notification-template" type="button" role="tab" aria-controls="notification-template" aria-selected="false">
+                        <i class="ti ti-bell-ringing me-2 fs-6"></i>
+                        <span class="d-none d-md-block">Notification Template</span>
                     </button>
                 </li>
             </ul>
@@ -79,7 +85,7 @@
                                             <div class="d-flex align-items-center justify-content-between mb-4">
                                                 <div class="d-flex align-items-center gap-3">
                                                     <div class="text-bg-light rounded-1 p-6 d-flex align-items-center justify-content-center">
-                                                        <i class="ti ti-bell text-dark d-block fs-7" width="22" height="22"></i>
+                                                        <i class="ti ti-bell-ringing text-dark d-block fs-7" width="22" height="22"></i>
                                                     </div>
                                                     <div>
                                                         <h5 class="fs-4 fw-semibold">System Notification</h5>
@@ -127,6 +133,73 @@
                                                     ?>
                                                 </div>
                                             </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="notification-template" role="tabpanel" aria-labelledby="notification-template-tab" tabindex="0">
+                        <div class="row justify-content-center">
+                            <div class="col-lg-9">
+                                <div class="card border shadow-none">
+                                    <div class="card-body p-4">
+                                        <h4 class="card-title">System Notification Template</h4>
+                                        <p class="card-subtitle">Configure the system notification template:</p>
+                                        <div class="d-flex align-items-center justify-content-between mt-7">
+                                            <div class="d-flex align-items-center gap-3">
+                                                <div>
+                                                    <h5 class="fs-4 fw-semibold">Subject</h5>
+                                                    <p class="mb-0">Body</p>
+                                                </div>
+                                            </div>
+                                            <?php
+                                                echo $notificationSettingWriteAccess['total'] > 0 ? 
+                                                ' <a class="text-dark fs-6 d-flex align-items-center justify-content-center bg-transparent p-2 fs-4 rounded-circle" href="javascript:void(0)" data-bs-toggle="modal" id="edit-details" data-bs-target="#notification-setting-modal">
+                                                    <i class="ti ti ti-pencil"></i>
+                                                </a>' : '';
+                                            ?>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row justify-content-center">
+                            <div class="col-lg-9">
+                                <div class="card border shadow-none">
+                                    <div class="card-body p-4">
+                                        <h4 class="card-title">Email Notification Template</h4>
+                                        <p class="card-subtitle">Configure the email notification template:</p>
+                                        <div class="d-flex align-items-center justify-content-between mt-7">
+                                            <div class="d-flex align-items-center gap-3">
+                                                <div>
+                                                    <h5 class="fs-4 fw-semibold">Subject</h5>
+                                                    <p class="mb-0">Body</p>
+                                                </div>
+                                            </div>
+                                            <a class="text-dark fs-6 d-flex align-items-center justify-content-center bg-transparent p-2 fs-4 rounded-circle" href="javascript:void(0)" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Edit">
+                                                <i class="ti ti ti-pencil"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row justify-content-center">
+                            <div class="col-lg-9">
+                                <div class="card border shadow-none">
+                                    <div class="card-body p-4">
+                                        <h4 class="card-title">SMS Notification Template</h4>
+                                        <p class="card-subtitle">Configure the SMS notification template:</p>
+                                        <div class="d-flex align-items-center justify-content-between mt-7">
+                                            <div class="d-flex align-items-center gap-3">
+                                                <div>
+                                                    <p class="mb-0">Message</p>
+                                                </div>
+                                            </div>
+                                            <a class="text-dark fs-6 d-flex align-items-center justify-content-center bg-transparent p-2 fs-4 rounded-circle" href="javascript:void(0)" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Edit">
+                                                <i class="ti ti ti-pencil"></i>
+                                            </a>
                                         </div>
                                     </div>
                                 </div>
