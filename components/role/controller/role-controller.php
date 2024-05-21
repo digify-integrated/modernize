@@ -282,7 +282,7 @@ class RoleController {
                     'success' => false,
                     'notExist' => true,
                     'title' => 'Update Role Error',
-                    'message' => 'The role has does not exist.',
+                    'message' => 'The role does not exist.',
                     'messageType' => 'error'
                 ];
                 
@@ -346,7 +346,7 @@ class RoleController {
                     'success' => false,
                     'notExist' => true,
                     'title' => 'Update Role Permission Error',
-                    'message' => 'The role permission has does not exist.',
+                    'message' => 'The role permission does not exist.',
                     'messageType' => 'error'
                 ];
                 
@@ -409,7 +409,7 @@ class RoleController {
                     'success' => false,
                     'notExist' => true,
                     'title' => 'Update Role Permission Error',
-                    'message' => 'The role permission has does not exist.',
+                    'message' => 'The role permission does not exist.',
                     'messageType' => 'error'
                 ];
                 
@@ -882,7 +882,7 @@ class RoleController {
                     'success' => false,
                     'notExist' => true,
                     'title' => 'Delete Role Error',
-                    'message' => 'The role has does not exist.',
+                    'message' => 'The role does not exist.',
                     'messageType' => 'error'
                 ];
                 
@@ -943,7 +943,7 @@ class RoleController {
                     'success' => false,
                     'notExist' => true,
                     'title' => 'Delete Role Permission Error',
-                    'message' => 'The role permission has does not exist.',
+                    'message' => 'The role permission does not exist.',
                     'messageType' => 'error'
                 ];
                 
@@ -1004,7 +1004,7 @@ class RoleController {
                     'success' => false,
                     'notExist' => true,
                     'title' => 'Delete Role Permission Error',
-                    'message' => 'The role permission has does not exist.',
+                    'message' => 'The role permission does not exist.',
                     'messageType' => 'error'
                 ];
                 
@@ -1065,7 +1065,7 @@ class RoleController {
                     'success' => false,
                     'notExist' => true,
                     'title' => 'Delete User Account Error',
-                    'message' => 'The role permission has does not exist.',
+                    'message' => 'The role permission does not exist.',
                     'messageType' => 'error'
                 ];
                 
@@ -1126,7 +1126,7 @@ class RoleController {
                     'success' => false,
                     'notExist' => true,
                     'title' => 'Delete Role Error',
-                    'message' => 'The role permission has does not exist.',
+                    'message' => 'The role permission does not exist.',
                     'messageType' => 'error'
                 ];
                 
@@ -1244,7 +1244,7 @@ class RoleController {
                     'success' => false,
                     'notExist' => true,
                     'title' => 'Get Role Details Error',
-                    'message' => 'The role has does not exist.',
+                    'message' => 'The role does not exist.',
                     'messageType' => 'error'
                 ];
                 

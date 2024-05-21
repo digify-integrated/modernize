@@ -245,7 +245,7 @@ class FileExtensionController {
                     'success' => false,
                     'notExist' => true,
                     'title' => 'Update File Extension Error',
-                    'message' => 'The file extension has does not exist.',
+                    'message' => 'The file extension does not exist.',
                     'messageType' => 'error'
                 ];
                 
@@ -313,7 +313,7 @@ class FileExtensionController {
                     'success' => false,
                     'notExist' => true,
                     'title' => 'Delete File Extension Error',
-                    'message' => 'The file extension has does not exist.',
+                    'message' => 'The file extension does not exist.',
                     'messageType' => 'error'
                 ];
                 
@@ -430,8 +430,8 @@ class FileExtensionController {
                 $response = [
                     'success' => false,
                     'notExist' => true,
-                    'title' => 'Get file extension Details Error',
-                    'message' => 'The file extension has does not exist.',
+                    'title' => 'Get File Extension Details Error',
+                    'message' => 'The file extension does not exist.',
                     'messageType' => 'error'
                 ];
                 

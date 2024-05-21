@@ -239,7 +239,7 @@ class SystemSettingController {
                     'success' => false,
                     'notExist' => true,
                     'title' => 'Update System Setting Error',
-                    'message' => 'The system setting has does not exist.',
+                    'message' => 'The system setting does not exist.',
                     'messageType' => 'error'
                 ];
                 
@@ -304,7 +304,7 @@ class SystemSettingController {
                     'success' => false,
                     'notExist' => true,
                     'title' => 'Delete System Setting Error',
-                    'message' => 'The system setting has does not exist.',
+                    'message' => 'The system setting does not exist.',
                     'messageType' => 'error'
                 ];
                 
@@ -421,8 +421,8 @@ class SystemSettingController {
                 $response = [
                     'success' => false,
                     'notExist' => true,
-                    'title' => 'Get system setting Details Error',
-                    'message' => 'The system setting has does not exist.',
+                    'title' => 'Get System Setting Details Error',
+                    'message' => 'The system setting does not exist.',
                     'messageType' => 'error'
                 ];
                 
@@ -431,11 +431,6 @@ class SystemSettingController {
             }
     
             $systemSettingDetails = $this->systemSettingModel->getSystemSetting($systemSettingID);
-            $smtpAutoTLS = $systemSettingDetails['smtp_auto_tls'] ?? null;
-            $smtpAuth = $systemSettingDetails['smtp_auth'] ?? null;
-            
-            $smtpAutoTLSSummary = ($smtpAutoTLS == 1) ? 'Yes' : 'No';
-            $smtpAuthSummary = ($smtpAuth == 1) ? 'Yes' : 'No';
 
             $response = [
                 'success' => true,

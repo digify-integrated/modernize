@@ -34,19 +34,19 @@
                                             <div class="col-9">
                                                 <h4 class="fw-semibold mb-8"><?php echo $pageTitle; ?></h4>
                                                 <nav aria-label="breadcrumb">
-                                                <ol class="breadcrumb fs-2">
-                                                    <?php
-                                                        require('view/_breadcrumb.php');
+                                                    <ol class="breadcrumb fs-2">
+                                                        <?php
+                                                            require('view/_breadcrumb.php');
 
-                                                        if(!$newRecord && !empty($detailID)){
-                                                            echo '<li class="breadcrumb-item" id="menu-item-id">'. $detailID .'</li>';
-                                                        }
+                                                            if(!$newRecord && !empty($detailID)){
+                                                                echo '<li class="breadcrumb-item" id="menu-item-id">'. $detailID .'</li>';
+                                                            }
 
-                                                        if($newRecord){
-                                                            echo '<li class="breadcrumb-item">New</li>';
-                                                        }
-                                                    ?>
-                                                </ol>
+                                                            if($newRecord){
+                                                                echo '<li class="breadcrumb-item">New</li>';
+                                                            }
+                                                        ?>
+                                                    </ol>
                                                 </nav>
                                             </div>
                                             <div class="col-3">

@@ -314,7 +314,7 @@ class UserAccountController {
                     'success' => false,
                     'notExist' => true,
                     'title' => 'Update User Account Error',
-                    'message' => 'The user account has does not exist.',
+                    'message' => 'The user account does not exist.',
                     'messageType' => 'error'
                 ];
                 
@@ -392,7 +392,7 @@ class UserAccountController {
                     'success' => false,
                     'notExist' => true,
                     'title' => 'Update User Account Profile Picture Error',
-                    'message' => 'The user account profile picture has does not exist.',
+                    'message' => 'The user account profile picture does not exist.',
                     'messageType' => 'error'
                 ];
                 
@@ -565,7 +565,7 @@ class UserAccountController {
                     'success' => false,
                     'notExist' => true,
                     'title' => 'Change User Account Password Error',
-                    'message' => 'The user account has does not exist.',
+                    'message' => 'The user account does not exist.',
                     'messageType' => 'error'
                 ];
                 
@@ -656,7 +656,7 @@ class UserAccountController {
                     'success' => false,
                     'notExist' => true,
                     'title' => 'Activate User Account Error',
-                    'message' => 'The user account has does not exist.',
+                    'message' => 'The user account does not exist.',
                     'messageType' => 'error'
                 ];
                 
@@ -787,7 +787,7 @@ class UserAccountController {
                     'success' => false,
                     'notExist' => true,
                     'title' => 'Deactivate User Account Error',
-                    'message' => 'The user account has does not exist.',
+                    'message' => 'The user account does not exist.',
                     'messageType' => 'error'
                 ];
                 
@@ -908,7 +908,7 @@ class UserAccountController {
                     'success' => false,
                     'notExist' => true,
                     'title' => 'Lock User Account Error',
-                    'message' => 'The user account has does not exist.',
+                    'message' => 'The user account does not exist.',
                     'messageType' => 'error'
                 ];
                 
@@ -1041,7 +1041,7 @@ class UserAccountController {
                     'success' => false,
                     'notExist' => true,
                     'title' => 'Unlock User Account Error',
-                    'message' => 'The user account has does not exist.',
+                    'message' => 'The user account does not exist.',
                     'messageType' => 'error'
                 ];
                 
@@ -1160,7 +1160,7 @@ class UserAccountController {
                     'success' => false,
                     'notExist' => true,
                     'title' => 'Enable Two-Factor Authentication Error',
-                    'message' => 'The user account has does not exist.',
+                    'message' => 'The user account does not exist.',
                     'messageType' => 'error'
                 ];
                 
@@ -1222,7 +1222,7 @@ class UserAccountController {
                     'success' => false,
                     'notExist' => true,
                     'title' => 'Enable Multiple Login Sessions Error',
-                    'message' => 'The user account has does not exist.',
+                    'message' => 'The user account does not exist.',
                     'messageType' => 'error'
                 ];
                 
@@ -1288,7 +1288,7 @@ class UserAccountController {
                     'success' => false,
                     'notExist' => true,
                     'title' => 'Disable Two-Factor Authentication Error',
-                    'message' => 'The user account has does not exist.',
+                    'message' => 'The user account does not exist.',
                     'messageType' => 'error'
                 ];
                 
@@ -1350,7 +1350,7 @@ class UserAccountController {
                     'success' => false,
                     'notExist' => true,
                     'title' => 'Disable Multiple Login Sessions Error',
-                    'message' => 'The user account has does not exist.',
+                    'message' => 'The user account does not exist.',
                     'messageType' => 'error'
                 ];
                 
@@ -1416,7 +1416,7 @@ class UserAccountController {
                     'success' => false,
                     'notExist' => true,
                     'title' => 'Delete User Account Error',
-                    'message' => 'The user account has does not exist.',
+                    'message' => 'The user account does not exist.',
                     'messageType' => 'error'
                 ];
                 
@@ -1626,7 +1626,7 @@ class UserAccountController {
                     'success' => false,
                     'notExist' => true,
                     'title' => 'Get User Account Details Error',
-                    'message' => 'The user account has does not exist.',
+                    'message' => 'The user account does not exist.',
                     'messageType' => 'error'
                 ];
                 

@@ -239,7 +239,7 @@ class SecuritySettingController {
                     'success' => false,
                     'notExist' => true,
                     'title' => 'Update Security Setting Error',
-                    'message' => 'The security setting has does not exist.',
+                    'message' => 'The security setting does not exist.',
                     'messageType' => 'error'
                 ];
                 
@@ -304,7 +304,7 @@ class SecuritySettingController {
                     'success' => false,
                     'notExist' => true,
                     'title' => 'Delete Security Setting Error',
-                    'message' => 'The security setting has does not exist.',
+                    'message' => 'The security setting does not exist.',
                     'messageType' => 'error'
                 ];
                 
@@ -421,8 +421,8 @@ class SecuritySettingController {
                 $response = [
                     'success' => false,
                     'notExist' => true,
-                    'title' => 'Get security setting Details Error',
-                    'message' => 'The security setting has does not exist.',
+                    'title' => 'Get Security Setting Details Error',
+                    'message' => 'The security setting does not exist.',
                     'messageType' => 'error'
                 ];
                 
@@ -431,11 +431,6 @@ class SecuritySettingController {
             }
     
             $securitySettingDetails = $this->securitySettingModel->getSecuritySetting($securitySettingID);
-            $smtpAutoTLS = $securitySettingDetails['smtp_auto_tls'] ?? null;
-            $smtpAuth = $securitySettingDetails['smtp_auth'] ?? null;
-            
-            $smtpAutoTLSSummary = ($smtpAutoTLS == 1) ? 'Yes' : 'No';
-            $smtpAuthSummary = ($smtpAuth == 1) ? 'Yes' : 'No';
 
             $response = [
                 'success' => true,

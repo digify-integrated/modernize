@@ -248,7 +248,7 @@ class UploadSettingController {
                     'success' => false,
                     'notExist' => true,
                     'title' => 'Update Upload Setting Error',
-                    'message' => 'The upload setting has does not exist.',
+                    'message' => 'The upload setting does not exist.',
                     'messageType' => 'error'
                 ];
                 
@@ -385,7 +385,7 @@ class UploadSettingController {
                     'success' => false,
                     'notExist' => true,
                     'title' => 'Delete Upload Setting Error',
-                    'message' => 'The upload setting has does not exist.',
+                    'message' => 'The upload setting does not exist.',
                     'messageType' => 'error'
                 ];
                 
@@ -446,7 +446,7 @@ class UploadSettingController {
                     'success' => false,
                     'notExist' => true,
                     'title' => 'Delete File Extension Error',
-                    'message' => 'The file extension has does not exist.',
+                    'message' => 'The file extension does not exist.',
                     'messageType' => 'error'
                 ];
                 
@@ -563,8 +563,8 @@ class UploadSettingController {
                 $response = [
                     'success' => false,
                     'notExist' => true,
-                    'title' => 'Get upload setting Details Error',
-                    'message' => 'The upload setting has does not exist.',
+                    'title' => 'Get Upload Setting Details Error',
+                    'message' => 'The upload setting does not exist.',
                     'messageType' => 'error'
                 ];
                 

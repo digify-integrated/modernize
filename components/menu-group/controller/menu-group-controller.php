@@ -237,7 +237,7 @@ class MenuGroupController {
                     'success' => false,
                     'notExist' => true,
                     'title' => 'Update Menu Group Error',
-                    'message' => 'The menu group has does not exist.',
+                    'message' => 'The menu group does not exist.',
                     'messageType' => 'error'
                 ];
                 
@@ -302,7 +302,7 @@ class MenuGroupController {
                     'success' => false,
                     'notExist' => true,
                     'title' => 'Delete Menu Group Error',
-                    'message' => 'The menu group has does not exist.',
+                    'message' => 'The menu group does not exist.',
                     'messageType' => 'error'
                 ];
                 
@@ -420,7 +420,7 @@ class MenuGroupController {
                     'success' => false,
                     'notExist' => true,
                     'title' => 'Get Menu Group Details Error',
-                    'message' => 'The menu group has does not exist.',
+                    'message' => 'The menu group does not exist.',
                     'messageType' => 'error'
                 ];
                 

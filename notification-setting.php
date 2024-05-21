@@ -13,8 +13,6 @@
     <head>
         <?php include_once('view/_head.php'); ?>
         <link rel="stylesheet" href="./assets/libs/datatables.net-bs5/css/dataTables.bootstrap5.min.css" />
-        <link rel="stylesheet" href="./assets/libs/bootstrap-duallistbox/dist/bootstrap-duallistbox.min.css">
-        <link rel="stylesheet" href="./assets/libs/select2/dist/css/select2.min.css">
     </head>
 
     <body>
@@ -33,19 +31,19 @@
                                             <div class="col-9">
                                                 <h4 class="fw-semibold mb-8"><?php echo $pageTitle; ?></h4>
                                                 <nav aria-label="breadcrumb">
-                                                <ol class="breadcrumb fs-2">
-                                                    <?php
-                                                        require('view/_breadcrumb.php');
+                                                    <ol class="breadcrumb fs-2">
+                                                        <?php
+                                                            require('view/_breadcrumb.php');
 
-                                                        if(!$newRecord && !empty($detailID)){
-                                                            echo '<li class="breadcrumb-item" id="notification-setting-id">'. $detailID .'</li>';
-                                                        }
+                                                            if(!$newRecord && !empty($detailID)){
+                                                                echo '<li class="breadcrumb-item" id="notification-setting-id">'. $detailID .'</li>';
+                                                            }
 
-                                                        if($newRecord){
-                                                            echo '<li class="breadcrumb-item">New</li>';
-                                                        }
-                                                    ?>
-                                                </ol>
+                                                            if($newRecord){
+                                                                echo '<li class="breadcrumb-item">New</li>';
+                                                            }
+                                                        ?>
+                                                    </ol>
                                                 </nav>
                                             </div>
                                             <div class="col-3">
@@ -82,9 +80,7 @@
         
         <script src="./assets/libs/max-length/bootstrap-maxlength.min.js"></script>
         <script src="./assets/libs/datatables.net/js/jquery.dataTables.min.js"></script>
-        <script src="./assets/libs/select2/dist/js/select2.full.min.js"></script>
-        <script src="./assets/libs/select2/dist/js/select2.min.js"></script>
-        <script src="./assets/libs/bootstrap-duallistbox/dist/jquery.bootstrap-duallistbox.min.js"></script>
+        <script src="./assets/libs/tinymce/tinymce.min.js"></script>
 
         <?php 
             if($newRecord){

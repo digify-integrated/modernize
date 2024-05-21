@@ -235,7 +235,7 @@ class FileTypeController {
                     'success' => false,
                     'notExist' => true,
                     'title' => 'Update File Type Error',
-                    'message' => 'The file type has does not exist.',
+                    'message' => 'The file type does not exist.',
                     'messageType' => 'error'
                 ];
                 
@@ -300,7 +300,7 @@ class FileTypeController {
                     'success' => false,
                     'notExist' => true,
                     'title' => 'Delete File Type Error',
-                    'message' => 'The file type has does not exist.',
+                    'message' => 'The file type does not exist.',
                     'messageType' => 'error'
                 ];
                 
@@ -418,7 +418,7 @@ class FileTypeController {
                     'success' => false,
                     'notExist' => true,
                     'title' => 'Get File Type Details Error',
-                    'message' => 'The file type has does not exist.',
+                    'message' => 'The file type does not exist.',
                     'messageType' => 'error'
                 ];
                 

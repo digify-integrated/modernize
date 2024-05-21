@@ -30,7 +30,7 @@ CREATE TABLE notification_setting_system_template(
 	notification_setting_system_id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY NOT NULL,
 	notification_setting_id INT UNSIGNED NOT NULL,
 	system_notification_title VARCHAR(200) NOT NULL,
-	system_notification_message VARCHAR(200) NOT NULL,
+	system_notification_message VARCHAR(500) NOT NULL,
     last_log_by INT UNSIGNED NOT NULL,
     FOREIGN KEY (notification_setting_id) REFERENCES notification_setting(notification_setting_id),
     FOREIGN KEY (last_log_by) REFERENCES user_account(user_account_id)

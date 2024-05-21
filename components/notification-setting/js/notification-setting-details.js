@@ -3,9 +3,24 @@
 
     $(function() {
         displayDetails('get notification setting details');
+        displayDetails('get system notification template details');
+        displayDetails('get email notification template details');
+        displayDetails('get sms notification template details');
 
         if($('#notification-setting-form').length){
             notificationSettingForm();
+        }
+
+        if($('#system-notification-template-form').length){
+            systemNotificationTemplateForm();
+        }
+
+        if($('#email-notification-template-form').length){
+            emailNotificationTemplateForm();
+        }
+
+        if($('#sms-notification-template-form').length){
+            smsNotificationTemplateForm();
         }
 
         $(document).on('click','#edit-details',function() {
@@ -291,11 +306,257 @@ function notificationSettingForm(){
     });
 }
 
+function systemNotificationTemplateForm(){
+    $('#system-notification-template-form').validate({
+        rules: {
+            system_notification_title: {
+                required: true
+            },
+            system_notification_message: {
+                required: true
+            }
+        },
+        messages: {
+            system_notification_title: {
+                required: 'Please enter the notification title'
+            },
+            system_notification_message: {
+                required: 'Please enter the notification message'
+            }
+        },
+        errorPlacement: function (error, element) {
+            showNotification('Attention Required: Error Found', error, 'error', 1500);
+        },
+        highlight: function(element) {
+            var inputElement = $(element);
+            if (inputElement.hasClass('select2-hidden-accessible')) {
+                inputElement.next().find('.select2-selection__rendered').addClass('is-invalid');
+            }
+            else {
+                inputElement.addClass('is-invalid');
+            }
+        },
+        unhighlight: function(element) {
+            var inputElement = $(element);
+            if (inputElement.hasClass('select2-hidden-accessible')) {
+                inputElement.next().find('.select2-selection__rendered').removeClass('is-invalid');
+            }
+            else {
+                inputElement.removeClass('is-invalid');
+            }
+        },
+        submitHandler: function(form) {
+            const notification_setting_id = $('#notification-setting-id').text();
+            const transaction = 'update system notification template';
+          
+            $.ajax({
+                type: 'POST',
+                url: 'components/notification-setting/controller/notification-setting-controller.php',
+                data: $(form).serialize() + '&transaction=' + transaction +'&notification_setting_id=' + notification_setting_id,
+                dataType: 'json',
+                beforeSend: function() {
+                    disableFormSubmitButton('system-notification-template-submit-data');
+                },
+                success: function (response) {
+                    if (response.success) {
+                        showNotification(response.title, response.message, response.messageType);
+                        displayDetails('get system notification template details');
+                        $('#system-notification-template-modal').modal('hide');
+                    }
+                    else {
+                        if (response.isInactive || response.notExist || response.userInactive || response.userLocked || response.sessionExpired) {
+                            setNotification(response.title, response.message, response.messageType);
+                            window.location = 'logout.php?logout';
+                        }
+                        else {
+                            showNotification(response.title, response.message, response.messageType);
+                        }
+                    }
+                },
+                error: function(xhr, status, error) {
+                    var fullErrorMessage = `XHR status: ${status}, Error: ${error}`;
+                    if (xhr.responseText) {
+                        fullErrorMessage += `, Response: ${xhr.responseText}`;
+                    }
+                    showErrorDialog(fullErrorMessage);
+                },
+                complete: function() {
+                    enableFormSubmitButton('system-notification-template-submit-data');
+                }
+            });
+        
+            return false;
+        }
+    });
+}
+
+function emailNotificationTemplateForm(){
+    $('#email-notification-template-form').validate({
+        rules: {
+            email_notification_subject: {
+                required: true
+            },
+            email_notification_body: {
+                required: true
+            },
+        },
+        messages: {
+            email_notification_subject: {
+                required: 'Please enter the email subject'
+            },
+            email_notification_body: {
+                required: 'Please enter the email body'
+            },
+        },
+        errorPlacement: function (error, element) {
+            showNotification('Attention Required: Error Found', error, 'error', 1500);
+        },
+        highlight: function(element) {
+            var inputElement = $(element);
+            if (inputElement.hasClass('select2-hidden-accessible')) {
+                inputElement.next().find('.select2-selection__rendered').addClass('is-invalid');
+            }
+            else {
+                inputElement.addClass('is-invalid');
+            }
+        },
+        unhighlight: function(element) {
+            var inputElement = $(element);
+            if (inputElement.hasClass('select2-hidden-accessible')) {
+                inputElement.next().find('.select2-selection__rendered').removeClass('is-invalid');
+            }
+            else {
+                inputElement.removeClass('is-invalid');
+            }
+        },
+        submitHandler: function(form) {
+            const notification_setting_id = $('#notification-setting-id').text();
+            const transaction = 'update system notification template';
+          
+            $.ajax({
+                type: 'POST',
+                url: 'components/notification-setting/controller/notification-setting-controller.php',
+                data: $(form).serialize() + '&transaction=' + transaction +'&notification_setting_id=' + notification_setting_id,
+                dataType: 'json',
+                beforeSend: function() {
+                    disableFormSubmitButton('system-notification-template-submit-data');
+                },
+                success: function (response) {
+                    if (response.success) {
+                        showNotification(response.title, response.message, response.messageType);
+                        displayDetails('get system notification template details');
+                        $('#system-notification-template-modal').modal('hide');
+                    }
+                    else {
+                        if (response.isInactive || response.notExist || response.userInactive || response.userLocked || response.sessionExpired) {
+                            setNotification(response.title, response.message, response.messageType);
+                            window.location = 'logout.php?logout';
+                        }
+                        else {
+                            showNotification(response.title, response.message, response.messageType);
+                        }
+                    }
+                },
+                error: function(xhr, status, error) {
+                    var fullErrorMessage = `XHR status: ${status}, Error: ${error}`;
+                    if (xhr.responseText) {
+                        fullErrorMessage += `, Response: ${xhr.responseText}`;
+                    }
+                    showErrorDialog(fullErrorMessage);
+                },
+                complete: function() {
+                    enableFormSubmitButton('system-notification-template-submit-data');
+                }
+            });
+        
+            return false;
+        }
+    });
+}
+
+function smsNotificationTemplateForm(){
+    $('#sms-notification-template-form').validate({
+        rules: {
+            sms_notification_message: {
+                required: true
+            }
+        },
+        messages: {
+            sms_notification_message: {
+                required: 'Please enter the notification message'
+            }
+        },
+        errorPlacement: function (error, element) {
+            showNotification('Attention Required: Error Found', error, 'error', 1500);
+        },
+        highlight: function(element) {
+            var inputElement = $(element);
+            if (inputElement.hasClass('select2-hidden-accessible')) {
+                inputElement.next().find('.select2-selection__rendered').addClass('is-invalid');
+            }
+            else {
+                inputElement.addClass('is-invalid');
+            }
+        },
+        unhighlight: function(element) {
+            var inputElement = $(element);
+            if (inputElement.hasClass('select2-hidden-accessible')) {
+                inputElement.next().find('.select2-selection__rendered').removeClass('is-invalid');
+            }
+            else {
+                inputElement.removeClass('is-invalid');
+            }
+        },
+        submitHandler: function(form) {
+            const notification_setting_id = $('#notification-setting-id').text();
+            const transaction = 'update system notification template';
+          
+            $.ajax({
+                type: 'POST',
+                url: 'components/notification-setting/controller/notification-setting-controller.php',
+                data: $(form).serialize() + '&transaction=' + transaction +'&notification_setting_id=' + notification_setting_id,
+                dataType: 'json',
+                beforeSend: function() {
+                    disableFormSubmitButton('system-notification-template-submit-data');
+                },
+                success: function (response) {
+                    if (response.success) {
+                        showNotification(response.title, response.message, response.messageType);
+                        displayDetails('get system notification template details');
+                        $('#system-notification-template-modal').modal('hide');
+                    }
+                    else {
+                        if (response.isInactive || response.notExist || response.userInactive || response.userLocked || response.sessionExpired) {
+                            setNotification(response.title, response.message, response.messageType);
+                            window.location = 'logout.php?logout';
+                        }
+                        else {
+                            showNotification(response.title, response.message, response.messageType);
+                        }
+                    }
+                },
+                error: function(xhr, status, error) {
+                    var fullErrorMessage = `XHR status: ${status}, Error: ${error}`;
+                    if (xhr.responseText) {
+                        fullErrorMessage += `, Response: ${xhr.responseText}`;
+                    }
+                    showErrorDialog(fullErrorMessage);
+                },
+                complete: function() {
+                    enableFormSubmitButton('system-notification-template-submit-data');
+                }
+            });
+        
+            return false;
+        }
+    });
+}
+
 function displayDetails(transaction){
     switch (transaction) {
         case 'get notification setting details':
             var notification_setting_id = $('#notification-setting-id').text();
-            const page_link = document.getElementById('page-link').getAttribute('href');
+            var page_link = document.getElementById('page-link').getAttribute('href');
             
             $.ajax({
                 url: 'components/notification-setting/controller/notification-setting-controller.php',
@@ -316,6 +577,133 @@ function displayDetails(transaction){
                         document.getElementById('system-notification').checked = response.systemNotification === 1;
                         document.getElementById('email-notification').checked = response.emailNotification === 1;
                         document.getElementById('sms-notification').checked = response.smsNotification === 1;
+                    } 
+                    else {
+                        if (response.isInactive || response.userNotExist || response.userInactive || response.userLocked || response.sessionExpired) {
+                            setNotification(response.title, response.message, response.messageType);
+                            window.location = 'logout.php?logout';
+                        }
+                        else if (response.notExist) {
+                            setNotification(response.title, response.message, response.messageType);
+                            window.location = page_link;
+                        }
+                        else {
+                            showNotification(response.title, response.message, response.messageType);
+                        }
+                    }
+                },
+                error: function(xhr, status, error) {
+                    var fullErrorMessage = `XHR status: ${status}, Error: ${error}`;
+                    if (xhr.responseText) {
+                        fullErrorMessage += `, Response: ${xhr.responseText}`;
+                    }
+                    showErrorDialog(fullErrorMessage);
+                }
+            });
+            break;
+        case 'get system notification template details':
+            var notification_setting_id = $('#notification-setting-id').text();
+            var page_link = document.getElementById('page-link').getAttribute('href');
+            
+            $.ajax({
+                url: 'components/notification-setting/controller/notification-setting-controller.php',
+                method: 'POST',
+                dataType: 'json',
+                data: {
+                    notification_setting_id : notification_setting_id, 
+                    transaction : transaction
+                },
+                success: function(response) {
+                    if (response.success) {
+                        $('#system_notification_title').val(response.systemNotificationTitle);
+                        $('#system_notification_message').val(response.systemNotificationMessage);
+                        
+                        $('#system_notification_title_preview').text(response.systemNotificationTitle);
+                        $('#system_notification_message_preview').text(response.systemNotificationMessage);
+                    } 
+                    else {
+                        if (response.isInactive || response.userNotExist || response.userInactive || response.userLocked || response.sessionExpired) {
+                            setNotification(response.title, response.message, response.messageType);
+                            window.location = 'logout.php?logout';
+                        }
+                        else if (response.notExist) {
+                            setNotification(response.title, response.message, response.messageType);
+                            window.location = page_link;
+                        }
+                        else {
+                            showNotification(response.title, response.message, response.messageType);
+                        }
+                    }
+                },
+                error: function(xhr, status, error) {
+                    var fullErrorMessage = `XHR status: ${status}, Error: ${error}`;
+                    if (xhr.responseText) {
+                        fullErrorMessage += `, Response: ${xhr.responseText}`;
+                    }
+                    showErrorDialog(fullErrorMessage);
+                }
+            });
+            break;
+        case 'get email notification template details':
+            var notification_setting_id = $('#notification-setting-id').text();
+            var page_link = document.getElementById('page-link').getAttribute('href');
+            
+            $.ajax({
+                url: 'components/notification-setting/controller/notification-setting-controller.php',
+                method: 'POST',
+                dataType: 'json',
+                data: {
+                    notification_setting_id : notification_setting_id, 
+                    transaction : transaction
+                },
+                success: function(response) {
+                    if (response.success) {
+                        $('#email_notification_subject').val(response.emailNotificationSubject);
+                        tinymce.get('email_notification_body').setContent(response.emailNotificationBody)
+                        
+                        $('#email_notification_subject_preview').text(response.emailNotificationSubject);
+                        $('#email_notification_body_preview').html(response.emailNotificationBody);
+                    } 
+                    else {
+                        if (response.isInactive || response.userNotExist || response.userInactive || response.userLocked || response.sessionExpired) {
+                            setNotification(response.title, response.message, response.messageType);
+                            window.location = 'logout.php?logout';
+                        }
+                        else if (response.notExist) {
+                            setNotification(response.title, response.message, response.messageType);
+                            window.location = page_link;
+                        }
+                        else {
+                            showNotification(response.title, response.message, response.messageType);
+                        }
+                    }
+                },
+                error: function(xhr, status, error) {
+                    var fullErrorMessage = `XHR status: ${status}, Error: ${error}`;
+                    if (xhr.responseText) {
+                        fullErrorMessage += `, Response: ${xhr.responseText}`;
+                    }
+                    showErrorDialog(fullErrorMessage);
+                }
+            });
+            break;
+        case 'get sms notification template details':
+            var notification_setting_id = $('#notification-setting-id').text();
+            var page_link = document.getElementById('page-link').getAttribute('href');
+            
+            $.ajax({
+                url: 'components/notification-setting/controller/notification-setting-controller.php',
+                method: 'POST',
+                dataType: 'json',
+                data: {
+                    notification_setting_id : notification_setting_id, 
+                    transaction : transaction
+                },
+                success: function(response) {
+                    if (response.success) {
+                        $('#sms_notification_message').val(response.smsNotificationMessage);
+                        
+                        $('#sms_notification_message_preview').text(response.smsNotificationMessage);
                     } 
                     else {
                         if (response.isInactive || response.userNotExist || response.userInactive || response.userLocked || response.sessionExpired) {

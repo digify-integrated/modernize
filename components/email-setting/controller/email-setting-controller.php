@@ -255,7 +255,7 @@ class EmailSettingController {
                     'success' => false,
                     'notExist' => true,
                     'title' => 'Update Email Setting Error',
-                    'message' => 'The email setting has does not exist.',
+                    'message' => 'The email setting does not exist.',
                     'messageType' => 'error'
                 ];
                 
@@ -320,7 +320,7 @@ class EmailSettingController {
                     'success' => false,
                     'notExist' => true,
                     'title' => 'Delete Email Setting Error',
-                    'message' => 'The email setting has does not exist.',
+                    'message' => 'The email setting does not exist.',
                     'messageType' => 'error'
                 ];
                 
@@ -437,8 +437,8 @@ class EmailSettingController {
                 $response = [
                     'success' => false,
                     'notExist' => true,
-                    'title' => 'Get email setting Details Error',
-                    'message' => 'The email setting has does not exist.',
+                    'title' => 'Get Email Setting Details Error',
+                    'message' => 'The email setting does not exist.',
                     'messageType' => 'error'
                 ];
                 

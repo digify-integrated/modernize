@@ -254,7 +254,7 @@ class MenuItemController {
                     'success' => false,
                     'notExist' => true,
                     'title' => 'Update Menu Item Error',
-                    'message' => 'The menu item has does not exist.',
+                    'message' => 'The menu item does not exist.',
                     'messageType' => 'error'
                 ];
                 
@@ -325,7 +325,7 @@ class MenuItemController {
                     'success' => false,
                     'notExist' => true,
                     'title' => 'Delete Menu Item Error',
-                    'message' => 'The menu item has does not exist.',
+                    'message' => 'The menu item does not exist.',
                     'messageType' => 'error'
                 ];
                 
@@ -442,8 +442,8 @@ class MenuItemController {
                 $response = [
                     'success' => false,
                     'notExist' => true,
-                    'title' => 'Get menu item Details Error',
-                    'message' => 'The menu item has does not exist.',
+                    'title' => 'Get Menu Item Details Error',
+                    'message' => 'The menu item does not exist.',
                     'messageType' => 'error'
                 ];
                 

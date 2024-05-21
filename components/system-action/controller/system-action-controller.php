@@ -240,7 +240,7 @@ class SystemActionController {
                     'success' => false,
                     'notExist' => true,
                     'title' => 'Update System Action Error',
-                    'message' => 'The system action has does not exist.',
+                    'message' => 'The system action does not exist.',
                     'messageType' => 'error'
                 ];
                 
@@ -305,7 +305,7 @@ class SystemActionController {
                     'success' => false,
                     'notExist' => true,
                     'title' => 'Delete System Action Error',
-                    'message' => 'The system action has does not exist.',
+                    'message' => 'The system action does not exist.',
                     'messageType' => 'error'
                 ];
                 
@@ -423,7 +423,7 @@ class SystemActionController {
                     'success' => false,
                     'notExist' => true,
                     'title' => 'Get System Action Details Error',
-                    'message' => 'The system action has does not exist.',
+                    'message' => 'The system action does not exist.',
                     'messageType' => 'error'
                 ];
                 

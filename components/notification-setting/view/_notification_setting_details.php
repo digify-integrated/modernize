@@ -149,13 +149,13 @@
                                         <div class="d-flex align-items-center justify-content-between mt-7">
                                             <div class="d-flex align-items-center gap-3">
                                                 <div>
-                                                    <h5 class="fs-4 fw-semibold">Subject</h5>
-                                                    <p class="mb-0">Body</p>
+                                                    <h5 class="fs-4 fw-semibold" id="system_notification_title_preview">Title</h5>
+                                                    <p class="mb-0" id="system_notification_message_preview">Message</p>
                                                 </div>
                                             </div>
                                             <?php
                                                 echo $notificationSettingWriteAccess['total'] > 0 ? 
-                                                ' <a class="text-dark fs-6 d-flex align-items-center justify-content-center bg-transparent p-2 fs-4 rounded-circle" href="javascript:void(0)" data-bs-toggle="modal" id="edit-details" data-bs-target="#notification-setting-modal">
+                                                ' <a class="text-dark fs-6 d-flex align-items-center justify-content-center bg-transparent p-2 fs-4 rounded-circle" href="javascript:void(0)" data-bs-toggle="modal" id="edit-details" data-bs-target="#system-notification-template-modal">
                                                     <i class="ti ti ti-pencil"></i>
                                                 </a>' : '';
                                             ?>
@@ -173,13 +173,16 @@
                                         <div class="d-flex align-items-center justify-content-between mt-7">
                                             <div class="d-flex align-items-center gap-3">
                                                 <div>
-                                                    <h5 class="fs-4 fw-semibold">Subject</h5>
-                                                    <p class="mb-0">Body</p>
+                                                    <h5 class="fs-4 fw-semibold" id="email_notification_subject_preview">Subject</h5>
+                                                    <p class="mb-0" id="email_notification_body_preview">Body</p>
                                                 </div>
                                             </div>
-                                            <a class="text-dark fs-6 d-flex align-items-center justify-content-center bg-transparent p-2 fs-4 rounded-circle" href="javascript:void(0)" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Edit">
-                                                <i class="ti ti ti-pencil"></i>
-                                            </a>
+                                            <?php
+                                                echo $notificationSettingWriteAccess['total'] > 0 ? 
+                                                ' <a class="text-dark fs-6 d-flex align-items-center justify-content-center bg-transparent p-2 fs-4 rounded-circle" href="javascript:void(0)" data-bs-toggle="modal" id="edit-details" data-bs-target="#email-notification-template-modal">
+                                                    <i class="ti ti ti-pencil"></i>
+                                                </a>' : '';
+                                            ?>
                                         </div>
                                     </div>
                                 </div>
@@ -194,12 +197,15 @@
                                         <div class="d-flex align-items-center justify-content-between mt-7">
                                             <div class="d-flex align-items-center gap-3">
                                                 <div>
-                                                    <p class="mb-0">Message</p>
+                                                    <p class="mb-0" id="sms_notification_message_preview">Message</p>
                                                 </div>
                                             </div>
-                                            <a class="text-dark fs-6 d-flex align-items-center justify-content-center bg-transparent p-2 fs-4 rounded-circle" href="javascript:void(0)" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Edit">
-                                                <i class="ti ti ti-pencil"></i>
-                                            </a>
+                                            <?php
+                                                echo $notificationSettingWriteAccess['total'] > 0 ? 
+                                                ' <a class="text-dark fs-6 d-flex align-items-center justify-content-center bg-transparent p-2 fs-4 rounded-circle" href="javascript:void(0)" data-bs-toggle="modal" id="edit-details" data-bs-target="#sms-notification-template-modal">
+                                                    <i class="ti ti ti-pencil"></i>
+                                                </a>' : '';
+                                            ?>
                                         </div>
                                     </div>
                                 </div>
@@ -240,6 +246,103 @@
             <div class="modal-footer border-top">
                 <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Close</button>
                 <button type="submit" form="notification-setting-form" class="btn btn-success" id="submit-data">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="system-notification-template-modal" class="modal fade" tabindex="-1" aria-labelledby="system-notification-template-modal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-r">
+        <div class="modal-content">
+            <div class="modal-header border-bottom">
+                <h5 class="modal-title fw-8">Edit System Notification Template</h5>
+                <button type="button" class="btn-close fs-2" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="system-notification-template-form" method="post" action="#">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="mb-3">
+                                <label class="form-label" for="system_notification_title">Notification Title <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control maxlength" id="system_notification_title" name="system_notification_title" maxlength="200" autocomplete="off">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="mb-3">
+                                <label class="form-label" for="system_notification_message">Notification Message <span class="text-danger">*</span></label>
+                                <textarea class="form-control maxlength" id="system_notification_message" name="system_notification_message" maxlength="500" rows="4"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer border-top">
+                <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Close</button>
+                <button type="submit" form="system-notification-template-form" class="btn btn-success" id="system-notification-template-submit-data">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="email-notification-template-modal" class="modal fade" tabindex="-1" aria-labelledby="email-notification-template-modal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-xl">
+        <div class="modal-content">
+            <div class="modal-header border-bottom">
+                <h5 class="modal-title fw-8">Edit Email Notification Template</h5>
+                <button type="button" class="btn-close fs-2" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="email-notification-template-form" method="post" action="#">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="mb-3">
+                                <label class="form-label" for="email_notification_subject">Email Subject <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control maxlength" id="email_notification_subject" name="email_notification_subject" maxlength="200" autocomplete="off">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="mb-3">
+                                <label class="form-label" for="email_notification_body">Email Body <span class="text-danger">*</span></label>
+                                <textarea class="form-control tiny-mce" id="email_notification_body" name="email_notification_body"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer border-top">
+                <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Close</button>
+                <button type="submit" form="system-notification-template-form" class="btn btn-success" id="email-notification-template-submit-data">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="sms-notification-template-modal" class="modal fade" tabindex="-1" aria-labelledby="sms-notification-template-modal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-r">
+        <div class="modal-content">
+            <div class="modal-header border-bottom">
+                <h5 class="modal-title fw-8">Edit SMS Notification Template</h5>
+                <button type="button" class="btn-close fs-2" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="sms-notification-template-form" method="post" action="#">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="mb-3">
+                                <label class="form-label" for="sms_notification_message">Notification Message <span class="text-danger">*</span></label>
+                                <textarea class="form-control maxlength" id="sms_notification_message" name="sms_notification_message" maxlength="500" rows="4"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer border-top">
+                <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Close</button>
+                <button type="submit" form="sms-notification-template-form" class="btn btn-success" id="sms-notification-template-submit-data">Save changes</button>
             </div>
         </div>
     </div>
