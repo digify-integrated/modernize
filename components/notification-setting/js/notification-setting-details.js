@@ -395,18 +395,12 @@ function emailNotificationTemplateForm(){
         rules: {
             email_notification_subject: {
                 required: true
-            },
-            email_notification_body: {
-                required: true
-            },
+            }
         },
         messages: {
             email_notification_subject: {
                 required: 'Please enter the email subject'
-            },
-            email_notification_body: {
-                required: 'Please enter the email body'
-            },
+            }
         },
         errorPlacement: function (error, element) {
             showNotification('Attention Required: Error Found', error, 'error', 1500);
@@ -431,21 +425,22 @@ function emailNotificationTemplateForm(){
         },
         submitHandler: function(form) {
             const notification_setting_id = $('#notification-setting-id').text();
-            const transaction = 'update system notification template';
+            const email_notification_body = tinymce.get('email_notification_body').getContent({ format: 'html' });
+            const transaction = 'update email notification template';
           
             $.ajax({
                 type: 'POST',
                 url: 'components/notification-setting/controller/notification-setting-controller.php',
-                data: $(form).serialize() + '&transaction=' + transaction +'&notification_setting_id=' + notification_setting_id,
+                data: $(form).serialize() + '&transaction=' + transaction +'&notification_setting_id=' + notification_setting_id +'&email_notification_body=' + email_notification_body,
                 dataType: 'json',
                 beforeSend: function() {
-                    disableFormSubmitButton('system-notification-template-submit-data');
+                    disableFormSubmitButton('email-notification-template-submit-data');
                 },
                 success: function (response) {
                     if (response.success) {
                         showNotification(response.title, response.message, response.messageType);
-                        displayDetails('get system notification template details');
-                        $('#system-notification-template-modal').modal('hide');
+                        displayDetails('get email notification template details');
+                        $('#email-notification-template-modal').modal('hide');
                     }
                     else {
                         if (response.isInactive || response.notExist || response.userInactive || response.userLocked || response.sessionExpired) {
@@ -465,7 +460,7 @@ function emailNotificationTemplateForm(){
                     showErrorDialog(fullErrorMessage);
                 },
                 complete: function() {
-                    enableFormSubmitButton('system-notification-template-submit-data');
+                    enableFormSubmitButton('email-notification-template-submit-data');
                 }
             });
         
@@ -509,7 +504,7 @@ function smsNotificationTemplateForm(){
         },
         submitHandler: function(form) {
             const notification_setting_id = $('#notification-setting-id').text();
-            const transaction = 'update system notification template';
+            const transaction = 'update sms notification template';
           
             $.ajax({
                 type: 'POST',
@@ -517,13 +512,13 @@ function smsNotificationTemplateForm(){
                 data: $(form).serialize() + '&transaction=' + transaction +'&notification_setting_id=' + notification_setting_id,
                 dataType: 'json',
                 beforeSend: function() {
-                    disableFormSubmitButton('system-notification-template-submit-data');
+                    disableFormSubmitButton('sms-notification-template-submit-data');
                 },
                 success: function (response) {
                     if (response.success) {
                         showNotification(response.title, response.message, response.messageType);
-                        displayDetails('get system notification template details');
-                        $('#system-notification-template-modal').modal('hide');
+                        displayDetails('get sms notification template details');
+                        $('#sms-notification-template-modal').modal('hide');
                     }
                     else {
                         if (response.isInactive || response.notExist || response.userInactive || response.userLocked || response.sessionExpired) {
@@ -543,7 +538,7 @@ function smsNotificationTemplateForm(){
                     showErrorDialog(fullErrorMessage);
                 },
                 complete: function() {
-                    enableFormSubmitButton('system-notification-template-submit-data');
+                    enableFormSubmitButton('sms-notification-template-submit-data');
                 }
             });
         
@@ -659,7 +654,16 @@ function displayDetails(transaction){
                 success: function(response) {
                     if (response.success) {
                         $('#email_notification_subject').val(response.emailNotificationSubject);
-                        tinymce.get('email_notification_body').setContent(response.emailNotificationBody)
+
+                        tinymce.init({
+                            height: '300',
+                            selector: '#email_notification_body',
+                            init_instance_callback: (editor) => {
+                                editor.setContent(response.emailNotificationBody, { format: 'html' });
+                            },
+                            menubar: false,
+                            license_key: 'gpl'
+                        });
                         
                         $('#email_notification_subject_preview').text(response.emailNotificationSubject);
                         $('#email_notification_body_preview').html(response.emailNotificationBody);

@@ -441,10 +441,10 @@ class NotificationSettingController {
             $smsNotificationMessage = $_POST['sms_notification_message'];
         
             $checkSMSNotificationTemplateExist = $this->notificationSettingModel->checkSMSNotificationTemplateExist($notificationSettingID);
-            $total = $checkSMSNotificatioTemplateExist['total'] ?? 0;
+            $total = $checkSMSNotificationTemplateExist['total'] ?? 0;
 
             if($total > 0){
-                $this->notificationSettingModel->checkSMSNotificationTemplateExist($notificationSettingID, $smsNotificationMessage, $userID);
+                $this->notificationSettingModel->updateSMSNotificationTemplate($notificationSettingID, $smsNotificationMessage, $userID);
             }
             else{
                 $this->notificationSettingModel->insertSMSNotificationTemplate($notificationSettingID, $smsNotificationMessage, $userID);
@@ -1058,22 +1058,6 @@ class NotificationSettingController {
         if (isset($_POST['notification_setting_id']) && !empty($_POST['notification_setting_id'])) {
             $userID = $_SESSION['user_account_id'];
             $notificationSettingID = htmlspecialchars($_POST['notification_setting_id'], ENT_QUOTES, 'UTF-8');
-
-            $checkSystemNotificationTemplateExist = $this->notificationSettingModel->checkSystemNotificationTemplateExist($notificationSettingID);
-            $total = $checkSystemNotificationTemplateExist['total'] ?? 0;
-
-            if($total === 0){
-                $response = [
-                    'success' => false,
-                    'notExist' => true,
-                    'title' => 'Get System Notification Template Details Error',
-                    'message' => 'The system notification template does not exist.',
-                    'messageType' => 'error'
-                ];
-                
-                echo json_encode($response);
-                exit;
-            }
     
             $systemNotificationTemplateDetails = $this->notificationSettingModel->getSystemNotificationTemplate($notificationSettingID);
 
@@ -1119,22 +1103,6 @@ class NotificationSettingController {
         if (isset($_POST['notification_setting_id']) && !empty($_POST['notification_setting_id'])) {
             $userID = $_SESSION['user_account_id'];
             $notificationSettingID = htmlspecialchars($_POST['notification_setting_id'], ENT_QUOTES, 'UTF-8');
-
-            $checkEmailNotificationTemplateExist = $this->notificationSettingModel->checkEmailNotificationTemplateExist($notificationSettingID);
-            $total = $checkEmailNotificationTemplateExist['total'] ?? 0;
-
-            if($total === 0){
-                $response = [
-                    'success' => false,
-                    'notExist' => true,
-                    'title' => 'Get Email Notification Template Details Error',
-                    'message' => 'The email notification template does not exist.',
-                    'messageType' => 'error'
-                ];
-                
-                echo json_encode($response);
-                exit;
-            }
     
             $emailNotificationTemplateDetails = $this->notificationSettingModel->getEmailNotificationTemplate($notificationSettingID);
 
@@ -1180,22 +1148,6 @@ class NotificationSettingController {
         if (isset($_POST['notification_setting_id']) && !empty($_POST['notification_setting_id'])) {
             $userID = $_SESSION['user_account_id'];
             $notificationSettingID = htmlspecialchars($_POST['notification_setting_id'], ENT_QUOTES, 'UTF-8');
-
-            $checkEmailNotificationTemplateExist = $this->notificationSettingModel->checkEmailNotificationTemplateExist($notificationSettingID);
-            $total = $checkEmailNotificationTemplateExist['total'] ?? 0;
-
-            if($total === 0){
-                $response = [
-                    'success' => false,
-                    'notExist' => true,
-                    'title' => 'Get SMS Notification Template Details Error',
-                    'message' => 'The SMS notification template does not exist.',
-                    'messageType' => 'error'
-                ];
-                
-                echo json_encode($response);
-                exit;
-            }
     
             $smsNotificationTemplateDetails = $this->notificationSettingModel->getSMSNotificationTemplate($notificationSettingID);
 

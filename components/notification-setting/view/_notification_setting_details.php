@@ -155,7 +155,7 @@
                                             </div>
                                             <?php
                                                 echo $notificationSettingWriteAccess['total'] > 0 ? 
-                                                ' <a class="text-dark fs-6 d-flex align-items-center justify-content-center bg-transparent p-2 fs-4 rounded-circle" href="javascript:void(0)" data-bs-toggle="modal" id="edit-details" data-bs-target="#system-notification-template-modal">
+                                                ' <a class="text-dark fs-6 d-flex align-items-center justify-content-center bg-transparent p-2 fs-4 rounded-circle" href="javascript:void(0)" data-bs-toggle="modal" id="edit-system-notification-template-details" data-bs-target="#system-notification-template-modal">
                                                     <i class="ti ti ti-pencil"></i>
                                                 </a>' : '';
                                             ?>
@@ -179,7 +179,7 @@
                                             </div>
                                             <?php
                                                 echo $notificationSettingWriteAccess['total'] > 0 ? 
-                                                ' <a class="text-dark fs-6 d-flex align-items-center justify-content-center bg-transparent p-2 fs-4 rounded-circle" href="javascript:void(0)" data-bs-toggle="modal" id="edit-details" data-bs-target="#email-notification-template-modal">
+                                                ' <a class="text-dark fs-6 d-flex align-items-center justify-content-center bg-transparent p-2 fs-4 rounded-circle" href="javascript:void(0)" data-bs-toggle="modal" id="edit-email-notification-template-details" data-bs-target="#email-notification-template-modal">
                                                     <i class="ti ti ti-pencil"></i>
                                                 </a>' : '';
                                             ?>
@@ -202,7 +202,7 @@
                                             </div>
                                             <?php
                                                 echo $notificationSettingWriteAccess['total'] > 0 ? 
-                                                ' <a class="text-dark fs-6 d-flex align-items-center justify-content-center bg-transparent p-2 fs-4 rounded-circle" href="javascript:void(0)" data-bs-toggle="modal" id="edit-details" data-bs-target="#sms-notification-template-modal">
+                                                ' <a class="text-dark fs-6 d-flex align-items-center justify-content-center bg-transparent p-2 fs-4 rounded-circle" href="javascript:void(0)" data-bs-toggle="modal" id="edit-sms-notification-template-details" data-bs-target="#sms-notification-template-modal">
                                                     <i class="ti ti ti-pencil"></i>
                                                 </a>' : '';
                                             ?>
@@ -307,7 +307,7 @@
                         <div class="col-lg-12">
                             <div class="mb-3">
                                 <label class="form-label" for="email_notification_body">Email Body <span class="text-danger">*</span></label>
-                                <textarea class="form-control tiny-mce" id="email_notification_body" name="email_notification_body"></textarea>
+                                <textarea class="form-control" id="email_notification_body"></textarea>
                             </div>
                         </div>
                     </div>
@@ -315,7 +315,7 @@
             </div>
             <div class="modal-footer border-top">
                 <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Close</button>
-                <button type="submit" form="system-notification-template-form" class="btn btn-success" id="email-notification-template-submit-data">Save changes</button>
+                <button type="submit" form="email-notification-template-form" class="btn btn-success" id="email-notification-template-submit-data">Save changes</button>
             </div>
         </div>
     </div>

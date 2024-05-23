@@ -294,19 +294,11 @@ function initializeFilterDaterange(){
     }
 }
 
-function initializeTinyMCE(){
-    document.addEventListener('focusin', function (e) { if (e.target.closest('.tox-tinymce-aux, .moxman-window, .tam-assetmanager-root') !== null) { e.stopImmediatePropagation(); } });
-    
+function initializeTinyMCE(){    
     tinymce.init({
         height: '300',
         selector: '.tiny-mce',
-        content_style: 'body { font-family: "Inter", sans-serif; }',
         menubar: false,
-        toolbar: [
-            'styleselect fontselect fontsizeselect',
-            'undo redo | cut copy paste | bold italic | link image | alignleft aligncenter alignright alignjustify',
-            'bullist numlist | outdent indent | blockquote subscript superscript | advlist | autolink | lists charmap'
-        ],
-        plugins: 'advlist autolink link image lists charmap'
+        license_key: 'gpl'
     });
 }
