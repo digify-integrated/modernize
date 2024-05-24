@@ -218,6 +218,24 @@
 
                 logNotes('notification_setting', notification_setting_id);
             });
+
+            $(document).on('click','#view-email-notification-template-log-notes',function() {
+                const notification_setting_id = $('#notification-setting-id').text();
+
+                logNotes('notification_setting_email_template', notification_setting_id);
+            });
+
+            $(document).on('click','#view-system-notification-template-log-notes',function() {
+                const notification_setting_id = $('#notification-setting-id').text();
+
+                logNotes('notification_setting_system_template', notification_setting_id);
+            });
+
+            $(document).on('click','#view-sms-notification-template-log-notes',function() {
+                const notification_setting_id = $('#notification-setting-id').text();
+
+                logNotes('notification_setting_sms_template', notification_setting_id);
+            });
         }
     });
 })(jQuery);
@@ -425,7 +443,7 @@ function emailNotificationTemplateForm(){
         },
         submitHandler: function(form) {
             const notification_setting_id = $('#notification-setting-id').text();
-            const email_notification_body = tinymce.get('email_notification_body').getContent({ format: 'html' });
+            const email_notification_body = encodeURIComponent(tinymce.get('email_notification_body').getContent());
             const transaction = 'update email notification template';
           
             $.ajax({

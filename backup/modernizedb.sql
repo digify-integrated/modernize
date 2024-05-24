@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 23, 2024 at 11:28 AM
+-- Generation Time: May 24, 2024 at 11:31 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -72,6 +72,30 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `checkAccessRights` (IN `p_user_acco
     END IF;
 END$$
 
+CREATE DEFINER=`root`@`localhost` PROCEDURE `checkEmailNotificationTemplateExist` (IN `p_notification_setting_id` INT)   BEGIN
+	SELECT COUNT(*) AS total
+    FROM notification_setting_email_template
+    WHERE notification_setting_id = p_notification_setting_id;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `checkEmailSettingExist` (IN `p_email_setting_id` INT)   BEGIN
+	SELECT COUNT(*) AS total
+    FROM email_setting
+    WHERE email_setting_id = p_email_setting_id;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `checkFileExtensionExist` (IN `p_file_extension_id` INT)   BEGIN
+	SELECT COUNT(*) AS total
+    FROM file_extension
+    WHERE file_extension_id = p_file_extension_id;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `checkFileTypeExist` (IN `p_file_type_id` INT)   BEGIN
+	SELECT COUNT(*) AS total
+    FROM file_type
+    WHERE file_type_id = p_file_type_id;
+END$$
+
 CREATE DEFINER=`root`@`localhost` PROCEDURE `checkLoginCredentialsExist` (IN `p_user_account_id` INT, IN `p_email` VARCHAR(255))   BEGIN
 	SELECT COUNT(*) AS total
     FROM user_account
@@ -88,6 +112,12 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `checkMenuItemExist` (IN `p_menu_ite
 	SELECT COUNT(*) AS total
     FROM menu_item
     WHERE menu_item_id = p_menu_item_id;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `checkNotificationSettingExist` (IN `p_notification_setting_id` INT)   BEGIN
+	SELECT COUNT(*) AS total
+    FROM notification_setting
+    WHERE notification_setting_id = p_notification_setting_id;
 END$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `checkRoleExist` (IN `p_role_id` INT)   BEGIN
@@ -114,6 +144,18 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `checkRoleUserAccountExist` (IN `p_r
     WHERE role_user_account_id = p_role_user_account_id;
 END$$
 
+CREATE DEFINER=`root`@`localhost` PROCEDURE `checkSecuritySettingExist` (IN `p_security_setting_id` INT)   BEGIN
+	SELECT COUNT(*) AS total
+    FROM security_setting
+    WHERE security_setting_id = p_security_setting_id;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `checkSMSNotificationTemplateExist` (IN `p_notification_setting_id` INT)   BEGIN
+	SELECT COUNT(*) AS total
+    FROM notification_setting_sms_template
+    WHERE notification_setting_id = p_notification_setting_id;
+END$$
+
 CREATE DEFINER=`root`@`localhost` PROCEDURE `checkSystemActionAccessRights` (IN `p_user_account_id` INT, IN `p_system_action_id` INT)   BEGIN
     SELECT COUNT(role_id) AS total
     FROM role_system_action_permission 
@@ -124,6 +166,30 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `checkSystemActionExist` (IN `p_syst
 	SELECT COUNT(*) AS total
     FROM system_action
     WHERE system_action_id = p_system_action_id;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `checkSystemNotificationTemplateExist` (IN `p_notification_setting_id` INT)   BEGIN
+	SELECT COUNT(*) AS total
+    FROM notification_setting_system_template
+    WHERE notification_setting_id = p_notification_setting_id;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `checkSystemSettingExist` (IN `p_system_setting_id` INT)   BEGIN
+	SELECT COUNT(*) AS total
+    FROM system_setting
+    WHERE system_setting_id = p_system_setting_id;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `checkUploadSettingExist` (IN `p_upload_setting_id` INT)   BEGIN
+	SELECT COUNT(*) AS total
+    FROM upload_setting
+    WHERE upload_setting_id = p_upload_setting_id;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `checkUploadSettingFileExtensionExist` (IN `p_upload_setting_file_extension_id` INT)   BEGIN
+	SELECT COUNT(*) AS total
+    FROM upload_setting_file_extension
+    WHERE upload_setting_file_extension_id = p_upload_setting_file_extension_id;
 END$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `checkUserAccountEmailExist` (IN `p_email` VARCHAR(255))   BEGIN
@@ -142,6 +208,39 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `checkUserAccountExist` (IN `p_user_
 	SELECT COUNT(*) AS total
     FROM user_account
     WHERE user_account_id = p_user_account_id;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `deleteEmailSetting` (IN `p_email_setting_id` INT)   BEGIN
+   DELETE FROM email_setting WHERE email_setting_id = p_email_setting_id;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `deleteFileExtension` (IN `p_file_extension_id` INT)   BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+    END;
+
+    START TRANSACTION;
+
+    DELETE FROM upload_setting_file_extension WHERE file_extension_id = p_file_extension_id;
+    DELETE FROM file_extension WHERE file_extension_id = p_file_extension_id;
+
+    COMMIT;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `deleteFileType` (IN `p_file_type_id` INT)   BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+    END;
+
+    START TRANSACTION;
+
+    DELETE FROM upload_setting_file_extension WHERE file_extension_id IN (SELECT file_extension_id FROM file_extension WHERE file_type_id = p_file_type_id);
+    DELETE FROM file_extension WHERE file_type_id = p_file_type_id;
+    DELETE FROM file_type WHERE file_type_id = p_file_type_id;
+
+    COMMIT;
 END$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `deleteMenuGroup` (IN `p_menu_group_id` INT)   BEGIN
@@ -167,6 +266,22 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `deleteMenuItem` (IN `p_menu_item_id
 
     DELETE FROM role_permission WHERE menu_item_id = p_menu_item_id;
     DELETE FROM menu_item WHERE menu_item_id = p_menu_item_id;
+
+    COMMIT;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `deleteNotificationSetting` (IN `p_notification_setting_id` INT)   BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+    END;
+
+    START TRANSACTION;
+
+    DELETE FROM notification_setting_email_template WHERE notification_setting_id = p_notification_setting_id;
+    DELETE FROM notification_setting_system_template WHERE notification_setting_id = p_notification_setting_id;
+    DELETE FROM notification_setting_sms_template WHERE notification_setting_id = p_notification_setting_id;
+    DELETE FROM notification_setting WHERE notification_setting_id = p_notification_setting_id;
 
     COMMIT;
 END$$
@@ -198,6 +313,10 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `deleteRoleUserAccount` (IN `p_role_
    DELETE FROM role_user_account WHERE role_user_account_id = p_role_user_account_id;
 END$$
 
+CREATE DEFINER=`root`@`localhost` PROCEDURE `deleteSecuritySetting` (IN `p_security_setting_id` INT)   BEGIN
+   DELETE FROM security_setting WHERE security_setting_id = p_security_setting_id;
+END$$
+
 CREATE DEFINER=`root`@`localhost` PROCEDURE `deleteSystemAction` (IN `p_system_action_id` INT)   BEGIN
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
     BEGIN
@@ -210,6 +329,28 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `deleteSystemAction` (IN `p_system_a
     DELETE FROM system_action WHERE system_action_id = p_system_action_id;
 
     COMMIT;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `deleteSystemSetting` (IN `p_system_setting_id` INT)   BEGIN
+   DELETE FROM system_setting WHERE system_setting_id = p_system_setting_id;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `deleteUploadSetting` (IN `p_upload_setting_id` INT)   BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+    END;
+
+    START TRANSACTION;
+
+    DELETE FROM upload_setting_file_extension WHERE upload_setting_id = p_upload_setting_id;
+    DELETE FROM upload_setting WHERE upload_setting_id = p_upload_setting_id;
+
+    COMMIT;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `deleteUploadSettingFileExtension` (IN `p_upload_setting_file_extension_id` INT)   BEGIN
+    DELETE FROM upload_setting_file_extension WHERE upload_setting_file_extension_id = p_upload_setting_file_extension_id;
 END$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `deleteUserAccount` (IN `p_user_account_id` INT)   BEGIN
@@ -225,6 +366,50 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `deleteUserAccount` (IN `p_user_acco
     DELETE FROM user_account WHERE user_account_id = p_user_account_id;
 
     COMMIT;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `generateEmailSettingTable` ()   BEGIN
+    SELECT email_setting_id, email_setting_name, email_setting_description 
+    FROM email_setting
+    ORDER BY email_setting_name;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `generateFileExtensionDualListBoxOptions` (IN `p_upload_setting_id` INT)   BEGIN
+	SELECT file_extension_id, file_extension_name, file_extension
+    FROM file_extension 
+    WHERE file_extension_id NOT IN (SELECT file_extension_id FROM upload_setting_file_extension WHERE upload_setting_id = p_upload_setting_id)
+    ORDER BY file_extension_name;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `generateFileExtensionTable` (IN `p_filter_by_file_type` INT)   BEGIN
+    DECLARE query VARCHAR(5000);
+
+    SET query = CONCAT('
+        SELECT file_extension_id, file_extension_name, file_extension, file_type_name 
+        FROM file_extension 
+        WHERE 1');
+
+    IF p_filter_by_file_type IS NOT NULL THEN
+        SET query = CONCAT(query, ' AND file_type_id = ', p_filter_by_file_type);
+    END IF;
+
+    SET query = CONCAT(query, ' ORDER BY file_extension_name');
+
+    PREPARE stmt FROM query;
+    EXECUTE stmt;
+    DEALLOCATE PREPARE stmt;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `generateFileTypeOptions` ()   BEGIN
+	SELECT file_type_id, file_type_name 
+    FROM file_type 
+    ORDER BY file_type_name;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `generateFileTypeTable` ()   BEGIN
+	SELECT file_type_id, file_type_name 
+    FROM file_type 
+    ORDER BY file_type_id;
 END$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `generateLogNotes` (IN `p_table_name` VARCHAR(255), IN `p_reference_id` INT)   BEGIN
@@ -285,6 +470,12 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `generateMenuItemTable` (IN `p_filte
     DEALLOCATE PREPARE stmt;
 END$$
 
+CREATE DEFINER=`root`@`localhost` PROCEDURE `generateNotificationSettingTable` ()   BEGIN
+    SELECT notification_setting_id, notification_setting_name, notification_setting_description 
+    FROM notification_setting
+    ORDER BY notification_setting_name;
+END$$
+
 CREATE DEFINER=`root`@`localhost` PROCEDURE `generateRoleMenuItemDualListBoxOptions` (IN `p_role_id` INT)   BEGIN
 	SELECT menu_item_id, menu_item_name 
     FROM menu_item 
@@ -293,7 +484,7 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `generateRoleMenuItemDualListBoxOpti
 END$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `generateRoleMenuItemPermissionTable` (IN `p_role_id` INT)   BEGIN
-	SELECT  role_permission_id, menu_item_name, read_access, write_access, create_access, delete_access 
+	SELECT role_permission_id, menu_item_name, read_access, write_access, create_access, delete_access 
     FROM role_permission
     WHERE role_id = p_role_id
     ORDER BY menu_item_name;
@@ -307,7 +498,7 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `generateRoleSystemActionDualListBox
 END$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `generateRoleSystemActionPermissionTable` (IN `p_role_id` INT)   BEGIN
-	SELECT  role_system_action_permission_id, system_action_name, system_action_access 
+	SELECT role_system_action_permission_id, system_action_name, system_action_access 
     FROM role_system_action_permission
     WHERE role_id = p_role_id
     ORDER BY system_action_name;
@@ -333,6 +524,12 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `generateRoleUserAccountTable` (IN `
     ORDER BY file_as;
 END$$
 
+CREATE DEFINER=`root`@`localhost` PROCEDURE `generateSecuritySettingTable` ()   BEGIN
+    SELECT security_setting_id, security_setting_name, security_setting_description, value
+    FROM security_setting
+    ORDER BY security_setting_name;
+END$$
+
 CREATE DEFINER=`root`@`localhost` PROCEDURE `generateSubmenuItemTable` (IN `p_parent_id` INT)   BEGIN
 	SELECT * FROM menu_item
 	WHERE parent_id = p_parent_id AND parent_id IS NOT NULL;
@@ -356,6 +553,25 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `generateSystemActionTable` ()   BEG
 	SELECT system_action_id, system_action_name, system_action_description
     FROM system_action 
     ORDER BY system_action_id;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `generateSystemSettingTable` ()   BEGIN
+    SELECT system_setting_id, system_setting_name, system_setting_description, value
+    FROM system_setting
+    ORDER BY system_setting_name;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `generateUploadSettingFileExtensionTable` (IN `p_upload_setting_id` INT)   BEGIN
+    SELECT upload_setting_file_extension_id, file_extension_name, file_extension 
+    FROM upload_setting_file_extension 
+    WHERE upload_setting_id = p_upload_setting_id
+    ORDER BY file_extension_name;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `generateUploadSettingTable` ()   BEGIN
+    SELECT upload_setting_id, upload_setting_name, upload_setting_description, max_file_size 
+    FROM upload_setting
+    ORDER BY upload_setting_name;
 END$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `generateUserAccountRoleDualListBoxOptions` (IN `p_user_account_id` INT)   BEGIN
@@ -403,9 +619,24 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `generateUserAccountTable` (IN `p_fi
     DEALLOCATE PREPARE stmt;
 END$$
 
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getEmailNotificationTemplate` (IN `p_notification_setting_id` INT)   BEGIN
+	SELECT * FROM notification_setting_email_template
+	WHERE notification_setting_id = p_notification_setting_id;
+END$$
+
 CREATE DEFINER=`root`@`localhost` PROCEDURE `getEmailSetting` (IN `p_email_setting_id` INT)   BEGIN
 	SELECT * FROM email_setting
     WHERE email_setting_id = p_email_setting_id;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getFileExtension` (IN `p_file_extension_id` INT)   BEGIN
+	SELECT * FROM file_extension
+	WHERE file_extension_id = p_file_extension_id;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getFileType` (IN `p_file_type_id` INT)   BEGIN
+	SELECT * FROM file_type
+	WHERE file_type_id = p_file_type_id;
 END$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `getLoginCredentials` (IN `p_user_account_id` INT, IN `p_email` VARCHAR(255))   BEGIN
@@ -425,7 +656,7 @@ END$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `getNotificationSetting` (IN `p_notification_setting_id` INT)   BEGIN
 	SELECT * FROM notification_setting
-    WHERE notification_setting_id = p_notification_setting_id;
+	WHERE notification_setting_id = p_notification_setting_id;
 END$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `getPasswordHistory` (IN `p_user_account_id` INT, IN `p_email` VARCHAR(255))   BEGIN
@@ -443,14 +674,65 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `getSecuritySetting` (IN `p_security
 	WHERE security_setting_id = p_security_setting_id;
 END$$
 
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getSMSNotificationTemplate` (IN `p_notification_setting_id` INT)   BEGIN
+	SELECT * FROM notification_setting_sms_template
+	WHERE notification_setting_id = p_notification_setting_id;
+END$$
+
 CREATE DEFINER=`root`@`localhost` PROCEDURE `getSystemAction` (IN `p_system_action_id` INT)   BEGIN
 	SELECT * FROM system_action
     WHERE system_action_id = p_system_action_id;
 END$$
 
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getSystemNotificationTemplate` (IN `p_notification_setting_id` INT)   BEGIN
+	SELECT * FROM notification_setting_system_template
+	WHERE notification_setting_id = p_notification_setting_id;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getSystemSetting` (IN `p_system_setting_id` INT)   BEGIN
+	SELECT * FROM system_setting
+	WHERE system_setting_id = p_system_setting_id;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getUploadSetting` (IN `p_upload_setting_id` INT)   BEGIN
+	SELECT * FROM upload_setting
+	WHERE upload_setting_id = p_upload_setting_id;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getUploadSettingFileExtension` (IN `p_upload_setting_id` INT)   BEGIN
+	SELECT * FROM upload_setting_file_extension
+	WHERE upload_setting_id = p_upload_setting_id;
+END$$
+
 CREATE DEFINER=`root`@`localhost` PROCEDURE `getUserAccount` (IN `p_user_account_id` INT, IN `p_email` VARCHAR(255))   BEGIN
 	SELECT * FROM user_account
     WHERE user_account_id = p_user_account_id OR email = p_email;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `insertEmailNotificationTemplate` (IN `p_notification_setting_id` INT, IN `p_email_notification_subject` VARCHAR(200), IN `p_email_notification_body` LONGTEXT, IN `p_last_log_by` INT)   BEGIN
+    INSERT INTO notification_setting_email_template (notification_setting_id, email_notification_subject, email_notification_body, last_log_by) 
+	VALUES(p_notification_setting_id, p_email_notification_subject, p_email_notification_body, p_last_log_by);
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `insertEmailSetting` (IN `p_email_setting_name` VARCHAR(100), IN `p_email_setting_description` VARCHAR(200), IN `p_mail_host` VARCHAR(100), IN `p_port` VARCHAR(10), IN `p_smtp_auth` INT(1), IN `p_smtp_auto_tls` INT(1), IN `p_mail_username` VARCHAR(200), IN `p_mail_password` VARCHAR(250), IN `p_mail_encryption` VARCHAR(20), IN `p_mail_from_name` VARCHAR(200), IN `p_mail_from_email` VARCHAR(200), IN `p_last_log_by` INT, OUT `p_email_setting_id` INT)   BEGIN
+    INSERT INTO email_setting (email_setting_name, email_setting_description, mail_host, port, smtp_auth, smtp_auto_tls, mail_username, mail_password, mail_encryption, mail_from_name, mail_from_email, last_log_by) 
+	VALUES(p_email_setting_name, p_email_setting_description, p_mail_host, p_port, p_smtp_auth, p_smtp_auto_tls, p_mail_username, p_mail_password, p_mail_encryption, p_mail_from_name, p_mail_from_email, p_last_log_by);
+	
+    SET p_email_setting_id = LAST_INSERT_ID();
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `insertFileExtension` (IN `p_file_extension_name` VARCHAR(100), IN `p_file_extension` VARCHAR(10), IN `p_file_type_id` INT, IN `p_file_type_name` VARCHAR(100), IN `p_last_log_by` INT, OUT `p_file_extension_id` INT)   BEGIN
+    INSERT INTO file_extension (file_extension_name, file_extension, file_type_id, file_type_name, last_log_by) 
+	VALUES(p_file_extension_name, p_file_extension, p_file_type_id, p_file_type_name, p_last_log_by);
+	
+    SET p_file_extension_id = LAST_INSERT_ID();
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `insertFileType` (IN `p_file_type_name` VARCHAR(100), IN `p_last_log_by` INT, OUT `p_file_type_id` INT)   BEGIN
+    INSERT INTO file_type (file_type_name, last_log_by) 
+	VALUES(p_file_type_name, p_last_log_by);
+	
+    SET p_file_type_id = LAST_INSERT_ID();
 END$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `insertMenuGroup` (IN `p_menu_group_name` VARCHAR(100), IN `p_order_sequence` TINYINT(10), IN `p_last_log_by` INT, OUT `p_menu_group_id` INT)   BEGIN
@@ -465,6 +747,13 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `insertMenuItem` (IN `p_menu_item_na
 	VALUES(p_menu_item_name, p_menu_item_url, p_menu_group_id, p_menu_group_name, p_parent_id, p_parent_name, p_menu_item_icon, p_order_sequence, p_last_log_by);
 	
     SET p_menu_item_id = LAST_INSERT_ID();
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `insertNotificationSetting` (IN `p_notification_setting_name` VARCHAR(100), IN `p_notification_setting_description` VARCHAR(200), IN `p_last_log_by` INT, OUT `p_notification_setting_id` INT)   BEGIN
+    INSERT INTO notification_setting (notification_setting_name, notification_setting_description, last_log_by) 
+	VALUES(p_notification_setting_name, p_notification_setting_description, p_last_log_by);
+	
+    SET p_notification_setting_id = LAST_INSERT_ID();
 END$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `insertPasswordHistory` (IN `p_user_account_id` INT, IN `p_email` VARCHAR(255), IN `p_password` VARCHAR(255), IN `p_last_password_change` DATETIME)   BEGIN
@@ -494,11 +783,47 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `insertRoleUserAccount` (IN `p_role_
 	VALUES(p_role_id, p_role_name, p_user_account_id, p_file_as, p_last_log_by);
 END$$
 
+CREATE DEFINER=`root`@`localhost` PROCEDURE `insertSecuritySetting` (IN `p_security_setting_name` VARCHAR(100), IN `p_security_setting_description` VARCHAR(200), IN `p_value` VARCHAR(1000), IN `p_last_log_by` INT, OUT `p_security_setting_id` INT)   BEGIN
+    INSERT INTO security_setting (security_setting_name, security_setting_description, value, last_log_by) 
+	VALUES(p_security_setting_name, p_security_setting_description, p_value, p_last_log_by);
+	
+    SET p_security_setting_id = LAST_INSERT_ID();
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `insertSMSNotificationTemplate` (IN `p_notification_setting_id` INT, IN `p_sms_notification_message` VARCHAR(500), IN `p_last_log_by` INT)   BEGIN
+    INSERT INTO notification_setting_sms_template (notification_setting_id, sms_notification_message, last_log_by) 
+	VALUES(p_notification_setting_id, p_sms_notification_message, p_last_log_by);
+END$$
+
 CREATE DEFINER=`root`@`localhost` PROCEDURE `insertSystemAction` (IN `p_system_action_name` VARCHAR(100), IN `p_system_action_description` VARCHAR(200), IN `p_last_log_by` INT, OUT `p_system_action_id` INT)   BEGIN
     INSERT INTO system_action (system_action_name, system_action_description, last_log_by) 
 	VALUES(p_system_action_name, p_system_action_description, p_last_log_by);
 	
     SET p_system_action_id = LAST_INSERT_ID();
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `insertSystemNotificationTemplate` (IN `p_notification_setting_id` INT, IN `p_system_notification_title` VARCHAR(200), IN `p_system_notification_message` VARCHAR(500), IN `p_last_log_by` INT)   BEGIN
+    INSERT INTO notification_setting_system_template (notification_setting_id, system_notification_title, system_notification_message, last_log_by) 
+	VALUES(p_notification_setting_id, p_system_notification_title, p_system_notification_message, p_last_log_by);
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `insertSystemSetting` (IN `p_system_setting_name` VARCHAR(100), IN `p_system_setting_description` VARCHAR(200), IN `p_value` VARCHAR(1000), IN `p_last_log_by` INT, OUT `p_system_setting_id` INT)   BEGIN
+    INSERT INTO system_setting (system_setting_name, system_setting_description, value, last_log_by) 
+	VALUES(p_system_setting_name, p_system_setting_description, p_value, p_last_log_by);
+	
+    SET p_system_setting_id = LAST_INSERT_ID();
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `insertUploadSetting` (IN `p_upload_setting_name` VARCHAR(100), IN `p_upload_setting_description` VARCHAR(200), IN `p_max_file_size` DOUBLE, IN `p_last_log_by` INT, OUT `p_upload_setting_id` INT)   BEGIN
+    INSERT INTO upload_setting (upload_setting_name, upload_setting_description, max_file_size, last_log_by) 
+	VALUES(p_upload_setting_name, p_upload_setting_description, p_max_file_size, p_last_log_by);
+	
+    SET p_upload_setting_id = LAST_INSERT_ID();
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `insertUploadSettingFileExtension` (IN `p_upload_setting_id` INT, IN `p_upload_setting_name` VARCHAR(100), IN `p_file_extension_id` INT, IN `p_file_extension_name` VARCHAR(100), IN `p_file_extension` VARCHAR(10), IN `p_last_log_by` INT)   BEGIN
+    INSERT INTO upload_setting_file_extension (upload_setting_id, upload_setting_name, file_extension_id, file_extension_name, file_extension, last_log_by) 
+	VALUES(p_upload_setting_id, p_upload_setting_name, p_file_extension_id, p_file_extension_name, p_file_extension, p_last_log_by);
 END$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `insertUserAccount` (IN `p_file_as` VARCHAR(300), IN `p_email` VARCHAR(255), IN `p_password` VARCHAR(255), IN `p_password_expiry_date` DATE, IN `p_last_password_change` DATETIME, IN `p_last_log_by` INT, OUT `p_user_account_id` INT)   BEGIN
@@ -514,10 +839,88 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `updateAccountLock` (IN `p_user_acco
     WHERE user_account_id = p_user_account_id;
 END$$
 
+CREATE DEFINER=`root`@`localhost` PROCEDURE `updateEmailNotificationChannelStatus` (IN `p_notification_setting_id` INT, IN `p_email_notification` INT(1), IN `p_last_log_by` INT)   BEGIN
+    UPDATE notification_setting
+    SET email_notification = p_email_notification,
+        last_log_by = p_last_log_by
+    WHERE notification_setting_id = p_notification_setting_id;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `updateEmailNotificationTemplate` (IN `p_notification_setting_id` INT, IN `p_email_notification_subject` VARCHAR(200), IN `p_email_notification_body` LONGTEXT, IN `p_last_log_by` INT)   BEGIN
+    UPDATE notification_setting_email_template
+    SET email_notification_subject = p_email_notification_subject,
+        email_notification_body = p_email_notification_body,
+        last_log_by = p_last_log_by
+    WHERE notification_setting_id = p_notification_setting_id;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `updateEmailSetting` (IN `p_email_setting_id` INT, IN `p_email_setting_name` VARCHAR(100), IN `p_email_setting_description` VARCHAR(200), IN `p_mail_host` VARCHAR(100), IN `p_port` VARCHAR(10), IN `p_smtp_auth` INT(1), IN `p_smtp_auto_tls` INT(1), IN `p_mail_username` VARCHAR(200), IN `p_mail_password` VARCHAR(250), IN `p_mail_encryption` VARCHAR(20), IN `p_mail_from_name` VARCHAR(200), IN `p_mail_from_email` VARCHAR(200), IN `p_last_log_by` INT)   BEGIN
+    UPDATE email_setting
+    SET email_setting_name = p_email_setting_name,
+        email_setting_description = p_email_setting_description,
+        mail_host = p_mail_host,
+        port = p_port,
+        smtp_auth = p_smtp_auth,
+        smtp_auto_tls = p_smtp_auto_tls,
+        mail_username = p_mail_username,
+        mail_password = p_mail_password,
+        mail_encryption = p_mail_encryption,
+        mail_from_name = p_mail_from_name,
+        mail_from_email = p_mail_from_email,
+        last_log_by = p_last_log_by
+    WHERE email_setting_id = p_email_setting_id;
+END$$
+
 CREATE DEFINER=`root`@`localhost` PROCEDURE `updateFailedOTPAttempts` (IN `p_user_account_id` INT, IN `p_failed_otp_attempts` INT)   BEGIN
 	UPDATE user_account 
     SET failed_otp_attempts = p_failed_otp_attempts
     WHERE user_account_id = p_user_account_id;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `updateFileExtension` (IN `p_file_extension_id` INT, IN `p_file_extension_name` VARCHAR(100), IN `p_file_extension` VARCHAR(10), IN `p_file_type_id` INT, IN `p_file_type_name` VARCHAR(100), IN `p_last_log_by` INT)   BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+    END;
+
+    START TRANSACTION;
+
+    UPDATE upload_setting_file_extension
+    SET file_extension_name = p_file_extension_name,
+        file_extension = p_file_extension,
+        last_log_by = p_last_log_by
+    WHERE file_extension_id = p_file_extension_id;
+
+    UPDATE file_extension
+    SET file_extension_name = p_file_extension_name,
+        file_extension = p_file_extension,
+        file_type_id = p_file_type_id,
+        file_type_name = p_file_type_name,
+        last_log_by = p_last_log_by
+    WHERE file_extension_id = p_file_extension_id;
+
+    COMMIT;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `updateFileType` (IN `p_file_type_id` INT, IN `p_file_type_name` VARCHAR(100), IN `p_last_log_by` INT)   BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+    END;
+
+    START TRANSACTION;
+
+    UPDATE file_extension
+    SET file_type_name = p_file_type_name,
+        last_log_by = p_last_log_by
+    WHERE file_type_id = p_file_type_id;
+
+    UPDATE file_type
+    SET file_type_name = p_file_type_name,
+        last_log_by = p_last_log_by
+    WHERE file_type_id = p_file_type_id;
+
+    COMMIT;
 END$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `updateLastConnection` (IN `p_user_account_id` INT, IN `p_session_token` VARCHAR(255), IN `p_last_connection_date` DATETIME)   BEGIN
@@ -587,6 +990,14 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `updateMultipleLoginSessionsStatus` 
     SET multiple_session = p_multiple_session,
         last_log_by = p_last_log_by
     WHERE user_account_id = p_user_account_id;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `updateNotificationSetting` (IN `p_notification_setting_id` INT, IN `p_notification_setting_name` VARCHAR(100), IN `p_notification_setting_description` VARCHAR(200), IN `p_last_log_by` INT)   BEGIN
+    UPDATE notification_setting
+    SET notification_setting_name = p_notification_setting_name,
+        notification_setting_description = p_notification_setting_description,
+        last_log_by = p_last_log_by
+    WHERE notification_setting_id = p_notification_setting_id;
 END$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `updateOTP` (IN `p_user_account_id` INT, IN `p_otp` VARCHAR(255), IN `p_otp_expiry_date` DATETIME)   BEGIN
@@ -677,6 +1088,29 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `updateRoleSystemActionPermission` (
     WHERE role_system_action_permission_id = p_role_system_action_permission_id;
 END$$
 
+CREATE DEFINER=`root`@`localhost` PROCEDURE `updateSecuritySetting` (IN `p_security_setting_id` INT, IN `p_security_setting_name` VARCHAR(100), IN `p_security_setting_description` VARCHAR(200), IN `p_value` VARCHAR(1000), IN `p_last_log_by` INT)   BEGIN
+    UPDATE security_setting
+    SET security_setting_name = p_security_setting_name,
+        security_setting_description = p_security_setting_description,
+        value = p_value,
+        last_log_by = p_last_log_by
+    WHERE security_setting_id = p_security_setting_id;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `updateSMSNotificationChannelStatus` (IN `p_notification_setting_id` INT, IN `p_sms_notification` INT(1), IN `p_last_log_by` INT)   BEGIN
+    UPDATE notification_setting
+    SET sms_notification = p_sms_notification,
+        last_log_by = p_last_log_by
+    WHERE notification_setting_id = p_notification_setting_id;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `updateSMSNotificationTemplate` (IN `p_notification_setting_id` INT, IN `p_sms_notification_message` VARCHAR(500), IN `p_last_log_by` INT)   BEGIN
+    UPDATE notification_setting_sms_template
+    SET sms_notification_message = p_sms_notification_message,
+        last_log_by = p_last_log_by
+    WHERE notification_setting_id = p_notification_setting_id;
+END$$
+
 CREATE DEFINER=`root`@`localhost` PROCEDURE `updateSystemAction` (IN `p_system_action_id` INT, IN `p_system_action_name` VARCHAR(100), IN `p_system_action_description` VARCHAR(200), IN `p_last_log_by` INT)   BEGIN
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
     BEGIN
@@ -699,11 +1133,58 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `updateSystemAction` (IN `p_system_a
     COMMIT;
 END$$
 
+CREATE DEFINER=`root`@`localhost` PROCEDURE `updateSystemNotificationChannelStatus` (IN `p_notification_setting_id` INT, IN `p_system_notification` INT(1), IN `p_last_log_by` INT)   BEGIN
+    UPDATE notification_setting
+    SET system_notification = p_system_notification,
+        last_log_by = p_last_log_by
+    WHERE notification_setting_id = p_notification_setting_id;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `updateSystemNotificationTemplate` (IN `p_notification_setting_id` INT, IN `p_system_notification_title` VARCHAR(200), IN `p_system_notification_message` VARCHAR(500), IN `p_last_log_by` INT)   BEGIN
+    UPDATE notification_setting_system_template
+    SET system_notification_title = p_system_notification_title,
+        system_notification_message = p_system_notification_message,
+        last_log_by = p_last_log_by
+    WHERE notification_setting_id = p_notification_setting_id;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `updateSystemSetting` (IN `p_system_setting_id` INT, IN `p_system_setting_name` VARCHAR(100), IN `p_system_setting_description` VARCHAR(200), IN `p_value` VARCHAR(1000), IN `p_last_log_by` INT)   BEGIN
+    UPDATE system_setting
+    SET system_setting_name = p_system_setting_name,
+        system_setting_description = p_system_setting_description,
+        value = p_value,
+        last_log_by = p_last_log_by
+    WHERE system_setting_id = p_system_setting_id;
+END$$
+
 CREATE DEFINER=`root`@`localhost` PROCEDURE `updateTwoFactorAuthenticationStatus` (IN `p_user_account_id` INT, IN `p_two_factor_auth` VARCHAR(5), IN `p_last_log_by` INT)   BEGIN
     UPDATE user_account
     SET two_factor_auth = p_two_factor_auth,
         last_log_by = p_last_log_by
     WHERE user_account_id = p_user_account_id;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `updateUploadSetting` (IN `p_upload_setting_id` INT, IN `p_upload_setting_name` VARCHAR(100), IN `p_upload_setting_description` VARCHAR(200), IN `p_max_file_size` DOUBLE, IN `p_last_log_by` INT)   BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+    END;
+
+    START TRANSACTION;
+
+    UPDATE upload_setting_file_extension
+    SET upload_setting_name = p_upload_setting_name,
+        last_log_by = p_last_log_by
+    WHERE upload_setting_id = p_upload_setting_id;
+
+    UPDATE upload_setting
+    SET upload_setting_name = p_upload_setting_name,
+        upload_setting_description = p_upload_setting_description,
+        max_file_size = p_max_file_size,
+        last_log_by = p_last_log_by
+    WHERE upload_setting_id = p_upload_setting_id;
+
+    COMMIT;
 END$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `updateUserAccount` (IN `p_user_account_id` INT, IN `p_file_as` VARCHAR(300), IN `p_email` VARCHAR(255), IN `p_last_log_by` INT)   BEGIN
@@ -741,6 +1222,13 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `updateUserAccountPassword` (IN `p_u
         last_password_change = NOW(), 
         last_log_by = p_last_log_by
     WHERE p_user_account_id = user_account_id;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `updateUserAccountProfilePicture` (IN `p_user_account_id` INT, IN `p_profile_picture` VARCHAR(500), IN `p_last_log_by` INT)   BEGIN
+    UPDATE user_account
+    SET profile_picture = p_profile_picture,
+        last_log_by = p_last_log_by
+    WHERE user_account_id = p_user_account_id;
 END$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `updateUserAccountStatus` (IN `p_user_account_id` INT, IN `p_active` VARCHAR(5), IN `p_last_log_by` INT)   BEGIN
@@ -784,365 +1272,35 @@ CREATE TABLE `audit_log` (
 --
 
 INSERT INTO `audit_log` (`audit_log_id`, `table_name`, `reference_id`, `log`, `changed_by`, `changed_at`) VALUES
-(1, 'user_account', 3, 'User account created. <br/><br/>File As: test<br/>Email: test@gmail.com<br/>Locked: No<br/>Active: No<br/>Password Expiry Date: 2024-10-01<br/>Receive Notification: Yes<br/>Two-Factor Authentication: Yes<br/>Last Password Change: 2024-04-04 12:19:11<br/>Multiple Session: Yes', 2, '2024-04-04 12:19:11'),
-(2, 'user_account', 3, 'Email: test@gmail.com -> test@gmail.coms<br/>', 2, '2024-04-05 15:52:29'),
-(3, 'user_account', 3, 'Email: test@gmail.coms -> test@gmail.com<br/>', 2, '2024-04-05 15:52:33'),
-(4, 'user_account', 4, 'User account created. <br/><br/>File As: test<br/>Email: test@gmail.com<br/>Locked: No<br/>Active: No<br/>Password Expiry Date: 2024-10-02<br/>Receive Notification: Yes<br/>Two-Factor Authentication: Yes<br/>Last Password Change: 2024-04-05 16:17:37<br/>Multiple Session: Yes', 2, '2024-04-05 16:17:37'),
-(5, 'user_account', 4, 'File As: test -> Lawrence<br/>Email: test@gmail.com -> benidickbelizario@christianmotors.p<br/>', 2, '2024-04-05 16:18:11'),
-(6, 'user_account', 4, 'Email: benidickbelizario@christianmotors.p -> benidickbelizario@christianmotors.ph<br/>', 2, '2024-04-05 16:18:18'),
-(7, 'user_account', 4, 'File As: Lawrence -> Christian Edward Baguisa<br/>', 2, '2024-04-05 16:18:37'),
-(8, 'user_account', 2, 'Last Connection Date: 2024-04-05 14:01:49 -> 2024-04-08 09:44:01<br/>', 1, '2024-04-08 09:44:01'),
-(9, 'user_account', 4, 'Two-Factor Authentication: Yes -> 2<br/>', 2, '2024-04-08 11:12:42'),
-(10, 'user_account', 4, 'Multiple Session: Yes -> 2<br/>', 2, '2024-04-08 11:12:45'),
-(11, 'user_account', 4, 'Two-Factor Authentication: 2 -> Yes<br/>', 2, '2024-04-08 11:14:13'),
-(12, 'user_account', 4, 'Two-Factor Authentication: Yes -> 2<br/>', 2, '2024-04-08 11:18:35'),
-(13, 'user_account', 4, 'Two-Factor Authentication: 2 -> <br/>', 2, '2024-04-08 11:27:33'),
-(14, 'user_account', 4, 'Two-Factor Authentication:  -> Yes<br/>', 2, '2024-04-08 11:30:01'),
-(15, 'user_account', 4, 'Two-Factor Authentication: Yes -> 2<br/>', 2, '2024-04-08 11:30:05'),
-(16, 'user_account', 4, 'Two-Factor Authentication: 2 -> No<br/>', 2, '2024-04-08 11:30:11'),
-(17, 'user_account', 4, 'Two-Factor Authentication: No -> 2<br/>', 2, '2024-04-08 11:30:15'),
-(18, 'user_account', 4, 'Two-Factor Authentication: 2 -> No<br/>', 2, '2024-04-08 11:30:20'),
-(19, 'user_account', 4, 'Two-Factor Authentication: No -> Yes<br/>', 2, '2024-04-08 11:31:42'),
-(20, 'user_account', 4, 'Multiple Session: 2 -> Yes<br/>', 2, '2024-04-08 11:31:44'),
-(21, 'user_account', 4, 'Multiple Session: Yes -> No<br/>', 2, '2024-04-08 11:31:46'),
-(22, 'user_account', 4, 'Two-Factor Authentication: Yes -> No<br/>', 2, '2024-04-08 11:31:48'),
-(23, 'user_account', 4, 'Two-Factor Authentication: No -> Yes<br/>', 2, '2024-04-08 11:38:16'),
-(24, 'user_account', 4, 'Two-Factor Authentication: Yes -> No<br/>', 2, '2024-04-08 11:38:45'),
-(25, 'user_account', 4, 'Multiple Session: No -> Yes<br/>', 2, '2024-04-08 11:38:48'),
-(26, 'user_account', 4, 'Active: No -> Yes<br/>', 2, '2024-04-08 11:48:15'),
-(27, 'user_account', 4, 'Active: Yes -> No<br/>', 2, '2024-04-08 11:48:18'),
-(28, 'user_account', 4, 'Locked: No -> Yes<br/>', 2, '2024-04-08 11:48:21'),
-(29, 'user_account', 4, 'Locked: Yes -> No<br/>', 2, '2024-04-08 11:48:24'),
-(30, 'user_account', 4, 'Password Expiry Date: 2024-10-02 -> 2024-10-05<br/>Last Password Change: 2024-04-05 16:17:37 -> 2024-04-08 12:23:33<br/>', 2, '2024-04-08 12:23:33'),
-(31, 'user_account', 4, 'Last Password Change: 2024-04-08 12:23:33 -> 2024-04-08 12:24:25<br/>', 2, '2024-04-08 12:24:25'),
-(32, 'user_account', 4, 'Active: No -> Yes<br/>', 2, '2024-04-08 12:24:56'),
-(33, 'user_account', 4, 'Active: Yes -> No<br/>', 2, '2024-04-08 12:29:15'),
-(34, 'user_account', 4, 'Active: No -> Yes<br/>', 2, '2024-04-08 12:29:18'),
-(35, 'user_account', 4, 'Active: Yes -> No<br/>', 2, '2024-04-08 12:51:34'),
-(36, 'user_account', 4, 'Active: No -> Yes<br/>', 2, '2024-04-08 12:51:40'),
-(37, 'user_account', 4, 'Locked: No -> Yes<br/>', 2, '2024-04-08 12:51:42'),
-(38, 'user_account', 4, 'Locked: Yes -> No<br/>', 2, '2024-04-08 12:51:44'),
-(39, 'role_user_account', 1, 'Role user account created. <br/><br/>Role Name: Administrator<br/>User Account Name: Administrator<br/>Date Assigned: 2024-04-08 14:52:18', 2, '2024-04-08 14:52:18'),
-(40, 'role_user_account', 2, 'Role user account created. <br/><br/>Role Name: Administrator<br/>User Account Name: CGMI Bot<br/>Date Assigned: 2024-04-08 14:52:18', 2, '2024-04-08 14:52:18'),
-(41, 'role_user_account', 3, 'Role user account created. <br/><br/>Role Name: Administrator<br/>User Account Name: Christian Edward Baguisa<br/>Date Assigned: 2024-04-08 14:52:18', 2, '2024-04-08 14:52:18'),
-(42, 'role_user_account', 4, 'Role user account created. <br/><br/>Role Name: Administrator<br/>User Account Name: Administrator<br/>Date Assigned: 2024-04-08 15:13:40', 2, '2024-04-08 15:13:40'),
-(43, 'role_user_account', 5, 'Role user account created. <br/><br/>Role Name: Administrator<br/>User Account Name: CGMI Bot<br/>Date Assigned: 2024-04-08 15:13:40', 2, '2024-04-08 15:13:40'),
-(44, 'role_user_account', 6, 'Role user account created. <br/><br/>Role Name: Administrator<br/>User Account Name: Christian Edward Baguisa<br/>Date Assigned: 2024-04-08 15:13:40', 2, '2024-04-08 15:13:40'),
-(45, 'role_user_account', 7, 'Role user account created. <br/><br/>Role Name: Administrator<br/>User Account Name: Administrator<br/>Date Assigned: 2024-04-08 15:25:00', 2, '2024-04-08 15:25:00'),
-(46, 'role_user_account', 8, 'Role user account created. <br/><br/>Role Name: Employee<br/>User Account Name: Administrator<br/>Date Assigned: 2024-04-08 16:24:28', 2, '2024-04-08 16:24:28'),
-(47, 'role_user_account', 9, 'Role user account created. <br/><br/>Role Name: Employee<br/>User Account Name: Administrator<br/>Date Assigned: 2024-04-08 16:24:28', 2, '2024-04-08 16:24:28'),
-(48, 'role_user_account', 10, 'Role user account created. <br/><br/>Role Name: Employee<br/>User Account Name: Administrator<br/>Date Assigned: 2024-04-08 16:25:38', 2, '2024-04-08 16:25:38'),
-(49, 'role_user_account', 11, 'Role user account created. <br/><br/>Role Name: Employee<br/>User Account Name: Administrator<br/>Date Assigned: 2024-04-08 16:25:38', 2, '2024-04-08 16:25:38'),
-(50, 'role_user_account', 12, 'Role user account created. <br/><br/>Role Name: Employee<br/>User Account Name: Administrator<br/>Date Assigned: 2024-04-08 16:26:02', 2, '2024-04-08 16:26:02'),
-(51, 'role_user_account', 13, 'Role user account created. <br/><br/>Role Name: Employee<br/>User Account Name: Administrator<br/>Date Assigned: 2024-04-08 16:26:02', 2, '2024-04-08 16:26:02'),
-(52, 'role_user_account', 14, 'Role user account created. <br/><br/>Role Name: Administrator<br/>User Account Name: Administrator<br/>Date Assigned: 2024-04-08 16:29:30', 2, '2024-04-08 16:29:30'),
-(53, 'role_user_account', 15, 'Role user account created. <br/><br/>Role Name: Administrator<br/>User Account Name: Administrator<br/>Date Assigned: 2024-04-08 16:29:30', 2, '2024-04-08 16:29:30'),
-(54, 'role_user_account', 16, 'Role user account created. <br/><br/>Role Name: Administrator<br/>User Account Name: Administrator<br/>Date Assigned: 2024-04-08 16:31:48', 2, '2024-04-08 16:31:48'),
-(55, 'role_user_account', 17, 'Role user account created. <br/><br/>Role Name: Administrator<br/>User Account Name: Administrator<br/>Date Assigned: 2024-04-08 16:31:59', 2, '2024-04-08 16:31:59'),
-(56, 'role_user_account', 18, 'Role user account created. <br/><br/>Role Name: Manager<br/>User Account Name: Administrator<br/>Date Assigned: 2024-04-08 16:31:59', 2, '2024-04-08 16:31:59'),
-(57, 'role_user_account', 19, 'Role user account created. <br/><br/>Role Name: Administrator<br/>User Account Name: Administrator<br/>Date Assigned: 2024-04-08 16:31:59', 2, '2024-04-08 16:31:59'),
-(58, 'role_user_account', 20, 'Role user account created. <br/><br/>Role Name: Manager<br/>User Account Name: Administrator<br/>Date Assigned: 2024-04-08 16:31:59', 2, '2024-04-08 16:31:59'),
-(59, 'role_user_account', 21, 'Role user account created. <br/><br/>Role Name: Accounting<br/>User Account Name: Administrator<br/>Date Assigned: 2024-04-08 16:32:09', 2, '2024-04-08 16:32:09'),
-(60, 'role_user_account', 22, 'Role user account created. <br/><br/>Role Name: Accounting<br/>User Account Name: Administrator<br/>Date Assigned: 2024-04-08 16:32:09', 2, '2024-04-08 16:32:09'),
-(61, 'role_user_account', 23, 'Role user account created. <br/><br/>Role Name: Administrator<br/>User Account Name: Administrator<br/>Date Assigned: 2024-04-08 16:41:08', 2, '2024-04-08 16:41:08'),
-(62, 'role_user_account', 24, 'Role user account created. <br/><br/>Role Name: Employee<br/>User Account Name: Administrator<br/>Date Assigned: 2024-04-08 16:41:14', 2, '2024-04-08 16:41:14'),
-(63, 'role_user_account', 25, 'Role user account created. <br/><br/>Role Name: Employee<br/>User Account Name: Administrator<br/>Date Assigned: 2024-04-08 16:41:14', 2, '2024-04-08 16:41:14'),
-(64, 'role_user_account', 26, 'Role user account created. <br/><br/>Role Name: Sales<br/>User Account Name: Administrator<br/>Date Assigned: 2024-04-08 16:41:27', 2, '2024-04-08 16:41:27'),
-(65, 'role_user_account', 27, 'Role user account created. <br/><br/>Role Name: Sales<br/>User Account Name: Administrator<br/>Date Assigned: 2024-04-08 16:41:27', 2, '2024-04-08 16:41:27'),
-(66, 'role_user_account', 28, 'Role user account created. <br/><br/>Role Name: Administrator<br/>User Account Name: Administrator<br/>Date Assigned: 2024-04-08 16:42:02', 2, '2024-04-08 16:42:02'),
-(67, 'role_user_account', 29, 'Role user account created. <br/><br/>Role Name: Administrator<br/>User Account Name: Administrator<br/>Date Assigned: 2024-04-08 16:42:16', 2, '2024-04-08 16:42:16'),
-(68, 'role_user_account', 30, 'Role user account created. <br/><br/>Role Name: Human Resources<br/>User Account Name: Administrator<br/>Date Assigned: 2024-04-08 16:42:27', 2, '2024-04-08 16:42:27'),
-(69, 'role_user_account', 31, 'Role user account created. <br/><br/>Role Name: Employee<br/>User Account Name: Administrator<br/>Date Assigned: 2024-04-08 16:42:51', 2, '2024-04-08 16:42:51'),
-(70, 'role_user_account', 32, 'Role user account created. <br/><br/>Role Name: Sales Proposal Approver<br/>User Account Name: Administrator<br/>Date Assigned: 2024-04-08 16:42:55', 2, '2024-04-08 16:42:55'),
-(71, 'role_user_account', 33, 'Role user account created. <br/><br/>Role Name: Employee<br/>User Account Name: Administrator<br/>Date Assigned: 2024-04-08 16:43:04', 2, '2024-04-08 16:43:04'),
-(72, 'role_user_account', 34, 'Role user account created. <br/><br/>Role Name: Accounting<br/>User Account Name: Administrator<br/>Date Assigned: 2024-04-08 16:43:07', 2, '2024-04-08 16:43:07'),
-(73, 'role_user_account', 35, 'Role user account created. <br/><br/>Role Name: Administrator<br/>User Account Name: Administrator<br/>Date Assigned: 2024-04-08 16:43:07', 2, '2024-04-08 16:43:07'),
-(74, 'role_user_account', 36, 'Role user account created. <br/><br/>Role Name: Human Resources<br/>User Account Name: Administrator<br/>Date Assigned: 2024-04-08 16:43:07', 2, '2024-04-08 16:43:07'),
-(75, 'role_user_account', 37, 'Role user account created. <br/><br/>Role Name: Manager<br/>User Account Name: Administrator<br/>Date Assigned: 2024-04-08 16:43:07', 2, '2024-04-08 16:43:07'),
-(76, 'role_user_account', 38, 'Role user account created. <br/><br/>Role Name: Sales<br/>User Account Name: Administrator<br/>Date Assigned: 2024-04-08 16:43:07', 2, '2024-04-08 16:43:07'),
-(77, 'role_user_account', 39, 'Role user account created. <br/><br/>Role Name: Sales Proposal Approver<br/>User Account Name: Administrator<br/>Date Assigned: 2024-04-08 16:43:07', 2, '2024-04-08 16:43:07'),
-(78, 'role_user_account', 40, 'Role user account created. <br/><br/>Role Name: Employee<br/>User Account Name: Administrator<br/>Date Assigned: 2024-04-08 16:43:22', 2, '2024-04-08 16:43:22'),
-(79, 'role_user_account', 41, 'Role user account created. <br/><br/>Role Name: Employee<br/>User Account Name: Administrator<br/>Date Assigned: 2024-04-08 16:43:22', 2, '2024-04-08 16:43:22'),
-(80, 'role_user_account', 42, 'Role user account created. <br/><br/>Role Name: Employee<br/>User Account Name: Administrator<br/>Date Assigned: 2024-04-08 16:50:07', 2, '2024-04-08 16:50:07'),
-(81, 'role_user_account', 43, 'Role user account created. <br/><br/>Role Name: Employee<br/>User Account Name: Administrator<br/>Date Assigned: 2024-04-08 16:50:07', 2, '2024-04-08 16:50:07'),
-(82, 'role_user_account', 44, 'Role user account created. <br/><br/>Role Name: Employee<br/>User Account Name: Administrator<br/>Date Assigned: 2024-04-08 16:52:55', 2, '2024-04-08 16:52:55'),
-(83, 'role_user_account', 45, 'Role user account created. <br/><br/>Role Name: Employee<br/>User Account Name: Administrator<br/>Date Assigned: 2024-04-08 16:52:55', 2, '2024-04-08 16:52:55'),
-(84, 'role_user_account', 46, 'Role user account created. <br/><br/>Role Name: Accounting<br/>User Account Name: Administrator<br/>Date Assigned: 2024-04-08 16:53:23', 2, '2024-04-08 16:53:23'),
-(85, 'role_user_account', 47, 'Role user account created. <br/><br/>Role Name: Human Resources<br/>User Account Name: Administrator<br/>Date Assigned: 2024-04-08 16:53:26', 2, '2024-04-08 16:53:26'),
-(86, 'role_user_account', 48, 'Role user account created. <br/><br/>Role Name: Employee<br/>User Account Name: Administrator<br/>Date Assigned: 2024-04-08 16:53:28', 2, '2024-04-08 16:53:28'),
-(87, 'role_user_account', 49, 'Role user account created. <br/><br/>Role Name: Sales Proposal Approver<br/>User Account Name: Administrator<br/>Date Assigned: 2024-04-08 16:53:31', 2, '2024-04-08 16:53:31'),
-(88, 'role_user_account', 50, 'Role user account created. <br/><br/>Role Name: Manager<br/>User Account Name: Administrator<br/>Date Assigned: 2024-04-08 16:53:34', 2, '2024-04-08 16:53:34'),
-(89, 'role_user_account', 51, 'Role user account created. <br/><br/>Role Name: Sales<br/>User Account Name: Administrator<br/>Date Assigned: 2024-04-08 16:53:36', 2, '2024-04-08 16:53:36'),
-(90, 'role_user_account', 52, 'Role user account created. <br/><br/>Role Name: Administrator<br/>User Account Name: Administrator<br/>Date Assigned: 2024-04-08 16:53:39', 2, '2024-04-08 16:53:39'),
-(91, 'role_user_account', 53, 'Role user account created. <br/><br/>Role Name: Employee<br/>User Account Name: Administrator<br/>Date Assigned: 2024-04-08 16:53:56', 2, '2024-04-08 16:53:56'),
-(92, 'role_user_account', 54, 'Role user account created. <br/><br/>Role Name: Accounting<br/>User Account Name: Administrator<br/>Date Assigned: 2024-04-08 16:54:31', 2, '2024-04-08 16:54:31'),
-(93, 'role_user_account', 55, 'Role user account created. <br/><br/>Role Name: Employee<br/>User Account Name: Administrator<br/>Date Assigned: 2024-04-08 16:54:35', 2, '2024-04-08 16:54:35'),
-(94, 'role_user_account', 56, 'Role user account created. <br/><br/>Role Name: Employee<br/>User Account Name: Administrator<br/>Date Assigned: 2024-04-08 16:54:39', 2, '2024-04-08 16:54:39'),
-(95, 'role_user_account', 57, 'Role user account created. <br/><br/>Role Name: Employee<br/>User Account Name: Administrator<br/>Date Assigned: 2024-04-08 16:54:39', 2, '2024-04-08 16:54:39'),
-(96, 'role_user_account', 58, 'Role user account created. <br/><br/>Role Name: Employee<br/>User Account Name: Administrator<br/>Date Assigned: 2024-04-08 16:54:47', 2, '2024-04-08 16:54:47'),
-(97, 'role_user_account', 59, 'Role user account created. <br/><br/>Role Name: Employee<br/>User Account Name: Administrator<br/>Date Assigned: 2024-04-08 17:00:22', 2, '2024-04-08 17:00:22'),
-(98, 'role_user_account', 60, 'Role user account created. <br/><br/>Role Name: Employee<br/>User Account Name: Administrator<br/>Date Assigned: 2024-04-08 17:00:22', 2, '2024-04-08 17:00:22'),
-(99, 'role_user_account', 61, 'Role user account created. <br/><br/>Role Name: Employee<br/>User Account Name: Administrator<br/>Date Assigned: 2024-04-08 17:00:31', 2, '2024-04-08 17:00:31'),
-(100, 'role_user_account', 62, 'Role user account created. <br/><br/>Role Name: Employee<br/>User Account Name: Administrator<br/>Date Assigned: 2024-04-08 17:00:31', 2, '2024-04-08 17:00:31'),
-(101, 'role_user_account', 63, 'Role user account created. <br/><br/>Role Name: Employee<br/>User Account Name: Administrator<br/>Date Assigned: 2024-04-08 17:00:38', 2, '2024-04-08 17:00:38'),
-(102, 'role_user_account', 64, 'Role user account created. <br/><br/>Role Name: Accounting<br/>User Account Name: Administrator<br/>Date Assigned: 2024-04-08 17:04:33', 2, '2024-04-08 17:04:33'),
-(103, 'role_user_account', 65, 'Role user account created. <br/><br/>Role Name: Administrator<br/>User Account Name: Administrator<br/>Date Assigned: 2024-04-08 17:04:33', 2, '2024-04-08 17:04:33'),
-(104, 'role_user_account', 66, 'Role user account created. <br/><br/>Role Name: Employee<br/>User Account Name: Administrator<br/>Date Assigned: 2024-04-08 17:04:33', 2, '2024-04-08 17:04:33'),
-(105, 'role_user_account', 67, 'Role user account created. <br/><br/>Role Name: Human Resources<br/>User Account Name: Administrator<br/>Date Assigned: 2024-04-08 17:04:33', 2, '2024-04-08 17:04:33'),
-(106, 'role_user_account', 68, 'Role user account created. <br/><br/>Role Name: Manager<br/>User Account Name: Administrator<br/>Date Assigned: 2024-04-08 17:04:33', 2, '2024-04-08 17:04:33'),
-(107, 'role_user_account', 69, 'Role user account created. <br/><br/>Role Name: Sales<br/>User Account Name: Administrator<br/>Date Assigned: 2024-04-08 17:04:33', 2, '2024-04-08 17:04:33'),
-(108, 'role_user_account', 70, 'Role user account created. <br/><br/>Role Name: Sales Proposal Approver<br/>User Account Name: Administrator<br/>Date Assigned: 2024-04-08 17:04:33', 2, '2024-04-08 17:04:33'),
-(109, 'role_user_account', 71, 'Role user account created. <br/><br/>Role Name: Employee<br/>User Account Name: Administrator<br/>Date Assigned: 2024-04-08 17:04:48', 2, '2024-04-08 17:04:48'),
-(110, 'role_user_account', 72, 'Role user account created. <br/><br/>Role Name: Employee<br/>User Account Name: Administrator<br/>Date Assigned: 2024-04-08 17:04:52', 2, '2024-04-08 17:04:52'),
-(111, 'role_user_account', 73, 'Role user account created. <br/><br/>Role Name: Employee<br/>User Account Name: Administrator<br/>Date Assigned: 2024-04-08 17:04:59', 2, '2024-04-08 17:04:59'),
-(112, 'role_user_account', 74, 'Role user account created. <br/><br/>Role Name: Accounting<br/>User Account Name: Administrator<br/>Date Assigned: 2024-04-08 17:04:59', 2, '2024-04-08 17:04:59'),
-(113, 'role_user_account', 75, 'Role user account created. <br/><br/>Role Name: Administrator<br/>User Account Name: Administrator<br/>Date Assigned: 2024-04-08 17:04:59', 2, '2024-04-08 17:04:59'),
-(114, 'role_user_account', 76, 'Role user account created. <br/><br/>Role Name: Employee<br/>User Account Name: Administrator<br/>Date Assigned: 2024-04-08 17:04:59', 2, '2024-04-08 17:04:59'),
-(115, 'role_user_account', 77, 'Role user account created. <br/><br/>Role Name: Human Resources<br/>User Account Name: Administrator<br/>Date Assigned: 2024-04-08 17:04:59', 2, '2024-04-08 17:04:59'),
-(116, 'role_user_account', 78, 'Role user account created. <br/><br/>Role Name: Manager<br/>User Account Name: Administrator<br/>Date Assigned: 2024-04-08 17:04:59', 2, '2024-04-08 17:04:59'),
-(117, 'role_user_account', 79, 'Role user account created. <br/><br/>Role Name: Sales<br/>User Account Name: Administrator<br/>Date Assigned: 2024-04-08 17:04:59', 2, '2024-04-08 17:04:59'),
-(118, 'role_user_account', 80, 'Role user account created. <br/><br/>Role Name: Sales Proposal Approver<br/>User Account Name: Administrator<br/>Date Assigned: 2024-04-08 17:04:59', 2, '2024-04-08 17:04:59'),
-(119, 'role_user_account', 81, 'Role user account created. <br/><br/>Role Name: Employee<br/>User Account Name: Administrator<br/>Date Assigned: 2024-04-08 17:08:34', 2, '2024-04-08 17:08:34'),
-(120, 'role_user_account', 82, 'Role user account created. <br/><br/>Role Name: Employee<br/>User Account Name: Administrator<br/>Date Assigned: 2024-04-08 17:08:40', 2, '2024-04-08 17:08:40'),
-(121, 'role_user_account', 83, 'Role user account created. <br/><br/>Role Name: Employee<br/>User Account Name: Administrator<br/>Date Assigned: 2024-04-08 17:08:50', 2, '2024-04-08 17:08:50'),
-(122, 'role_user_account', 84, 'Role user account created. <br/><br/>Role Name: Employee<br/>User Account Name: Administrator<br/>Date Assigned: 2024-04-08 17:08:55', 2, '2024-04-08 17:08:55'),
-(123, 'user_account', 2, 'Last Connection Date: 2024-04-08 09:44:01 -> 2024-04-11 11:49:08<br/>', 1, '2024-04-11 11:49:08'),
-(124, 'user_account', 2, 'Two-Factor Authentication: No -> Yes<br/>', 2, '2024-04-11 15:37:40'),
-(125, 'user_account', 2, 'Two-Factor Authentication: Yes -> No<br/>', 2, '2024-04-11 15:40:02'),
-(126, 'user_account', 2, 'Two-Factor Authentication: No -> Yes<br/>', 2, '2024-04-11 15:40:03'),
-(127, 'user_account', 2, 'Two-Factor Authentication: Yes -> No<br/>', 2, '2024-04-11 15:40:03'),
-(128, 'user_account', 2, 'Two-Factor Authentication: No -> Yes<br/>', 2, '2024-04-11 15:40:03'),
-(129, 'user_account', 2, 'Two-Factor Authentication: Yes -> No<br/>', 2, '2024-04-11 15:40:03'),
-(130, 'user_account', 2, 'Two-Factor Authentication: No -> Yes<br/>', 2, '2024-04-11 15:40:04'),
-(131, 'user_account', 2, 'Two-Factor Authentication: Yes -> No<br/>', 2, '2024-04-11 15:40:04'),
-(132, 'user_account', 2, 'Two-Factor Authentication: No -> Yes<br/>', 2, '2024-04-11 15:40:04'),
-(133, 'user_account', 2, 'Two-Factor Authentication: Yes -> No<br/>', 2, '2024-04-11 15:40:04'),
-(134, 'user_account', 2, 'Two-Factor Authentication: No -> Yes<br/>', 2, '2024-04-11 15:40:04'),
-(135, 'user_account', 2, 'Two-Factor Authentication: Yes -> No<br/>', 2, '2024-04-11 15:40:05'),
-(136, 'user_account', 2, 'Two-Factor Authentication: No -> Yes<br/>', 2, '2024-04-11 15:40:05'),
-(137, 'user_account', 2, 'Two-Factor Authentication: Yes -> No<br/>', 2, '2024-04-11 15:40:05'),
-(138, 'user_account', 2, 'Two-Factor Authentication: No -> Yes<br/>', 2, '2024-04-11 15:40:05'),
-(139, 'user_account', 2, 'Two-Factor Authentication: Yes -> No<br/>', 2, '2024-04-11 15:40:06'),
-(140, 'user_account', 2, 'Two-Factor Authentication: No -> Yes<br/>', 2, '2024-04-11 15:40:06'),
-(141, 'user_account', 2, 'Two-Factor Authentication: Yes -> No<br/>', 2, '2024-04-11 15:40:06'),
-(142, 'user_account', 2, 'Two-Factor Authentication: No -> Yes<br/>', 2, '2024-04-11 15:40:07'),
-(143, 'user_account', 2, 'Two-Factor Authentication: Yes -> No<br/>', 2, '2024-04-11 15:40:08'),
-(144, 'user_account', 2, 'Two-Factor Authentication: No -> Yes<br/>', 2, '2024-04-11 15:40:08'),
-(145, 'user_account', 2, 'Two-Factor Authentication: Yes -> No<br/>', 2, '2024-04-11 15:40:08'),
-(146, 'user_account', 2, 'Two-Factor Authentication: No -> Yes<br/>', 2, '2024-04-11 15:40:09'),
-(147, 'user_account', 2, 'Two-Factor Authentication: Yes -> No<br/>', 2, '2024-04-11 15:40:09'),
-(148, 'user_account', 2, 'Two-Factor Authentication: No -> Yes<br/>', 2, '2024-04-11 15:40:10'),
-(149, 'user_account', 2, 'Two-Factor Authentication: Yes -> No<br/>', 2, '2024-04-11 15:40:10'),
-(150, 'user_account', 2, 'Two-Factor Authentication: No -> Yes<br/>', 2, '2024-04-11 15:40:10'),
-(151, 'user_account', 2, 'Two-Factor Authentication: Yes -> No<br/>', 2, '2024-04-11 15:40:11'),
-(152, 'user_account', 2, 'Two-Factor Authentication: No -> Yes<br/>', 2, '2024-04-11 15:40:11'),
-(153, 'user_account', 2, 'Two-Factor Authentication: Yes -> No<br/>', 2, '2024-04-11 15:40:11'),
-(154, 'user_account', 2, 'Two-Factor Authentication: No -> Yes<br/>', 2, '2024-04-11 15:40:12'),
-(155, 'user_account', 2, 'Two-Factor Authentication: Yes -> No<br/>', 2, '2024-04-11 15:48:56'),
-(156, 'user_account', 2, 'Two-Factor Authentication: No -> Yes<br/>', 2, '2024-04-11 15:48:58'),
-(157, 'user_account', 2, 'Multiple Session: Yes -> No<br/>', 2, '2024-04-11 15:49:40'),
-(158, 'user_account', 2, 'Multiple Session: No -> Yes<br/>', 2, '2024-04-11 15:49:40'),
-(159, 'user_account', 2, 'Multiple Session: Yes -> No<br/>', 2, '2024-04-11 15:49:40'),
-(160, 'user_account', 2, 'Multiple Session: No -> Yes<br/>', 2, '2024-04-11 15:49:40'),
-(161, 'user_account', 2, 'Multiple Session: Yes -> No<br/>', 2, '2024-04-11 15:49:41'),
-(162, 'user_account', 2, 'Last Connection Date: 2024-04-11 11:49:08 -> 2024-04-11 16:13:51<br/>', 2, '2024-04-11 16:13:51'),
-(163, 'user_account', 2, 'Last Connection Date: 2024-04-11 16:13:51 -> 2024-04-11 16:27:02<br/>', 2, '2024-04-11 16:27:02'),
-(164, 'user_account', 2, 'Last Connection Date: 2024-04-11 16:27:02 -> 2024-04-11 16:28:26<br/>', 2, '2024-04-11 16:28:26'),
-(165, 'user_account', 2, 'Last Connection Date: 2024-04-11 16:28:26 -> 2024-04-11 16:35:31<br/>', 2, '2024-04-11 16:35:31'),
-(166, 'user_account', 2, 'Last Connection Date: 2024-04-11 16:35:31 -> 2024-04-12 08:35:47<br/>', 2, '2024-04-12 08:35:47'),
-(167, 'user_account', 2, 'Two-Factor Authentication: Yes -> No<br/>', 2, '2024-04-12 08:48:05'),
-(168, 'user_account', 2, 'Multiple Session: No -> Yes<br/>', 2, '2024-04-12 08:48:06'),
-(169, 'role_user_account', 85, 'Role user account created. <br/><br/>Role Name: Accounting<br/>User Account Name: Administrator<br/>Date Assigned: 2024-04-12 08:52:46', 2, '2024-04-12 08:52:46'),
-(170, 'role_user_account', 86, 'Role user account created. <br/><br/>Role Name: Administrator<br/>User Account Name: Administrator<br/>Date Assigned: 2024-04-12 08:52:46', 2, '2024-04-12 08:52:46'),
-(171, 'role_user_account', 87, 'Role user account created. <br/><br/>Role Name: Employee<br/>User Account Name: Administrator<br/>Date Assigned: 2024-04-12 08:52:46', 2, '2024-04-12 08:52:46'),
-(172, 'role_user_account', 88, 'Role user account created. <br/><br/>Role Name: Human Resources<br/>User Account Name: Administrator<br/>Date Assigned: 2024-04-12 08:52:46', 2, '2024-04-12 08:52:46'),
-(173, 'role_user_account', 89, 'Role user account created. <br/><br/>Role Name: Manager<br/>User Account Name: Administrator<br/>Date Assigned: 2024-04-12 08:52:46', 2, '2024-04-12 08:52:46'),
-(174, 'role_user_account', 90, 'Role user account created. <br/><br/>Role Name: Sales<br/>User Account Name: Administrator<br/>Date Assigned: 2024-04-12 08:52:46', 2, '2024-04-12 08:52:46'),
-(175, 'role_user_account', 91, 'Role user account created. <br/><br/>Role Name: Sales Proposal Approver<br/>User Account Name: Administrator<br/>Date Assigned: 2024-04-12 08:52:46', 2, '2024-04-12 08:52:46'),
-(176, 'role_user_account', 92, 'Role user account created. <br/><br/>Role Name: Employee<br/>User Account Name: Administrator<br/>Date Assigned: 2024-04-12 08:53:00', 2, '2024-04-12 08:53:00'),
-(177, 'role_user_account', 93, 'Role user account created. <br/><br/>Role Name: Employee<br/>User Account Name: Administrator<br/>Date Assigned: 2024-04-12 08:53:09', 2, '2024-04-12 08:53:09'),
-(178, 'role_user_account', 94, 'Role user account created. <br/><br/>Role Name: Administrator<br/>User Account Name: Administrator<br/>Date Assigned: 2024-04-12 09:49:02', 2, '2024-04-12 09:49:02'),
-(179, 'role_user_account', 95, 'Role user account created. <br/><br/>Role Name: Employee<br/>User Account Name: Administrator<br/>Date Assigned: 2024-04-12 09:49:02', 2, '2024-04-12 09:49:02'),
-(180, 'user_account', 4, 'Locked: No -> Yes<br/>', 2, '2024-04-12 10:44:54'),
-(181, 'user_account', 4, 'Active: Yes -> No<br/>', 2, '2024-04-12 10:55:07'),
-(182, 'user_account', 4, 'Active: No -> Yes<br/>', 2, '2024-04-12 10:55:12'),
-(183, 'user_account', 2, 'Active: Yes -> No<br/>', 2, '2024-04-12 10:55:18'),
-(184, 'user_account', 2, 'Active: No -> Yes<br/>', 2, '2024-04-12 10:56:36'),
-(185, 'user_account', 2, 'Last Connection Date: 2024-04-12 08:35:47 -> 2024-04-12 10:56:44<br/>', 2, '2024-04-12 10:56:44'),
-(186, 'user_account', 1, 'Active: Yes -> No<br/>', 2, '2024-04-12 11:02:30'),
-(187, 'user_account', 4, 'Active: Yes -> No<br/>', 2, '2024-04-12 11:02:30'),
-(188, 'user_account', 1, 'Active: No -> Yes<br/>', 2, '2024-04-12 11:02:33'),
-(189, 'user_account', 4, 'Active: No -> Yes<br/>', 2, '2024-04-12 11:02:33'),
-(190, 'user_account', 1, 'Locked: No -> Yes<br/>', 2, '2024-04-12 11:02:36'),
-(191, 'user_account', 1, 'Locked: Yes -> No<br/>', 2, '2024-04-12 11:02:46'),
-(192, 'user_account', 4, 'Locked: Yes -> No<br/>', 2, '2024-04-12 11:02:46'),
-(193, 'menu_group', 1, 'Menu group created. <br/><br/>Menu Group Name: Technical<br/>Order Sequence: 127', 2, '2024-04-12 14:05:12'),
-(194, 'menu_item', 1, 'Menu Item created. <br/><br/>Menu Item Name: User Interface<br/>Menu Group: Technical<br/>Menu Item Icon: ti ti-layout<br/>Order Sequence: 13', 2, '2024-04-12 14:25:09'),
-(195, 'role', 1, 'Role created. <br/><br/>Role Name: Administrator<br/>Role Description: Full access to all features and data within the system. This role have similar access levels to the Admin but is not as powerful as the Super Admin.', 1, '2024-04-12 14:25:49'),
-(196, 'role', 2, 'Role created. <br/><br/>Role Name: Manager<br/>Role Description: Access to manage specific aspects of the system or resources related to their teams or departments.', 1, '2024-04-12 14:25:49'),
-(197, 'role', 3, 'Role created. <br/><br/>Role Name: Employee<br/>Role Description: The typical user account with standard access to use the system features and functionalities.', 1, '2024-04-12 14:25:49'),
-(198, 'role', 4, 'Role created. <br/><br/>Role Name: Human Resources<br/>Role Description: Access to manage HR-related functionalities and employee data.', 1, '2024-04-12 14:25:49'),
-(199, 'role', 5, 'Role created. <br/><br/>Role Name: Sales Proposal Approver<br/>Role Description: Access to approve or reject requests and transactions.', 1, '2024-04-12 14:25:49'),
-(200, 'role', 6, 'Role created. <br/><br/>Role Name: Accounting<br/>Role Description: Access to financial and accounting-related functionalities.', 1, '2024-04-12 14:25:50'),
-(201, 'role', 7, 'Role created. <br/><br/>Role Name: Sales<br/>Role Description: Access to sales-related functionalities and customer management.', 1, '2024-04-12 14:25:50'),
-(202, 'role_permission', 1, 'Role permission created. <br/><br/>Role Name: Administrator<br/>Menu Item Name: User Interface<br/>Date Assigned: 2024-04-12 14:26:03', 2, '2024-04-12 14:26:03'),
-(203, 'role_permission', 1, 'Read Access: 0 -> 1<br/>', 2, '2024-04-12 14:26:05'),
-(204, 'menu_item', 2, 'Menu Item created. <br/><br/>Menu Item Name: Menu Group<br/>Menu Item URL: menu-group.php<br/>Menu Group: Technical<br/>Parent: User Interface<br/>Order Sequence: 13', 2, '2024-04-12 14:31:55'),
-(205, 'role_permission', 2, 'Role permission created. <br/><br/>Role Name: Administrator<br/>Menu Item Name: Menu Group<br/>Date Assigned: 2024-04-12 14:32:02', 2, '2024-04-12 14:32:02'),
-(206, 'role_permission', 2, 'Read Access: 0 -> 1<br/>', 2, '2024-04-12 14:32:03'),
-(207, 'role_permission', 2, 'Create Access: 0 -> 1<br/>', 2, '2024-04-12 14:32:04'),
-(208, 'role_permission', 2, 'Write Access: 0 -> 1<br/>', 2, '2024-04-12 14:32:05'),
-(209, 'role_permission', 2, 'Delete Access: 0 -> 1<br/>', 2, '2024-04-12 14:32:05'),
-(210, 'menu_item', 1, 'Order Sequence: 13 -> 21<br/>', 2, '2024-04-12 15:09:25'),
-(211, 'menu_item', 3, 'Menu Item created. <br/><br/>Menu Item Name: Menu Item<br/>Menu Item URL: menu-item.php<br/>Menu Group: Technical<br/>Parent: User Interface<br/>Order Sequence: 13', 2, '2024-04-12 15:10:18'),
-(212, 'menu_item', 4, 'Menu Item created. <br/><br/>Menu Item Name: System Action<br/>Menu Item URL: system-action.php<br/>Menu Group: Technical<br/>Parent: User Interface<br/>Order Sequence: 19', 2, '2024-04-12 15:24:01'),
-(213, 'menu_group', 2, 'Menu group created. <br/><br/>Menu Group Name: Administration<br/>Order Sequence: 100', 2, '2024-04-12 15:26:12'),
-(214, 'menu_item', 5, 'Menu Item created. <br/><br/>Menu Item Name: Users &amp; Companies<br/>Menu Group: Administration<br/>Menu Item Icon: ti ti-users<br/>Order Sequence: 21', 2, '2024-04-12 15:28:16'),
-(215, 'role_permission', 3, 'Role permission created. <br/><br/>Role Name: Administrator<br/>Menu Item Name: Users &amp; Companies<br/>Date Assigned: 2024-04-12 15:28:21', 2, '2024-04-12 15:28:21'),
-(216, 'role_permission', 3, 'Read Access: 0 -> 1<br/>', 2, '2024-04-12 15:28:23'),
-(217, 'role_permission', 4, 'Role permission created. <br/><br/>Role Name: Employee<br/>Menu Item Name: Menu Item<br/>Date Assigned: 2024-04-12 15:28:32', 2, '2024-04-12 15:28:32'),
-(218, 'role_permission', 4, 'Read Access: 0 -> 1<br/>', 2, '2024-04-12 15:28:34'),
-(219, 'role_permission', 4, 'Create Access: 0 -> 1<br/>', 2, '2024-04-12 15:28:35'),
-(220, 'role_permission', 4, 'Write Access: 0 -> 1<br/>', 2, '2024-04-12 15:28:36'),
-(221, 'role_permission', 4, 'Delete Access: 0 -> 1<br/>', 2, '2024-04-12 15:28:36'),
-(222, 'role_permission', 5, 'Role permission created. <br/><br/>Role Name: Employee<br/>Menu Item Name: System Action<br/>Date Assigned: 2024-04-12 15:28:48', 2, '2024-04-12 15:28:48'),
-(223, 'role_permission', 5, 'Read Access: 0 -> 1<br/>', 2, '2024-04-12 15:28:51'),
-(224, 'role_permission', 5, 'Create Access: 0 -> 1<br/>', 2, '2024-04-12 15:28:51'),
-(225, 'role_permission', 5, 'Write Access: 0 -> 1<br/>', 2, '2024-04-12 15:28:52'),
-(226, 'role_permission', 5, 'Delete Access: 0 -> 1<br/>', 2, '2024-04-12 15:28:53'),
-(227, 'role_permission', 3, 'Menu Item: Users &amp; Companies -> Users & Companies<br/>', 2, '2024-04-12 15:33:16'),
-(228, 'menu_item', 5, 'Menu Item Name: Users &amp; Companies -> Users & Companies<br/>', 2, '2024-04-12 15:33:16'),
-(229, 'menu_item', 6, 'Menu Item created. <br/><br/>Menu Item Name: User Account<br/>Menu Item URL: user-account.php<br/>Menu Group: Administration<br/>Parent: Users & Companies<br/>Order Sequence: 21', 2, '2024-04-12 15:37:20'),
-(230, 'role_user_account', 1, 'Role user account created. <br/><br/>Role Name: Administrator<br/>User Account Name: Administrator<br/>Date Assigned: 2024-04-12 16:08:26', 2, '2024-04-12 16:08:26'),
-(231, 'role_permission', 6, 'Role permission created. <br/><br/>Role Name: Administrator<br/>Menu Item Name: Menu Item<br/>Date Assigned: 2024-04-12 16:21:22', 2, '2024-04-12 16:21:22'),
-(232, 'role_permission', 6, 'Read Access: 0 -> 1<br/>', 2, '2024-04-12 16:21:24'),
-(233, 'role_permission', 6, 'Create Access: 0 -> 1<br/>', 2, '2024-04-12 16:21:25'),
-(234, 'role_permission', 6, 'Write Access: 0 -> 1<br/>', 2, '2024-04-12 16:21:26'),
-(235, 'role_permission', 6, 'Delete Access: 0 -> 1<br/>', 2, '2024-04-12 16:21:27'),
-(236, 'role_permission', 7, 'Role permission created. <br/><br/>Role Name: Administrator<br/>Menu Item Name: User Account<br/>Date Assigned: 2024-04-12 17:01:56', 2, '2024-04-12 17:01:56'),
-(237, 'role_permission', 7, 'Read Access: 0 -> 1<br/>', 2, '2024-04-12 17:01:58'),
-(238, 'role_permission', 7, 'Create Access: 0 -> 1<br/>', 2, '2024-04-12 17:01:59'),
-(239, 'role_permission', 7, 'Write Access: 0 -> 1<br/>', 2, '2024-04-12 17:01:59'),
-(240, 'role_permission', 7, 'Delete Access: 0 -> 1<br/>', 2, '2024-04-12 17:02:00'),
-(241, 'role_permission', 8, 'Role permission created. <br/><br/>Role Name: Administrator<br/>Menu Item Name: System Action<br/>Date Assigned: 2024-04-12 17:18:42', 2, '2024-04-12 17:18:42'),
-(242, 'role_permission', 8, 'Read Access: 0 -> 1<br/>', 2, '2024-04-12 17:18:43'),
-(243, 'role_permission', 8, 'Create Access: 0 -> 1<br/>', 2, '2024-04-12 17:18:43'),
-(244, 'role_permission', 8, 'Write Access: 0 -> 1<br/>', 2, '2024-04-12 17:18:44'),
-(245, 'role_permission', 8, 'Delete Access: 0 -> 1<br/>', 2, '2024-04-12 17:18:45'),
-(246, 'user_account', 2, 'Last Connection Date: 2024-04-12 10:56:44 -> 2024-04-19 15:50:07<br/>', 2, '2024-04-19 15:50:07'),
-(247, 'user_account', 2, 'Two-Factor Authentication: No -> Yes<br/>', 2, '2024-04-19 16:05:09'),
-(248, 'user_account', 2, 'Two-Factor Authentication: Yes -> No<br/>', 2, '2024-04-19 16:05:10'),
-(249, 'menu_item', 7, 'Menu Item created. <br/><br/>Menu Item Name: Settings<br/>Menu Group: Technical<br/>Menu Item Icon: ti ti-gear<br/>Order Sequence: 19', 2, '2024-04-19 16:10:28'),
-(250, 'role_permission', 9, 'Role permission created. <br/><br/>Role Name: Administrator<br/>Menu Item Name: Settings<br/>Date Assigned: 2024-04-19 16:10:36', 2, '2024-04-19 16:10:36'),
-(251, 'role_permission', 9, 'Read Access: 0 -> 1<br/>', 2, '2024-04-19 16:10:38'),
-(252, 'menu_item', 7, 'Menu Item Icon: ti ti-gear -> ti ti-settings<br/>', 2, '2024-04-19 16:13:18'),
-(253, 'role_permission', 9, 'Menu Item: Settings -> Configurations<br/>', 2, '2024-04-19 16:28:34'),
-(254, 'menu_item', 7, 'Menu Item Name: Settings -> Configurations<br/>Order Sequence: 19 -> 3<br/>', 2, '2024-04-19 16:28:34'),
-(255, 'menu_item', 8, 'Menu Item created. <br/><br/>Menu Item Name: File Type<br/>Menu Item URL: file-type.php<br/>Menu Group: Technical<br/>Parent: Configurations<br/>Order Sequence: 6', 2, '2024-04-19 16:29:21'),
-(256, 'role_permission', 10, 'Role permission created. <br/><br/>Role Name: Administrator<br/>Menu Item Name: File Type<br/>Date Assigned: 2024-04-19 16:29:26', 2, '2024-04-19 16:29:26'),
-(257, 'role_permission', 10, 'Read Access: 0 -> 1<br/>', 2, '2024-04-19 16:29:28'),
-(258, 'role_permission', 10, 'Create Access: 0 -> 1<br/>', 2, '2024-04-19 16:29:29'),
-(259, 'role_permission', 10, 'Write Access: 0 -> 1<br/>', 2, '2024-04-19 16:29:30'),
-(260, 'role_permission', 10, 'Delete Access: 0 -> 1<br/>', 2, '2024-04-19 16:29:30'),
-(261, 'menu_item', 9, 'Menu Item created. <br/><br/>Menu Item Name: File Extension<br/>Menu Item URL: file-extension.php<br/>Menu Group: Technical<br/>Parent: Configurations<br/>Order Sequence: 6', 2, '2024-04-19 16:30:01'),
-(262, 'role_permission', 11, 'Role permission created. <br/><br/>Role Name: Administrator<br/>Menu Item Name: File Extension<br/>Date Assigned: 2024-04-19 16:30:05', 2, '2024-04-19 16:30:05'),
-(263, 'role_permission', 11, 'Read Access: 0 -> 1<br/>', 2, '2024-04-19 16:30:06'),
-(264, 'role_permission', 11, 'Create Access: 0 -> 1<br/>', 2, '2024-04-19 16:30:07'),
-(265, 'role_permission', 11, 'Write Access: 0 -> 1<br/>', 2, '2024-04-19 16:30:08'),
-(266, 'role_permission', 11, 'Delete Access: 0 -> 1<br/>', 2, '2024-04-19 16:30:08'),
-(267, 'menu_item', 1, 'Menu Item Icon: ti ti-layout -> ti ti-template<br/>', 2, '2024-04-19 16:33:07'),
-(268, 'menu_item', 10, 'Menu Item created. <br/><br/>Menu Item Name: Settings<br/>Menu Group: Technical<br/>Menu Item Icon: ti ti-settings-2<br/>Order Sequence: 19', 2, '2024-04-19 16:47:52'),
-(269, 'role_permission', 12, 'Role permission created. <br/><br/>Role Name: Administrator<br/>Menu Item Name: Settings<br/>Date Assigned: 2024-04-19 16:47:58', 2, '2024-04-19 16:47:58'),
-(270, 'role_permission', 12, 'Read Access: 0 -> 1<br/>', 2, '2024-04-19 16:48:00'),
-(271, 'menu_item', 11, 'Menu Item created. <br/><br/>Menu Item Name: Upload Setting<br/>Menu Item URL: upload-setting.php<br/>Menu Group: Technical<br/>Parent: Settings<br/>Order Sequence: 21', 2, '2024-04-19 16:51:43'),
-(272, 'role_permission', 13, 'Role permission created. <br/><br/>Role Name: Administrator<br/>Menu Item Name: Upload Setting<br/>Date Assigned: 2024-04-19 16:51:49', 2, '2024-04-19 16:51:49'),
-(273, 'role_permission', 13, 'Read Access: 0 -> 1<br/>', 2, '2024-04-19 16:51:51'),
-(274, 'role_permission', 13, 'Create Access: 0 -> 1<br/>', 2, '2024-04-19 16:51:52'),
-(275, 'role_permission', 13, 'Write Access: 0 -> 1<br/>', 2, '2024-04-19 16:51:53'),
-(276, 'role_permission', 13, 'Delete Access: 0 -> 1<br/>', 2, '2024-04-19 16:51:53'),
-(277, 'menu_item', 12, 'Menu Item created. <br/><br/>Menu Item Name: Security Setting<br/>Menu Item URL: security-setting.php<br/>Menu Group: Technical<br/>Parent: Settings<br/>Order Sequence: 19', 2, '2024-04-19 16:52:49'),
-(278, 'role_permission', 14, 'Role permission created. <br/><br/>Role Name: Administrator<br/>Menu Item Name: Security Setting<br/>Date Assigned: 2024-04-19 16:52:54', 2, '2024-04-19 16:52:54'),
-(279, 'role_permission', 14, 'Read Access: 0 -> 1<br/>', 2, '2024-04-19 16:52:55'),
-(280, 'role_permission', 14, 'Create Access: 0 -> 1<br/>', 2, '2024-04-19 16:52:56'),
-(281, 'role_permission', 14, 'Write Access: 0 -> 1<br/>', 2, '2024-04-19 16:52:57'),
-(282, 'role_permission', 14, 'Delete Access: 0 -> 1<br/>', 2, '2024-04-19 16:52:57'),
-(283, 'menu_item', 13, 'Menu Item created. <br/><br/>Menu Item Name: Email Setting<br/>Menu Item URL: email-setting.php<br/>Menu Group: Technical<br/>Parent: Settings<br/>Order Sequence: 5', 2, '2024-04-19 16:53:58'),
-(284, 'role_permission', 15, 'Role permission created. <br/><br/>Role Name: Administrator<br/>Menu Item Name: Email Setting<br/>Date Assigned: 2024-04-19 16:54:02', 2, '2024-04-19 16:54:02'),
-(285, 'role_permission', 15, 'Read Access: 0 -> 1<br/>', 2, '2024-04-19 16:54:03'),
-(286, 'role_permission', 15, 'Create Access: 0 -> 1<br/>', 2, '2024-04-19 16:54:04'),
-(287, 'role_permission', 15, 'Write Access: 0 -> 1<br/>', 2, '2024-04-19 16:54:04'),
-(288, 'role_permission', 15, 'Delete Access: 0 -> 1<br/>', 2, '2024-04-19 16:54:05'),
-(289, 'menu_item', 14, 'Menu Item created. <br/><br/>Menu Item Name: Notification Setting<br/>Menu Item URL: notification-setting.php<br/>Menu Group: Technical<br/>Parent: Settings<br/>Order Sequence: 14', 2, '2024-04-19 16:54:41'),
-(290, 'role_permission', 16, 'Role permission created. <br/><br/>Role Name: Administrator<br/>Menu Item Name: Notification Setting<br/>Date Assigned: 2024-04-19 16:54:46', 2, '2024-04-19 16:54:46'),
-(291, 'role_permission', 16, 'Read Access: 0 -> 1<br/>', 2, '2024-04-19 16:54:48'),
-(292, 'role_permission', 16, 'Create Access: 0 -> 1<br/>', 2, '2024-04-19 16:54:49'),
-(293, 'role_permission', 16, 'Write Access: 0 -> 1<br/>', 2, '2024-04-19 16:54:50'),
-(294, 'role_permission', 16, 'Delete Access: 0 -> 1<br/>', 2, '2024-04-19 16:54:50'),
-(295, 'menu_item', 15, 'Menu Item created. <br/><br/>Menu Item Name: System Setting<br/>Menu Item URL: security-setting.php<br/>Menu Group: Technical<br/>Parent: Settings<br/>Order Sequence: 19', 2, '2024-04-19 16:55:47'),
-(296, 'role_permission', 17, 'Role permission created. <br/><br/>Role Name: Administrator<br/>Menu Item Name: System Setting<br/>Date Assigned: 2024-04-19 16:55:51', 2, '2024-04-19 16:55:51'),
-(297, 'role_permission', 17, 'Read Access: 0 -> 1<br/>', 2, '2024-04-19 16:55:53'),
-(298, 'role_permission', 17, 'Create Access: 0 -> 1<br/>', 2, '2024-04-19 16:55:53'),
-(299, 'role_permission', 17, 'Write Access: 0 -> 1<br/>', 2, '2024-04-19 16:55:54'),
-(300, 'role_permission', 17, 'Delete Access: 0 -> 1<br/>', 2, '2024-04-19 16:55:55'),
-(301, 'user_account', 2, 'Last Connection Date: 2024-04-19 15:50:07 -> 2024-04-19 17:04:58<br/>', 2, '2024-04-19 17:04:58'),
-(302, 'user_account', 2, 'Last Connection Date: 2024-04-19 17:04:58 -> 2024-04-22 11:23:23<br/>', 2, '2024-04-22 11:23:23'),
-(303, 'menu_item', 16, 'Menu Item created. <br/><br/>Menu Item Name: Role<br/>Menu Item URL: role.php<br/>Menu Group: Administration<br/>Parent: User Account<br/>Order Sequence: 18', 2, '2024-04-22 16:09:23'),
-(304, 'role_permission', 18, 'Role permission created. <br/><br/>Role Name: Administrator<br/>Menu Item Name: Role<br/>Date Assigned: 2024-04-22 16:09:30', 2, '2024-04-22 16:09:30'),
-(305, 'role_permission', 18, 'Read Access: 0 -> 1<br/>', 2, '2024-04-22 16:09:31'),
-(306, 'role_permission', 18, 'Create Access: 0 -> 1<br/>', 2, '2024-04-22 16:09:31'),
-(307, 'role_permission', 18, 'Write Access: 0 -> 1<br/>', 2, '2024-04-22 16:09:32'),
-(308, 'role_permission', 18, 'Delete Access: 0 -> 1<br/>', 2, '2024-04-22 16:09:34'),
-(309, 'menu_item', 16, 'Parent: User Account -> Users & Companies<br/>', 2, '2024-04-22 16:09:43'),
-(310, 'user_account', 2, 'Last Connection Date: 2024-04-22 11:23:23 -> 2024-04-23 15:05:53<br/>', 2, '2024-04-23 15:05:53'),
-(311, 'system_action', 1, 'System action created. <br/><br/>System Action Name: Activate User Account<br/>System Action Description: Access to activate the user account.', 2, '2024-04-23 16:00:17'),
-(312, 'role_system_action_permission', 1, 'Role system action permission created. <br/><br/>Role Name: Administrator<br/>System Action Name: Activate User Account<br/>Date Assigned: 2024-04-23 16:00:21', 2, '2024-04-23 16:00:21'),
-(313, 'role_system_action_permission', 1, 'System Action Access: 0 -> 1<br/>', 2, '2024-04-23 16:00:22'),
-(314, 'system_action', 2, 'System action created. <br/><br/>System Action Name: Deactivate User Account<br/>System Action Description: Access to deactivate the user account.', 2, '2024-04-23 16:00:56'),
-(315, 'role_system_action_permission', 2, 'Role system action permission created. <br/><br/>Role Name: Administrator<br/>System Action Name: Deactivate User Account<br/>Date Assigned: 2024-04-23 16:01:00', 2, '2024-04-23 16:01:00'),
-(316, 'role_system_action_permission', 2, 'System Action Access: 0 -> 1<br/>', 2, '2024-04-23 16:01:02'),
-(317, 'system_action', 3, 'System action created. <br/><br/>System Action Name: Lock User Account<br/>System Action Description: Access to lock the user account.', 2, '2024-04-23 16:01:18'),
-(318, 'role_system_action_permission', 3, 'Role system action permission created. <br/><br/>Role Name: Administrator<br/>System Action Name: Lock User Account<br/>Date Assigned: 2024-04-23 16:01:22', 2, '2024-04-23 16:01:22'),
-(319, 'role_system_action_permission', 3, 'System Action Access: 0 -> 1<br/>', 2, '2024-04-23 16:01:23'),
-(320, 'system_action', 4, 'System action created. <br/><br/>System Action Name: Unlock User Account<br/>System Action Description: Access to unlock the user account.', 2, '2024-04-23 16:01:36'),
-(321, 'role_system_action_permission', 4, 'Role system action permission created. <br/><br/>Role Name: Administrator<br/>System Action Name: Unlock User Account<br/>Date Assigned: 2024-04-23 16:01:40', 2, '2024-04-23 16:01:40'),
-(322, 'role_system_action_permission', 4, 'System Action Access: 0 -> 1<br/>', 2, '2024-04-23 16:01:41'),
-(323, 'user_account', 1, 'Locked: No -> Yes<br/>', 2, '2024-04-23 16:19:23'),
-(324, 'user_account', 4, 'Locked: No -> Yes<br/>', 2, '2024-04-23 16:19:23'),
-(325, 'user_account', 1, 'Locked: Yes -> No<br/>', 2, '2024-04-23 16:19:29'),
-(326, 'user_account', 4, 'Locked: Yes -> No<br/>', 2, '2024-04-23 16:19:29'),
-(327, 'system_action', 5, 'System action created. <br/><br/>System Action Name: Add Role User Account<br/>System Action Description: Access to assign roles to user account.', 2, '2024-04-23 17:07:20'),
-(328, 'role_system_action_permission', 5, 'Role system action permission created. <br/><br/>Role Name: Administrator<br/>System Action Name: Add Role User Account<br/>Date Assigned: 2024-04-23 17:07:24', 2, '2024-04-23 17:07:24'),
-(329, 'role_system_action_permission', 5, 'System Action Access: 0 -> 1<br/>', 2, '2024-04-23 17:07:25'),
-(330, 'system_action', 6, 'System action created. <br/><br/>System Action Name: Delete Role User Account<br/>System Action Description: Access to delete roles to user account.', 2, '2024-04-23 17:07:38'),
-(331, 'role_system_action_permission', 6, 'Role system action permission created. <br/><br/>Role Name: Administrator<br/>System Action Name: Delete Role User Account<br/>Date Assigned: 2024-04-23 17:07:42', 2, '2024-04-23 17:07:42'),
-(332, 'role_system_action_permission', 6, 'System Action Access: 0 -> 1<br/>', 2, '2024-04-23 17:07:44'),
-(333, 'user_account', 2, 'Two-Factor Authentication: No -> Yes<br/>', 2, '2024-04-23 17:18:13'),
-(334, 'user_account', 2, 'Two-Factor Authentication: Yes -> No<br/>', 2, '2024-04-23 17:18:13'),
-(335, 'role_permission', 7, 'Create Access: 1 -> 0<br/>', 2, '2024-04-23 17:19:08'),
-(336, 'role_permission', 7, 'Create Access: 0 -> 1<br/>', 2, '2024-04-23 17:19:21'),
-(337, 'role_permission', 1, 'Write Access: 0 -> 1<br/>', 2, '2024-04-23 17:19:26'),
-(338, 'role_permission', 1, 'Write Access: 1 -> 0<br/>', 2, '2024-04-23 17:19:36'),
-(339, 'role_permission', 7, 'Write Access: 1 -> 0<br/>', 2, '2024-04-23 17:19:40'),
-(340, 'role_permission', 7, 'Write Access: 0 -> 1<br/>', 2, '2024-04-23 17:20:22'),
-(341, 'system_action', 7, 'System action created. <br/><br/>System Action Name: Add Role Access<br/>System Action Description: Access to add role access.', 2, '2024-04-23 17:26:24'),
-(342, 'role_system_action_permission', 7, 'Role system action permission created. <br/><br/>Role Name: Administrator<br/>System Action Name: Add Role Access<br/>Date Assigned: 2024-04-23 17:26:27', 2, '2024-04-23 17:26:27'),
-(343, 'role_system_action_permission', 7, 'System Action Access: 0 -> 1<br/>', 2, '2024-04-23 17:26:28'),
-(344, 'system_action', 8, 'System action created. <br/><br/>System Action Name: Update Role Access<br/>System Action Description: Access to update the role access.', 2, '2024-04-23 17:26:45'),
-(345, 'role_system_action_permission', 8, 'Role system action permission created. <br/><br/>Role Name: Administrator<br/>System Action Name: Update Role Access<br/>Date Assigned: 2024-04-23 17:26:48', 2, '2024-04-23 17:26:48'),
-(346, 'role_system_action_permission', 8, 'System Action Access: 0 -> 1<br/>', 2, '2024-04-23 17:26:50'),
-(347, 'system_action', 9, 'System action created. <br/><br/>System Action Name: Delete Role Access<br/>System Action Description: Access to delete the role access.', 2, '2024-04-23 17:27:02'),
-(348, 'role_system_action_permission', 9, 'Role system action permission created. <br/><br/>Role Name: Administrator<br/>System Action Name: Delete Role Access<br/>Date Assigned: 2024-04-23 17:27:05', 2, '2024-04-23 17:27:05'),
-(349, 'role_system_action_permission', 9, 'System Action Access: 0 -> 1<br/>', 2, '2024-04-23 17:27:07'),
-(350, 'system_action', 10, 'System action created. <br/><br/>System Action Name: Add Role System Action Access<br/>System Action Description: Access to add the role system action access.', 2, '2024-04-23 17:27:29'),
-(351, 'role_system_action_permission', 10, 'Role system action permission created. <br/><br/>Role Name: Administrator<br/>System Action Name: Add Role System Action Access<br/>Date Assigned: 2024-04-23 17:27:33', 2, '2024-04-23 17:27:33'),
-(352, 'role_system_action_permission', 10, 'System Action Access: 0 -> 1<br/>', 2, '2024-04-23 17:27:35'),
-(353, 'system_action', 11, 'System action created. <br/><br/>System Action Name: Update Role System Action Access<br/>System Action Description: Access to update the role system action access.', 2, '2024-04-23 17:27:56'),
-(354, 'role_system_action_permission', 11, 'Role system action permission created. <br/><br/>Role Name: Administrator<br/>System Action Name: Update Role System Action Access<br/>Date Assigned: 2024-04-23 17:27:59', 2, '2024-04-23 17:27:59');
-INSERT INTO `audit_log` (`audit_log_id`, `table_name`, `reference_id`, `log`, `changed_by`, `changed_at`) VALUES
-(355, 'role_system_action_permission', 11, 'System Action Access: 0 -> 1<br/>', 2, '2024-04-23 17:28:04'),
-(356, 'system_action', 12, 'System action created. <br/><br/>System Action Name: Delete Role System Action Access<br/>System Action Description: Access to delete the role system action access.', 2, '2024-04-23 17:28:23'),
-(357, 'role_system_action_permission', 12, 'Role system action permission created. <br/><br/>Role Name: Administrator<br/>System Action Name: Delete Role System Action Access<br/>Date Assigned: 2024-04-23 17:28:28', 2, '2024-04-23 17:28:28'),
-(358, 'role_system_action_permission', 12, 'System Action Access: 0 -> 1<br/>', 2, '2024-04-23 17:28:29');
+(1, 'system_action', 13, 'System action created. <br/><br/>System Action Name: Add File Extension Access<br/>System Action Description: Access to assign the file extension to the upload setting.', 1, '2024-05-13 10:45:22'),
+(2, 'system_action', 14, 'System action created. <br/><br/>System Action Name: Delete File Extension Access<br/>System Action Description: Access to delete the file extension to the upload setting.', 1, '2024-05-13 10:45:22'),
+(3, 'role_system_action_permission', 13, 'Role system action permission created. <br/><br/>Role Name: Administrator<br/>System Action Name: Add File Extension Access<br/>System Action Access: 1<br/>Date Assigned: 2024-05-13 10:46:07', 1, '2024-05-13 10:46:07'),
+(4, 'role_system_action_permission', 14, 'Role system action permission created. <br/><br/>Role Name: Administrator<br/>System Action Name: Delete File Extension Access<br/>System Action Access: 1<br/>Date Assigned: 2024-05-13 10:46:07', 1, '2024-05-13 10:46:07'),
+(5, 'email_setting', 2, 'Email Setting created. <br/><br/>Email Setting Name: Test<br/>Email Setting Description: test<br/>Host: test<br/>Port: 12<br/>Mail Username: test<br/>Mail Encryption: none<br/>Mail From Name: te<br/>Mail From Email: te', 2, '2024-05-13 16:25:43'),
+(6, 'email_setting', 2, 'Email Setting Name: Test -> Test2<br/>Email Setting Description: test -> test2<br/>Host: test -> test2<br/>Port: 12 -> 122<br/>SMTP Authentication: 0 -> 1<br/>SMTP Auto TLS: 0 -> 1<br/>Mail Username: test -> test2<br/>Mail Encryption: none -> starttls<br/>Mail From Name: te -> te2<br/>Mail From Email: te -> te2<br/>', 2, '2024-05-13 16:28:36'),
+(7, 'email_setting', 3, 'Email Setting created. <br/><br/>Email Setting Name: test<br/>Email Setting Description: te<br/>Host: t<br/>Port: te<br/>Mail Username: t<br/>Mail Encryption: none<br/>Mail From Name: t<br/>Mail From Email: t', 2, '2024-05-13 16:29:06'),
+(8, 'email_setting', 4, 'Email Setting created. <br/><br/>Email Setting Name: t<br/>Email Setting Description: t<br/>Host: t<br/>Port: t<br/>Mail Username: t<br/>Mail Encryption: starttls<br/>Mail From Name: t<br/>Mail From Email: t', 2, '2024-05-13 16:29:14'),
+(9, 'security_setting', 8, 'Security Setting created. <br/><br/>Security Setting Name: asd<br/>Security Setting Description: asd<br/>Value: asd', 2, '2024-05-13 17:27:12'),
+(10, 'security_setting', 9, 'Security Setting created. <br/><br/>Security Setting Name: asdasd<br/>Security Setting Description: asdasd<br/>Value: asd', 2, '2024-05-13 17:27:18'),
+(11, 'security_setting', 10, 'Security Setting created. <br/><br/>Security Setting Name: asdasd<br/>Security Setting Description: asdasd<br/>Value: asdasdasd', 2, '2024-05-13 17:27:23'),
+(12, 'user_account', 2, 'Last Connection Date: 2024-05-13 10:43:01 -> 2024-05-14 16:52:31<br/>', 2, '2024-05-14 16:52:31'),
+(13, 'system_setting', 2, 'System Setting created. <br/><br/>System Setting Name: asd<br/>System Setting Description: asd<br/>Value: asd', 2, '2024-05-14 17:08:22'),
+(14, 'system_setting', 3, 'System Setting created. <br/><br/>System Setting Name: asd<br/>System Setting Description: asd<br/>Value: asd', 2, '2024-05-14 17:08:33'),
+(15, 'system_setting', 4, 'System Setting created. <br/><br/>System Setting Name: asd<br/>System Setting Description: asd<br/>Value: asd', 2, '2024-05-14 17:08:39'),
+(16, 'system_setting', 4, 'System Setting Name: asd -> asd2<br/>System Setting Description: asd -> asd2<br/>Value: asd -> asd2<br/>', 2, '2024-05-14 17:08:47'),
+(17, 'user_account', 2, 'Last Connection Date: 2024-05-14 16:52:31 -> 2024-05-14 17:25:38<br/>', 2, '2024-05-14 17:25:38'),
+(18, 'user_account', 2, 'Last Connection Date: 2024-05-14 17:25:38 -> 2024-05-20 16:30:17<br/>', 2, '2024-05-20 16:30:17'),
+(19, 'user_account', 2, 'Last Connection Date: 2024-05-20 16:30:17 -> 2024-05-21 15:15:27<br/>', 2, '2024-05-21 15:15:27'),
+(20, 'user_account', 2, 'Last Connection Date: 2024-05-21 15:15:27 -> 2024-05-23 13:41:07<br/>', 2, '2024-05-23 13:41:07'),
+(21, 'user_account', 2, 'Last Connection Date: 2024-05-23 13:41:07 -> 2024-05-24 14:49:20<br/>', 2, '2024-05-24 14:49:20'),
+(22, 'notification_setting_email_template', 2, 'Email Notification Template created. <br/><br/>Email Notification Subject: Login OTP - Secure Access to Your Account<br/>Email Notification Body: <p>To ensure the security of', 2, '2024-05-24 16:35:40'),
+(23, 'notification_setting_email_template', 2, 'Email Notification Body: <p>To ensure the security of -> To ensure the security of your account, we have generated a unique One-Time Password (OTP) for you to use during the login process. Please use the following OTP to access your account:\n\nOTP: {OTP_CODE}\n\nPlease note that this OTP is valid for {OTP_VALIDITY}. Once you have logged in successfully, we recommend enabling two-factor authentication for an added layer of security.\n\nIf you did not initiate this login or believe it was sent to you in error, please disregard this email and delete it immediately. Your account\'s security remains our utmost priority.\n\nNote: This is an automatically generated email. Please do not reply to this address.<br/>', 2, '2024-05-24 16:37:34'),
+(24, 'notification_setting_email_template', 2, 'Email Notification Body: To ensure the security of your account, we have generated a unique One-Time Password (OTP) for you to use during the login process. Please use the following OTP to access your account:\n\nOTP: {OTP_CODE}\n\nPlease note that this OTP is valid for {OTP_VALIDITY}. Once you have logged in successfully, we recommend enabling two-factor authentication for an added layer of security.\n\nIf you did not initiate this login or believe it was sent to you in error, please disregard this email and delete it immediately. Your account\'s security remains our utmost priority.\n\nNote: This is an automatically generated email. Please do not reply to this address. -> <p>To ensure the security of<br/>', 2, '2024-05-24 16:37:53'),
+(25, 'notification_setting_email_template', 2, 'Email Notification Body: <p>To ensure the security of -> <p>To ensure the security of&nbsp;<span class=\"il\">your</span>&nbsp;<span class=\"il\">account</span>, we have generated a unique One-Time Password (<span class=\"il\">OTP</span>) for you to use during the&nbsp;<span class=\"il\">login</span>&nbsp;process. Please use the following&nbsp;<span class=\"il\">OTP</span>&nbsp;to&nbsp;<span class=\"il\">access</span>&nbsp;<span class=\"il\">your</span>&nbsp;<span class=\"il\">account</span>:</p>\n<p><span class=\"il\">OTP</span>:&nbsp;<strong>{OTP_CODE}</strong></p>\n<p>Please note that this&nbsp;<span class=\"il\">OTP</span> is valid for <strong>{OTP_VALIDITY}</strong>. Once you have logged in successfully, we recommend enabling two-factor authentication for an added layer of security.</p>\n<p>If you did not initiate this&nbsp;<span class=\"il\">login</span>&nbsp;or believe it was sent to you in error, please disregard this email and delete it immediately.&nbsp;<span class=\"il\">Your</span>&nbsp;<span class=\"il\">account</span>\'s security remains our utmost priority.</p>\n<p>Note: This is an automatically generated email. Please do not reply to this address.</p><br/>', 2, '2024-05-24 16:44:37'),
+(26, 'notification_setting_email_template', 2, 'Email Notification Body: <p>To ensure the security of&nbsp;<span class=\"il\">your</span>&nbsp;<span class=\"il\">account</span>, we have generated a unique One-Time Password (<span class=\"il\">OTP</span>) for you to use during the&nbsp;<span class=\"il\">login</span>&nbsp;process. Please use the following&nbsp;<span class=\"il\">OTP</span>&nbsp;to&nbsp;<span class=\"il\">access</span>&nbsp;<span class=\"il\">your</span>&nbsp;<span class=\"il\">account</span>:</p>\n<p><span class=\"il\">OTP</span>:&nbsp;<strong>{OTP_CODE}</strong></p>\n<p>Please note that this&nbsp;<span class=\"il\">OTP</span> is valid for <strong>{OTP_VALIDITY}</strong>. Once you have logged in successfully, we recommend enabling two-factor authentication for an added layer of security.</p>\n<p>If you did not initiate this&nbsp;<span class=\"il\">login</span>&nbsp;or believe it was sent to you in error, please disregard this email and delete it immediately.&nbsp;<span class=\"il\">Your</span>&nbsp;<span class=\"il\">account</span>\'s security remains our utmost priority.</p>\n<p>Note: This is an automatically generated email. Please do not reply to this address.</p> -> <p>To ensure the security of&nbsp;<span class=\"il\">your</span>&nbsp;<span class=\"il\">account</span>, we have generated a unique One-Time Password (<span class=\"il\">OTP</span>) for you to use during the&nbsp;<span class=\"il\">login</span>&nbsp;process. Please use the following&nbsp;<span class=\"il\">OTP</span>&nbsp;to&nbsp;<span class=\"il\">access</span>&nbsp;<span class=\"il\">your</span>&nbsp;<span class=\"il\">account</span>:</p>\n<p><span class=\"il\">OTP</span>: <strong>#{OTP_CODE}</strong></p>\n<p>Please note that this&nbsp;<span class=\"il\">OTP</span> is valid for <strong>#{OTP_VALIDITY}</strong>. Once you have logged in successfully, we recommend enabling two-factor authentication for an added layer of security.</p>\n<p>If you did not initiate this&nbsp;<span class=\"il\">login</span>&nbsp;or believe it was sent to you in error, please disregard this email and delete it immediately.&nbsp;<span class=\"il\">Your</span>&nbsp;<span class=\"il\">account</span>\'s security remains our utmost priority.</p>\n<p>Note: This is an automatically generated email. Please do not reply to this address.</p><br/>', 2, '2024-05-24 16:49:12'),
+(27, 'notification_setting_email_template', 2, 'Email Notification Subject: Login OTP - Secure Access to Your Account -> Password Reset Request - Action Required<br/>Email Notification Body: <p>To ensure the security of&nbsp;<span class=\"il\">your</span>&nbsp;<span class=\"il\">account</span>, we have generated a unique One-Time Password (<span class=\"il\">OTP</span>) for you to use during the&nbsp;<span class=\"il\">login</span>&nbsp;process. Please use the following&nbsp;<span class=\"il\">OTP</span>&nbsp;to&nbsp;<span class=\"il\">access</span>&nbsp;<span class=\"il\">your</span>&nbsp;<span class=\"il\">account</span>:</p>\n<p><span class=\"il\">OTP</span>: <strong>#{OTP_CODE}</strong></p>\n<p>Please note that this&nbsp;<span class=\"il\">OTP</span> is valid for <strong>#{OTP_VALIDITY}</strong>. Once you have logged in successfully, we recommend enabling two-factor authentication for an added layer of security.</p>\n<p>If you did not initiate this&nbsp;<span class=\"il\">login</span>&nbsp;or believe it was sent to you in error, please disregard this email and delete it immediately.&nbsp;<span class=\"il\">Your</span>&nbsp;<span class=\"il\">account</span>\'s security remains our utmost priority.</p>\n<p>Note: This is an automatically generated email. Please do not reply to this address.</p> -> <p>We received a request to reset the password for your account associated with this email address. If you did not make this request, please ignore this email.</p>\n<p>To set a new password, please click on the link below:<br><strong>#{RESET_LINK}</strong></p>\n<p>This link will expire in <strong>#{RESET_LINK_VALIDITY} </strong>for security reasons. If you need further assistance, please contact our support team.</p><br/>', 2, '2024-05-24 16:52:02'),
+(28, 'notification_setting_email_template', 1, 'Email Notification Template created. <br/><br/>Email Notification Subject: Login OTP - Secure Access to Your Account<br/>Email Notification Body: <p>Your One-Time Password (OTP) for accessing your account is:</p>\n<p><strong>#{OTP_CODE}</strong></p>\n<p>Please enter this code on the verification page to proceed. Remember, this OTP is valid for only <strong>#{OTP_CODE_VALIDITY}</strong> and should not be shared with anyone.</p>\n<p>If you did not request this code, please contact our support team immediately to ensure your account\'s security.</p>', 2, '2024-05-24 16:53:49'),
+(29, 'notification_setting_email_template', 2, 'Email Notification Body: <p>We received a request to reset the password for your account associated with this email address. If you did not make this request, please ignore this email.</p>\n<p>To set a new password, please click on the link below:<br><strong>#{RESET_LINK}</strong></p>\n<p>This link will expire in <strong>#{RESET_LINK_VALIDITY} </strong>for security reasons. If you need further assistance, please contact our support team.</p> -> <p>We received a request to reset the password for your account associated with this email address. If you did not make this request, please ignore this email.</p>\n<p>To set a new password, please click on the link below:</p>\n<div>\n<div>&lt;a href=\\\"<strong>#{RESET_LINK}</strong>\\\"&gt;<strong>Reset Password</strong></div>\n<div>&nbsp;</div>\n</div>\n<p>This link will expire in <strong>#{RESET_LINK_VALIDITY} </strong>for security reasons. If you need further assistance, please contact our support team.</p><br/>', 2, '2024-05-24 17:13:44');
 
 -- --------------------------------------------------------
 
@@ -1155,7 +1313,7 @@ CREATE TABLE `email_setting` (
   `email_setting_name` varchar(100) NOT NULL,
   `email_setting_description` varchar(200) NOT NULL,
   `mail_host` varchar(100) NOT NULL,
-  `port` int(11) NOT NULL,
+  `port` varchar(10) NOT NULL,
   `smtp_auth` int(1) NOT NULL,
   `smtp_auto_tls` int(1) NOT NULL,
   `mail_username` varchar(200) NOT NULL,
@@ -1171,7 +1329,236 @@ CREATE TABLE `email_setting` (
 --
 
 INSERT INTO `email_setting` (`email_setting_id`, `email_setting_name`, `email_setting_description`, `mail_host`, `port`, `smtp_auth`, `smtp_auto_tls`, `mail_username`, `mail_password`, `mail_encryption`, `mail_from_name`, `mail_from_email`, `last_log_by`) VALUES
-(1, 'Security Email Setting', '\r\nEmail setting for security emails.', 'smtp.hostinger.com', 465, 1, 0, 'cgmi-noreply@christianmotors.ph', 'UsDpF0dYRC6M9v0tT3MHq%2BlrRJu01%2Fb95Dq%2BAeCfu2Y%3D', 'ssl', 'cgmi-noreply@christianmotors.ph', 'cgmi-noreply@christianmotors.ph', 1);
+(1, 'Security Email Setting', '\r\nEmail setting for security emails.', 'smtp.hostinger.com', '465', 1, 0, 'cgmi-noreply@christianmotors.ph', 'UsDpF0dYRC6M9v0tT3MHq%2BlrRJu01%2Fb95Dq%2BAeCfu2Y%3D', 'ssl', 'cgmi-noreply@christianmotors.ph', 'cgmi-noreply@christianmotors.ph', 1);
+
+--
+-- Triggers `email_setting`
+--
+DELIMITER $$
+CREATE TRIGGER `email_setting_trigger_insert` AFTER INSERT ON `email_setting` FOR EACH ROW BEGIN
+    DECLARE audit_log TEXT DEFAULT 'Email Setting created. <br/>';
+
+    IF NEW.email_setting_name <> '' THEN
+        SET audit_log = CONCAT(audit_log, "<br/>Email Setting Name: ", NEW.email_setting_name);
+    END IF;
+
+    IF NEW.email_setting_description <> '' THEN
+        SET audit_log = CONCAT(audit_log, "<br/>Email Setting Description: ", NEW.email_setting_description);
+    END IF;
+
+    IF NEW.mail_host <> '' THEN
+        SET audit_log = CONCAT(audit_log, "<br/>Host: ", NEW.mail_host);
+    END IF;
+
+    IF NEW.port <> '' THEN
+        SET audit_log = CONCAT(audit_log, "<br/>Port: ", NEW.port);
+    END IF;
+
+    IF NEW.smtp_auth <> '' THEN
+        SET audit_log = CONCAT(audit_log, "<br/>SMTP Authentication: ", NEW.smtp_auth);
+    END IF;
+
+    IF NEW.smtp_auto_tls <> '' THEN
+        SET audit_log = CONCAT(audit_log, "<br/>SMTP Auto TLS: ", NEW.smtp_auto_tls);
+    END IF;
+
+    IF NEW.mail_username <> '' THEN
+        SET audit_log = CONCAT(audit_log, "<br/>Mail Username: ", NEW.mail_username);
+    END IF;
+
+    IF NEW.mail_encryption <> '' THEN
+        SET audit_log = CONCAT(audit_log, "<br/>Mail Encryption: ", NEW.mail_encryption);
+    END IF;
+
+    IF NEW.mail_from_name <> '' THEN
+        SET audit_log = CONCAT(audit_log, "<br/>Mail From Name: ", NEW.mail_from_name);
+    END IF;
+
+    IF NEW.mail_from_email <> '' THEN
+        SET audit_log = CONCAT(audit_log, "<br/>Mail From Email: ", NEW.mail_from_email);
+    END IF;
+
+    INSERT INTO audit_log (table_name, reference_id, log, changed_by, changed_at) 
+    VALUES ('email_setting', NEW.email_setting_id, audit_log, NEW.last_log_by, NOW());
+END
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE TRIGGER `email_setting_trigger_update` AFTER UPDATE ON `email_setting` FOR EACH ROW BEGIN
+    DECLARE audit_log TEXT DEFAULT '';
+
+    IF NEW.email_setting_name <> OLD.email_setting_name THEN
+        SET audit_log = CONCAT(audit_log, "Email Setting Name: ", OLD.email_setting_name, " -> ", NEW.email_setting_name, "<br/>");
+    END IF;
+
+    IF NEW.email_setting_description <> OLD.email_setting_description THEN
+        SET audit_log = CONCAT(audit_log, "Email Setting Description: ", OLD.email_setting_description, " -> ", NEW.email_setting_description, "<br/>");
+    END IF;
+
+    IF NEW.mail_host <> OLD.mail_host THEN
+        SET audit_log = CONCAT(audit_log, "Host: ", OLD.mail_host, " -> ", NEW.mail_host, "<br/>");
+    END IF;
+
+    IF NEW.port <> OLD.port THEN
+        SET audit_log = CONCAT(audit_log, "Port: ", OLD.port, " -> ", NEW.port, "<br/>");
+    END IF;
+
+    IF NEW.smtp_auth <> OLD.smtp_auth THEN
+        SET audit_log = CONCAT(audit_log, "SMTP Authentication: ", OLD.smtp_auth, " -> ", NEW.smtp_auth, "<br/>");
+    END IF;
+
+    IF NEW.smtp_auto_tls <> OLD.smtp_auto_tls THEN
+        SET audit_log = CONCAT(audit_log, "SMTP Auto TLS: ", OLD.smtp_auto_tls, " -> ", NEW.smtp_auto_tls, "<br/>");
+    END IF;
+
+    IF NEW.mail_username <> OLD.mail_username THEN
+        SET audit_log = CONCAT(audit_log, "Mail Username: ", OLD.mail_username, " -> ", NEW.mail_username, "<br/>");
+    END IF;
+
+    IF NEW.mail_encryption <> OLD.mail_encryption THEN
+        SET audit_log = CONCAT(audit_log, "Mail Encryption: ", OLD.mail_encryption, " -> ", NEW.mail_encryption, "<br/>");
+    END IF;
+
+    IF NEW.mail_from_name <> OLD.mail_from_name THEN
+        SET audit_log = CONCAT(audit_log, "Mail From Name: ", OLD.mail_from_name, " -> ", NEW.mail_from_name, "<br/>");
+    END IF;
+
+    IF NEW.mail_from_email <> OLD.mail_from_email THEN
+        SET audit_log = CONCAT(audit_log, "Mail From Email: ", OLD.mail_from_email, " -> ", NEW.mail_from_email, "<br/>");
+    END IF;
+    
+    IF LENGTH(audit_log) > 0 THEN
+        INSERT INTO audit_log (table_name, reference_id, log, changed_by, changed_at) 
+        VALUES ('email_setting', NEW.email_setting_id, audit_log, NEW.last_log_by, NOW());
+    END IF;
+END
+$$
+DELIMITER ;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `file_extension`
+--
+
+CREATE TABLE `file_extension` (
+  `file_extension_id` int(10) UNSIGNED NOT NULL,
+  `file_extension_name` varchar(100) NOT NULL,
+  `file_extension` varchar(10) NOT NULL,
+  `file_type_id` int(11) NOT NULL,
+  `file_type_name` varchar(100) NOT NULL,
+  `last_log_by` int(10) UNSIGNED NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `file_extension`
+--
+
+INSERT INTO `file_extension` (`file_extension_id`, `file_extension_name`, `file_extension`, `file_type_id`, `file_type_name`, `last_log_by`) VALUES
+(1, 'PNG', 'png', 1, 'Image', 1),
+(2, 'JPG', 'jpg', 1, 'Image', 1),
+(3, 'JPEG', 'jpeg', 1, 'Image', 1),
+(4, 'PDF', 'pdf', 2, 'Document', 1);
+
+--
+-- Triggers `file_extension`
+--
+DELIMITER $$
+CREATE TRIGGER `file_extension_trigger_insert` AFTER INSERT ON `file_extension` FOR EACH ROW BEGIN
+    DECLARE audit_log TEXT DEFAULT 'File Extension created. <br/>';
+
+    IF NEW.file_extension_name <> '' THEN
+        SET audit_log = CONCAT(audit_log, "<br/>File Extension Name: ", NEW.file_extension_name);
+    END IF;
+
+    IF NEW.file_extension <> '' THEN
+        SET audit_log = CONCAT(audit_log, "<br/>File Extension: ", NEW.file_extension);
+    END IF;
+
+    IF NEW.file_type_name <> '' THEN
+        SET audit_log = CONCAT(audit_log, "<br/>File Type: ", NEW.file_type_name);
+    END IF;
+
+    INSERT INTO audit_log (table_name, reference_id, log, changed_by, changed_at) 
+    VALUES ('file_extension', NEW.file_extension_id, audit_log, NEW.last_log_by, NOW());
+END
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE TRIGGER `file_extension_trigger_update` AFTER UPDATE ON `file_extension` FOR EACH ROW BEGIN
+    DECLARE audit_log TEXT DEFAULT '';
+
+    IF NEW.file_extension_name <> OLD.file_extension_name THEN
+        SET audit_log = CONCAT(audit_log, "File Extension Name: ", OLD.file_extension_name, " -> ", NEW.file_extension_name, "<br/>");
+    END IF;
+
+    IF NEW.file_extension <> OLD.file_extension THEN
+        SET audit_log = CONCAT(audit_log, "File Extension: ", OLD.file_extension, " -> ", NEW.file_extension, "<br/>");
+    END IF;
+
+    IF NEW.file_type_name <> OLD.file_type_name THEN
+        SET audit_log = CONCAT(audit_log, "File Type: ", OLD.file_type_name, " -> ", NEW.file_type_name, "<br/>");
+    END IF;
+    
+    IF LENGTH(audit_log) > 0 THEN
+        INSERT INTO audit_log (table_name, reference_id, log, changed_by, changed_at) 
+        VALUES ('file_extension', NEW.file_extension_id, audit_log, NEW.last_log_by, NOW());
+    END IF;
+END
+$$
+DELIMITER ;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `file_type`
+--
+
+CREATE TABLE `file_type` (
+  `file_type_id` int(10) UNSIGNED NOT NULL,
+  `file_type_name` varchar(100) NOT NULL,
+  `last_log_by` int(10) UNSIGNED NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `file_type`
+--
+
+INSERT INTO `file_type` (`file_type_id`, `file_type_name`, `last_log_by`) VALUES
+(1, 'Image', 1),
+(2, 'Document', 1);
+
+--
+-- Triggers `file_type`
+--
+DELIMITER $$
+CREATE TRIGGER `file_type_trigger_insert` AFTER INSERT ON `file_type` FOR EACH ROW BEGIN
+    DECLARE audit_log TEXT DEFAULT 'File type created. <br/>';
+
+    IF NEW.file_type_name <> '' THEN
+        SET audit_log = CONCAT(audit_log, "<br/>File Type Name: ", NEW.file_type_name);
+    END IF;
+
+    INSERT INTO audit_log (table_name, reference_id, log, changed_by, changed_at) 
+    VALUES ('file_type', NEW.file_type_id, audit_log, NEW.last_log_by, NOW());
+END
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE TRIGGER `file_type_trigger_update` AFTER UPDATE ON `file_type` FOR EACH ROW BEGIN
+    DECLARE audit_log TEXT DEFAULT '';
+
+    IF NEW.file_type_name <> OLD.file_type_name THEN
+        SET audit_log = CONCAT(audit_log, "File Type Name: ", OLD.file_type_name, " -> ", NEW.file_type_name, "<br/>");
+    END IF;
+    
+    IF LENGTH(audit_log) > 0 THEN
+        INSERT INTO audit_log (table_name, reference_id, log, changed_by, changed_at) 
+        VALUES ('file_type', NEW.file_type_id, audit_log, NEW.last_log_by, NOW());
+    END IF;
+END
+$$
+DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -1191,8 +1578,8 @@ CREATE TABLE `menu_group` (
 --
 
 INSERT INTO `menu_group` (`menu_group_id`, `menu_group_name`, `order_sequence`, `last_log_by`) VALUES
-(1, 'Technical', 127, 2),
-(2, 'Administration', 100, 2);
+(1, 'Technical', 127, 1),
+(2, 'Administration', 100, 1);
 
 --
 -- Triggers `menu_group`
@@ -1258,22 +1645,23 @@ CREATE TABLE `menu_item` (
 --
 
 INSERT INTO `menu_item` (`menu_item_id`, `menu_item_name`, `menu_item_url`, `menu_group_id`, `menu_group_name`, `parent_id`, `parent_name`, `menu_item_icon`, `order_sequence`, `last_log_by`) VALUES
-(1, 'User Interface', '', 1, 'Technical', 0, NULL, 'ti ti-template', 21, 2),
-(2, 'Menu Group', 'menu-group.php', 1, 'Technical', 1, 'User Interface', '', 13, 2),
-(3, 'Menu Item', 'menu-item.php', 1, 'Technical', 1, 'User Interface', '', 13, 2),
-(4, 'System Action', 'system-action.php', 1, 'Technical', 1, 'User Interface', '', 19, 2),
-(5, 'Users & Companies', '', 2, 'Administration', NULL, NULL, 'ti ti-users', 21, 2),
-(6, 'User Account', 'user-account.php', 2, 'Administration', 5, 'Users & Companies', '', 21, 2),
-(7, 'Configurations', '', 1, 'Technical', 0, NULL, 'ti ti-settings', 3, 2),
-(8, 'File Type', 'file-type.php', 1, 'Technical', 7, 'Configurations', '', 6, 2),
-(9, 'File Extension', 'file-extension.php', 1, 'Technical', 7, 'Configurations', '', 6, 2),
-(10, 'Settings', '', 1, 'Technical', 0, NULL, 'ti ti-settings-2', 19, 2),
-(11, 'Upload Setting', 'upload-setting.php', 1, 'Technical', 10, 'Settings', '', 21, 2),
-(12, 'Security Setting', 'security-setting.php', 1, 'Technical', 10, 'Settings', '', 19, 2),
-(13, 'Email Setting', 'email-setting.php', 1, 'Technical', 10, 'Settings', '', 5, 2),
-(14, 'Notification Setting', 'notification-setting.php', 1, 'Technical', 10, 'Settings', '', 14, 2),
-(15, 'System Setting', 'security-setting.php', 1, 'Technical', 10, 'Settings', '', 19, 2),
-(16, 'Role', 'role.php', 2, 'Administration', 5, 'Users & Companies', '', 18, 2);
+(1, 'User Interface', '', 1, 'Technical', 0, '', 'ti ti-template', 21, 1),
+(2, 'Menu Group', 'menu-group.php', 1, 'Technical', 1, 'User Interface', '', 13, 1),
+(3, 'Menu Item', 'menu-item.php', 1, 'Technical', 1, 'User Interface', '', 13, 1),
+(4, 'System Action', 'system-action.php', 1, 'Technical', 1, 'User Interface', '', 19, 1),
+(5, 'Users & Companies', '', 2, 'Administration', 0, '', 'ti ti-users', 21, 1),
+(6, 'User Account', 'user-account.php', 2, 'Administration', 5, 'Users & Companies', '', 21, 1),
+(7, 'Role', 'role.php', 2, 'Administration', 5, 'Users & Companies', '', 18, 1),
+(8, 'Company', 'company.php', 2, 'Administration', 5, 'Users & Companies', '', 3, 1),
+(9, 'Settings', '', 2, 'Administration', 0, '', 'ti ti-settings-2', 19, 1),
+(10, 'Upload Setting', 'upload-setting.php', 2, 'Administration', 9, 'Settings', '', 21, 1),
+(11, 'Security Setting', 'security-setting.php', 2, 'Administration', 9, 'Settings', '', 19, 1),
+(12, 'Email Setting', 'email-setting.php', 2, 'Administration', 9, 'Settings', '', 5, 1),
+(13, 'Notification Setting', 'notification-setting.php', 2, 'Administration', 9, 'Settings', '', 14, 1),
+(14, 'System Setting', 'system-setting.php', 2, 'Administration', 9, 'Settings', '', 19, 1),
+(15, 'Configurations', '', 1, 'Technical', 0, '', 'ti ti-settings', 3, 1),
+(16, 'File Type', 'file-type.php', 1, 'Technical', 15, 'Configurations', '', 6, 1),
+(17, 'File Extension', 'file-extension.php', 1, 'Technical', 15, 'Configurations', '', 6, 1);
 
 --
 -- Triggers `menu_item`
@@ -1360,11 +1748,6 @@ CREATE TABLE `notification_setting` (
   `system_notification` int(1) NOT NULL DEFAULT 1,
   `email_notification` int(1) NOT NULL DEFAULT 0,
   `sms_notification` int(1) NOT NULL DEFAULT 0,
-  `system_notification_title` varchar(200) DEFAULT NULL,
-  `system_notification_message` varchar(200) DEFAULT NULL,
-  `email_notification_subject` varchar(200) DEFAULT NULL,
-  `email_notification_body` longtext DEFAULT NULL,
-  `sms_notification_message` varchar(500) DEFAULT NULL,
   `last_log_by` int(10) UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -1372,9 +1755,234 @@ CREATE TABLE `notification_setting` (
 -- Dumping data for table `notification_setting`
 --
 
-INSERT INTO `notification_setting` (`notification_setting_id`, `notification_setting_name`, `notification_setting_description`, `system_notification`, `email_notification`, `sms_notification`, `system_notification_title`, `system_notification_message`, `email_notification_subject`, `email_notification_body`, `sms_notification_message`, `last_log_by`) VALUES
-(1, 'Login OTP', 'Notification setting for Login OTP received by the users.', 0, 1, 0, NULL, NULL, 'Login OTP - Secure Access to Your Account', '<p>To ensure the security of your account, we have generated a unique One-Time Password (OTP) for you to use during the login process. Please use the following OTP to access your account:</p>\r\n<p>OTP: <strong>{OTP_CODE}</strong></p>\r\n<p>Please note that this OTP is valid for &lt;strong&gt;5 minutes&lt;/strong&gt;. Once you have logged in successfully, we recommend enabling two-factor authentication for an added layer of security.</p>\r\n<p>If you did not initiate this login or believe it was sent to you in error, please disregard this email and delete it immediately. Your account\'s security remains our utmost priority.</p>\r\n<p>&nbsp;</p>\r\n<p>Note: This is an automatically generated email. Please do not reply to this address.</p>', NULL, 1),
-(2, 'Forgot Password', 'Notification setting when the user initiates forgot password.', 0, 1, 0, NULL, NULL, 'Password Reset Request - Action Required', '<p>We have received a request to reset your password. To ensure the security of your account, please follow the instructions below:</p>\r\n<p>1. Click on the link below to reset your password:</p>\r\n<p><a href=\"{RESET_LINK}\"><strong>Reset Password</strong></a></p>\r\n<p>2. If the button does not work, you can copy and paste the following link into your browser\'s address bar:</p>\r\n<p><strong>{RESET_LINK}</strong></p>\r\n<p>Please note that this link is time-sensitive and will expire after <strong>{RESET_DURATION} minutes</strong>. If you do not reset your password within this timeframe, you may need to request another password reset.</p>\r\n<p>If you did not initiate this password reset request or believe it was sent to you in error, please disregard this email and delete it immediately. Your account\'s security remains our utmost priority.</p>\r\n<p>&nbsp;</p>\r\n<p>Note: This is an automatically generated email. Please do not reply to this address.</p>', NULL, 1);
+INSERT INTO `notification_setting` (`notification_setting_id`, `notification_setting_name`, `notification_setting_description`, `system_notification`, `email_notification`, `sms_notification`, `last_log_by`) VALUES
+(1, 'Login OTP', 'Notification setting for Login OTP received by the users.', 0, 1, 0, 2),
+(2, 'Forgot Password', 'Notification setting when the user initiates forgot password.', 0, 1, 0, 2);
+
+--
+-- Triggers `notification_setting`
+--
+DELIMITER $$
+CREATE TRIGGER `notification_setting_trigger_insert` AFTER INSERT ON `notification_setting` FOR EACH ROW BEGIN
+    DECLARE audit_log TEXT DEFAULT 'Notification Setting created. <br/>';
+
+    IF NEW.notification_setting_name <> '' THEN
+        SET audit_log = CONCAT(audit_log, "<br/>Notification Setting Name: ", NEW.notification_setting_name);
+    END IF;
+
+    IF NEW.notification_setting_description <> '' THEN
+        SET audit_log = CONCAT(audit_log, "<br/>Notification Setting Description: ", NEW.notification_setting_description);
+    END IF;
+
+    IF NEW.system_notification <> '' THEN
+        SET audit_log = CONCAT(audit_log, "<br/>System Notification: ", NEW.system_notification);
+    END IF;
+
+    IF NEW.email_notification <> '' THEN
+        SET audit_log = CONCAT(audit_log, "<br/>Email Notification: ", NEW.email_notification);
+    END IF;
+
+    IF NEW.sms_notification <> '' THEN
+        SET audit_log = CONCAT(audit_log, "<br/>SMS Notification: ", NEW.sms_notification);
+    END IF;
+
+    INSERT INTO audit_log (table_name, reference_id, log, changed_by, changed_at) 
+    VALUES ('notification_setting', NEW.notification_setting_id, audit_log, NEW.last_log_by, NOW());
+END
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE TRIGGER `notification_setting_trigger_update` AFTER UPDATE ON `notification_setting` FOR EACH ROW BEGIN
+    DECLARE audit_log TEXT DEFAULT '';
+
+    IF NEW.notification_setting_name <> OLD.notification_setting_name THEN
+        SET audit_log = CONCAT(audit_log, "Notification Setting Name: ", OLD.notification_setting_name, " -> ", NEW.notification_setting_name, "<br/>");
+    END IF;
+
+    IF NEW.notification_setting_description <> OLD.notification_setting_description THEN
+        SET audit_log = CONCAT(audit_log, "Notification Setting Description: ", OLD.notification_setting_description, " -> ", NEW.notification_setting_description, "<br/>");
+    END IF;
+
+    IF NEW.system_notification <> OLD.system_notification THEN
+        SET audit_log = CONCAT(audit_log, "System Notification: ", OLD.system_notification, " -> ", NEW.system_notification, "<br/>");
+    END IF;
+
+    IF NEW.email_notification <> OLD.email_notification THEN
+        SET audit_log = CONCAT(audit_log, "Email Notification: ", OLD.email_notification, " -> ", NEW.email_notification, "<br/>");
+    END IF;
+
+    IF NEW.sms_notification <> OLD.sms_notification THEN
+        SET audit_log = CONCAT(audit_log, "SMS Notification: ", OLD.sms_notification, " -> ", NEW.sms_notification, "<br/>");
+    END IF;
+
+    IF LENGTH(audit_log) > 0 THEN
+        INSERT INTO audit_log (table_name, reference_id, log, changed_by, changed_at) 
+        VALUES ('notification_setting', NEW.notification_setting_id, audit_log, NEW.last_log_by, NOW());
+    END IF;
+END
+$$
+DELIMITER ;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `notification_setting_email_template`
+--
+
+CREATE TABLE `notification_setting_email_template` (
+  `notification_setting_email_id` int(10) UNSIGNED NOT NULL,
+  `notification_setting_id` int(10) UNSIGNED NOT NULL,
+  `email_notification_subject` varchar(200) NOT NULL,
+  `email_notification_body` longtext NOT NULL,
+  `last_log_by` int(10) UNSIGNED NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `notification_setting_email_template`
+--
+
+INSERT INTO `notification_setting_email_template` (`notification_setting_email_id`, `notification_setting_id`, `email_notification_subject`, `email_notification_body`, `last_log_by`) VALUES
+(1, 2, 'Password Reset Request - Action Required', '<p>We received a request to reset the password for your account associated with this email address. If you did not make this request, please ignore this email.</p>\n<p>To set a new password, please click on the link below:</p>\n<div>\n<div>&lt;a href=\\\"<strong>#{RESET_LINK}</strong>\\\"&gt;<strong>Reset Password</strong></div>\n<div>&nbsp;</div>\n</div>\n<p>This link will expire in <strong>#{RESET_LINK_VALIDITY} </strong>for security reasons. If you need further assistance, please contact our support team.</p>', 2),
+(2, 1, 'Login OTP - Secure Access to Your Account', '<p>Your One-Time Password (OTP) for accessing your account is:</p>\n<p><strong>#{OTP_CODE}</strong></p>\n<p>Please enter this code on the verification page to proceed. Remember, this OTP is valid for only <strong>#{OTP_CODE_VALIDITY}</strong> and should not be shared with anyone.</p>\n<p>If you did not request this code, please contact our support team immediately to ensure your account\'s security.</p>', 2);
+
+--
+-- Triggers `notification_setting_email_template`
+--
+DELIMITER $$
+CREATE TRIGGER `notification_setting_email_template_trigger_insert` AFTER INSERT ON `notification_setting_email_template` FOR EACH ROW BEGIN
+    DECLARE audit_log TEXT DEFAULT 'Email Notification Template created. <br/>';
+
+    IF NEW.email_notification_subject <> '' THEN
+        SET audit_log = CONCAT(audit_log, "<br/>Email Notification Subject: ", NEW.email_notification_subject);
+    END IF;
+
+    IF NEW.email_notification_body <> '' THEN
+        SET audit_log = CONCAT(audit_log, "<br/>Email Notification Body: ", NEW.email_notification_body);
+    END IF;
+
+    INSERT INTO audit_log (table_name, reference_id, log, changed_by, changed_at) 
+    VALUES ('notification_setting_email_template', NEW.notification_setting_id, audit_log, NEW.last_log_by, NOW());
+END
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE TRIGGER `notification_setting_email_template_trigger_update` AFTER UPDATE ON `notification_setting_email_template` FOR EACH ROW BEGIN
+    DECLARE audit_log TEXT DEFAULT '';
+
+    IF NEW.email_notification_subject <> OLD.email_notification_subject THEN
+        SET audit_log = CONCAT(audit_log, "Email Notification Subject: ", OLD.email_notification_subject, " -> ", NEW.email_notification_subject, "<br/>");
+    END IF;
+
+    IF NEW.email_notification_body <> OLD.email_notification_body THEN
+        SET audit_log = CONCAT(audit_log, "Email Notification Body: ", OLD.email_notification_body, " -> ", NEW.email_notification_body, "<br/>");
+    END IF;
+
+    IF LENGTH(audit_log) > 0 THEN
+        INSERT INTO audit_log (table_name, reference_id, log, changed_by, changed_at) 
+        VALUES ('notification_setting_email_template', NEW.notification_setting_id, audit_log, NEW.last_log_by, NOW());
+    END IF;
+END
+$$
+DELIMITER ;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `notification_setting_sms_template`
+--
+
+CREATE TABLE `notification_setting_sms_template` (
+  `notification_setting_sms_id` int(10) UNSIGNED NOT NULL,
+  `notification_setting_id` int(10) UNSIGNED NOT NULL,
+  `sms_notification_message` varchar(500) NOT NULL,
+  `last_log_by` int(10) UNSIGNED NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Triggers `notification_setting_sms_template`
+--
+DELIMITER $$
+CREATE TRIGGER `notification_setting_sms_template_trigger_insert` AFTER INSERT ON `notification_setting_sms_template` FOR EACH ROW BEGIN
+    DECLARE audit_log TEXT DEFAULT 'SMS Notification Template created. <br/>';
+
+    IF NEW.sms_notification_message <> '' THEN
+        SET audit_log = CONCAT(audit_log, "<br/>SMS Notification Message: ", NEW.sms_notification_message);
+    END IF;
+
+    INSERT INTO audit_log (table_name, reference_id, log, changed_by, changed_at) 
+    VALUES ('notification_setting_sms_template', NEW.notification_setting_id, audit_log, NEW.last_log_by, NOW());
+END
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE TRIGGER `notification_setting_sms_template_trigger_update` AFTER UPDATE ON `notification_setting_sms_template` FOR EACH ROW BEGIN
+    DECLARE audit_log TEXT DEFAULT '';
+
+    IF NEW.sms_notification_message <> OLD.sms_notification_message THEN
+        SET audit_log = CONCAT(audit_log, "SMS Notification Message: ", OLD.sms_notification_message, " -> ", NEW.sms_notification_message, "<br/>");
+    END IF;
+
+    IF LENGTH(audit_log) > 0 THEN
+        INSERT INTO audit_log (table_name, reference_id, log, changed_by, changed_at) 
+        VALUES ('notification_setting_sms_template', NEW.notification_setting_id, audit_log, NEW.last_log_by, NOW());
+    END IF;
+END
+$$
+DELIMITER ;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `notification_setting_system_template`
+--
+
+CREATE TABLE `notification_setting_system_template` (
+  `notification_setting_system_id` int(10) UNSIGNED NOT NULL,
+  `notification_setting_id` int(10) UNSIGNED NOT NULL,
+  `system_notification_title` varchar(200) NOT NULL,
+  `system_notification_message` varchar(500) NOT NULL,
+  `last_log_by` int(10) UNSIGNED NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Triggers `notification_setting_system_template`
+--
+DELIMITER $$
+CREATE TRIGGER `notification_setting_system_template_trigger_insert` AFTER INSERT ON `notification_setting_system_template` FOR EACH ROW BEGIN
+    DECLARE audit_log TEXT DEFAULT 'System Notification Template created. <br/>';
+
+    IF NEW.system_notification_title <> '' THEN
+        SET audit_log = CONCAT(audit_log, "<br/>System Notification Title: ", NEW.system_notification_title);
+    END IF;
+
+    IF NEW.system_notification_message <> '' THEN
+        SET audit_log = CONCAT(audit_log, "<br/>System Notification Message: ", NEW.system_notification_message);
+    END IF;
+
+    INSERT INTO audit_log (table_name, reference_id, log, changed_by, changed_at) 
+    VALUES ('notification_setting_system_template', NEW.notification_setting_id, audit_log, NEW.last_log_by, NOW());
+END
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE TRIGGER `notification_setting_system_template_trigger_update` AFTER UPDATE ON `notification_setting_system_template` FOR EACH ROW BEGIN
+    DECLARE audit_log TEXT DEFAULT '';
+
+    IF NEW.system_notification_title <> OLD.system_notification_title THEN
+        SET audit_log = CONCAT(audit_log, "System Notification Title: ", OLD.system_notification_title, " -> ", NEW.system_notification_title, "<br/>");
+    END IF;
+
+    IF NEW.system_notification_message <> OLD.system_notification_message THEN
+        SET audit_log = CONCAT(audit_log, "System Notification Message: ", OLD.system_notification_message, " -> ", NEW.system_notification_message, "<br/>");
+    END IF;
+
+    IF LENGTH(audit_log) > 0 THEN
+        INSERT INTO audit_log (table_name, reference_id, log, changed_by, changed_at) 
+        VALUES ('notification_setting_system_template', NEW.notification_setting_id, audit_log, NEW.last_log_by, NOW());
+    END IF;
+END
+$$
+DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -1389,14 +1997,6 @@ CREATE TABLE `password_history` (
   `password` varchar(255) NOT NULL,
   `password_change_date` datetime DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `password_history`
---
-
-INSERT INTO `password_history` (`password_history_id`, `user_account_id`, `email`, `password`, `password_change_date`) VALUES
-(2, 4, 'test@gmail.com', '5RvsHIk1NKOcqYF7%2BUiM7sdELANPUQCIy5iMNS9e47o%3D', '2024-04-05 16:17:37'),
-(3, 4, 'benidickbelizario@christianmotors.ph', 'uAEQIiQf%2FwUa2hVPV89U4PlGBkD%2FtS9pBdl4RB4CVi0%3D', '2024-04-08 12:24:25');
 
 -- --------------------------------------------------------
 
@@ -1489,22 +2089,23 @@ CREATE TABLE `role_permission` (
 --
 
 INSERT INTO `role_permission` (`role_permission_id`, `role_id`, `role_name`, `menu_item_id`, `menu_item_name`, `read_access`, `write_access`, `create_access`, `delete_access`, `date_assigned`, `last_log_by`) VALUES
-(1, 1, 'Administrator', 1, 'User Interface', 1, 0, 0, 0, '2024-04-12 14:26:03', 2),
-(2, 1, 'Administrator', 2, 'Menu Group', 1, 1, 1, 1, '2024-04-12 14:32:02', 2),
-(3, 1, 'Administrator', 5, 'Users & Companies', 1, 0, 0, 0, '2024-04-12 15:28:21', 2),
-(6, 1, 'Administrator', 3, 'Menu Item', 1, 1, 1, 1, '2024-04-12 16:21:22', 2),
-(7, 1, 'Administrator', 6, 'User Account', 1, 1, 1, 1, '2024-04-12 17:01:56', 2),
-(8, 1, 'Administrator', 4, 'System Action', 1, 1, 1, 1, '2024-04-12 17:18:42', 2),
-(9, 1, 'Administrator', 7, 'Configurations', 1, 0, 0, 0, '2024-04-19 16:10:36', 2),
-(10, 1, 'Administrator', 8, 'File Type', 1, 1, 1, 1, '2024-04-19 16:29:26', 2),
-(11, 1, 'Administrator', 9, 'File Extension', 1, 1, 1, 1, '2024-04-19 16:30:05', 2),
-(12, 1, 'Administrator', 10, 'Settings', 1, 0, 0, 0, '2024-04-19 16:47:58', 2),
-(13, 1, 'Administrator', 11, 'Upload Setting', 1, 1, 1, 1, '2024-04-19 16:51:49', 2),
-(14, 1, 'Administrator', 12, 'Security Setting', 1, 1, 1, 1, '2024-04-19 16:52:54', 2),
-(15, 1, 'Administrator', 13, 'Email Setting', 1, 1, 1, 1, '2024-04-19 16:54:02', 2),
-(16, 1, 'Administrator', 14, 'Notification Setting', 1, 1, 1, 1, '2024-04-19 16:54:46', 2),
-(17, 1, 'Administrator', 15, 'System Setting', 1, 1, 1, 1, '2024-04-19 16:55:51', 2),
-(18, 1, 'Administrator', 16, 'Role', 1, 1, 1, 1, '2024-04-22 16:09:30', 2);
+(1, 1, 'Administrator', 1, 'User Interface', 1, 0, 0, 0, '2024-05-13 10:38:33', 1),
+(2, 1, 'Administrator', 2, 'Menu Group', 1, 1, 1, 1, '2024-05-13 10:38:33', 1),
+(3, 1, 'Administrator', 3, 'Menu Item', 1, 1, 1, 1, '2024-05-13 10:38:33', 1),
+(4, 1, 'Administrator', 4, 'System Action', 1, 1, 1, 1, '2024-05-13 10:38:33', 1),
+(5, 1, 'Administrator', 5, 'Users & Companies', 1, 0, 0, 0, '2024-05-13 10:38:33', 1),
+(6, 1, 'Administrator', 6, 'User Account', 1, 1, 1, 1, '2024-05-13 10:38:33', 1),
+(7, 1, 'Administrator', 7, 'Role', 1, 1, 1, 1, '2024-05-13 10:38:33', 1),
+(8, 1, 'Administrator', 8, 'Company', 1, 1, 1, 1, '2024-05-13 10:38:33', 1),
+(9, 1, 'Administrator', 9, 'Settings', 1, 0, 0, 0, '2024-05-13 10:38:33', 1),
+(10, 1, 'Administrator', 10, 'Upload Setting', 1, 1, 1, 1, '2024-05-13 10:38:33', 1),
+(11, 1, 'Administrator', 11, 'Security Setting', 1, 1, 1, 1, '2024-05-13 10:38:33', 1),
+(12, 1, 'Administrator', 12, 'Email Setting', 1, 1, 1, 1, '2024-05-13 10:38:33', 1),
+(13, 1, 'Administrator', 13, 'Notification Setting', 1, 1, 1, 1, '2024-05-13 10:38:33', 1),
+(14, 1, 'Administrator', 14, 'System Setting', 1, 1, 1, 1, '2024-05-13 10:38:33', 1),
+(15, 1, 'Administrator', 15, 'Configurations', 1, 0, 0, 0, '2024-05-13 10:38:33', 1),
+(16, 1, 'Administrator', 16, 'File Type', 1, 1, 1, 1, '2024-05-13 10:38:33', 1),
+(17, 1, 'Administrator', 17, 'File Extension', 1, 1, 1, 1, '2024-05-13 10:38:33', 1);
 
 --
 -- Triggers `role_permission`
@@ -1604,18 +2205,20 @@ CREATE TABLE `role_system_action_permission` (
 --
 
 INSERT INTO `role_system_action_permission` (`role_system_action_permission_id`, `role_id`, `role_name`, `system_action_id`, `system_action_name`, `system_action_access`, `date_assigned`, `last_log_by`) VALUES
-(1, 1, 'Administrator', 1, 'Activate User Account', 1, '2024-04-23 16:00:21', 2),
-(2, 1, 'Administrator', 2, 'Deactivate User Account', 1, '2024-04-23 16:01:00', 2),
-(3, 1, 'Administrator', 3, 'Lock User Account', 1, '2024-04-23 16:01:22', 2),
-(4, 1, 'Administrator', 4, 'Unlock User Account', 1, '2024-04-23 16:01:40', 2),
-(5, 1, 'Administrator', 5, 'Add Role User Account', 1, '2024-04-23 17:07:24', 2),
-(6, 1, 'Administrator', 6, 'Delete Role User Account', 1, '2024-04-23 17:07:42', 2),
-(7, 1, 'Administrator', 7, 'Add Role Access', 1, '2024-04-23 17:26:27', 2),
-(8, 1, 'Administrator', 8, 'Update Role Access', 1, '2024-04-23 17:26:48', 2),
-(9, 1, 'Administrator', 9, 'Delete Role Access', 1, '2024-04-23 17:27:05', 2),
-(10, 1, 'Administrator', 10, 'Add Role System Action Access', 1, '2024-04-23 17:27:33', 2),
-(11, 1, 'Administrator', 11, 'Update Role System Action Access', 1, '2024-04-23 17:27:59', 2),
-(12, 1, 'Administrator', 12, 'Delete Role System Action Access', 1, '2024-04-23 17:28:28', 2);
+(1, 1, 'Administrator', 1, 'Activate User Account', 1, '2024-05-13 10:39:21', 1),
+(2, 1, 'Administrator', 2, 'Deactivate User Account', 1, '2024-05-13 10:39:21', 1),
+(3, 1, 'Administrator', 3, 'Lock User Account', 1, '2024-05-13 10:39:21', 1),
+(4, 1, 'Administrator', 4, 'Unlock User Account', 1, '2024-05-13 10:39:21', 1),
+(5, 1, 'Administrator', 5, 'Add Role User Account', 1, '2024-05-13 10:39:21', 1),
+(6, 1, 'Administrator', 6, 'Delete Role User Account', 1, '2024-05-13 10:39:21', 1),
+(7, 1, 'Administrator', 7, 'Add Role Access', 1, '2024-05-13 10:39:21', 1),
+(8, 1, 'Administrator', 8, 'Update Role Access', 1, '2024-05-13 10:39:21', 1),
+(9, 1, 'Administrator', 9, 'Delete Role Access', 1, '2024-05-13 10:39:21', 1),
+(10, 1, 'Administrator', 10, 'Add Role System Action Access', 1, '2024-05-13 10:39:21', 1),
+(11, 1, 'Administrator', 11, 'Update Role System Action Access', 1, '2024-05-13 10:39:21', 1),
+(12, 1, 'Administrator', 12, 'Delete Role System Action Access', 1, '2024-05-13 10:39:21', 1),
+(13, 1, 'Administrator', 13, 'Add File Extension Access', 1, '2024-05-13 10:46:07', 1),
+(14, 1, 'Administrator', 14, 'Delete File Extension Access', 1, '2024-05-13 10:46:07', 1);
 
 --
 -- Triggers `role_system_action_permission`
@@ -1690,7 +2293,7 @@ CREATE TABLE `role_user_account` (
 --
 
 INSERT INTO `role_user_account` (`role_user_account_id`, `role_id`, `role_name`, `user_account_id`, `file_as`, `date_assigned`, `last_log_by`) VALUES
-(1, 1, 'Administrator', 2, 'Administrator', '2024-04-12 16:08:26', 2);
+(1, 1, 'Administrator', 2, 'Administrator', '2024-05-13 10:38:33', 1);
 
 --
 -- Triggers `role_user_account`
@@ -1763,6 +2366,54 @@ INSERT INTO `security_setting` (`security_setting_id`, `security_setting_name`, 
 (6, 'OTP Duration', 'The time window during which a one-time password (OTP) is valid for user authentication (in minutes).', '5', 1),
 (7, 'Reset Password Token Duration', 'The time window during which a reset password token remains valid for user account recovery (in minutes).', '10', 1);
 
+--
+-- Triggers `security_setting`
+--
+DELIMITER $$
+CREATE TRIGGER `security_setting_trigger_insert` AFTER INSERT ON `security_setting` FOR EACH ROW BEGIN
+    DECLARE audit_log TEXT DEFAULT 'Security Setting created. <br/>';
+
+    IF NEW.security_setting_name <> '' THEN
+        SET audit_log = CONCAT(audit_log, "<br/>Security Setting Name: ", NEW.security_setting_name);
+    END IF;
+
+    IF NEW.security_setting_description <> '' THEN
+        SET audit_log = CONCAT(audit_log, "<br/>Security Setting Description: ", NEW.security_setting_description);
+    END IF;
+
+    IF NEW.value <> '' THEN
+        SET audit_log = CONCAT(audit_log, "<br/>Value: ", NEW.value);
+    END IF;
+
+    INSERT INTO audit_log (table_name, reference_id, log, changed_by, changed_at) 
+    VALUES ('security_setting', NEW.security_setting_id, audit_log, NEW.last_log_by, NOW());
+END
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE TRIGGER `security_setting_trigger_update` AFTER UPDATE ON `security_setting` FOR EACH ROW BEGIN
+    DECLARE audit_log TEXT DEFAULT '';
+
+    IF NEW.security_setting_name <> OLD.security_setting_name THEN
+        SET audit_log = CONCAT(audit_log, "Security Setting Name: ", OLD.security_setting_name, " -> ", NEW.security_setting_name, "<br/>");
+    END IF;
+
+    IF NEW.security_setting_description <> OLD.security_setting_description THEN
+        SET audit_log = CONCAT(audit_log, "Security Setting Description: ", OLD.security_setting_description, " -> ", NEW.security_setting_description, "<br/>");
+    END IF;
+
+    IF NEW.value <> OLD.value THEN
+        SET audit_log = CONCAT(audit_log, "Value: ", OLD.value, " -> ", NEW.value, "<br/>");
+    END IF;
+    
+    IF LENGTH(audit_log) > 0 THEN
+        INSERT INTO audit_log (table_name, reference_id, log, changed_by, changed_at) 
+        VALUES ('security_setting', NEW.security_setting_id, audit_log, NEW.last_log_by, NOW());
+    END IF;
+END
+$$
+DELIMITER ;
+
 -- --------------------------------------------------------
 
 --
@@ -1781,18 +2432,20 @@ CREATE TABLE `system_action` (
 --
 
 INSERT INTO `system_action` (`system_action_id`, `system_action_name`, `system_action_description`, `last_log_by`) VALUES
-(1, 'Activate User Account', 'Access to activate the user account.', 2),
-(2, 'Deactivate User Account', 'Access to deactivate the user account.', 2),
-(3, 'Lock User Account', 'Access to lock the user account.', 2),
-(4, 'Unlock User Account', 'Access to unlock the user account.', 2),
-(5, 'Add Role User Account', 'Access to assign roles to user account.', 2),
-(6, 'Delete Role User Account', 'Access to delete roles to user account.', 2),
-(7, 'Add Role Access', 'Access to add role access.', 2),
-(8, 'Update Role Access', 'Access to update the role access.', 2),
-(9, 'Delete Role Access', 'Access to delete the role access.', 2),
-(10, 'Add Role System Action Access', 'Access to add the role system action access.', 2),
-(11, 'Update Role System Action Access', 'Access to update the role system action access.', 2),
-(12, 'Delete Role System Action Access', 'Access to delete the role system action access.', 2);
+(1, 'Activate User Account', 'Access to activate the user account.', 1),
+(2, 'Deactivate User Account', 'Access to deactivate the user account.', 1),
+(3, 'Lock User Account', 'Access to lock the user account.', 1),
+(4, 'Unlock User Account', 'Access to unlock the user account.', 1),
+(5, 'Add Role User Account', 'Access to assign roles to user account.', 1),
+(6, 'Delete Role User Account', 'Access to delete roles to user account.', 1),
+(7, 'Add Role Access', 'Access to add role access.', 1),
+(8, 'Update Role Access', 'Access to update role access.', 1),
+(9, 'Delete Role Access', 'Access to delete role access.', 1),
+(10, 'Add Role System Action Access', 'Access to add the role system action access.', 1),
+(11, 'Update Role System Action Access', 'Access to update the role system action access.', 1),
+(12, 'Delete Role System Action Access', 'Access to delete the role system action access.', 1),
+(13, 'Add File Extension Access', 'Access to assign the file extension to the upload setting.', 1),
+(14, 'Delete File Extension Access', 'Access to delete the file extension to the upload setting.', 1);
 
 --
 -- Triggers `system_action`
@@ -1837,6 +2490,199 @@ DELIMITER ;
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `system_setting`
+--
+
+CREATE TABLE `system_setting` (
+  `system_setting_id` int(10) UNSIGNED NOT NULL,
+  `system_setting_name` varchar(100) NOT NULL,
+  `system_setting_description` varchar(200) NOT NULL,
+  `value` varchar(1000) NOT NULL,
+  `last_log_by` int(10) UNSIGNED NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `system_setting`
+--
+
+INSERT INTO `system_setting` (`system_setting_id`, `system_setting_name`, `system_setting_description`, `value`, `last_log_by`) VALUES
+(1, 'File As Arrangement', 'This sets the arrangement of the file as.', '{last_name}, {first_name} {suffix} {middle_name}', 1);
+
+--
+-- Triggers `system_setting`
+--
+DELIMITER $$
+CREATE TRIGGER `system_setting_trigger_insert` AFTER INSERT ON `system_setting` FOR EACH ROW BEGIN
+    DECLARE audit_log TEXT DEFAULT 'System Setting created. <br/>';
+
+    IF NEW.system_setting_name <> '' THEN
+        SET audit_log = CONCAT(audit_log, "<br/>System Setting Name: ", NEW.system_setting_name);
+    END IF;
+
+    IF NEW.system_setting_description <> '' THEN
+        SET audit_log = CONCAT(audit_log, "<br/>System Setting Description: ", NEW.system_setting_description);
+    END IF;
+
+    IF NEW.value <> '' THEN
+        SET audit_log = CONCAT(audit_log, "<br/>Value: ", NEW.value);
+    END IF;
+
+    INSERT INTO audit_log (table_name, reference_id, log, changed_by, changed_at) 
+    VALUES ('system_setting', NEW.system_setting_id, audit_log, NEW.last_log_by, NOW());
+END
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE TRIGGER `system_setting_trigger_update` AFTER UPDATE ON `system_setting` FOR EACH ROW BEGIN
+    DECLARE audit_log TEXT DEFAULT '';
+
+    IF NEW.system_setting_name <> OLD.system_setting_name THEN
+        SET audit_log = CONCAT(audit_log, "System Setting Name: ", OLD.system_setting_name, " -> ", NEW.system_setting_name, "<br/>");
+    END IF;
+
+    IF NEW.system_setting_description <> OLD.system_setting_description THEN
+        SET audit_log = CONCAT(audit_log, "System Setting Description: ", OLD.system_setting_description, " -> ", NEW.system_setting_description, "<br/>");
+    END IF;
+
+    IF NEW.value <> OLD.value THEN
+        SET audit_log = CONCAT(audit_log, "Value: ", OLD.value, " -> ", NEW.value, "<br/>");
+    END IF;
+    
+    IF LENGTH(audit_log) > 0 THEN
+        INSERT INTO audit_log (table_name, reference_id, log, changed_by, changed_at) 
+        VALUES ('system_setting', NEW.system_setting_id, audit_log, NEW.last_log_by, NOW());
+    END IF;
+END
+$$
+DELIMITER ;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `upload_setting`
+--
+
+CREATE TABLE `upload_setting` (
+  `upload_setting_id` int(10) UNSIGNED NOT NULL,
+  `upload_setting_name` varchar(100) NOT NULL,
+  `upload_setting_description` varchar(200) NOT NULL,
+  `max_file_size` double NOT NULL,
+  `last_log_by` int(10) UNSIGNED NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `upload_setting`
+--
+
+INSERT INTO `upload_setting` (`upload_setting_id`, `upload_setting_name`, `upload_setting_description`, `max_file_size`, `last_log_by`) VALUES
+(1, 'User Account Profile Picture', 'Sets the upload setting when uploading user account profile picture.', 800, 1);
+
+--
+-- Triggers `upload_setting`
+--
+DELIMITER $$
+CREATE TRIGGER `upload_setting_trigger_insert` AFTER INSERT ON `upload_setting` FOR EACH ROW BEGIN
+    DECLARE audit_log TEXT DEFAULT 'Upload Setting created. <br/>';
+
+    IF NEW.upload_setting_name <> '' THEN
+        SET audit_log = CONCAT(audit_log, "<br/>Upload Setting Name: ", NEW.upload_setting_name);
+    END IF;
+
+    IF NEW.upload_setting_description <> '' THEN
+        SET audit_log = CONCAT(audit_log, "<br/>Upload Setting Description: ", NEW.upload_setting_description);
+    END IF;
+
+    IF NEW.max_file_size <> '' THEN
+        SET audit_log = CONCAT(audit_log, "<br/>Max File Size: ", NEW.max_file_size);
+    END IF;
+
+    INSERT INTO audit_log (table_name, reference_id, log, changed_by, changed_at) 
+    VALUES ('upload_setting', NEW.upload_setting_id, audit_log, NEW.last_log_by, NOW());
+END
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE TRIGGER `upload_setting_trigger_update` AFTER UPDATE ON `upload_setting` FOR EACH ROW BEGIN
+    DECLARE audit_log TEXT DEFAULT '';
+
+    IF NEW.upload_setting_name <> OLD.upload_setting_name THEN
+        SET audit_log = CONCAT(audit_log, "Upload Setting Name: ", OLD.upload_setting_name, " -> ", NEW.upload_setting_name, "<br/>");
+    END IF;
+
+    IF NEW.upload_setting_description <> OLD.upload_setting_description THEN
+        SET audit_log = CONCAT(audit_log, "Upload Setting Description: ", OLD.upload_setting_description, " -> ", NEW.upload_setting_description, "<br/>");
+    END IF;
+
+    IF NEW.max_file_size <> OLD.max_file_size THEN
+        SET audit_log = CONCAT(audit_log, "Max File Size: ", OLD.max_file_size, " -> ", NEW.max_file_size, "<br/>");
+    END IF;
+    
+    IF LENGTH(audit_log) > 0 THEN
+        INSERT INTO audit_log (table_name, reference_id, log, changed_by, changed_at) 
+        VALUES ('upload_setting', NEW.upload_setting_id, audit_log, NEW.last_log_by, NOW());
+    END IF;
+END
+$$
+DELIMITER ;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `upload_setting_file_extension`
+--
+
+CREATE TABLE `upload_setting_file_extension` (
+  `upload_setting_file_extension_id` int(10) UNSIGNED NOT NULL,
+  `upload_setting_id` int(10) UNSIGNED NOT NULL,
+  `upload_setting_name` varchar(100) NOT NULL,
+  `file_extension_id` int(10) UNSIGNED NOT NULL,
+  `file_extension_name` varchar(100) NOT NULL,
+  `file_extension` varchar(10) NOT NULL,
+  `date_assigned` datetime DEFAULT current_timestamp(),
+  `last_log_by` int(10) UNSIGNED NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `upload_setting_file_extension`
+--
+
+INSERT INTO `upload_setting_file_extension` (`upload_setting_file_extension_id`, `upload_setting_id`, `upload_setting_name`, `file_extension_id`, `file_extension_name`, `file_extension`, `date_assigned`, `last_log_by`) VALUES
+(1, 1, 'User Account Profile Picture', 1, 'PNG', 'png', '2024-05-13 10:40:31', 1),
+(2, 1, 'User Account Profile Picture', 2, 'JPG', 'jpg', '2024-05-13 10:40:31', 1),
+(3, 1, 'User Account Profile Picture', 3, 'JPEG', 'jpeg', '2024-05-13 10:40:31', 1);
+
+--
+-- Triggers `upload_setting_file_extension`
+--
+DELIMITER $$
+CREATE TRIGGER `upload_setting_file_extension_trigger_insert` AFTER INSERT ON `upload_setting_file_extension` FOR EACH ROW BEGIN
+    DECLARE audit_log TEXT DEFAULT 'Upload Setting File Extension created. <br/>';
+
+    IF NEW.upload_setting_name <> '' THEN
+        SET audit_log = CONCAT(audit_log, "<br/>Upload Setting Name: ", NEW.upload_setting_name);
+    END IF;
+
+    IF NEW.file_extension_name <> '' THEN
+        SET audit_log = CONCAT(audit_log, "<br/>File Extension Name: ", NEW.file_extension_name);
+    END IF;
+
+    IF NEW.file_extension <> '' THEN
+        SET audit_log = CONCAT(audit_log, "<br/>File Extension: ", NEW.file_extension);
+    END IF;
+
+    IF NEW.date_assigned <> '' THEN
+        SET audit_log = CONCAT(audit_log, "<br/>Date Assigned: ", NEW.date_assigned);
+    END IF;
+
+    INSERT INTO audit_log (table_name, reference_id, log, changed_by, changed_at) 
+    VALUES ('upload_setting_file_extension', NEW.upload_setting_file_extension_id, audit_log, NEW.last_log_by, NOW());
+END
+$$
+DELIMITER ;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `user_account`
 --
 
@@ -1872,9 +2718,8 @@ CREATE TABLE `user_account` (
 --
 
 INSERT INTO `user_account` (`user_account_id`, `file_as`, `email`, `password`, `profile_picture`, `locked`, `active`, `last_failed_login_attempt`, `failed_login_attempts`, `last_connection_date`, `password_expiry_date`, `reset_token`, `reset_token_expiry_date`, `receive_notification`, `two_factor_auth`, `otp`, `otp_expiry_date`, `failed_otp_attempts`, `last_password_change`, `account_lock_duration`, `last_password_reset`, `multiple_session`, `session_token`, `last_log_by`) VALUES
-(1, 'CGMI Bot', 'cgmids@christianmotors.ph', 'RYHObc8sNwIxdPDNJwCsO8bXKZJXYx7RjTgEWMC17FY%3D', NULL, 'No', 'Yes', NULL, 0, NULL, '2025-12-30', NULL, NULL, 'Yes', 'No', NULL, NULL, 0, NULL, 0, NULL, 'Yes', NULL, 2),
-(2, 'Administrator', 'lawrenceagulto.317@gmail.com', 'RYHObc8sNwIxdPDNJwCsO8bXKZJXYx7RjTgEWMC17FY%3D', NULL, 'No', 'Yes', NULL, 0, '2024-04-23 15:05:53', '2025-12-30', NULL, NULL, 'Yes', 'No', 'lIT0AN4gu3eEQZNQ4FYhayb83RUOCBEjxDrOx1Hns0U%3D', '2024-04-12 08:40:18', 0, NULL, 0, NULL, 'Yes', 'JorufUa1ljTS9gbjN4udHF5Fx27DkxwPFB0gjgNlKVQ%3D', 2),
-(4, 'Christian Edward Baguisa', 'benidickbelizario@christianmotors.ph', 'uAEQIiQf%2FwUa2hVPV89U4PlGBkD%2FtS9pBdl4RB4CVi0%3D', NULL, 'No', 'Yes', NULL, 0, '2024-04-08 12:25:04', '2024-10-05', NULL, NULL, 'Yes', 'No', NULL, NULL, 0, '2024-04-08 12:24:25', 0, NULL, 'Yes', 'hRIvgBlBnoCgxiTo4Jt8dXaKNW5S3CxtiJOpieNNrCM%3D', 2);
+(1, 'CGMI Bot', 'cgmids@christianmotors.ph', 'RYHObc8sNwIxdPDNJwCsO8bXKZJXYx7RjTgEWMC17FY%3D', NULL, 'No', 'Yes', NULL, 0, NULL, '2025-12-30', NULL, NULL, 'Yes', 'No', NULL, NULL, 0, NULL, 0, NULL, 'Yes', NULL, 1),
+(2, 'Administrator', 'lawrenceagulto.317@gmail.com', 'RYHObc8sNwIxdPDNJwCsO8bXKZJXYx7RjTgEWMC17FY%3D', './components/user-account/image/profile_image/2/FH1G.jpg', 'No', 'Yes', NULL, 0, '2024-05-24 14:49:20', '2025-12-30', NULL, NULL, 'Yes', 'No', NULL, NULL, 0, NULL, 0, NULL, 'Yes', 'Xjy95l2iAIm9HQ%2B2a0GnOiwiekbC22JiTwA6GZbS1m8%3D', 2);
 
 --
 -- Triggers `user_account`
@@ -2027,6 +2872,23 @@ ALTER TABLE `email_setting`
   ADD KEY `email_setting_index_email_setting_id` (`email_setting_id`);
 
 --
+-- Indexes for table `file_extension`
+--
+ALTER TABLE `file_extension`
+  ADD PRIMARY KEY (`file_extension_id`),
+  ADD KEY `last_log_by` (`last_log_by`),
+  ADD KEY `file_extension_index_file_extension_id` (`file_extension_id`),
+  ADD KEY `file_extension_index_file_type_id` (`file_type_id`);
+
+--
+-- Indexes for table `file_type`
+--
+ALTER TABLE `file_type`
+  ADD PRIMARY KEY (`file_type_id`),
+  ADD KEY `last_log_by` (`last_log_by`),
+  ADD KEY `file_type_index_file_type_id` (`file_type_id`);
+
+--
 -- Indexes for table `menu_group`
 --
 ALTER TABLE `menu_group`
@@ -2050,6 +2912,33 @@ ALTER TABLE `notification_setting`
   ADD PRIMARY KEY (`notification_setting_id`),
   ADD KEY `last_log_by` (`last_log_by`),
   ADD KEY `notification_setting_index_notification_setting_id` (`notification_setting_id`);
+
+--
+-- Indexes for table `notification_setting_email_template`
+--
+ALTER TABLE `notification_setting_email_template`
+  ADD PRIMARY KEY (`notification_setting_email_id`),
+  ADD KEY `last_log_by` (`last_log_by`),
+  ADD KEY `notification_setting_email_index_notification_setting_email_id` (`notification_setting_email_id`),
+  ADD KEY `notification_setting_email_index_notification_setting_id` (`notification_setting_id`);
+
+--
+-- Indexes for table `notification_setting_sms_template`
+--
+ALTER TABLE `notification_setting_sms_template`
+  ADD PRIMARY KEY (`notification_setting_sms_id`),
+  ADD KEY `last_log_by` (`last_log_by`),
+  ADD KEY `notification_setting_sms_index_notification_setting_sms_id` (`notification_setting_sms_id`),
+  ADD KEY `notification_setting_sms_index_notification_setting_id` (`notification_setting_id`);
+
+--
+-- Indexes for table `notification_setting_system_template`
+--
+ALTER TABLE `notification_setting_system_template`
+  ADD PRIMARY KEY (`notification_setting_system_id`),
+  ADD KEY `last_log_by` (`last_log_by`),
+  ADD KEY `notification_setting_system_index_notification_setting_system_id` (`notification_setting_system_id`),
+  ADD KEY `notification_setting_system_index_notification_setting_id` (`notification_setting_id`);
 
 --
 -- Indexes for table `password_history`
@@ -2115,6 +3004,32 @@ ALTER TABLE `system_action`
   ADD KEY `system_action_index_system_action_id` (`system_action_id`);
 
 --
+-- Indexes for table `system_setting`
+--
+ALTER TABLE `system_setting`
+  ADD PRIMARY KEY (`system_setting_id`),
+  ADD KEY `last_log_by` (`last_log_by`),
+  ADD KEY `system_setting_index_system_setting_id` (`system_setting_id`);
+
+--
+-- Indexes for table `upload_setting`
+--
+ALTER TABLE `upload_setting`
+  ADD PRIMARY KEY (`upload_setting_id`),
+  ADD KEY `last_log_by` (`last_log_by`),
+  ADD KEY `upload_setting_index_upload_setting_id` (`upload_setting_id`);
+
+--
+-- Indexes for table `upload_setting_file_extension`
+--
+ALTER TABLE `upload_setting_file_extension`
+  ADD PRIMARY KEY (`upload_setting_file_extension_id`),
+  ADD KEY `last_log_by` (`last_log_by`),
+  ADD KEY `upload_setting_file_ext_index_upload_setting_file_extension_id` (`upload_setting_file_extension_id`),
+  ADD KEY `upload_setting_file_ext_index_upload_setting_id` (`upload_setting_id`),
+  ADD KEY `upload_setting_file_ext_index_file_extension_id` (`file_extension_id`);
+
+--
 -- Indexes for table `user_account`
 --
 ALTER TABLE `user_account`
@@ -2131,13 +3046,25 @@ ALTER TABLE `user_account`
 -- AUTO_INCREMENT for table `audit_log`
 --
 ALTER TABLE `audit_log`
-  MODIFY `audit_log_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=359;
+  MODIFY `audit_log_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
 
 --
 -- AUTO_INCREMENT for table `email_setting`
 --
 ALTER TABLE `email_setting`
-  MODIFY `email_setting_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `email_setting_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- AUTO_INCREMENT for table `file_extension`
+--
+ALTER TABLE `file_extension`
+  MODIFY `file_extension_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- AUTO_INCREMENT for table `file_type`
+--
+ALTER TABLE `file_type`
+  MODIFY `file_type_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `menu_group`
@@ -2149,7 +3076,7 @@ ALTER TABLE `menu_group`
 -- AUTO_INCREMENT for table `menu_item`
 --
 ALTER TABLE `menu_item`
-  MODIFY `menu_item_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+  MODIFY `menu_item_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- AUTO_INCREMENT for table `notification_setting`
@@ -2158,10 +3085,28 @@ ALTER TABLE `notification_setting`
   MODIFY `notification_setting_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
+-- AUTO_INCREMENT for table `notification_setting_email_template`
+--
+ALTER TABLE `notification_setting_email_template`
+  MODIFY `notification_setting_email_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT for table `notification_setting_sms_template`
+--
+ALTER TABLE `notification_setting_sms_template`
+  MODIFY `notification_setting_sms_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `notification_setting_system_template`
+--
+ALTER TABLE `notification_setting_system_template`
+  MODIFY `notification_setting_system_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `password_history`
 --
 ALTER TABLE `password_history`
-  MODIFY `password_history_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `password_history_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `role`
@@ -2173,13 +3118,13 @@ ALTER TABLE `role`
 -- AUTO_INCREMENT for table `role_permission`
 --
 ALTER TABLE `role_permission`
-  MODIFY `role_permission_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `role_permission_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- AUTO_INCREMENT for table `role_system_action_permission`
 --
 ALTER TABLE `role_system_action_permission`
-  MODIFY `role_system_action_permission_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `role_system_action_permission_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT for table `role_user_account`
@@ -2191,19 +3136,37 @@ ALTER TABLE `role_user_account`
 -- AUTO_INCREMENT for table `security_setting`
 --
 ALTER TABLE `security_setting`
-  MODIFY `security_setting_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `security_setting_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `system_action`
 --
 ALTER TABLE `system_action`
-  MODIFY `system_action_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `system_action_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+
+--
+-- AUTO_INCREMENT for table `system_setting`
+--
+ALTER TABLE `system_setting`
+  MODIFY `system_setting_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- AUTO_INCREMENT for table `upload_setting`
+--
+ALTER TABLE `upload_setting`
+  MODIFY `upload_setting_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT for table `upload_setting_file_extension`
+--
+ALTER TABLE `upload_setting_file_extension`
+  MODIFY `upload_setting_file_extension_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `user_account`
 --
 ALTER TABLE `user_account`
-  MODIFY `user_account_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `user_account_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- Constraints for dumped tables
@@ -2222,6 +3185,18 @@ ALTER TABLE `email_setting`
   ADD CONSTRAINT `email_setting_ibfk_1` FOREIGN KEY (`last_log_by`) REFERENCES `user_account` (`user_account_id`);
 
 --
+-- Constraints for table `file_extension`
+--
+ALTER TABLE `file_extension`
+  ADD CONSTRAINT `file_extension_ibfk_1` FOREIGN KEY (`last_log_by`) REFERENCES `user_account` (`user_account_id`);
+
+--
+-- Constraints for table `file_type`
+--
+ALTER TABLE `file_type`
+  ADD CONSTRAINT `file_type_ibfk_1` FOREIGN KEY (`last_log_by`) REFERENCES `user_account` (`user_account_id`);
+
+--
 -- Constraints for table `menu_group`
 --
 ALTER TABLE `menu_group`
@@ -2238,6 +3213,27 @@ ALTER TABLE `menu_item`
 --
 ALTER TABLE `notification_setting`
   ADD CONSTRAINT `notification_setting_ibfk_1` FOREIGN KEY (`last_log_by`) REFERENCES `user_account` (`user_account_id`);
+
+--
+-- Constraints for table `notification_setting_email_template`
+--
+ALTER TABLE `notification_setting_email_template`
+  ADD CONSTRAINT `notification_setting_email_template_ibfk_1` FOREIGN KEY (`notification_setting_id`) REFERENCES `notification_setting` (`notification_setting_id`),
+  ADD CONSTRAINT `notification_setting_email_template_ibfk_2` FOREIGN KEY (`last_log_by`) REFERENCES `user_account` (`user_account_id`);
+
+--
+-- Constraints for table `notification_setting_sms_template`
+--
+ALTER TABLE `notification_setting_sms_template`
+  ADD CONSTRAINT `notification_setting_sms_template_ibfk_1` FOREIGN KEY (`notification_setting_id`) REFERENCES `notification_setting` (`notification_setting_id`),
+  ADD CONSTRAINT `notification_setting_sms_template_ibfk_2` FOREIGN KEY (`last_log_by`) REFERENCES `user_account` (`user_account_id`);
+
+--
+-- Constraints for table `notification_setting_system_template`
+--
+ALTER TABLE `notification_setting_system_template`
+  ADD CONSTRAINT `notification_setting_system_template_ibfk_1` FOREIGN KEY (`notification_setting_id`) REFERENCES `notification_setting` (`notification_setting_id`),
+  ADD CONSTRAINT `notification_setting_system_template_ibfk_2` FOREIGN KEY (`last_log_by`) REFERENCES `user_account` (`user_account_id`);
 
 --
 -- Constraints for table `password_history`
@@ -2286,6 +3282,24 @@ ALTER TABLE `security_setting`
 --
 ALTER TABLE `system_action`
   ADD CONSTRAINT `system_action_ibfk_1` FOREIGN KEY (`last_log_by`) REFERENCES `user_account` (`user_account_id`);
+
+--
+-- Constraints for table `system_setting`
+--
+ALTER TABLE `system_setting`
+  ADD CONSTRAINT `system_setting_ibfk_1` FOREIGN KEY (`last_log_by`) REFERENCES `user_account` (`user_account_id`);
+
+--
+-- Constraints for table `upload_setting`
+--
+ALTER TABLE `upload_setting`
+  ADD CONSTRAINT `upload_setting_ibfk_1` FOREIGN KEY (`last_log_by`) REFERENCES `user_account` (`user_account_id`);
+
+--
+-- Constraints for table `upload_setting_file_extension`
+--
+ALTER TABLE `upload_setting_file_extension`
+  ADD CONSTRAINT `upload_setting_file_extension_ibfk_1` FOREIGN KEY (`last_log_by`) REFERENCES `user_account` (`user_account_id`);
 
 --
 -- Constraints for table `user_account`

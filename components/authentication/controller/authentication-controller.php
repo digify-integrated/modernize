@@ -976,17 +976,21 @@ class AuthenticationController {
         $mailFromName = $emailSetting['mail_from_name'] ?? null;
         $mailFromEmail = $emailSetting['mail_from_email'] ?? null;
 
+        $securitySettingDetails = $this->securitySettingModel->getSecuritySetting(6);
+        $otpDuration = $securitySettingDetails['value'] ?? DEFAULT_OTP_DURATION;
+
         $notificationSettingDetails = $this->notificationSettingModel->getNotificationSetting(1);
         $emailSubject = $notificationSettingDetails['email_notification_subject'] ?? null;
         $emailBody = $notificationSettingDetails['email_notification_body'] ?? null;
-        $emailBody = str_replace('{OTP_CODE}', $otp, $emailBody);
+        $emailBody = str_replace('#{OTP_CODE}', $otp, $emailBody);
+        $emailBody = str_replace('#{OTP_CODE_VALIDITY}', $otpDuration . ' minute(s)', $emailBody);
 
         $message = file_get_contents('../../notification-setting/template/default-email.html');
         $message = str_replace('{EMAIL_SUBJECT}', $emailSubject, $message);
         $message = str_replace('{EMAIL_CONTENT}', $emailBody, $message);
     
         $mailer = new PHPMailer\PHPMailer\PHPMailer();
-        $this->configureSMTP($mailer);
+        $this->configureSMTP(1, $mailer);
         
         $mailer->setFrom($mailFromEmail, $mailFromName);
         $mailer->addAddress($email);
@@ -1027,15 +1031,15 @@ class AuthenticationController {
         $notificationSettingDetails = $this->notificationSettingModel->getNotificationSetting(2);
         $emailSubject = $notificationSettingDetails['email_notification_subject'] ?? null;
         $emailBody = $notificationSettingDetails['email_notification_body'] ?? null;
-        $emailBody = str_replace('{RESET_LINK}', $defaultForgotPasswordLink . $userAccountID .'&token=' . $resetToken, $emailBody);
-        $emailBody = str_replace('{RESET_DURATION}', $resetPasswordTokenDuration, $emailBody);
+        $emailBody = str_replace('#{RESET_LINK}', $defaultForgotPasswordLink . $userAccountID .'&token=' . $resetToken, $emailBody);
+        $emailBody = str_replace('#{RESET_LINK_VALIDITY}', $resetPasswordTokenDuration . ' minute(s)', $emailBody);
 
         $message = file_get_contents('../../notification-setting/template/default-email.html');
         $message = str_replace('{EMAIL_SUBJECT}', $emailSubject, $message);
         $message = str_replace('{EMAIL_CONTENT}', $emailBody, $message);
     
         $mailer = new PHPMailer\PHPMailer\PHPMailer();
-        $this->configureSMTP($mailer);
+        $this->configureSMTP(1, $mailer);
         
         $mailer->setFrom($mailFromEmail, $mailFromName);
         $mailer->addAddress($email);
@@ -1067,8 +1071,8 @@ class AuthenticationController {
     # Returns: None
     #
     # -------------------------------------------------------------
-    private function configureSMTP($mailer, $isHTML = true) {
-        $emailSetting = $this->emailSettingModel->getEmailSetting(1);
+    private function configureSMTP($emailSettingID, $mailer, $isHTML = true) {
+        $emailSetting = $this->emailSettingModel->getEmailSetting($emailSettingID);
         $mailHost = $emailSetting['mail_host'] ?? MAIL_HOST;
         $smtpAuth = empty($emailSetting['smtp_auth']) ? false : true;
         $mailUsername = $emailSetting['mail_username'] ?? MAIL_USERNAME;

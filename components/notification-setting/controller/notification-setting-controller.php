@@ -383,7 +383,7 @@ class NotificationSettingController {
             $userID = $_SESSION['user_account_id'];
             $notificationSettingID = htmlspecialchars($_POST['notification_setting_id'], ENT_QUOTES, 'UTF-8');
             $emailNotificationSubject = $_POST['email_notification_subject'];
-            $emailNotificationBody = $_POST['email_notification_body'];
+            $emailNotificationBody = urldecode($_POST['email_notification_body']);
         
             $checkEmailNotificationTemplateExist = $this->notificationSettingModel->checkEmailNotificationTemplateExist($notificationSettingID);
             $total = $checkEmailNotificationTemplateExist['total'] ?? 0;
@@ -1109,7 +1109,7 @@ class NotificationSettingController {
             $response = [
                 'success' => true,
                 'emailNotificationSubject' => $emailNotificationTemplateDetails['email_notification_subject'] ?? null,
-                'emailNotificationBody' => $emailNotificationTemplateDetails['email_notification_body'] ?? null
+                'emailNotificationBody' => $emailNotificationTemplateDetails['email_notification_body'] ?? ''
             ];
 
             echo json_encode($response);

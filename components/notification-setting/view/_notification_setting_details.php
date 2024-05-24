@@ -153,12 +153,13 @@
                                                     <p class="mb-0" id="system_notification_message_preview">Message</p>
                                                 </div>
                                             </div>
+                                        </div>
+                                        <div class="d-flex align-items-center gap-3">
                                             <?php
                                                 echo $notificationSettingWriteAccess['total'] > 0 ? 
-                                                ' <a class="text-dark fs-6 d-flex align-items-center justify-content-center bg-transparent p-2 fs-4 rounded-circle" href="javascript:void(0)" data-bs-toggle="modal" id="edit-system-notification-template-details" data-bs-target="#system-notification-template-modal">
-                                                    <i class="ti ti ti-pencil"></i>
-                                                </a>' : '';
+                                                '<button class="btn btn-info" data-bs-toggle="modal" id="edit-system-notification-template-details" data-bs-target="#system-notification-template-modal">Edit</button>' : '';
                                             ?>
+                                            <button class="btn btn-warning" id="view-system-notification-template-log-notes" data-bs-toggle="offcanvas" data-bs-target="#log-notes-offcanvas" aria-controls="log-notes-offcanvas">View Log Notes</button>
                                         </div>
                                     </div>
                                 </div>
@@ -177,12 +178,13 @@
                                                     <p class="mb-0" id="email_notification_body_preview">Body</p>
                                                 </div>
                                             </div>
+                                        </div>
+                                        <div class="d-flex align-items-center gap-3">
                                             <?php
                                                 echo $notificationSettingWriteAccess['total'] > 0 ? 
-                                                ' <a class="text-dark fs-6 d-flex align-items-center justify-content-center bg-transparent p-2 fs-4 rounded-circle" href="javascript:void(0)" data-bs-toggle="modal" id="edit-email-notification-template-details" data-bs-target="#email-notification-template-modal">
-                                                    <i class="ti ti ti-pencil"></i>
-                                                </a>' : '';
+                                                '<button class="btn btn-info" data-bs-toggle="modal" id="edit-email-notification-template-details" data-bs-target="#email-notification-template-modal">Edit</button>' : '';
                                             ?>
+                                            <button class="btn btn-warning" id="view-email-notification-template-log-notes" data-bs-toggle="offcanvas" data-bs-target="#log-notes-offcanvas" aria-controls="log-notes-offcanvas">View Log Notes</button>
                                         </div>
                                     </div>
                                 </div>
@@ -200,12 +202,13 @@
                                                     <p class="mb-0" id="sms_notification_message_preview">Message</p>
                                                 </div>
                                             </div>
+                                        </div>
+                                        <div class="d-flex align-items-center gap-3">
                                             <?php
                                                 echo $notificationSettingWriteAccess['total'] > 0 ? 
-                                                ' <a class="text-dark fs-6 d-flex align-items-center justify-content-center bg-transparent p-2 fs-4 rounded-circle" href="javascript:void(0)" data-bs-toggle="modal" id="edit-sms-notification-template-details" data-bs-target="#sms-notification-template-modal">
-                                                    <i class="ti ti ti-pencil"></i>
-                                                </a>' : '';
+                                                '<button class="btn btn-info" data-bs-toggle="modal" id="edit-sms-notification-template-details" data-bs-target="#sms-notification-template-modal">Edit</button>' : '';
                                             ?>
+                                            <button class="btn btn-warning" id="view-sms-notification-template-log-notes" data-bs-toggle="offcanvas" data-bs-target="#log-notes-offcanvas" aria-controls="log-notes-offcanvas">View Log Notes</button>
                                         </div>
                                     </div>
                                 </div>
