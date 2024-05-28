@@ -979,11 +979,11 @@ class AuthenticationController {
         $securitySettingDetails = $this->securitySettingModel->getSecuritySetting(6);
         $otpDuration = $securitySettingDetails['value'] ?? DEFAULT_OTP_DURATION;
 
-        $notificationSettingDetails = $this->notificationSettingModel->getNotificationSetting(1);
+        $notificationSettingDetails = $this->notificationSettingModel->getEmailNotificationTemplate(1);
         $emailSubject = $notificationSettingDetails['email_notification_subject'] ?? null;
         $emailBody = $notificationSettingDetails['email_notification_body'] ?? null;
         $emailBody = str_replace('#{OTP_CODE}', $otp, $emailBody);
-        $emailBody = str_replace('#{OTP_CODE_VALIDITY}', $otpDuration . ' minute(s)', $emailBody);
+        $emailBody = str_replace('#{OTP_CODE_VALIDITY}', $otpDuration . ' minutes', $emailBody);
 
         $message = file_get_contents('../../notification-setting/template/default-email.html');
         $message = str_replace('{EMAIL_SUBJECT}', $emailSubject, $message);
@@ -1028,11 +1028,11 @@ class AuthenticationController {
         $securitySettingDetails = $this->securitySettingModel->getSecuritySetting(3);
         $defaultForgotPasswordLink = $securitySettingDetails['value'];
 
-        $notificationSettingDetails = $this->notificationSettingModel->getNotificationSetting(2);
+        $notificationSettingDetails = $this->notificationSettingModel->getEmailNotificationTemplate(2);
         $emailSubject = $notificationSettingDetails['email_notification_subject'] ?? null;
         $emailBody = $notificationSettingDetails['email_notification_body'] ?? null;
         $emailBody = str_replace('#{RESET_LINK}', $defaultForgotPasswordLink . $userAccountID .'&token=' . $resetToken, $emailBody);
-        $emailBody = str_replace('#{RESET_LINK_VALIDITY}', $resetPasswordTokenDuration . ' minute(s)', $emailBody);
+        $emailBody = str_replace('#{RESET_LINK_VALIDITY}', $resetPasswordTokenDuration . ' minute', $emailBody);
 
         $message = file_get_contents('../../notification-setting/template/default-email.html');
         $message = str_replace('{EMAIL_SUBJECT}', $emailSubject, $message);

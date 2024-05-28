@@ -28,10 +28,10 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-lg-6">
+                        <div class="col-lg-12">
                             <div class="mb-3">
                                 <label class="form-label" for="upload_setting_description">Description <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control maxlength" id="upload_setting_description" name="upload_setting_description" maxlength="200" autocomplete="off">
+                                <textarea class="form-control maxlength" id="upload_setting_description" name="upload_setting_description" maxlength="200" rows="3"></textarea>
                             </div>
                         </div>
                     </div>

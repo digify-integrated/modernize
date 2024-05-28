@@ -154,6 +154,18 @@
                 logNotes('upload_setting_file_extension', upload_setting_file_extension_id);
             });
         }
+
+        if($('#internal-notes').length){
+            const upload_setting_id = $('#upload-setting-id').text();
+
+            internalNotes('upload_setting', upload_setting_id);
+        }
+
+        if($('#internal-notes-form').length){
+            const upload_setting_id = $('#upload-setting-id').text();
+
+            internalNotesForm('upload_setting', upload_setting_id);
+        }
     });
 })(jQuery);
 

@@ -39,17 +39,17 @@
                                         <label for="email" class="form-label">Email</label>
                                         <input type="email" class="form-control" id="email" name="email" autocomplete="off">
                                     </div>
-                                    <div class="mb-4">
+                                    <div class="mb-3">
                                         <label for="password" class="form-label">Password</label>
                                         <div class="input-group mb-3">
                                             <input type="password" class="form-control" id="password" name="password">
-                                            <button class="btn bg-info-subtle text-info  rounded-end d-flex align-items-center password-addon" type="button">
+                                            <button class="btn bg-info-subtle text-info rounded-end d-flex align-items-center password-addon" type="button">
                                                 <i class="ti ti-eye"></i>
                                             </button>
                                         </div>
                                     </div>
-                                    <div class="text-end mb-4">
-                                        <a class="text-primary fw-medium fs-3" href="forgot-password.php">Forgot Password ?</a>
+                                    <div class="text-end mb-3">
+                                        <a class="text-primary fw-medium fs-2" href="forgot-password.php">Forgot Password ?</a>
                                     </div>
                                     <button id="signin" type="submit" class="btn btn-info w-100 py-8 mb-4 rounded-2">Login</button>
                                 </form>

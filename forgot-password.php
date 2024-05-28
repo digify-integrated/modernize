@@ -41,7 +41,7 @@
                                         <label for="email" class="form-label">Email</label>
                                         <input type="email" class="form-control" id="email" name="email" autocomplete="off">
                                     </div>
-                                    <button id="forgot-password" type="submit" class="btn btn-primary w-100 py-8 mb-4 rounded-2">Forgot Password</button>
+                                    <button id="forgot-password" type="submit" class="btn btn-info w-100 py-8 mb-3 rounded-2">Forgot Password</button>
                                     <a href="index.php" class="btn bg-primary-subtle text-primary w-100 py-8mb-4 rounded-2">Back to Login</a>
                                 </form>
                             </div>

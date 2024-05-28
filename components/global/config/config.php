@@ -116,18 +116,4 @@ define('MAX_FAILED_OTP_ATTEMPTS', 5);
 define('DEFAULT_OTP_DURATION', 5);
 
 # -------------------------------------------------------------
-
-# -------------------------------------------------------------
-#
-# Name       : Default upload file path
-# Purpose    : This is the serves as the default upload file path.
-#
-# -------------------------------------------------------------
-
-define('USER_ACCOUNT_PROFILE_PICTURE_FULL_PATH_FILE', '/tech_nexus/user_account/profile_image/');
-define('USER_ACCOUNT_PROFILE_PICTURE_RELATIVE_PATH_FILE', './user_account/profile_image/');
-
-
-
-# -------------------------------------------------------------
 ?>

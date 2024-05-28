@@ -433,7 +433,7 @@ class UserAccountController {
                 $response = [
                     'success' => false,
                     'title' => 'Update User Account Profile Picture Error',
-                    'message' => 'The Please choose the profile picture.',
+                    'message' => 'Please choose the profile picture.',
                     'messageType' => 'error'
                 ];
                 
@@ -457,7 +457,7 @@ class UserAccountController {
                 $response = [
                     'success' => false,
                     'title' => 'Update User Account Profile Picture Error',
-                    'message' => 'The document file exceeds the maximum allowed size of ' . $maxFileSize . ' kb.',
+                    'message' => 'The document file exceeds the maximum allowed size of ' . number_format($maxFileSize) . ' kb.',
                     'messageType' => 'error'
                 ];
                 
@@ -469,9 +469,7 @@ class UserAccountController {
             $fileNew = $fileName . '.' . $profilePictureActualFileExtension;
             
             define('PROJECT_BASE_DIR', dirname(__DIR__));
-
             define('USER_ACCOUNT_PROFILE_PICTURE_DIR', 'image/profile_image/');
-
 
             $directory = PROJECT_BASE_DIR. '/'. USER_ACCOUNT_PROFILE_PICTURE_DIR. $userAccountID. '/';
             $fileDestination = $directory. $fileNew;

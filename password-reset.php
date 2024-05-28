@@ -78,7 +78,7 @@
                                             </button>
                                         </div>
                                     </div>
-                                    <button id="reset" type="submit" class="btn btn-primary w-100 py-8 mb-4 rounded-2">Reset Password</button>
+                                    <button id="reset" type="submit" class="btn btn-info w-100 py-8 mb-4 rounded-2">Reset Password</button>
                                 </form>
                             </div>
                         </div>

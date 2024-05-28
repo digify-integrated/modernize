@@ -10,6 +10,36 @@ BEGIN
     ORDER BY changed_at DESC;
 END //
 
+CREATE PROCEDURE generateInternalNotes(IN p_table_name VARCHAR(255), IN p_reference_id INT)
+BEGIN
+	SELECT internal_notes_id, internal_note, internal_note_by, internal_note_date
+    FROM internal_notes
+    WHERE table_name = p_table_name AND reference_id  = p_reference_id
+    ORDER BY internal_note_date DESC;
+END //
+
+/* ----------------------------------------------------------------------------------------------------------------------------- */
+
+/* Insert Stored Procedure */
+
+CREATE PROCEDURE insertInternalNotes(IN p_table_name VARCHAR(255), IN p_reference_id INT, IN p_internal_note VARCHAR(5000), IN p_internal_note_by INT, OUT p_internal_notes_id INT)
+BEGIN
+    INSERT INTO internal_notes (table_name, reference_id, internal_note, internal_note_by) 
+	VALUES(p_table_name, p_reference_id, p_internal_note, p_internal_note_by);
+
+    SET p_internal_notes_id = LAST_INSERT_ID();
+END //
+
+CREATE PROCEDURE insertInternalNotesAttachment(IN p_internal_notes_id INT, IN p_attachment_file_name VARCHAR(500), IN p_attachment_file_size DOUBLE, IN p_attachment_path_file VARCHAR(500))
+BEGIN
+    INSERT INTO internal_notes_attachment (internal_notes_id, attachment_file_name, attachment_file_size, attachment_path_file) 
+	VALUES(p_internal_notes_id, p_attachment_file_name, p_attachment_file_size, p_attachment_path_file);
+END //
+
+/* ----------------------------------------------------------------------------------------------------------------------------- */
+
+/* Build Stored Procedure */
+
 CREATE PROCEDURE buildMenuGroup(IN p_user_account_id INT)
 BEGIN
     SELECT DISTINCT(mg.menu_group_id) as menu_group_id, mg.menu_group_name
@@ -39,6 +69,10 @@ BEGIN
     ORDER BY mi.order_sequence;
 END //
 
+/* ----------------------------------------------------------------------------------------------------------------------------- */
+
+/* Check Stored Procedure */
+
 CREATE PROCEDURE checkAccessRights(IN p_user_account_id INT, IN p_menu_item_id INT, IN p_access_type VARCHAR(10))
 BEGIN
 	IF p_access_type = 'read' THEN
@@ -65,6 +99,16 @@ BEGIN
     SELECT COUNT(role_id) AS total
     FROM role_system_action_permission 
     WHERE system_action_id = p_system_action_id AND system_action_access = 1 AND role_id IN (SELECT role_id FROM role_user_account WHERE user_account_id = p_user_account_id);
+END //
+
+/* ----------------------------------------------------------------------------------------------------------------------------- */
+
+/* Check Stored Procedure */
+
+CREATE PROCEDURE getInternalNotesAttachment(IN p_internal_notes_id INT)
+BEGIN
+	SELECT * FROM internal_notes_attachment
+	WHERE internal_notes_id = p_internal_notes_id;
 END //
 
 /* ----------------------------------------------------------------------------------------------------------------------------- */

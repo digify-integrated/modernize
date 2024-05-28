@@ -14,6 +14,63 @@ class GlobalModel {
     }
 
     # -------------------------------------------------------------
+    #   Insert methods
+    # -------------------------------------------------------------
+
+    # -------------------------------------------------------------
+    #
+    # Function: insertInternalNotes
+    # Description: Inserts the internal notes.
+    #
+    # Parameters:
+    # - $p_table_name (string): The table name.
+    # - $p_reference_id (int): The reference ID.
+    # - $p_internal_note (string): The internal note.
+    # - $p_internal_note_by (int): The internal note by.
+    #
+    # Returns: String
+    #
+    # -------------------------------------------------------------
+    public function insertInternalNotes($p_table_name, $p_reference_id, $p_internal_note, $p_internal_note_by) {
+        $stmt = $this->db->getConnection()->prepare('CALL insertInternalNotes(:p_table_name, :p_reference_id, :p_internal_note, :p_internal_note_by, @p_internal_notes_id)');
+        $stmt->bindValue(':p_table_name', $p_table_name, PDO::PARAM_STR);
+        $stmt->bindValue(':p_reference_id', $p_reference_id, PDO::PARAM_INT);
+        $stmt->bindValue(':p_internal_note', $p_internal_note, PDO::PARAM_STR);
+        $stmt->bindValue(':p_internal_note_by', $p_internal_note_by, PDO::PARAM_INT);
+        $stmt->execute();
+
+        $result = $this->db->getConnection()->query('SELECT @p_internal_notes_id AS internal_notes_id');
+        $internalNotesID = $result->fetch(PDO::FETCH_ASSOC)['internal_notes_id'];
+        
+        return $internalNotesID;
+    }
+    # -------------------------------------------------------------
+
+    # -------------------------------------------------------------
+    #
+    # Function: insertInternalNotesAttachment
+    # Description: Inserts the internal notes attachment.
+    #
+    # Parameters:
+    # - $p_internal_notes_id (int): The internal notes ID.
+    # - $p_attachment_file_name (string): The attachment file name.
+    # - $p_attachment_file_size (double): The attachment file size.
+    # - $p_attachment_path_file (string): The attachment file path.
+    #
+    # Returns: String
+    #
+    # -------------------------------------------------------------
+    public function insertInternalNotesAttachment($p_internal_notes_id, $p_attachment_file_name, $p_attachment_file_size, $p_attachment_path_file) {
+        $stmt = $this->db->getConnection()->prepare('CALL insertInternalNotesAttachment(:p_internal_notes_id, :p_attachment_file_name, :p_attachment_file_size, :p_attachment_path_file');
+        $stmt->bindValue(':p_internal_notes_id', $p_internal_notes_id, PDO::PARAM_INT);
+        $stmt->bindValue(':p_attachment_file_name', $p_attachment_file_name, PDO::PARAM_STR);
+        $stmt->bindValue(':p_attachment_file_size', $p_attachment_file_size, PDO::PARAM_STR);
+        $stmt->bindValue(':p_attachment_path_file', $p_attachment_path_file, PDO::PARAM_STR);
+        $stmt->execute();
+    }
+    # -------------------------------------------------------------
+
+    # -------------------------------------------------------------
     #   Check methods
     # -------------------------------------------------------------
 
@@ -210,6 +267,30 @@ class GlobalModel {
     
         return $html;
     }    
+    # -------------------------------------------------------------
+
+    # -------------------------------------------------------------
+    #   Get methods
+    # -------------------------------------------------------------
+
+    # -------------------------------------------------------------
+    #
+    # Function: getInternalNotesAttachment
+    # Description: Retrieves the details of a internal notes attachment.
+    #
+    # Parameters:
+    # - $p_internal_notes_id (int): The internal notes ID.
+    #
+    # Returns:
+    # - An array containing the internal notes attachment details.
+    #
+    # -------------------------------------------------------------
+    public function getInternalNotesAttachment($p_internal_notes_id) {
+        $stmt = $this->db->getConnection()->prepare('CALL getInternalNotesAttachment(:p_internal_notes_id)');
+        $stmt->bindValue(':p_internal_notes_id', $p_internal_notes_id, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
     # -------------------------------------------------------------
 }
 ?>

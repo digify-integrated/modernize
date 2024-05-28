@@ -6,6 +6,10 @@
         maxLength();
         initializeFilterDaterange();
 
+        $(document).on('click','#internal-notes-button',function() {
+            resetModalForm('internal-notes-form');
+        });
+
         $(document).on('click','#copy-error-message',function() {
             copyToClipboard('error-dialog');
         });
@@ -36,10 +40,6 @@
         $(document).on('click','.datatable-checkbox-children',function() {
             toggleActionDropdown();
         });
-
-        if ($('.tiny-mce').length) {
-            initializeTinyMCE();
-        }
     });
 })(jQuery);
 
@@ -254,6 +254,20 @@ function logNotes(databaseTable, referenceID){
     });
 }
 
+function internalNotes(databaseTable, referenceID){
+    const type = 'internal notes';
+
+    $.ajax({
+        type: 'POST',
+        url: 'components/global/view/_internal_notes_generation.php',
+        dataType: 'json',
+        data: { type: type, 'database_table': databaseTable, 'reference_id': referenceID },
+        success: function (result) {
+            document.getElementById('internal-notes').innerHTML = result[0].INTERNAL_NOTES;
+        }
+    });
+}
+
 function initializeDualListBoxIcon(){
     $('.moveall i').removeClass().addClass('ti ti-chevron-right');
     $('.removeall i').removeClass().addClass('ti ti-chevron-left');
@@ -294,11 +308,89 @@ function initializeFilterDaterange(){
     }
 }
 
-function initializeTinyMCE(){    
-    tinymce.init({
-        height: '300',
-        selector: '.tiny-mce',
-        menubar: false,
-        license_key: 'gpl'
+function internalNotesForm(databaseTable, referenceID){
+    $('#internal-notes-form').validate({
+        rules: {
+            internal_note: {
+                required: true
+            }
+        },
+        messages: {
+            internal_note: {
+                required: 'Please enter the internal note'
+            }
+        },
+        errorPlacement: function (error, element) {
+            showNotification('Attention Required: Error Found', error, 'error', 1500);
+        },
+        highlight: function(element) {
+            var inputElement = $(element);
+            if (inputElement.hasClass('select2-hidden-accessible')) {
+                inputElement.next().find('.select2-selection').addClass('is-invalid');
+            }
+            else {
+                inputElement.addClass('is-invalid');
+            }
+        },
+        unhighlight: function(element) {
+            var inputElement = $(element);
+            if (inputElement.hasClass('select2-hidden-accessible')) {
+                inputElement.next().find('.select2-selection').removeClass('is-invalid');
+            }
+            else {
+                inputElement.removeClass('is-invalid');
+            }
+        },
+        submitHandler: function(form) {
+            const transaction = 'add internal notes';
+            var formData = new FormData(form);
+            formData.append('transaction', transaction);
+            formData.append('database_table', databaseTable);
+            formData.append('reference_id', referenceID);
+          
+            $.ajax({
+                type: 'POST',
+                url: 'components/global/controller/internal-notes-controller.php',
+                data: formData,
+                processData: false,
+                contentType: false,
+                dataType: 'json',
+                beforeSend: function() {
+                    disableFormSubmitButton('submit-internal-notes');
+                },
+                success: function (response) {
+                    if (response.success) {
+                        showNotification(response.title, response.message, response.messageType);
+                        internalNotes(databaseTable, referenceID)
+                        $('#internal-notes-modal').modal('hide');
+                    }
+                    else {
+                        if (response.isInactive || response.userNotExist || response.userInactive || response.userLocked || response.sessionExpired) {
+                            setNotification(response.title, response.message, response.messageType);
+                            window.location = 'logout.php?logout';
+                        }
+                        else if (response.notExist) {
+                            setNotification(response.title, response.message, response.messageType);
+                            window.location = page_link;
+                        }
+                        else {
+                            showNotification(response.title, response.message, response.messageType);
+                        }
+                    }
+                },
+                error: function(xhr, status, error) {
+                    var fullErrorMessage = `XHR status: ${status}, Error: ${error}`;
+                    if (xhr.responseText) {
+                        fullErrorMessage += `, Response: ${xhr.responseText}`;
+                    }
+                    showErrorDialog(fullErrorMessage);
+                },
+                complete: function() {
+                    enableFormSubmitButton('submit-internal-notes');
+                }
+            });
+        
+            return false;
+        }
     });
 }

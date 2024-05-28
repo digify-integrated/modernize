@@ -673,6 +673,13 @@ function displayDetails(transaction){
                     if (response.success) {
                         $('#email_notification_subject').val(response.emailNotificationSubject);
 
+                        // Prevent Bootstrap dialog from blocking focusin
+                         document.addEventListener('focusin', (e) => {
+                                if (e.target.closest(".tox-tinymce-aux, .moxman-window, .tam-assetmanager-root") !== null) {
+                                e.stopImmediatePropagation();
+                        }
+                        });
+
                         tinymce.init({
                             height: '300',
                             selector: '#email_notification_body',
@@ -680,6 +687,12 @@ function displayDetails(transaction){
                                 editor.setContent(response.emailNotificationBody, { format: 'html' });
                             },
                             menubar: false,
+                            toolbar: [
+                                'styleselect fontselect fontsizeselect',
+                                'undo redo | cut copy paste | bold italic | link image | alignleft aligncenter alignright alignjustify',
+                                'bullist numlist | outdent indent | blockquote subscript superscript | advlist | autolink | lists charmap | print preview |  code'
+                            ],
+                            plugins: 'advlist autolink link image lists charmap print preview code',
                             license_key: 'gpl'
                         });
                         

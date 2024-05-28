@@ -66,7 +66,7 @@ if(isset($_POST['type']) && !empty($_POST['type'])){
 
                 if(empty($logNote)){
                     $logNote = '<div class="text-center">
-                                No log notes found
+                                No log notes found.
                             </div>';
                 }
 
