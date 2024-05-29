@@ -118,15 +118,15 @@ if(isset($_POST['type']) && !empty($_POST['type'])){
 
                     $response[] = [
                         'USER_ACCOUNT' => '<div class="d-flex align-items-center">
-                                                    <img src="'. $profilePicture .'" alt="avatar" class="rounded-circle" width="35" />
-                                                    <div class="ms-3">
-                                                        <div class="user-meta-info">
-                                                            <h6 class="user-name mb-0">'. $fileAs .'</h6>
-                                                            <small>'. $email .'</small>
-                                                        </div>
+                                                <img src="'. $profilePicture .'" alt="avatar" class="rounded-circle" width="35" height="35" />
+                                                <div class="ms-3">
+                                                    <div class="user-meta-info">
+                                                        <h6 class="user-name mb-0">'. $fileAs .'</h6>
+                                                        <small>'. $email .'</small>
                                                     </div>
-                                                </a>
-                                            </div>',
+                                                </div>
+                                            </a>
+                                        </div>',
                         'LAST_CONNECTION_DATE' => $lastConnectionDate,
                         'ACTION' => '<div class="d-flex gap-2">
                                         <a href="javascript:void(0);" class="text-info view-role-user-account-log-notes" data-role-user-account-id="' . $roleUserAccountID . '" data-bs-toggle="offcanvas" data-bs-target="#log-notes-offcanvas" aria-controls="log-notes-offcanvas" title="View Log Notes">

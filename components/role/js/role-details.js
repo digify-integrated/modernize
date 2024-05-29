@@ -408,6 +408,18 @@
                 logNotes('role_user_account', role_user_account_id);
             });
         }
+
+        if($('#internal-notes').length){
+             const role_id = $('#role-id').text();
+
+            internalNotes('role', role_id);
+        }
+
+        if($('#internal-notes-form').length){
+             const role_id = $('#role-id').text();
+
+            internalNotesForm('role', role_id);
+        }
     });
 })(jQuery);
 

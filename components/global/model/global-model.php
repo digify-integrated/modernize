@@ -61,7 +61,7 @@ class GlobalModel {
     #
     # -------------------------------------------------------------
     public function insertInternalNotesAttachment($p_internal_notes_id, $p_attachment_file_name, $p_attachment_file_size, $p_attachment_path_file) {
-        $stmt = $this->db->getConnection()->prepare('CALL insertInternalNotesAttachment(:p_internal_notes_id, :p_attachment_file_name, :p_attachment_file_size, :p_attachment_path_file');
+        $stmt = $this->db->getConnection()->prepare('CALL insertInternalNotesAttachment(:p_internal_notes_id, :p_attachment_file_name, :p_attachment_file_size, :p_attachment_path_file)');
         $stmt->bindValue(':p_internal_notes_id', $p_internal_notes_id, PDO::PARAM_INT);
         $stmt->bindValue(':p_attachment_file_name', $p_attachment_file_name, PDO::PARAM_STR);
         $stmt->bindValue(':p_attachment_file_size', $p_attachment_file_size, PDO::PARAM_STR);

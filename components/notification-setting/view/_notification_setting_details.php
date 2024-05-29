@@ -351,4 +351,5 @@
     </div>
 </div>
 
+<?php require_once('components/global/view/_internal_notes.php'); ?>
 <?php require_once('components/global/view/_log_notes_offcanvas.php'); ?>

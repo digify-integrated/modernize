@@ -79,6 +79,18 @@
                 logNotes('file_extension', file_extension_id);
             });
         }
+
+        if($('#internal-notes').length){
+            const file_extension_id = $('#file-extension-id').text();
+
+            internalNotes('file_extension', file_extension_id);
+        }
+
+        if($('#internal-notes-form').length){
+            const file_extension_id = $('#file-extension-id').text();
+
+            internalNotesForm('file_extension', file_extension_id);
+        }
     });
 })(jQuery);
 

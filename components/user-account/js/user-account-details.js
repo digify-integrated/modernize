@@ -484,6 +484,18 @@
                 logNotes('user_account', user_account_id);
             });
         }
+
+        if($('#internal-notes').length){
+            const user_account_id = $('#user-account-id').text();
+
+            internalNotes('user_account', user_account_id);
+        }
+
+        if($('#internal-notes-form').length){
+            const user_account_id = $('#user-account-id').text();
+
+            internalNotesForm('user_account', user_account_id);
+        }
     });
 })(jQuery);
 

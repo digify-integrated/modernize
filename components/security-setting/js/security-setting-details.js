@@ -78,6 +78,18 @@
                 logNotes('security_setting', security_setting_id);
             });
         }
+
+        if($('#internal-notes').length){
+            const security_setting_id = $('#security-setting-id').text();
+
+            internalNotes('security_setting', security_setting_id);
+        }
+
+        if($('#internal-notes-form').length){
+            const security_setting_id = $('#security-setting-id').text();
+
+            internalNotesForm('security_setting', security_setting_id);
+        }
     });
 })(jQuery);
 

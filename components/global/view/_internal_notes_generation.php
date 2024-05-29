@@ -31,7 +31,7 @@ if(isset($_POST['type']) && !empty($_POST['type'])){
         # -------------------------------------------------------------
         case 'internal notes':
             if(isset($_POST['database_table']) && !empty($_POST['database_table']) && isset($_POST['reference_id']) && !empty($_POST['reference_id'])){
-                $internalNote = '';
+                $internalNoteList = '';
 
                 $databaseTable = htmlspecialchars($_POST['database_table'], ENT_QUOTES, 'UTF-8');
                 $referenceID = htmlspecialchars($_POST['reference_id'], ENT_QUOTES, 'UTF-8');
@@ -66,24 +66,34 @@ if(isset($_POST['type']) && !empty($_POST['type'])){
                             $attachmentFileName = $internalNotesAttachment['attachment_file_name'];
                             $attachmentFileSize = $systemModel->getFormatBytes($internalNotesAttachment['attachment_file_size']);
                             $attachmentPathFile = $internalNotesAttachment['attachment_path_file'];
-    
-                            $attachment .= '<div class="position-relative d-flex gap-2 flex-wrap align-items-center">
-                                                <a href="'. $attachmentPathFile .'" class="stretched-link" target="_blank"></a>
-                                                <img src="'. $attachmentPathFile .'" width="45" class="rounded" alt="attachment">
-                                                <div class="ms-3">
-                                                    <h6 class="mb-0 fw-semibold">'. $attachmentFileName .'</h6>
-                                                    <span class="fs-2">'. $attachmentFileSize .'</span>
-                                                </div>
-                                            </div>';
+
+                            if(file_exists(str_replace('./components/', '../../', $attachmentPathFile))){
+                                $fileExtension = pathinfo($attachmentPathFile, PATHINFO_EXTENSION);                                
+                                $attachmentImage = ' <img src="'. $systemModel->getFileExtensionIcon($fileExtension) .'" class="rounded" alt="album" width="30">';
+        
+                                $attachment .= '<a href="'. $attachmentPathFile .'" target="_blank">
+                                                    <div class="mt-4 card p-3 rounded shadow-none border">
+                                                        <div class="d-flex align-items-center">
+                                                            <div class="position-relative">
+                                                                '. $attachmentImage .'
+                                                            </div>
+                                                            <div class="ms-3">
+                                                                <h6 class="mb-0 fs-5">'. $attachmentFileName .'</h6>
+                                                                <small>'. $attachmentFileSize .'</small>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </a>';
+                            }
                         }
                     }                    
                     
-                    $internalNote .= '<div class="p-4 rounded-4 text-bg-light mb-3">
+                    $internalNoteList .= '<div class="p-4 rounded-4 text-bg-light mb-3">
                                     <div class="d-flex align-items-center gap-6 flex-wrap">
                                         <img src="'. $profilePicture .'" alt="user" class="rounded-circle" width="33" height="33">
                                         <h6 class="mb-0">'. $fileAs .'</h6>
                                         <span class="fs-2">
-                                            <span class="p-1 text-bg-muted rounded-circle d-inline-block"></span> '. $timeElapsed .'
+                                            <span class="p-1 text-bg-muted rounded-circle d-inline-block me-2"></span> '. $timeElapsed .'
                                         </span>
                                     </div>
                                     '. $internalNote .'
@@ -91,14 +101,14 @@ if(isset($_POST['type']) && !empty($_POST['type'])){
                                 </div>';
                 }
 
-                if(empty($internalNote)){
-                    $internalNote = '<div class="p-4 rounded-4 text-bg-light mb-3 text-center">
+                if(empty($internalNoteList)){
+                    $internalNoteList = '<div class="p-4 rounded-4 text-bg-light mb-3 text-center">
                                 No internal notes found.
                             </div>';
                 }
 
                 $response[] = [
-                    'INTERNAL_NOTES' => $internalNote
+                    'INTERNAL_NOTES' => $internalNoteList
                 ];
 
                 echo json_encode($response);

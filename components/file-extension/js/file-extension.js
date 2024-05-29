@@ -5,7 +5,7 @@
         generateFilterOptions('file type radio filter');
 
         if($('#file-extension-table').length){
-            menuItemTable('#file-extension-table');
+            fileExtensionTable('#file-extension-table');
         }
 
         $(document).on('click','.delete-file-extension',function() {
@@ -136,13 +136,13 @@
         });
 
         $(document).on('click','#apply-filter',function() {
-            menuItemTable('#file-extension-table');
+            fileExtensionTable('#file-extension-table');
             $('#filter-offcanvas').offcanvas('hide');
         });
     });
 })(jQuery);
 
-function menuItemTable(datatable_name, buttons = false, show_all = false){
+function fileExtensionTable(datatable_name, buttons = false, show_all = false){
     toggleHideActionDropdown();
 
     const type = 'file extension table';

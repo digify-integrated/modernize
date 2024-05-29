@@ -1,4 +1,4 @@
-/* Menu Item Table */
+/* File Extension Table */
 
 CREATE TABLE file_extension (
     file_extension_id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY NOT NULL,

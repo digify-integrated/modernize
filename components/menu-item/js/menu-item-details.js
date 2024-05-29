@@ -212,6 +212,18 @@
                 logNotes('role_permission', role_permission_id);
             });
         }
+
+        if($('#internal-notes').length){
+            const menu_item_id = $('#menu-item-id').text();
+
+            internalNotes('menu_item', menu_item_id);
+        }
+
+        if($('#internal-notes-form').length){
+            const menu_item_id = $('#menu-item-id').text();
+
+            internalNotesForm('menu_item', menu_item_id);
+        }
     });
 })(jQuery);
 

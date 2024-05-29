@@ -78,6 +78,18 @@
                 logNotes('file_type', file_type_id);
             });
         }
+        
+        if($('#internal-notes').length){
+            const file_type_id = $('#file-type-id').text();
+
+            internalNotes('file_type', file_type_id);
+        }
+
+        if($('#internal-notes-form').length){
+            const file_type_id = $('#file-type-id').text();
+
+            internalNotesForm('file_type', file_type_id);
+        }
     });
 })(jQuery);
 

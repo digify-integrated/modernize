@@ -78,6 +78,18 @@
                 logNotes('system_setting', system_setting_id);
             });
         }
+
+        if($('#internal-notes').length){
+            const system_setting_id = $('#system-setting-id').text();
+
+            internalNotes('system_setting', system_setting_id);
+        }
+
+        if($('#internal-notes-form').length){
+            const system_setting_id = $('#system-setting-id').text();
+
+            internalNotesForm('system_setting', system_setting_id);
+        }
     });
 })(jQuery);
 

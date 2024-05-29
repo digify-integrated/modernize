@@ -204,6 +204,18 @@
                 logNotes('role_system_action_permission', role_system_action_permission_id);
             });
         }
+
+        if($('#internal-notes').length){
+            const system_action_id = $('#system-action-id').text();
+
+            internalNotes('system_action', system_action_id);
+        }
+
+        if($('#internal-notes-form').length){
+            const system_action_id = $('#system-action-id').text();
+
+            internalNotesForm('system_action', system_action_id);
+        }
     });
 })(jQuery);
 

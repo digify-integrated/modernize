@@ -134,36 +134,5 @@ class FileTypeModel {
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
     # -------------------------------------------------------------
-
-    # -------------------------------------------------------------
-    #   Generate methods
-    # -------------------------------------------------------------
-
-    # -------------------------------------------------------------
-    #
-    # Function: generateFileTypeOptions
-    # Description: Generates the file type options.
-    #
-    # Parameters:None
-    #
-    # Returns: String.
-    #
-    # -------------------------------------------------------------
-    public function generateFileTypeOptions() {
-        $stmt = $this->db->getConnection()->prepare('CALL generateFileTypeOptions()');
-        $stmt->execute();
-        $options = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-        $htmlOptions = '';
-        foreach ($options as $row) {
-            $fileTypeID = $row['file_type_id'];
-            $fileTypeName = $row['file_type_name'];
-
-            $htmlOptions .= '<option value="' . htmlspecialchars($fileTypeID, ENT_QUOTES) . '">' . htmlspecialchars($fileTypeName, ENT_QUOTES) . '</option>';
-        }
-
-        return $htmlOptions;
-    }
-    # -------------------------------------------------------------
 }
 ?>

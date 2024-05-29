@@ -78,6 +78,18 @@
                 logNotes('menu_group', menu_group_id);
             });
         }
+
+        if($('#internal-notes').length){
+            const menu_group_id = $('#menu-group-id').text();
+
+            internalNotes('menu_group', menu_group_id);
+        }
+
+        if($('#internal-notes-form').length){
+            const menu_group_id = $('#menu-group-id').text();
+
+            internalNotesForm('menu_group', menu_group_id);
+        }
     });
 })(jQuery);
 

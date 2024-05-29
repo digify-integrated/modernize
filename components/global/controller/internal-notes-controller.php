@@ -174,7 +174,7 @@ class InternalNotesController {
                 define('PROJECT_BASE_DIR', dirname(__DIR__));
                 define('INTERNAL_NOTES_DIR', 'files/internal_notes/');
     
-                $directory = PROJECT_BASE_DIR. '/'. INTERNAL_NOTES_DIR;
+                $directory = PROJECT_BASE_DIR. '/'. INTERNAL_NOTES_DIR . $internalNoteID . '/';
                 
                 $directoryChecker = $this->securityModel->directoryChecker(str_replace('./', '../../', $directory));
     
@@ -201,67 +201,38 @@ class InternalNotesController {
                 }
 
                 for ($i = 0; $i < count($_FILES['internal_notes_files']['name']); $i++) {
+                    $error = 0;
                     $internalNotesFileName = $_FILES['internal_notes_files']['name'][$i];
                     $internalNotesFileSize = $_FILES['internal_notes_files']['size'][$i];
                     $internalNotesFileError = $_FILES['internal_notes_files']['error'][$i];
-                    $internalNotesFileTempNames = $_FILES['internal_notes_files']['tmp_name'][$i];
+                    $internalNotesFileTempName = $_FILES['internal_notes_files']['tmp_name'][$i];
                     $internalNotesFileExtension = explode('.', $internalNotesFileName);
+                    $internalNotesActualFileName = reset($internalNotesFileExtension);
                     $internalNotesActualFileExtension = strtolower(end($internalNotesFileExtension));
 
                     if (!in_array($internalNotesActualFileExtension, $allowedFileExtensions)) {
-                        $response = [
-                            'success' => false,
-                            'title' => 'Insert Internal Note Error',
-                            'message' => 'The attachment uploaded is not supported.',
-                            'messageType' => 'error'
-                        ];
-                        
-                        echo json_encode($response);
-                        exit;
+                       $error = $error + 1;
                     }
                     
                     if($internalNotesFileError){
-                        $response = [
-                            'success' => false,
-                            'title' => 'Insert Internal Note Error',
-                            'message' => 'An error occurred while uploading the attachment.',
-                            'messageType' => 'error'
-                        ];
-                        
-                        echo json_encode($response);
-                        exit;
+                        $error = $error + 1;
                     }
                     
                     if($internalNotesFileSize > ($maxFileSize * 1024)){
-                        $response = [
-                            'success' => false,
-                            'title' => 'Insert Internal Note Error',
-                            'message' => 'The internal note attachment exceeds the maximum allowed size of ' . number_format($maxFileSize) . ' kb.',
-                            'messageType' => 'error'
-                        ];
-                        
-                        echo json_encode($response);
-                        exit;
+                        $error = $error + 1;
                     }
 
-                    $fileName = $this->securityModel->generateFileName();
-                    $fileNew = $fileName . '.' . $internalNotesActualFileExtension;
+                    $fileNew = $internalNotesActualFileName . '.' . $internalNotesActualFileExtension;
                     $fileDestination = $directory. $fileNew;
-                    $filePath = './components/global/files/internal_notes/' . $fileNew;
+                    $filePath = './components/global/files/internal_notes/' . $internalNoteID . '/'  . $fileNew;
 
-                    if(!move_uploaded_file($internalNotesFileTempNames, $fileDestination)){
-                        $response = [
-                            'success' => false,
-                            'title' => 'Insert Internal Note Error',
-                            'message' => 'The internal notes attachment cannot be uploaded due to an error.',
-                            'messageType' => 'error'
-                        ];
-                        
-                        echo json_encode($response);
-                        exit;           
+                    if(!move_uploaded_file($internalNotesFileTempName, $fileDestination)){
+                        $error = $error + 1;
                     }
-        
-                    $this->globalModel->insertInternalNotesAttachment($internalNoteID, $fileName, $internalNotesFileSize, $filePath);
+                    
+                    if($error == 0){
+                        $this->globalModel->insertInternalNotesAttachment($internalNoteID, $internalNotesActualFileName, $internalNotesFileSize, $filePath);
+                    }
                 }
             }
     

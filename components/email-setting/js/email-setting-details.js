@@ -78,6 +78,18 @@
                 logNotes('email_setting', email_setting_id);
             });
         }
+
+        if($('#internal-notes').length){
+            const email_setting_id = $('#email-setting-id').text();
+
+            internalNotes('email_setting', email_setting_id);
+        }
+
+        if($('#internal-notes-form').length){
+            const email_setting_id = $('#email-setting-id').text();
+
+            internalNotesForm('email_setting', email_setting_id);
+        }
     });
 })(jQuery);
 

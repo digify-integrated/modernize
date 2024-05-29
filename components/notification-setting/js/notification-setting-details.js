@@ -237,6 +237,18 @@
                 logNotes('notification_setting_sms_template', notification_setting_id);
             });
         }
+
+        if($('#internal-notes').length){
+            const notification_setting_id = $('#notification-setting-id').text();
+
+            internalNotes('notification_setting', notification_setting_id);
+        }
+
+        if($('#internal-notes-form').length){
+            const notification_setting_id = $('#notification-setting-id').text();
+
+            internalNotesForm('notification_setting', notification_setting_id);
+        }
     });
 })(jQuery);
 

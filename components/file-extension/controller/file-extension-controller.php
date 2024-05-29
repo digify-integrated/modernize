@@ -26,8 +26,8 @@ class FileExtensionController {
     # These instances are used for file extension related, user related operations and security related operations, respectively.
     #
     # Parameters:
-    # - @param fileExtensionModel $fileExtensionModel     The fileExtensionModel instance for file extension related operations.
-    # - @param FileTypeModel $fileTypeModel     The fileTypeModel instance for menu group related operations.
+    # - @param FileExtensionModel $fileExtensionModel     The fileExtensionModel instance for file extension related operations.
+    # - @param FileTypeModel $fileTypeModel     The fileTypeModel instance for file type related operations.
     # - @param AuthenticationModel $authenticationModel     The AuthenticationModel instance for user related operations.
     # - @param SecurityModel $securityModel   The SecurityModel instance for security related operations.
     #
@@ -476,7 +476,7 @@ require_once '../../file-extension/model/file-extension-model.php';
 require_once '../../file-type/model/file-type-model.php';
 require_once '../../authentication/model/authentication-model.php';
 
-$controller = new FileExtensionController(new fileExtensionModel(new DatabaseModel), new FileTypeModel(new DatabaseModel), new AuthenticationModel(new DatabaseModel), new SecurityModel());
+$controller = new FileExtensionController(new FileExtensionModel(new DatabaseModel), new FileTypeModel(new DatabaseModel), new AuthenticationModel(new DatabaseModel), new SecurityModel());
 $controller->handleRequest();
 
 ?>
