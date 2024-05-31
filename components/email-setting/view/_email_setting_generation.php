@@ -100,9 +100,6 @@ if(isset($_POST['type']) && !empty($_POST['type'])){
             ];
 
             foreach ($options as $row) {
-                $emailSettingID = $row['email_setting_id'];
-                $emailSettingName = $row['email_setting_name'];
-
                 $response[] = [
                     'id' => $row['email_setting_id'],
                     'text' => $row['email_setting_name']

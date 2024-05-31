@@ -3,13 +3,13 @@ require_once '../../../session.php';
 require_once '../../global/config/config.php';
 require_once '../../global/model/database-model.php';
 require_once '../../global/model/system-model.php';
-require_once '../../menu-group/model/menu-group-model.php';
+require_once '../../city/model/city-model.php';
 require_once '../../global/model/security-model.php';
 require_once '../../global/model/global-model.php';
 
 $databaseModel = new DatabaseModel();
 $systemModel = new SystemModel();
-$menuGroupModel = new MenuGroupModel($databaseModel);
+$cityModel = new CityModel($databaseModel);
 $securityModel = new SecurityModel();
 $globalModel = new GlobalModel($databaseModel, $securityModel);
 
@@ -22,46 +22,52 @@ if(isset($_POST['type']) && !empty($_POST['type'])){
     switch ($type) {
         # -------------------------------------------------------------
         #
-        # Type: menu group table
+        # Type: city table
         # Description:
-        # Generates the menu group table.
+        # Generates the city table.
         #
         # Parameters: None
         #
         # Returns: Array
         #
         # -------------------------------------------------------------
-        case 'menu group table':
-            $sql = $databaseModel->getConnection()->prepare('CALL generateMenuGroupTable()');
+        case 'city table':
+            $filterByState = isset($_POST['filter_by_state']) ? htmlspecialchars($_POST['filter_by_state'], ENT_QUOTES, 'UTF-8') : null;
+            $filterByCountry = isset($_POST['filter_by_country']) ? htmlspecialchars($_POST['filter_by_country'], ENT_QUOTES, 'UTF-8') : null;
+            $sql = $databaseModel->getConnection()->prepare('CALL generateCityTable(:filterByState, :filterByCountry)');
+            $sql->bindValue(':filterByState', $filterByState, PDO::PARAM_INT);
+            $sql->bindValue(':filterByCountry', $filterByCountry, PDO::PARAM_INT);
             $sql->execute();
             $options = $sql->fetchAll(PDO::FETCH_ASSOC);
             $sql->closeCursor();
 
-            $menuGroupDeleteAccess = $globalModel->checkAccessRights($userID, $pageID, 'delete');
+            $cityDeleteAccess = $globalModel->checkAccessRights($userID, $pageID, 'delete');
 
             foreach ($options as $row) {
-                $menuGroupID = $row['menu_group_id'];
-                $menuGroupName = $row['menu_group_name'];
-                $orderSequence = $row['order_sequence'];
+                $cityID = $row['city_id'];
+                $cityName = $row['city_name'];
+                $stateName = $row['state_name'];
+                $countryName = $row['country_name'];
 
-                $menuGroupIDEncrypted = $securityModel->encryptData($menuGroupID);
+                $cityIDEncrypted = $securityModel->encryptData($cityID);
 
                 $deleteButton = '';
-                if($menuGroupDeleteAccess['total'] > 0){
-                    $deleteButton = '<a href="javascript:void(0);" class="text-danger ms-3 delete-menu-group" data-menu-group-id="' . $menuGroupID . '" title="Delete Menu Group">
-                                    <i class="ti ti-trash fs-5"></i>
-                                </a>';
+                if($cityDeleteAccess['total'] > 0){
+                    $deleteButton = '<a href="javascript:void(0);" class="text-danger ms-3 delete-city" data-city-id="' . $cityID . '" title="Delete City">
+                                        <i class="ti ti-trash fs-5"></i>
+                                    </a>';
                 }
 
                 $response[] = [
-                    'CHECK_BOX' => '<input class="form-check-input datatable-checkbox-children" type="checkbox" value="'. $menuGroupID .'">',
-                    'MENU_GROUP_NAME' => $menuGroupName,
-                    'ORDER_SEQUENCE' => $orderSequence,
-                    'ACTION' => '<div class="d-flex gap-2">
-                                    <a href="'. $pageLink .'&id='. $menuGroupIDEncrypted .'" class="text-info" title="View Details">
+                    'CHECK_BOX' => '<input class="form-check-input datatable-checkbox-children" type="checkbox" value="'. $cityID .'">',
+                    'CITY_NAME' => $cityName,
+                    'STATE_NAME' => $stateName,
+                    'COUNTRY_NAME' => $countryName,
+                    'ACTION' => '<div class="action-btn">
+                                    <a href="'. $pageLink .'&id='. $cityIDEncrypted .'" class="text-info" title="View Details">
                                         <i class="ti ti-eye fs-5"></i>
                                     </a>
-                                    '. $deleteButton .'
+                                   '. $deleteButton .'
                                 </div>'
                 ];
             }
@@ -72,17 +78,17 @@ if(isset($_POST['type']) && !empty($_POST['type'])){
 
         # -------------------------------------------------------------
         #
-        # Type: menu group options
+        # Type: city options
         # Description:
-        # Generates the menu group options.
+        # Generates the city options.
         #
         # Parameters: None
         #
         # Returns: Array
         #
         # -------------------------------------------------------------
-        case 'menu group options':
-            $sql = $databaseModel->getConnection()->prepare('CALL generateMenuGroupOptions()');
+        case 'city options':
+            $sql = $databaseModel->getConnection()->prepare('CALL generateCityOptions()');
             $sql->execute();
             $options = $sql->fetchAll(PDO::FETCH_ASSOC);
             $sql->closeCursor();
@@ -94,8 +100,8 @@ if(isset($_POST['type']) && !empty($_POST['type'])){
 
             foreach ($options as $row) {
                 $response[] = [
-                    'id' => $row['menu_group_id'],
-                    'text' => $row['menu_group_name']
+                    'id' => $row['city_id'],
+                    'text' => $row['city_name']
                 ];
             }
 
@@ -105,33 +111,33 @@ if(isset($_POST['type']) && !empty($_POST['type'])){
 
         # -------------------------------------------------------------
         #
-        # Type: menu group radio filter
+        # Type: city radio filter
         # Description:
-        # Generates the menu group options.
+        # Generates the city options.
         #
         # Parameters: None
         #
         # Returns: Array
         #
         # -------------------------------------------------------------
-        case 'menu group radio filter':
-            $sql = $databaseModel->getConnection()->prepare('CALL generateMenuGroupOptions()');
+        case 'city radio filter':
+            $sql = $databaseModel->getConnection()->prepare('CALL generateCityOptions()');
             $sql->execute();
             $options = $sql->fetchAll(PDO::FETCH_ASSOC);
             $sql->closeCursor();
 
             $filterOptions = '<div class="form-check py-2 mb-0">
-                            <input class="form-check-input p-2" type="radio" name="filter-menu-group" id="filter-menu-group-all" value="" checked>
-                            <label class="form-check-label d-flex align-items-center ps-2" for="filter-menu-group-all">All</label>
+                            <input class="form-check-input p-2" type="radio" name="filter-city" id="filter-city-all" value="" checked>
+                            <label class="form-check-label d-flex align-items-center ps-2" for="filter-city-all">All</label>
                         </div>';
 
             foreach ($options as $row) {
-                $menuGroupID = $row['menu_group_id'];
-                $menuGroupName = $row['menu_group_name'];
+                $cityID = $row['city_id'];
+                $cityName = $row['city_name'];
 
                 $filterOptions .= '<div class="form-check py-2 mb-0">
-                                <input class="form-check-input p-2" type="radio" name="filter-menu-group" id="filter-menu-group-'. $menuGroupID .'" value="'. $menuGroupID .'">
-                                <label class="form-check-label d-flex align-items-center ps-2" for="filter-menu-group-'. $menuGroupID .'">'. $menuGroupName .'</label>
+                                <input class="form-check-input p-2" type="radio" name="filter-city" id="filter-city-'. $cityID .'" value="'. $cityID .'">
+                                <label class="form-check-label d-flex align-items-center ps-2" for="filter-city-'. $cityID .'">'. $cityName .'</label>
                             </div>';
             }
 

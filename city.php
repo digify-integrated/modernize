@@ -3,16 +3,17 @@
     require('view/_check_user_status.php');
     require('view/_page_details.php');
 
-    $countryReadAccess = $globalModel->checkAccessRights($userID, $pageID, 'read');
-    $countryCreateAccess = $globalModel->checkAccessRights($userID, $pageID, 'create');
-    $countryWriteAccess = $globalModel->checkAccessRights($userID, $pageID, 'write');
-    $countryDeleteAccess = $globalModel->checkAccessRights($userID, $pageID, 'delete');
+    $cityReadAccess = $globalModel->checkAccessRights($userID, $pageID, 'read');
+    $cityCreateAccess = $globalModel->checkAccessRights($userID, $pageID, 'create');
+    $cityWriteAccess = $globalModel->checkAccessRights($userID, $pageID, 'write');
+    $cityDeleteAccess = $globalModel->checkAccessRights($userID, $pageID, 'delete');
 ?>
 <!DOCTYPE html>
 <html lang="en" dir="ltr" data-bs-theme="light" data-color-theme="Blue_Theme" data-layout="vertical">
     <head>
         <?php include_once('view/_head.php'); ?>
         <link rel="stylesheet" href="./assets/libs/datatables.net-bs5/css/dataTables.bootstrap5.min.css" />
+        <link rel="stylesheet" href="./assets/libs/select2/dist/css/select2.min.css">
     </head>
 
     <body>
@@ -36,7 +37,7 @@
                                                             require('view/_breadcrumb.php');
 
                                                             if(!$newRecord && !empty($detailID)){
-                                                                echo '<li class="breadcrumb-item" id="country-id">'. $detailID .'</li>';
+                                                                echo '<li class="breadcrumb-item" id="city-id">'. $detailID .'</li>';
                                                             }
 
                                                             if($newRecord){
@@ -58,13 +59,13 @@
                         </div>
                         <?php
                             if($newRecord){
-                                require_once('components/country/view/_country_new.php');
+                                require_once('components/city/view/_city_new.php');
                             }
                             else if(!empty($detailID)){
-                                require_once('components/country/view/_country_details.php');
+                                require_once('components/city/view/_city_details.php');
                             }
                             else{
-                                require_once('components/country/view/_country.php');
+                                require_once('components/city/view/_city.php');
                             }
                         ?>
                     </div>
@@ -80,19 +81,21 @@
         
         <script src="./assets/libs/max-length/bootstrap-maxlength.min.js"></script>
         <script src="./assets/libs/datatables.net/js/jquery.dataTables.min.js"></script>
+        <script src="./assets/libs/select2/dist/js/select2.full.min.js"></script>
+        <script src="./assets/libs/select2/dist/js/select2.min.js"></script>
 
         <?php 
             if($newRecord){
-                $scriptLink = 'country-new.js';
+                $scriptLink = 'city-new.js';
             }
             else if(!empty($detailID)){
-                $scriptLink = 'country-details.js';
+                $scriptLink = 'city-details.js';
             }
             else{
-                $scriptLink = 'country.js';
+                $scriptLink = 'city.js';
             }
 
-            echo '<script src="./components/country/js/'. $scriptLink .'?v=' . rand() .'"></script>';
+            echo '<script src="./components/city/js/'. $scriptLink .'?v=' . rand() .'"></script>';
         ?>
     </body>
 </html>

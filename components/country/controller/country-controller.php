@@ -338,7 +338,7 @@ class CountryController {
     #
     # Function: deleteMultipleCountry
     # Description: 
-    # Delete the selected countrys if it exists; otherwise, skip it.
+    # Delete the selected countries if it exists; otherwise, skip it.
     #
     # Parameters: None
     #
@@ -365,7 +365,7 @@ class CountryController {
             $response = [
                 'success' => true,
                 'title' => 'Delete Multiple Country Success',
-                'message' => 'The selected countrys have been deleted successfully.',
+                'message' => 'The selected countries have been deleted successfully.',
                 'messageType' => 'success'
             ];
             

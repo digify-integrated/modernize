@@ -3,16 +3,17 @@ session_start();
 
 # -------------------------------------------------------------
 #
-# Function: StateController
+# Function: CityController
 # Description: 
-# The StateController class handles state related operations and interactions.
+# The CityController class handles city related operations and interactions.
 #
 # Parameters: None
 #
 # Returns: None
 #
 # -------------------------------------------------------------
-class StateController {
+class CityController {
+    private $cityModel;
     private $stateModel;
     private $countryModel;
     private $authenticationModel;
@@ -22,19 +23,21 @@ class StateController {
     #
     # Function: __construct
     # Description: 
-    # The constructor initializes the object with the provided stateModel, AuthenticationModel and SecurityModel instances.
-    # These instances are used for state related, user related operations and security related operations, respectively.
+    # The constructor initializes the object with the provided cityModel, AuthenticationModel and SecurityModel instances.
+    # These instances are used for city related, user related operations and security related operations, respectively.
     #
     # Parameters:
+    # - @param CityModel $cityModel     The cityModel instance for city related operations.
     # - @param StateModel $stateModel     The stateModel instance for state related operations.
-    # - @param CountryModel $countryModel     The countryModel instance for country related operations.
+    # - @param CountryModel $stateModel     The countryModel instance for country related operations.
     # - @param AuthenticationModel $authenticationModel     The AuthenticationModel instance for user related operations.
     # - @param SecurityModel $securityModel   The SecurityModel instance for security related operations.
     #
     # Returns: None
     #
     # -------------------------------------------------------------
-    public function __construct(StateModel $stateModel, CountryModel $countryModel, AuthenticationModel $authenticationModel, SecurityModel $securityModel) {
+    public function __construct(CityModel $cityModel, StateModel $stateModel, CountryModel $countryModel, AuthenticationModel $authenticationModel, SecurityModel $securityModel) {
+        $this->cityModel = $cityModel;
         $this->stateModel = $stateModel;
         $this->countryModel = $countryModel;
         $this->authenticationModel = $authenticationModel;
@@ -124,20 +127,20 @@ class StateController {
             $transaction = isset($_POST['transaction']) ? $_POST['transaction'] : null;
 
             switch ($transaction) {
-                case 'add state':
-                    $this->addState();
+                case 'add city':
+                    $this->addCity();
                     break;
-                case 'update state':
-                    $this->updateState();
+                case 'update city':
+                    $this->updateCity();
                     break;
-                case 'get state details':
-                    $this->getStateDetails();
+                case 'get city details':
+                    $this->getCityDetails();
                     break;
-                case 'delete state':
-                    $this->deleteState();
+                case 'delete city':
+                    $this->deleteCity();
                     break;
-                case 'delete multiple state':
-                    $this->deleteMultipleState();
+                case 'delete multiple city':
+                    $this->deleteMultipleCity();
                     break;
                 default:
                     $response = [
@@ -160,35 +163,39 @@ class StateController {
 
     # -------------------------------------------------------------
     #
-    # Function: addState
+    # Function: addCity
     # Description: 
-    # Inserts a state.
+    # Inserts a city.
     #
     # Parameters: None
     #
     # Returns: Array
     #
     # -------------------------------------------------------------
-    public function addState() {
+    public function addCity() {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             return;
         }
 
-        if (isset($_POST['state_name']) && !empty($_POST['state_name']) && isset($_POST['country_id']) && !empty($_POST['country_id']) ) {
+        if (isset($_POST['city_name']) && !empty($_POST['city_name']) && isset($_POST['state_id']) && !empty($_POST['state_id'])) {
             $userID = $_SESSION['user_account_id'];
-            $stateName = $_POST['state_name'];
-            $countryID = htmlspecialchars($_POST['country_id'], ENT_QUOTES, 'UTF-8');
+            $cityName = $_POST['city_name'];
+            $stateID = htmlspecialchars($_POST['state_id'], ENT_QUOTES, 'UTF-8');
+
+            $stateDetails = $this->stateModel->getState($stateID);
+            $stateName = $stateDetails['state_name'] ?? null;
+            $countryID = $stateDetails['country_id'] ?? null;
 
             $countryDetails = $this->countryModel->getCountry($countryID);
             $countryName = $countryDetails['country_name'] ?? null;
         
-            $stateID = $this->stateModel->insertState($stateName, $countryID, $countryName, $userID);
+            $cityID = $this->cityModel->insertCity($cityName, $stateID, $stateName, $countryID, $countryName, $userID);
     
             $response = [
                 'success' => true,
-                'stateID' => $this->securityModel->encryptData($stateID),
-                'title' => 'Insert State Success',
-                'message' => 'The state has been inserted successfully.',
+                'cityID' => $this->securityModel->encryptData($cityID),
+                'title' => 'Insert City Success',
+                'message' => 'The city has been inserted successfully.',
                 'messageType' => 'success'
             ];
             
@@ -215,35 +222,35 @@ class StateController {
 
     # -------------------------------------------------------------
     #
-    # Function: updateState
+    # Function: updateCity
     # Description: 
-    # Updates the state if it exists; otherwise, return an error message.
+    # Updates the city if it exists; otherwise, return an error message.
     #
     # Parameters: None
     #
     # Returns: Array
     #
     # -------------------------------------------------------------
-    public function updateState() {
+    public function updateCity() {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             return;
         }
         
-        if (isset($_POST['state_id']) && !empty($_POST['state_id']) && isset($_POST['state_name']) && !empty($_POST['state_name']) && isset($_POST['country_id']) && !empty($_POST['country_id'])) {
+        if (isset($_POST['city_id']) && !empty($_POST['city_id']) && isset($_POST['city_name']) && !empty($_POST['city_name']) && isset($_POST['state_id']) && !empty($_POST['state_id'])) {
             $userID = $_SESSION['user_account_id'];
+            $cityID = htmlspecialchars($_POST['city_id'], ENT_QUOTES, 'UTF-8');
+            $cityName = $_POST['city_name'];
             $stateID = htmlspecialchars($_POST['state_id'], ENT_QUOTES, 'UTF-8');
-            $stateName = $_POST['state_name'];
-            $countryID = htmlspecialchars($_POST['country_id'], ENT_QUOTES, 'UTF-8');
         
-            $checkStateExist = $this->stateModel->checkStateExist($stateID);
-            $total = $checkStateExist['total'] ?? 0;
+            $checkCityExist = $this->cityModel->checkCityExist($cityID);
+            $total = $checkCityExist['total'] ?? 0;
 
             if($total === 0){
                 $response = [
                     'success' => false,
                     'notExist' => true,
-                    'title' => 'Update State Error',
-                    'message' => 'The state does not exist.',
+                    'title' => 'Update City Error',
+                    'message' => 'The city does not exist.',
                     'messageType' => 'error'
                 ];
                 
@@ -251,15 +258,19 @@ class StateController {
                 exit;
             }
 
-            $countryDetails = $this->countryModel->getCountry($countryID);
+            $stateDetails = $this->stateModel->getState($stateID);
+            $stateName = $stateDetails['state_name'] ?? null;
+            $countryID = $stateDetails['country_id'] ?? null;
+
+            $countryDetails = $this->countryModel->getCountry($stateID);
             $countryName = $countryDetails['country_name'] ?? null;
 
-            $this->stateModel->updateState($stateID, $stateName, $countryID, $countryName, $userID);
+            $this->cityModel->updateCity($cityID, $cityName, $stateID, $stateName, $countryID, $countryName, $userID);
                 
             $response = [
                 'success' => true,
-                'title' => 'Update State Success',
-                'message' => 'The state has been updated successfully.',
+                'title' => 'Update City Success',
+                'message' => 'The city has been updated successfully.',
                 'messageType' => 'success'
             ];
             
@@ -286,32 +297,32 @@ class StateController {
 
     # -------------------------------------------------------------
     #
-    # Function: deleteState
+    # Function: deleteCity
     # Description: 
-    # Delete the state if it exists; otherwise, return an error message.
+    # Delete the city if it exists; otherwise, return an error message.
     #
     # Parameters: None
     #
     # Returns: Array
     #
     # -------------------------------------------------------------
-    public function deleteState() {
+    public function deleteCity() {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             return;
         }
 
-        if (isset($_POST['state_id']) && !empty($_POST['state_id'])) {
-            $stateID = htmlspecialchars($_POST['state_id'], ENT_QUOTES, 'UTF-8');
+        if (isset($_POST['city_id']) && !empty($_POST['city_id'])) {
+            $cityID = htmlspecialchars($_POST['city_id'], ENT_QUOTES, 'UTF-8');
         
-            $checkStateExist = $this->stateModel->checkStateExist($stateID);
-            $total = $checkStateExist['total'] ?? 0;
+            $checkCityExist = $this->cityModel->checkCityExist($cityID);
+            $total = $checkCityExist['total'] ?? 0;
 
             if($total === 0){
                 $response = [
                     'success' => false,
                     'notExist' => true,
-                    'title' => 'Delete State Error',
-                    'message' => 'The state does not exist.',
+                    'title' => 'Delete City Error',
+                    'message' => 'The city does not exist.',
                     'messageType' => 'error'
                 ];
                 
@@ -319,12 +330,12 @@ class StateController {
                 exit;
             }
 
-            $this->stateModel->deleteState($stateID);
+            $this->cityModel->deleteCity($cityID);
                 
             $response = [
                 'success' => true,
-                'title' => 'Delete State Success',
-                'message' => 'The state has been deleted successfully.',
+                'title' => 'Delete City Success',
+                'message' => 'The city has been deleted successfully.',
                 'messageType' => 'success'
             ];
             
@@ -347,36 +358,36 @@ class StateController {
 
     # -------------------------------------------------------------
     #
-    # Function: deleteMultipleState
+    # Function: deleteMultipleCity
     # Description: 
-    # Delete the selected states if it exists; otherwise, skip it.
+    # Delete the selected cities if it exists; otherwise, skip it.
     #
     # Parameters: None
     #
     # Returns: Array
     #
     # -------------------------------------------------------------
-    public function deleteMultipleState() {
+    public function deleteMultipleCity() {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             return;
         }
 
-        if (isset($_POST['state_id']) && !empty($_POST['state_id'])) {
-            $stateIDs = $_POST['state_id'];
+        if (isset($_POST['city_id']) && !empty($_POST['city_id'])) {
+            $cityIDs = $_POST['city_id'];
     
-            foreach($stateIDs as $stateID){
-                $checkStateExist = $this->stateModel->checkStateExist($stateID);
-                $total = $checkStateExist['total'] ?? 0;
+            foreach($cityIDs as $cityID){
+                $checkCityExist = $this->cityModel->checkCityExist($cityID);
+                $total = $checkCityExist['total'] ?? 0;
 
                 if($total > 0){
-                    $this->stateModel->deleteState($stateID);
+                    $this->cityModel->deleteCity($cityID);
                 }
             }
                 
             $response = [
                 'success' => true,
-                'title' => 'Delete Multiple State Success',
-                'message' => 'The selected states have been deleted successfully.',
+                'title' => 'Delete Multiple City Success',
+                'message' => 'The selected cities have been deleted successfully.',
                 'messageType' => 'success'
             ];
             
@@ -403,33 +414,33 @@ class StateController {
 
     # -------------------------------------------------------------
     #
-    # Function: getStateDetails
+    # Function: getCityDetails
     # Description: 
-    # Handles the retrieval of state details.
+    # Handles the retrieval of city details.
     #
     # Parameters: None
     #
     # Returns: Array
     #
     # -------------------------------------------------------------
-    public function getStateDetails() {
+    public function getCityDetails() {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             return;
         }
     
-        if (isset($_POST['state_id']) && !empty($_POST['state_id'])) {
+        if (isset($_POST['city_id']) && !empty($_POST['city_id'])) {
             $userID = $_SESSION['user_account_id'];
-            $stateID = htmlspecialchars($_POST['state_id'], ENT_QUOTES, 'UTF-8');
+            $cityID = htmlspecialchars($_POST['city_id'], ENT_QUOTES, 'UTF-8');
 
-            $checkStateExist = $this->stateModel->checkStateExist($stateID);
-            $total = $checkStateExist['total'] ?? 0;
+            $checkCityExist = $this->cityModel->checkCityExist($cityID);
+            $total = $checkCityExist['total'] ?? 0;
 
             if($total === 0){
                 $response = [
                     'success' => false,
                     'notExist' => true,
-                    'title' => 'Get State Details Error',
-                    'message' => 'The state does not exist.',
+                    'title' => 'Get City Details Error',
+                    'message' => 'The city does not exist.',
                     'messageType' => 'error'
                 ];
                 
@@ -437,14 +448,14 @@ class StateController {
                 exit;
             }
     
-            $stateDetails = $this->stateModel->getState($stateID);
+            $cityDetails = $this->cityModel->getCity($cityID);
 
             $response = [
                 'success' => true,
-                'stateName' => $stateDetails['state_name'] ?? null,
-                'state' => $stateDetails['state'] ?? null,
-                'countryID' => $stateDetails['country_id'] ?? null,
-                'countryName' => $stateDetails['country_name'] ?? null
+                'cityName' => $cityDetails['city_name'] ?? null,
+                'city' => $cityDetails['city'] ?? null,
+                'stateID' => $cityDetails['state_id'] ?? null,
+                'stateName' => $cityDetails['state_name'] ?? null
             ];
 
             echo json_encode($response);
@@ -470,11 +481,12 @@ require_once '../../global/config/config.php';
 require_once '../../global/model/database-model.php';
 require_once '../../global/model/security-model.php';
 require_once '../../global/model/system-model.php';
+require_once '../../city/model/city-model.php';
 require_once '../../state/model/state-model.php';
 require_once '../../country/model/country-model.php';
 require_once '../../authentication/model/authentication-model.php';
 
-$controller = new StateController(new StateModel(new DatabaseModel), new CountryModel(new DatabaseModel), new AuthenticationModel(new DatabaseModel), new SecurityModel());
+$controller = new CityController(new CityModel(new DatabaseModel), new StateModel(new DatabaseModel), new CountryModel(new DatabaseModel), new AuthenticationModel(new DatabaseModel), new SecurityModel());
 $controller->handleRequest();
 
 ?>

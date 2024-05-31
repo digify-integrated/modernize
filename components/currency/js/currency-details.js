@@ -2,25 +2,24 @@
     'use strict';
 
     $(function() {
-        generateDropdownOptions('country options');
-        displayDetails('get state details');
+        displayDetails('get currency details');
 
-        if($('#state-form').length){
-            stateForm();
+        if($('#currency-form').length){
+            currencyForm();
         }
 
         $(document).on('click','#edit-details',function() {
-            displayDetails('get state details');
+            displayDetails('get currency details');
         });
 
-        $(document).on('click','#delete-state',function() {
-            const state_id = $('#state-id').text();
+        $(document).on('click','#delete-currency',function() {
+            const currency_id = $('#currency-id').text();
             const page_link = document.getElementById('page-link').getAttribute('href');
-            const transaction = 'delete state';
+            const transaction = 'delete currency';
     
             Swal.fire({
-                title: 'Confirm State Deletion',
-                text: 'Are you sure you want to delete this state?',
+                title: 'Confirm Currency Deletion',
+                text: 'Are you sure you want to delete this currency?',
                 icon: 'warning',
                 showCancelButton: !0,
                 confirmButtonText: 'Delete',
@@ -34,10 +33,10 @@
                 if (result.value) {
                     $.ajax({
                         type: 'POST',
-                        url: 'components/state/controller/state-controller.php',
+                        url: 'components/currency/controller/currency-controller.php',
                         dataType: 'json',
                         data: {
-                            state_id : state_id, 
+                            currency_id : currency_id, 
                             transaction : transaction
                         },
                         success: function (response) {
@@ -74,42 +73,42 @@
 
         if($('#log-notes-offcanvas').length && $('#view-log-notes').length){
             $(document).on('click','#view-log-notes',function() {
-                const state_id = $('#state-id').text();
+                const currency_id = $('#currency-id').text();
 
-                logNotes('state', state_id);
+                logNotes('currency', currency_id);
             });
         }
 
         if($('#internal-notes').length){
-            const state_id = $('#state-id').text();
+            const currency_id = $('#currency-id').text();
 
-            internalNotes('state', state_id);
+            internalNotes('currency', currency_id);
         }
 
         if($('#internal-notes-form').length){
-            const state_id = $('#state-id').text();
+            const currency_id = $('#currency-id').text();
 
-            internalNotesForm('state', state_id);
+            internalNotesForm('currency', currency_id);
         }
     });
 })(jQuery);
 
-function stateForm(){
-    $('#state-form').validate({
+function currencyForm(){
+    $('#currency-form').validate({
         rules: {
-            state_name: {
+            currency_name: {
                 required: true
             },
-            country_id: {
+            currency_symbol: {
                 required: true
             }
         },
         messages: {
-            state_name: {
+            currency_name: {
                 required: 'Please enter the display name'
             },
-            country_id: {
-                required: 'Please choose the country'
+            currency_symbol: {
+                required: 'Please enter the symbol'
             }
         },
         errorPlacement: function (error, element) {
@@ -134,14 +133,14 @@ function stateForm(){
             }
         },
         submitHandler: function(form) {
-            const state_id = $('#state-id').text();
+            const currency_id = $('#currency-id').text();
             const page_link = document.getElementById('page-link').getAttribute('href'); 
-            const transaction = 'update state';
+            const transaction = 'update currency';
           
             $.ajax({
                 type: 'POST',
-                url: 'components/state/controller/state-controller.php',
-                data: $(form).serialize() + '&transaction=' + transaction + '&state_id=' + state_id,
+                url: 'components/currency/controller/currency-controller.php',
+                data: $(form).serialize() + '&transaction=' + transaction + '&currency_id=' + currency_id,
                 dataType: 'json',
                 beforeSend: function() {
                     disableFormSubmitButton('submit-data');
@@ -149,8 +148,8 @@ function stateForm(){
                 success: function (response) {
                     if (response.success) {
                         showNotification(response.title, response.message, response.messageType);
-                        displayDetails('get state details');
-                        $('#state-modal').modal('hide');
+                        displayDetails('get currency details');
+                        $('#currency-modal').modal('hide');
                     }
                     else {
                         if (response.isInactive || response.userNotExist || response.userInactive || response.userLocked || response.sessionExpired) {
@@ -185,29 +184,28 @@ function stateForm(){
 
 function displayDetails(transaction){
     switch (transaction) {
-        case 'get state details':
-            var state_id = $('#state-id').text();
+        case 'get currency details':
+            var currency_id = $('#currency-id').text();
             const page_link = document.getElementById('page-link').getAttribute('href');
             
             $.ajax({
-                url: 'components/state/controller/state-controller.php',
+                url: 'components/currency/controller/currency-controller.php',
                 method: 'POST',
                 dataType: 'json',
                 data: {
-                    state_id : state_id, 
+                    currency_id : currency_id, 
                     transaction : transaction
                 },
                 beforeSend: function(){
-                    resetModalForm('state-form');
+                    resetModalForm('currency-form');
                 },
                 success: function(response) {
                     if (response.success) {
-                        $('#state_name').val(response.stateName);
+                        $('#currency_name').val(response.currencyName);
+                        $('#currency_symbol').val(response.currencySymbol);
                         
-                        $('#country_id').val(response.countryID).trigger('change');
-                        
-                        $('#state_name_summary').text(response.stateName);
-                        $('#country_summary').text(response.countryName);
+                        $('#currency_name_summary').text(response.currencyName);
+                        $('#currency_symbol_summary').text(response.currencySymbol);
                     } 
                     else {
                         if (response.isInactive || response.userNotExist || response.userInactive || response.userLocked || response.sessionExpired) {
@@ -222,37 +220,6 @@ function displayDetails(transaction){
                             showNotification(response.title, response.message, response.messageType);
                         }
                     }
-                },
-                error: function(xhr, status, error) {
-                    var fullErrorMessage = `XHR status: ${status}, Error: ${error}`;
-                    if (xhr.responseText) {
-                        fullErrorMessage += `, Response: ${xhr.responseText}`;
-                    }
-                    showErrorDialog(fullErrorMessage);
-                }
-            });
-            break;
-    }
-}
-
-function generateDropdownOptions(type){
-    switch (type) {
-        case 'country options':
-            
-            $.ajax({
-                url: 'components/country/view/_country_generation.php',
-                method: 'POST',
-                dataType: 'json',
-                data: {
-                    type : type
-                },
-                success: function(response) {
-                    $('#country_id').select2({
-                        dropdownParent: $('#state-modal'),
-                        data: response
-                    }).on('change', function (e) {
-                        $(this).valid()
-                    });
                 },
                 error: function(xhr, status, error) {
                     var fullErrorMessage = `XHR status: ${status}, Error: ${error}`;

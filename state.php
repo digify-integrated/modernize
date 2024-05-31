@@ -59,13 +59,13 @@
                         </div>
                         <?php
                             if($newRecord){
-                                require_once('components/state/view/state_new.php');
+                                require_once('components/state/view/_state_new.php');
                             }
                             else if(!empty($detailID)){
-                                require_once('components/state/view/state_details.php');
+                                require_once('components/state/view/_state_details.php');
                             }
                             else{
-                                require_once('components/state/view/state.php');
+                                require_once('components/state/view/_state.php');
                             }
                         ?>
                     </div>

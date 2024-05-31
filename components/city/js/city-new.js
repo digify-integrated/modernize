@@ -2,10 +2,10 @@
     'use strict';
 
     $(function() {
-        generateDropdownOptions('country options');
+        generateDropdownOptions('state options');
 
-        if($('#state-form').length){
-            stateForm();
+        if($('#city-form').length){
+            cityForm();
         }
 
         $(document).on('click','#discard-create',function() {
@@ -15,22 +15,22 @@
     });
 })(jQuery);
 
-function stateForm(){
-    $('#state-form').validate({
+function cityForm(){
+    $('#city-form').validate({
         rules: {
-            state_name: {
+            city_name: {
                 required: true
             },
-            country_id: {
+            state_id: {
                 required: true
             }
         },
         messages: {
-            state_name: {
+            city_name: {
                 required: 'Please enter the display name'
             },
-            country_id: {
-                required: 'Please choose the country'
+            state_id: {
+                required: 'Please choose the state'
             }
         },
         errorPlacement: function (error, element) {
@@ -55,12 +55,12 @@ function stateForm(){
             }
         },
         submitHandler: function(form) {
-            const transaction = 'add state';
+            const transaction = 'add city';
             const page_link = document.getElementById('page-link').getAttribute('href');
           
             $.ajax({
                 type: 'POST',
-                url: 'components/state/controller/state-controller.php',
+                url: 'components/city/controller/city-controller.php',
                 data: $(form).serialize() + '&transaction=' + transaction,
                 dataType: 'json',
                 beforeSend: function() {
@@ -69,7 +69,7 @@ function stateForm(){
                 success: function (response) {
                     if (response.success) {
                         setNotification(response.title, response.message, response.messageType);
-                        window.location = page_link + '&id=' + response.stateID;
+                        window.location = page_link + '&id=' + response.cityID;
                     }
                     else {
                         if (response.isInactive || response.notExist || response.userInactive || response.userLocked || response.sessionExpired) {
@@ -100,17 +100,17 @@ function stateForm(){
 
 function generateDropdownOptions(type){
     switch (type) {
-        case 'country options':
+        case 'state options':
             
             $.ajax({
-                url: 'components/country/view/_country_generation.php',
+                url: 'components/state/view/_state_generation.php',
                 method: 'POST',
                 dataType: 'json',
                 data: {
                     type : type
                 },
                 success: function(response) {
-                    $('#country_id').select2({
+                    $('#state_id').select2({
                         data: response
                     }).on('change', function (e) {
                         $(this).valid()

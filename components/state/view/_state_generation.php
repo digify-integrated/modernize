@@ -32,7 +32,7 @@ if(isset($_POST['type']) && !empty($_POST['type'])){
         #
         # -------------------------------------------------------------
         case 'state table':
-            $filterByCountry = isset($_POST['filter_by_country']) ? htmlspecialchars($_POST['filter_by_country'], ENT_QUOTES, 'UTF-8') : null;
+            $filterByCountry = isset($_POST['filter_by_state']) ? htmlspecialchars($_POST['filter_by_state'], ENT_QUOTES, 'UTF-8') : null;
             $sql = $databaseModel->getConnection()->prepare('CALL generateStateTable(:filterByCountry)');
             $sql->bindValue(':filterByCountry', $filterByCountry, PDO::PARAM_INT);
             $sql->execute();
@@ -67,6 +67,79 @@ if(isset($_POST['type']) && !empty($_POST['type'])){
                                 </div>'
                 ];
             }
+
+            echo json_encode($response);
+        break;
+        # -------------------------------------------------------------
+
+        # -------------------------------------------------------------
+        #
+        # Type: state options
+        # Description:
+        # Generates the state options.
+        #
+        # Parameters: None
+        #
+        # Returns: Array
+        #
+        # -------------------------------------------------------------
+        case 'state options':
+            $sql = $databaseModel->getConnection()->prepare('CALL generateStateOptions()');
+            $sql->execute();
+            $options = $sql->fetchAll(PDO::FETCH_ASSOC);
+            $sql->closeCursor();
+
+            $response[] = [
+                'id' => '',
+                'text' => '--'
+            ];
+
+            foreach ($options as $row) {
+                $response[] = [
+                    'id' => $row['state_id'],
+                    'text' => $row['state_name']
+                ];
+            }
+
+            echo json_encode($response);
+        break;
+        # -------------------------------------------------------------
+
+        # -------------------------------------------------------------
+        #
+        # Type: state radio filter
+        # Description:
+        # Generates the state options.
+        #
+        # Parameters: None
+        #
+        # Returns: Array
+        #
+        # -------------------------------------------------------------
+        case 'state radio filter':
+            $sql = $databaseModel->getConnection()->prepare('CALL generateStateOptions()');
+            $sql->execute();
+            $options = $sql->fetchAll(PDO::FETCH_ASSOC);
+            $sql->closeCursor();
+
+            $filterOptions = '<div class="form-check py-2 mb-0">
+                            <input class="form-check-input p-2" type="radio" name="filter-state" id="filter-state-all" value="" checked>
+                            <label class="form-check-label d-flex align-items-center ps-2" for="filter-state-all">All</label>
+                        </div>';
+
+            foreach ($options as $row) {
+                $stateID = $row['state_id'];
+                $stateName = $row['state_name'];
+
+                $filterOptions .= '<div class="form-check py-2 mb-0">
+                                <input class="form-check-input p-2" type="radio" name="filter-state" id="filter-state-'. $stateID .'" value="'. $stateID .'">
+                                <label class="form-check-label d-flex align-items-center ps-2" for="filter-state-'. $stateID .'">'. $stateName .'</label>
+                            </div>';
+            }
+
+            $response[] = [
+                'filterOptions' => $filterOptions
+            ];
 
             echo json_encode($response);
         break;

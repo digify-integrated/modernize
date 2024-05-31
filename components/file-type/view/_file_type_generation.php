@@ -91,9 +91,6 @@ if(isset($_POST['type']) && !empty($_POST['type'])){
             ];
 
             foreach ($options as $row) {
-                $fileTypeID = $row['file_type_id'];
-                $fileTypeName = $row['file_type_name'];
-
                 $response[] = [
                     'id' => $row['file_type_id'],
                     'text' => $row['file_type_name']

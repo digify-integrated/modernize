@@ -98,11 +98,9 @@ if(isset($_POST['type']) && !empty($_POST['type'])){
                     $menuItemName = $row['menu_item_name'];
                     $orderSequence = $row['order_sequence'];
     
-                    $menuItemIDEncrypted = $securityModel->encryptData($menuItemID);
-    
                     $response[] = [
                         'MENU_ITEM_NAME' => $menuItemName,
-                        'ORDER_SEQUENCE' => $orderSequence,
+                        'ORDER_SEQUENCE' => $orderSequence
                     ];
                 }
     
@@ -134,9 +132,6 @@ if(isset($_POST['type']) && !empty($_POST['type'])){
             ];
 
             foreach ($options as $row) {
-                $menuItemID = $row['menu_item_id'];
-                $menuItemName = $row['menu_item_name'];
-
                 $response[] = [
                     'id' => $row['menu_item_id'],
                     'text' => $row['menu_item_name']

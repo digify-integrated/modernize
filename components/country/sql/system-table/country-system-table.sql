@@ -9,7 +9,4 @@ CREATE TABLE country(
 
 CREATE INDEX country_index_country_id ON country(country_id);
 
-INSERT INTO country (country_name, last_log_by) VALUES ('Image', '1');
-INSERT INTO country (country_name, last_log_by) VALUES ('Document', '1');
-
 /* ----------------------------------------------------------------------------------------------------------------------------- */

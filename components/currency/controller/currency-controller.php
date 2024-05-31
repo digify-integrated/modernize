@@ -3,18 +3,17 @@ session_start();
 
 # -------------------------------------------------------------
 #
-# Function: StateController
+# Function: CurrencyController
 # Description: 
-# The StateController class handles state related operations and interactions.
+# The CurrencyController class handles currency related operations and interactions.
 #
 # Parameters: None
 #
 # Returns: None
 #
 # -------------------------------------------------------------
-class StateController {
-    private $stateModel;
-    private $countryModel;
+class CurrencyController {
+    private $currencyModel;
     private $authenticationModel;
     private $securityModel;
 
@@ -22,21 +21,19 @@ class StateController {
     #
     # Function: __construct
     # Description: 
-    # The constructor initializes the object with the provided stateModel, AuthenticationModel and SecurityModel instances.
-    # These instances are used for state related, user related operations and security related operations, respectively.
+    # The constructor initializes the object with the provided currencyModel, AuthenticationModel and SecurityModel instances.
+    # These instances are used for currency related, user related operations and security related operations, respectively.
     #
     # Parameters:
-    # - @param StateModel $stateModel     The stateModel instance for state related operations.
-    # - @param CountryModel $countryModel     The countryModel instance for country related operations.
+    # - @param CurrencyModel $currencyModel     The currencyModel instance for currency related operations.
     # - @param AuthenticationModel $authenticationModel     The AuthenticationModel instance for user related operations.
     # - @param SecurityModel $securityModel   The SecurityModel instance for security related operations.
     #
     # Returns: None
     #
     # -------------------------------------------------------------
-    public function __construct(StateModel $stateModel, CountryModel $countryModel, AuthenticationModel $authenticationModel, SecurityModel $securityModel) {
-        $this->stateModel = $stateModel;
-        $this->countryModel = $countryModel;
+    public function __construct(CurrencyModel $currencyModel, AuthenticationModel $authenticationModel, SecurityModel $securityModel) {
+        $this->currencyModel = $currencyModel;
         $this->authenticationModel = $authenticationModel;
         $this->securityModel = $securityModel;
     }
@@ -124,20 +121,20 @@ class StateController {
             $transaction = isset($_POST['transaction']) ? $_POST['transaction'] : null;
 
             switch ($transaction) {
-                case 'add state':
-                    $this->addState();
+                case 'add currency':
+                    $this->addCurrency();
                     break;
-                case 'update state':
-                    $this->updateState();
+                case 'update currency':
+                    $this->updateCurrency();
                     break;
-                case 'get state details':
-                    $this->getStateDetails();
+                case 'get currency details':
+                    $this->getCurrencyDetails();
                     break;
-                case 'delete state':
-                    $this->deleteState();
+                case 'delete currency':
+                    $this->deleteCurrency();
                     break;
-                case 'delete multiple state':
-                    $this->deleteMultipleState();
+                case 'delete multiple currency':
+                    $this->deleteMultipleCurrency();
                     break;
                 default:
                     $response = [
@@ -160,35 +157,32 @@ class StateController {
 
     # -------------------------------------------------------------
     #
-    # Function: addState
+    # Function: addCurrency
     # Description: 
-    # Inserts a state.
+    # Inserts a currency.
     #
     # Parameters: None
     #
     # Returns: Array
     #
     # -------------------------------------------------------------
-    public function addState() {
+    public function addCurrency() {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             return;
         }
 
-        if (isset($_POST['state_name']) && !empty($_POST['state_name']) && isset($_POST['country_id']) && !empty($_POST['country_id']) ) {
+        if (isset($_POST['currency_name']) && !empty($_POST['currency_name']) && isset($_POST['currency_symbol']) && !empty($_POST['currency_symbol'])) {
             $userID = $_SESSION['user_account_id'];
-            $stateName = $_POST['state_name'];
-            $countryID = htmlspecialchars($_POST['country_id'], ENT_QUOTES, 'UTF-8');
-
-            $countryDetails = $this->countryModel->getCountry($countryID);
-            $countryName = $countryDetails['country_name'] ?? null;
+            $currencyName = $_POST['currency_name'];
+            $currencySymbol = $_POST['currency_symbol'];
         
-            $stateID = $this->stateModel->insertState($stateName, $countryID, $countryName, $userID);
+            $currencyID = $this->currencyModel->insertCurrency($currencyName, $currencySymbol, $userID);
     
             $response = [
                 'success' => true,
-                'stateID' => $this->securityModel->encryptData($stateID),
-                'title' => 'Insert State Success',
-                'message' => 'The state has been inserted successfully.',
+                'currencyID' => $this->securityModel->encryptData($currencyID),
+                'title' => 'Insert Currency Success',
+                'message' => 'The currency has been inserted successfully.',
                 'messageType' => 'success'
             ];
             
@@ -215,35 +209,35 @@ class StateController {
 
     # -------------------------------------------------------------
     #
-    # Function: updateState
+    # Function: updateCurrency
     # Description: 
-    # Updates the state if it exists; otherwise, return an error message.
+    # Updates the currency if it exists; otherwise, return an error message.
     #
     # Parameters: None
     #
     # Returns: Array
     #
     # -------------------------------------------------------------
-    public function updateState() {
+    public function updateCurrency() {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             return;
         }
         
-        if (isset($_POST['state_id']) && !empty($_POST['state_id']) && isset($_POST['state_name']) && !empty($_POST['state_name']) && isset($_POST['country_id']) && !empty($_POST['country_id'])) {
+        if (isset($_POST['currency_id']) && !empty($_POST['currency_id']) && isset($_POST['currency_name']) && !empty($_POST['currency_name']) && isset($_POST['currency_symbol']) && !empty($_POST['currency_symbol'])) {
             $userID = $_SESSION['user_account_id'];
-            $stateID = htmlspecialchars($_POST['state_id'], ENT_QUOTES, 'UTF-8');
-            $stateName = $_POST['state_name'];
-            $countryID = htmlspecialchars($_POST['country_id'], ENT_QUOTES, 'UTF-8');
+            $currencyID = htmlspecialchars($_POST['currency_id'], ENT_QUOTES, 'UTF-8');
+            $currencyName = $_POST['currency_name'];
+            $currencySymbol = $_POST['currency_symbol'];
         
-            $checkStateExist = $this->stateModel->checkStateExist($stateID);
-            $total = $checkStateExist['total'] ?? 0;
+            $checkCurrencyExist = $this->currencyModel->checkCurrencyExist($currencyID);
+            $total = $checkCurrencyExist['total'] ?? 0;
 
             if($total === 0){
                 $response = [
                     'success' => false,
                     'notExist' => true,
-                    'title' => 'Update State Error',
-                    'message' => 'The state does not exist.',
+                    'title' => 'Update Currency Error',
+                    'message' => 'The currency does not exist.',
                     'messageType' => 'error'
                 ];
                 
@@ -251,15 +245,12 @@ class StateController {
                 exit;
             }
 
-            $countryDetails = $this->countryModel->getCountry($countryID);
-            $countryName = $countryDetails['country_name'] ?? null;
-
-            $this->stateModel->updateState($stateID, $stateName, $countryID, $countryName, $userID);
+            $this->currencyModel->updateCurrency($currencyID, $currencyName, $currencySymbol, $userID);
                 
             $response = [
                 'success' => true,
-                'title' => 'Update State Success',
-                'message' => 'The state has been updated successfully.',
+                'title' => 'Update Currency Success',
+                'message' => 'The currency has been updated successfully.',
                 'messageType' => 'success'
             ];
             
@@ -286,32 +277,32 @@ class StateController {
 
     # -------------------------------------------------------------
     #
-    # Function: deleteState
+    # Function: deleteCurrency
     # Description: 
-    # Delete the state if it exists; otherwise, return an error message.
+    # Delete the currency if it exists; otherwise, return an error message.
     #
     # Parameters: None
     #
     # Returns: Array
     #
     # -------------------------------------------------------------
-    public function deleteState() {
+    public function deleteCurrency() {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             return;
         }
 
-        if (isset($_POST['state_id']) && !empty($_POST['state_id'])) {
-            $stateID = htmlspecialchars($_POST['state_id'], ENT_QUOTES, 'UTF-8');
+        if (isset($_POST['currency_id']) && !empty($_POST['currency_id'])) {
+            $currencyID = htmlspecialchars($_POST['currency_id'], ENT_QUOTES, 'UTF-8');
         
-            $checkStateExist = $this->stateModel->checkStateExist($stateID);
-            $total = $checkStateExist['total'] ?? 0;
+            $checkCurrencyExist = $this->currencyModel->checkCurrencyExist($currencyID);
+            $total = $checkCurrencyExist['total'] ?? 0;
 
             if($total === 0){
                 $response = [
                     'success' => false,
                     'notExist' => true,
-                    'title' => 'Delete State Error',
-                    'message' => 'The state does not exist.',
+                    'title' => 'Delete Currency Error',
+                    'message' => 'The currency does not exist.',
                     'messageType' => 'error'
                 ];
                 
@@ -319,12 +310,12 @@ class StateController {
                 exit;
             }
 
-            $this->stateModel->deleteState($stateID);
+            $this->currencyModel->deleteCurrency($currencyID);
                 
             $response = [
                 'success' => true,
-                'title' => 'Delete State Success',
-                'message' => 'The state has been deleted successfully.',
+                'title' => 'Delete Currency Success',
+                'message' => 'The currency has been deleted successfully.',
                 'messageType' => 'success'
             ];
             
@@ -347,36 +338,36 @@ class StateController {
 
     # -------------------------------------------------------------
     #
-    # Function: deleteMultipleState
+    # Function: deleteMultipleCurrency
     # Description: 
-    # Delete the selected states if it exists; otherwise, skip it.
+    # Delete the selected currencys if it exists; otherwise, skip it.
     #
     # Parameters: None
     #
     # Returns: Array
     #
     # -------------------------------------------------------------
-    public function deleteMultipleState() {
+    public function deleteMultipleCurrency() {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             return;
         }
 
-        if (isset($_POST['state_id']) && !empty($_POST['state_id'])) {
-            $stateIDs = $_POST['state_id'];
+        if (isset($_POST['currency_id']) && !empty($_POST['currency_id'])) {
+            $currencyIDs = $_POST['currency_id'];
     
-            foreach($stateIDs as $stateID){
-                $checkStateExist = $this->stateModel->checkStateExist($stateID);
-                $total = $checkStateExist['total'] ?? 0;
+            foreach($currencyIDs as $currencyID){
+                $checkCurrencyExist = $this->currencyModel->checkCurrencyExist($currencyID);
+                $total = $checkCurrencyExist['total'] ?? 0;
 
                 if($total > 0){
-                    $this->stateModel->deleteState($stateID);
+                    $this->currencyModel->deleteCurrency($currencyID);
                 }
             }
                 
             $response = [
                 'success' => true,
-                'title' => 'Delete Multiple State Success',
-                'message' => 'The selected states have been deleted successfully.',
+                'title' => 'Delete Multiple Currency Success',
+                'message' => 'The selected currencys have been deleted successfully.',
                 'messageType' => 'success'
             ];
             
@@ -403,33 +394,33 @@ class StateController {
 
     # -------------------------------------------------------------
     #
-    # Function: getStateDetails
+    # Function: getCurrencyDetails
     # Description: 
-    # Handles the retrieval of state details.
+    # Handles the retrieval of currency details.
     #
     # Parameters: None
     #
     # Returns: Array
     #
     # -------------------------------------------------------------
-    public function getStateDetails() {
+    public function getCurrencyDetails() {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             return;
         }
     
-        if (isset($_POST['state_id']) && !empty($_POST['state_id'])) {
+        if (isset($_POST['currency_id']) && !empty($_POST['currency_id'])) {
             $userID = $_SESSION['user_account_id'];
-            $stateID = htmlspecialchars($_POST['state_id'], ENT_QUOTES, 'UTF-8');
+            $currencyID = htmlspecialchars($_POST['currency_id'], ENT_QUOTES, 'UTF-8');
 
-            $checkStateExist = $this->stateModel->checkStateExist($stateID);
-            $total = $checkStateExist['total'] ?? 0;
+            $checkCurrencyExist = $this->currencyModel->checkCurrencyExist($currencyID);
+            $total = $checkCurrencyExist['total'] ?? 0;
 
             if($total === 0){
                 $response = [
                     'success' => false,
                     'notExist' => true,
-                    'title' => 'Get State Details Error',
-                    'message' => 'The state does not exist.',
+                    'title' => 'Get Currency Details Error',
+                    'message' => 'The currency does not exist.',
                     'messageType' => 'error'
                 ];
                 
@@ -437,14 +428,12 @@ class StateController {
                 exit;
             }
     
-            $stateDetails = $this->stateModel->getState($stateID);
+            $currencyDetails = $this->currencyModel->getCurrency($currencyID);
 
             $response = [
                 'success' => true,
-                'stateName' => $stateDetails['state_name'] ?? null,
-                'state' => $stateDetails['state'] ?? null,
-                'countryID' => $stateDetails['country_id'] ?? null,
-                'countryName' => $stateDetails['country_name'] ?? null
+                'currencyName' => $currencyDetails['currency_name'] ?? null,
+                'currencySymbol' => $currencyDetails['currency_symbol'] ?? null,
             ];
 
             echo json_encode($response);
@@ -470,11 +459,10 @@ require_once '../../global/config/config.php';
 require_once '../../global/model/database-model.php';
 require_once '../../global/model/security-model.php';
 require_once '../../global/model/system-model.php';
-require_once '../../state/model/state-model.php';
-require_once '../../country/model/country-model.php';
+require_once '../../currency/model/currency-model.php';
 require_once '../../authentication/model/authentication-model.php';
 
-$controller = new StateController(new StateModel(new DatabaseModel), new CountryModel(new DatabaseModel), new AuthenticationModel(new DatabaseModel), new SecurityModel());
+$controller = new CurrencyController(new CurrencyModel(new DatabaseModel), new AuthenticationModel(new DatabaseModel), new SecurityModel());
 $controller->handleRequest();
 
 ?>

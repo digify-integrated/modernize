@@ -3,7 +3,7 @@ require_once '../../../session.php';
 require_once '../../global/config/config.php';
 require_once '../../global/model/database-model.php';
 require_once '../../global/model/system-model.php';
-require_once '../../file-type/model/file-type-model.php';
+require_once '../../country/model/country-model.php';
 require_once '../../global/model/security-model.php';
 require_once '../../global/model/global-model.php';
 
@@ -47,7 +47,7 @@ if(isset($_POST['type']) && !empty($_POST['type'])){
 
                 $deleteButton = '';
                 if($countryDeleteAccess['total'] > 0){
-                    $deleteButton = '<a href="javascript:void(0);" class="text-danger ms-3 delete-file-type" data-file-type-id="' . $countryID . '" title="Delete File Type">
+                    $deleteButton = '<a href="javascript:void(0);" class="text-danger ms-3 delete-country" data-country-id="' . $countryID . '" title="Delete File Type">
                                     <i class="ti ti-trash fs-5"></i>
                                 </a>';
                 }
@@ -91,9 +91,6 @@ if(isset($_POST['type']) && !empty($_POST['type'])){
             ];
 
             foreach ($options as $row) {
-                $countryID = $row['country_id'];
-                $countryName = $row['country_name'];
-
                 $response[] = [
                     'id' => $row['country_id'],
                     'text' => $row['country_name']
@@ -122,8 +119,8 @@ if(isset($_POST['type']) && !empty($_POST['type'])){
             $sql->closeCursor();
 
             $filterOptions = '<div class="form-check py-2 mb-0">
-                            <input class="form-check-input p-2" type="radio" name="filter-file-type" id="filter-file-type-all" value="" checked>
-                            <label class="form-check-label d-flex align-items-center ps-2" for="filter-file-type-all">All</label>
+                            <input class="form-check-input p-2" type="radio" name="filter-country" id="filter-country-all" value="" checked>
+                            <label class="form-check-label d-flex align-items-center ps-2" for="filter-country-all">All</label>
                         </div>';
 
             foreach ($options as $row) {
@@ -131,8 +128,8 @@ if(isset($_POST['type']) && !empty($_POST['type'])){
                 $countryName = $row['country_name'];
 
                 $filterOptions .= '<div class="form-check py-2 mb-0">
-                                <input class="form-check-input p-2" type="radio" name="filter-file-type" id="filter-file-type-'. $countryID .'" value="'. $countryID .'">
-                                <label class="form-check-label d-flex align-items-center ps-2" for="filter-file-type-'. $countryID .'">'. $countryName .'</label>
+                                <input class="form-check-input p-2" type="radio" name="filter-country" id="filter-country-'. $countryID .'" value="'. $countryID .'">
+                                <label class="form-check-label d-flex align-items-center ps-2" for="filter-country-'. $countryID .'">'. $countryName .'</label>
                             </div>';
             }
 

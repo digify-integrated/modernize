@@ -2,10 +2,8 @@
     'use strict';
 
     $(function() {
-        generateDropdownOptions('country options');
-
-        if($('#state-form').length){
-            stateForm();
+        if($('#currency-form').length){
+            currencyForm();
         }
 
         $(document).on('click','#discard-create',function() {
@@ -15,22 +13,22 @@
     });
 })(jQuery);
 
-function stateForm(){
-    $('#state-form').validate({
+function currencyForm(){
+    $('#currency-form').validate({
         rules: {
-            state_name: {
+            currency_name: {
                 required: true
             },
-            country_id: {
+            currency_symbol: {
                 required: true
             }
         },
         messages: {
-            state_name: {
+            currency_name: {
                 required: 'Please enter the display name'
             },
-            country_id: {
-                required: 'Please choose the country'
+            currency_symbol: {
+                required: 'Please enter the symbol'
             }
         },
         errorPlacement: function (error, element) {
@@ -55,12 +53,12 @@ function stateForm(){
             }
         },
         submitHandler: function(form) {
-            const transaction = 'add state';
+            const transaction = 'add currency';
             const page_link = document.getElementById('page-link').getAttribute('href');
           
             $.ajax({
                 type: 'POST',
-                url: 'components/state/controller/state-controller.php',
+                url: 'components/currency/controller/currency-controller.php',
                 data: $(form).serialize() + '&transaction=' + transaction,
                 dataType: 'json',
                 beforeSend: function() {
@@ -69,7 +67,7 @@ function stateForm(){
                 success: function (response) {
                     if (response.success) {
                         setNotification(response.title, response.message, response.messageType);
-                        window.location = page_link + '&id=' + response.stateID;
+                        window.location = page_link + '&id=' + response.currencyID;
                     }
                     else {
                         if (response.isInactive || response.notExist || response.userInactive || response.userLocked || response.sessionExpired) {
@@ -96,34 +94,4 @@ function stateForm(){
             return false;
         }
     });
-}
-
-function generateDropdownOptions(type){
-    switch (type) {
-        case 'country options':
-            
-            $.ajax({
-                url: 'components/country/view/_country_generation.php',
-                method: 'POST',
-                dataType: 'json',
-                data: {
-                    type : type
-                },
-                success: function(response) {
-                    $('#country_id').select2({
-                        data: response
-                    }).on('change', function (e) {
-                        $(this).valid()
-                    });
-                },
-                error: function(xhr, status, error) {
-                    var fullErrorMessage = `XHR status: ${status}, Error: ${error}`;
-                    if (xhr.responseText) {
-                        fullErrorMessage += `, Response: ${xhr.responseText}`;
-                    }
-                    showErrorDialog(fullErrorMessage);
-                }
-            });
-            break;
-    }
 }

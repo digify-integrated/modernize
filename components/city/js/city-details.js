@@ -2,25 +2,25 @@
     'use strict';
 
     $(function() {
-        generateDropdownOptions('country options');
-        displayDetails('get state details');
+        generateDropdownOptions('state options');
+        displayDetails('get city details');
 
-        if($('#state-form').length){
-            stateForm();
+        if($('#city-form').length){
+            cityForm();
         }
 
         $(document).on('click','#edit-details',function() {
-            displayDetails('get state details');
+            displayDetails('get city details');
         });
 
-        $(document).on('click','#delete-state',function() {
-            const state_id = $('#state-id').text();
+        $(document).on('click','#delete-city',function() {
+            const city_id = $('#city-id').text();
             const page_link = document.getElementById('page-link').getAttribute('href');
-            const transaction = 'delete state';
+            const transaction = 'delete city';
     
             Swal.fire({
-                title: 'Confirm State Deletion',
-                text: 'Are you sure you want to delete this state?',
+                title: 'Confirm City Deletion',
+                text: 'Are you sure you want to delete this city?',
                 icon: 'warning',
                 showCancelButton: !0,
                 confirmButtonText: 'Delete',
@@ -34,10 +34,10 @@
                 if (result.value) {
                     $.ajax({
                         type: 'POST',
-                        url: 'components/state/controller/state-controller.php',
+                        url: 'components/city/controller/city-controller.php',
                         dataType: 'json',
                         data: {
-                            state_id : state_id, 
+                            city_id : city_id, 
                             transaction : transaction
                         },
                         success: function (response) {
@@ -74,42 +74,42 @@
 
         if($('#log-notes-offcanvas').length && $('#view-log-notes').length){
             $(document).on('click','#view-log-notes',function() {
-                const state_id = $('#state-id').text();
+                const city_id = $('#city-id').text();
 
-                logNotes('state', state_id);
+                logNotes('city', city_id);
             });
         }
 
         if($('#internal-notes').length){
-            const state_id = $('#state-id').text();
+            const city_id = $('#city-id').text();
 
-            internalNotes('state', state_id);
+            internalNotes('city', city_id);
         }
 
         if($('#internal-notes-form').length){
-            const state_id = $('#state-id').text();
+            const city_id = $('#city-id').text();
 
-            internalNotesForm('state', state_id);
+            internalNotesForm('city', city_id);
         }
     });
 })(jQuery);
 
-function stateForm(){
-    $('#state-form').validate({
+function cityForm(){
+    $('#city-form').validate({
         rules: {
-            state_name: {
+            city_name: {
                 required: true
             },
-            country_id: {
+            state_id: {
                 required: true
             }
         },
         messages: {
-            state_name: {
+            city_name: {
                 required: 'Please enter the display name'
             },
-            country_id: {
-                required: 'Please choose the country'
+            state_id: {
+                required: 'Please choose the state'
             }
         },
         errorPlacement: function (error, element) {
@@ -134,14 +134,14 @@ function stateForm(){
             }
         },
         submitHandler: function(form) {
-            const state_id = $('#state-id').text();
+            const city_id = $('#city-id').text();
             const page_link = document.getElementById('page-link').getAttribute('href'); 
-            const transaction = 'update state';
+            const transaction = 'update city';
           
             $.ajax({
                 type: 'POST',
-                url: 'components/state/controller/state-controller.php',
-                data: $(form).serialize() + '&transaction=' + transaction + '&state_id=' + state_id,
+                url: 'components/city/controller/city-controller.php',
+                data: $(form).serialize() + '&transaction=' + transaction + '&city_id=' + city_id,
                 dataType: 'json',
                 beforeSend: function() {
                     disableFormSubmitButton('submit-data');
@@ -149,8 +149,8 @@ function stateForm(){
                 success: function (response) {
                     if (response.success) {
                         showNotification(response.title, response.message, response.messageType);
-                        displayDetails('get state details');
-                        $('#state-modal').modal('hide');
+                        displayDetails('get city details');
+                        $('#city-modal').modal('hide');
                     }
                     else {
                         if (response.isInactive || response.userNotExist || response.userInactive || response.userLocked || response.sessionExpired) {
@@ -185,29 +185,29 @@ function stateForm(){
 
 function displayDetails(transaction){
     switch (transaction) {
-        case 'get state details':
-            var state_id = $('#state-id').text();
+        case 'get city details':
+            var city_id = $('#city-id').text();
             const page_link = document.getElementById('page-link').getAttribute('href');
             
             $.ajax({
-                url: 'components/state/controller/state-controller.php',
+                url: 'components/city/controller/city-controller.php',
                 method: 'POST',
                 dataType: 'json',
                 data: {
-                    state_id : state_id, 
+                    city_id : city_id, 
                     transaction : transaction
                 },
                 beforeSend: function(){
-                    resetModalForm('state-form');
+                    resetModalForm('city-form');
                 },
                 success: function(response) {
                     if (response.success) {
-                        $('#state_name').val(response.stateName);
+                        $('#city_name').val(response.cityName);
                         
-                        $('#country_id').val(response.countryID).trigger('change');
+                        $('#state_id').val(response.stateID).trigger('change');
                         
-                        $('#state_name_summary').text(response.stateName);
-                        $('#country_summary').text(response.countryName);
+                        $('#city_name_summary').text(response.cityName);
+                        $('#state_summary').text(response.stateName);
                     } 
                     else {
                         if (response.isInactive || response.userNotExist || response.userInactive || response.userLocked || response.sessionExpired) {
@@ -237,18 +237,18 @@ function displayDetails(transaction){
 
 function generateDropdownOptions(type){
     switch (type) {
-        case 'country options':
+        case 'state options':
             
             $.ajax({
-                url: 'components/country/view/_country_generation.php',
+                url: 'components/state/view/_state_generation.php',
                 method: 'POST',
                 dataType: 'json',
                 data: {
                     type : type
                 },
                 success: function(response) {
-                    $('#country_id').select2({
-                        dropdownParent: $('#state-modal'),
+                    $('#state_id').select2({
+                        dropdownParent: $('#city-modal'),
                         data: response
                     }).on('change', function (e) {
                         $(this).valid()
