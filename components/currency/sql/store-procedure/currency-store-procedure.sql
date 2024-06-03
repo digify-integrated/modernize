@@ -27,12 +27,26 @@ END //
 
 CREATE PROCEDURE updateCurrency(IN p_currency_id INT, IN p_currency_name VARCHAR(100), IN p_currency_symbol VARCHAR(10), IN p_last_log_by INT)
 BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+    END;
+
+    START TRANSACTION;
+
+    UPDATE company
+    SET currency_name = p_currency_name,
+        currency_symbol = p_currency_symbol,
+        last_log_by = p_last_log_by
+    WHERE currency_id = p_currency_id;
 
     UPDATE currency
     SET currency_name = p_currency_name,
         currency_symbol = p_currency_symbol,
         last_log_by = p_last_log_by
     WHERE currency_id = p_currency_id;
+
+    COMMIT;
 END //
 
 /* ----------------------------------------------------------------------------------------------------------------------------- */

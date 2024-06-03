@@ -3,13 +3,13 @@ require_once '../../../session.php';
 require_once '../../global/config/config.php';
 require_once '../../global/model/database-model.php';
 require_once '../../global/model/system-model.php';
-require_once '../../city/model/city-model.php';
+require_once '../../company/model/company-model.php';
 require_once '../../global/model/security-model.php';
 require_once '../../global/model/global-model.php';
 
 $databaseModel = new DatabaseModel();
 $systemModel = new SystemModel();
-$cityModel = new CityModel($databaseModel);
+$companyModel = new CompanyModel($databaseModel);
 $securityModel = new SecurityModel();
 $globalModel = new GlobalModel($databaseModel, $securityModel);
 
@@ -22,49 +22,63 @@ if(isset($_POST['type']) && !empty($_POST['type'])){
     switch ($type) {
         # -------------------------------------------------------------
         #
-        # Type: city table
+        # Type: company table
         # Description:
-        # Generates the city table.
+        # Generates the company table.
         #
         # Parameters: None
         #
         # Returns: Array
         #
         # -------------------------------------------------------------
-        case 'city table':
+        case 'company table':
+            $filterByCity = isset($_POST['filter_by_city']) ? htmlspecialchars($_POST['filter_by_city'], ENT_QUOTES, 'UTF-8') : null;
             $filterByState = isset($_POST['filter_by_state']) ? htmlspecialchars($_POST['filter_by_state'], ENT_QUOTES, 'UTF-8') : null;
             $filterByCountry = isset($_POST['filter_by_country']) ? htmlspecialchars($_POST['filter_by_country'], ENT_QUOTES, 'UTF-8') : null;
-            $sql = $databaseModel->getConnection()->prepare('CALL generateCityTable(:filterByState, :filterByCountry)');
+            $sql = $databaseModel->getConnection()->prepare('CALL generateCompanyTable(:filterByCity, :filterByState, :filterByCountry)');
+            $sql->bindValue(':filterByCity', $filterByCity, PDO::PARAM_INT);
             $sql->bindValue(':filterByState', $filterByState, PDO::PARAM_INT);
             $sql->bindValue(':filterByCountry', $filterByCountry, PDO::PARAM_INT);
             $sql->execute();
             $options = $sql->fetchAll(PDO::FETCH_ASSOC);
             $sql->closeCursor();
 
-            $cityDeleteAccess = $globalModel->checkAccessRights($userID, $pageID, 'delete');
+            $companyDeleteAccess = $globalModel->checkAccessRights($userID, $pageID, 'delete');
 
             foreach ($options as $row) {
-                $cityID = $row['city_id'];
+                $companyID = $row['company_id'];
+                $companyName = $row['company_name'];
+                $address = $row['address'];
                 $cityName = $row['city_name'];
                 $stateName = $row['state_name'];
                 $countryName = $row['country_name'];
+                $companyLogo = $systemModel->checkImage($row['company_logo'], 'company logo');
 
-                $cityIDEncrypted = $securityModel->encryptData($cityID);
+                $companyAddress = $address . ', ' . $cityName . ', ' . $stateName . ', ' . $countryName;
+
+                $companyIDEncrypted = $securityModel->encryptData($companyID);
 
                 $deleteButton = '';
-                if($cityDeleteAccess['total'] > 0){
-                    $deleteButton = '<a href="javascript:void(0);" class="text-danger ms-3 delete-city" data-city-id="' . $cityID . '" title="Delete City">
+                if($companyDeleteAccess['total'] > 0){
+                    $deleteButton = '<a href="javascript:void(0);" class="text-danger ms-3 delete-company" data-company-id="' . $companyID . '" title="Delete Company">
                                         <i class="ti ti-trash fs-5"></i>
                                     </a>';
                 }
 
                 $response[] = [
-                    'CHECK_BOX' => '<input class="form-check-input datatable-checkbox-children" type="checkbox" value="'. $cityID .'">',
-                    'CITY_NAME' => $cityName,
-                    'STATE_NAME' => $stateName,
-                    'COUNTRY_NAME' => $countryName,
+                    'CHECK_BOX' => '<input class="form-check-input datatable-checkbox-children" type="checkbox" value="'. $companyID .'">',
+                    'COMPANY_NAME' => '<div class="d-flex align-items-center">
+                                                <img src="'. $companyLogo .'" alt="avatar" class="rounded-circle" width="35" height="35" />
+                                                <div class="ms-3">
+                                                    <div class="user-meta-info">
+                                                        <h6 class="user-name mb-0">'. $companyName .'</h6>
+                                                        <small>'. $companyAddress .'</small>
+                                                    </div>
+                                                </div>
+                                            </a>
+                                        </div>',
                     'ACTION' => '<div class="action-btn">
-                                    <a href="'. $pageLink .'&id='. $cityIDEncrypted .'" class="text-info" title="View Details">
+                                    <a href="'. $pageLink .'&id='. $companyIDEncrypted .'" class="text-info" title="View Details">
                                         <i class="ti ti-eye fs-5"></i>
                                     </a>
                                    '. $deleteButton .'
@@ -78,17 +92,17 @@ if(isset($_POST['type']) && !empty($_POST['type'])){
 
         # -------------------------------------------------------------
         #
-        # Type: city options
+        # Type: company options
         # Description:
-        # Generates the city options.
+        # Generates the company options.
         #
         # Parameters: None
         #
         # Returns: Array
         #
         # -------------------------------------------------------------
-        case 'city options':
-            $sql = $databaseModel->getConnection()->prepare('CALL generateCityOptions()');
+        case 'company options':
+            $sql = $databaseModel->getConnection()->prepare('CALL generateCompanyOptions()');
             $sql->execute();
             $options = $sql->fetchAll(PDO::FETCH_ASSOC);
             $sql->closeCursor();
@@ -100,8 +114,8 @@ if(isset($_POST['type']) && !empty($_POST['type'])){
 
             foreach ($options as $row) {
                 $response[] = [
-                    'id' => $row['city_id'],
-                    'text' => $row['city_name'] . ', ' . $row['state_name'] . ', ' . $row['country_name'] 
+                    'id' => $row['company_id'],
+                    'text' => $row['company_name']
                 ];
             }
 
@@ -111,33 +125,33 @@ if(isset($_POST['type']) && !empty($_POST['type'])){
 
         # -------------------------------------------------------------
         #
-        # Type: city radio filter
+        # Type: company radio filter
         # Description:
-        # Generates the city options.
+        # Generates the company options.
         #
         # Parameters: None
         #
         # Returns: Array
         #
         # -------------------------------------------------------------
-        case 'city radio filter':
-            $sql = $databaseModel->getConnection()->prepare('CALL generateCityOptions()');
+        case 'company radio filter':
+            $sql = $databaseModel->getConnection()->prepare('CALL generateCompanyOptions()');
             $sql->execute();
             $options = $sql->fetchAll(PDO::FETCH_ASSOC);
             $sql->closeCursor();
 
             $filterOptions = '<div class="form-check py-2 mb-0">
-                            <input class="form-check-input p-2" type="radio" name="filter-city" id="filter-city-all" value="" checked>
-                            <label class="form-check-label d-flex align-items-center ps-2" for="filter-city-all">All</label>
+                            <input class="form-check-input p-2" type="radio" name="filter-company" id="filter-company-all" value="" checked>
+                            <label class="form-check-label d-flex align-items-center ps-2" for="filter-company-all">All</label>
                         </div>';
 
             foreach ($options as $row) {
-                $cityID = $row['city_id'];
-                $cityName = $row['city_name'];
+                $companyID = $row['company_id'];
+                $companyName = $row['company_name'];
 
                 $filterOptions .= '<div class="form-check py-2 mb-0">
-                                <input class="form-check-input p-2" type="radio" name="filter-city" id="filter-city-'. $cityID .'" value="'. $cityID .'">
-                                <label class="form-check-label d-flex align-items-center ps-2" for="filter-city-'. $cityID .'">'. $cityName .'</label>
+                                <input class="form-check-input p-2" type="radio" name="filter-company" id="filter-company-'. $companyID .'" value="'. $companyID .'">
+                                <label class="form-check-label d-flex align-items-center ps-2" for="filter-company-'. $companyID .'">'. $companyName .'</label>
                             </div>';
             }
 

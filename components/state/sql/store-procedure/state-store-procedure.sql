@@ -34,6 +34,13 @@ BEGIN
 
     START TRANSACTION;
 
+    UPDATE company
+    SET state_name = p_state_name,
+        country_id = p_country_id,
+        country_name = p_country_name,
+        last_log_by = p_last_log_by
+    WHERE state_id = p_state_id;
+
     UPDATE city
     SET state_name = p_state_name,
         country_id = p_country_id,
@@ -106,7 +113,7 @@ END //
 
 CREATE PROCEDURE generateStateOptions()
 BEGIN
-	SELECT state_id, state_name 
+	SELECT state_id, state_name, country_name
     FROM state 
     ORDER BY state_name;
 END //

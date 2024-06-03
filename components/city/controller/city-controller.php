@@ -262,7 +262,7 @@ class CityController {
             $stateName = $stateDetails['state_name'] ?? null;
             $countryID = $stateDetails['country_id'] ?? null;
 
-            $countryDetails = $this->countryModel->getCountry($stateID);
+            $countryDetails = $this->countryModel->getCountry($countryID);
             $countryName = $countryDetails['country_name'] ?? null;
 
             $this->cityModel->updateCity($cityID, $cityName, $stateID, $stateName, $countryID, $countryName, $userID);
@@ -455,7 +455,7 @@ class CityController {
                 'cityName' => $cityDetails['city_name'] ?? null,
                 'city' => $cityDetails['city'] ?? null,
                 'stateID' => $cityDetails['state_id'] ?? null,
-                'stateName' => $cityDetails['state_name'] ?? null
+                'stateName' => $cityDetails['state_name'] . ', ' . $cityDetails['country_name']
             ];
 
             echo json_encode($response);
