@@ -15928,6 +15928,10 @@ ul {
   [data-layout=vertical] body .page-wrapper {
     margin-left: 270px;
   }
+  [data-layout=vertical] body .app-page-wrapper {
+    margin-left: 270px;
+    margin-right: 270px;
+  }
   [data-layout=vertical] body[data-sidebartype=mini-sidebar] .topbar {
     width: calc(100% - 87px);
   }
@@ -26420,4 +26424,11 @@ body .dp-nav.dp-nav-right::before {
 
 .select2-selection__arrow b{
   display: none !important;
+}
+
+.o_home_menu_background {
+  background-size: cover;
+  background-attachment: fixed;
+  background-color: #e7e9ed;
+  background-image: url(../images/default/background-light.svg);
 }

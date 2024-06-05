@@ -1434,6 +1434,23 @@ class UserAccountController {
                 exit;
             }
 
+            $userAccountDetails = $this->userAccountModel->getUserAccount($userAccountID, null);
+            $userAccountProfilePiturePath = !empty($userAccountDetails['profile_picture']) ? str_replace('./components/', '../../', $userAccountDetails['profile_picture']) : null;
+
+            if(file_exists($userAccountProfilePiturePath)){
+                if (!unlink($userAccountProfilePiturePath)) {
+                    $response = [
+                        'success' => false,
+                        'title' => 'Update User Account Profile Picture Error',
+                        'message' => 'The user account profile picture cannot be deleted due to an error.',
+                        'messageType' => 'error'
+                    ];
+                    
+                    echo json_encode($response);
+                    exit;                    
+                }
+            }
+
             $this->userAccountModel->deleteUserAccount($userAccountID);
                 
             $response = [
@@ -1486,6 +1503,23 @@ class UserAccountController {
 
                 if($total > 0){
                     if($userAccountID != $userID){
+                        $userAccountDetails = $this->userAccountModel->getUserAccount($userAccountID, null);
+                        $userAccountProfilePiturePath = !empty($userAccountDetails['profile_picture']) ? str_replace('./components/', '../../', $userAccountDetails['profile_picture']) : null;
+            
+                        if(file_exists($userAccountProfilePiturePath)){
+                            if (!unlink($userAccountProfilePiturePath)) {
+                                $response = [
+                                    'success' => false,
+                                    'title' => 'Update User Account Profile Picture Error',
+                                    'message' => 'The user account profile picture cannot be deleted due to an error.',
+                                    'messageType' => 'error'
+                                ];
+                                
+                                echo json_encode($response);
+                                exit;
+                            }
+                        }
+
                         $this->userAccountModel->deleteUserAccount($userAccountID);
                     }
                 }

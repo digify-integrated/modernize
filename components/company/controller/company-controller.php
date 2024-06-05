@@ -477,7 +477,7 @@ class CompanyController {
                     ];
                     
                     echo json_encode($response);
-                    exit;                    
+                    exit;
                 }
             }
 
@@ -547,6 +547,23 @@ class CompanyController {
                 exit;
             }
 
+            $companyDetails = $this->companyModel->getCompany($companyID);
+            $companyLogoPath = !empty($companyDetails['company_logo']) ? str_replace('./components/', '../../', $companyDetails['company_logo']) : null;
+
+            if(file_exists($companyLogoPath)){
+                if (!unlink($companyLogoPath)) {
+                    $response = [
+                        'success' => false,
+                        'title' => 'Update Company Logo Error',
+                        'message' => 'The company logo cannot be deleted due to an error.',
+                        'messageType' => 'error'
+                    ];
+                    
+                    echo json_encode($response);
+                    exit;
+                }
+            }
+
             $this->companyModel->deleteCompany($companyID);
                 
             $response = [
@@ -597,6 +614,23 @@ class CompanyController {
                 $total = $checkCompanyExist['total'] ?? 0;
 
                 if($total > 0){
+                    $companyDetails = $this->companyModel->getCompany($companyID);
+                    $companyLogoPath = !empty($companyDetails['company_logo']) ? str_replace('./components/', '../../', $companyDetails['company_logo']) : null;
+        
+                    if(file_exists($companyLogoPath)){
+                        if (!unlink($companyLogoPath)) {
+                            $response = [
+                                'success' => false,
+                                'title' => 'Update Company Logo Error',
+                                'message' => 'The company logo cannot be deleted due to an error.',
+                                'messageType' => 'error'
+                            ];
+                            
+                            echo json_encode($response);
+                            exit;
+                        }
+                    }
+                    
                     $this->companyModel->deleteCompany($companyID);
                 }
             }
