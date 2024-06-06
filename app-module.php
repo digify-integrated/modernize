@@ -3,10 +3,10 @@
     require('view/_check_user_status.php');
     require('view/_page_details.php');
 
-    $menuGroupReadAccess = $globalModel->checkAccessRights($userID, $pageID, 'read');
-    $menuGroupCreateAccess = $globalModel->checkAccessRights($userID, $pageID, 'create');
-    $menuGroupWriteAccess = $globalModel->checkAccessRights($userID, $pageID, 'write');
-    $menuGroupDeleteAccess = $globalModel->checkAccessRights($userID, $pageID, 'delete');
+    $appModuleReadAccess = $globalModel->checkAccessRights($userID, $pageID, 'read');
+    $appModuleCreateAccess = $globalModel->checkAccessRights($userID, $pageID, 'create');
+    $appModuleWriteAccess = $globalModel->checkAccessRights($userID, $pageID, 'write');
+    $appModuleDeleteAccess = $globalModel->checkAccessRights($userID, $pageID, 'delete');
 ?>
 <!DOCTYPE html>
 <html lang="en" dir="ltr" data-bs-theme="light" data-color-theme="Blue_Theme" data-layout="vertical">
@@ -36,7 +36,7 @@
                                                             require('view/_breadcrumb.php');
 
                                                             if(!$newRecord && !empty($detailID)){
-                                                                echo '<li class="breadcrumb-item" id="app-configuration-id">'. $detailID .'</li>';
+                                                                echo '<li class="breadcrumb-item" id="app-module-id">'. $detailID .'</li>';
                                                             }
 
                                                             if($newRecord){
@@ -58,13 +58,13 @@
                         </div>
                         <?php
                             if($newRecord){
-                                require_once('components/app-configuration/view/_app_configuration_new.php');
+                                require_once('components/app-module/view/_app_module_new.php');
                             }
                             else if(!empty($detailID)){
-                                require_once('components/app-configuration/view/_app_configuration_details.php');
+                                require_once('components/app-module/view/_app_module_details.php');
                             }
                             else{
-                                require_once('components/app-configuration/view/_app_configuration.php');
+                                require_once('components/app-module/view/_app_module.php');
                             }
                         ?>
                     </div>
@@ -83,16 +83,16 @@
 
         <?php 
             if($newRecord){
-                $scriptLink = 'app-configuration-new.js';
+                $scriptLink = 'app-module-new.js';
             }
             else if(!empty($detailID)){
-                $scriptLink = 'app-configuration-details.js';
+                $scriptLink = 'app-module-details.js';
             }
             else{
-                $scriptLink = 'app-configuration.js';
+                $scriptLink = 'app-module.js';
             }
 
-            echo '<script src="./components/app-configuration/js/'. $scriptLink .'?v=' . rand() .'"></script>';
+            echo '<script src="./components/app-module/js/'. $scriptLink .'?v=' . rand() .'"></script>';
         ?>
     </body>
 </html>

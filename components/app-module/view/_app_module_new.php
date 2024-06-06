@@ -19,6 +19,14 @@
                         </div>
                         <div class="col-lg-6">
                             <div class="mb-3">
+                                <label class="col-sm-4 form-label" for="app_module_description">Description <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control maxlength" id="app_module_description" name="app_module_description" maxlength="100" autocomplete="off">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="mb-3">
                                 <label class="col-sm-4 form-label" for="order_sequence">Order Sequence <span class="text-danger">*</span></label>
                                 <input type="number" class="form-control" id="order_sequence" name="order_sequence" min="0">
                             </div>

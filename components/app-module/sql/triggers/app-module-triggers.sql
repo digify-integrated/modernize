@@ -14,6 +14,10 @@ BEGIN
         SET audit_log = CONCAT(audit_log, "App Module Description: ", OLD.app_module_description, " -> ", NEW.app_module_description, "<br/>");
     END IF;
 
+    IF NEW.app_version <> OLD.app_version THEN
+        SET audit_log = CONCAT(audit_log, "App Version: ", OLD.app_version, " -> ", NEW.app_version, "<br/>");
+    END IF;
+
     IF NEW.order_sequence <> OLD.order_sequence THEN
         SET audit_log = CONCAT(audit_log, "Order Sequence: ", OLD.order_sequence, " -> ", NEW.order_sequence, "<br/>");
     END IF;
@@ -36,6 +40,10 @@ BEGIN
 
     IF NEW.app_module_description <> '' THEN
         SET audit_log = CONCAT(audit_log, "<br/>App Module Description: ", NEW.app_module_description);
+    END IF;
+
+    IF NEW.app_version <> '' THEN
+        SET audit_log = CONCAT(audit_log, "<br/>App Version: ", NEW.app_version);
     END IF;
 
     IF NEW.order_sequence <> '' THEN

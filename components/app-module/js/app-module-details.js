@@ -188,6 +188,85 @@ function appModuleForm(){
     });
 }
 
+function updateAppLogoForm(){
+    $('#app-logo-form').validate({
+        rules: {
+            app_logo: {
+                required: true
+            }
+        },
+        messages: {
+            app_logo: {
+                required: 'Please choose the app logo'
+            }
+        },
+        errorPlacement: function (error, element) {
+            showNotification('Attention Required: Error Found', error, 'error', 1500);
+        },
+        highlight: function(element) {
+            var inputElement = $(element);
+            if (inputElement.hasClass('select2-hidden-accessible')) {
+                inputElement.next().find('.select2-selection__rendered').addClass('is-invalid');
+            }
+            else {
+                inputElement.addClass('is-invalid');
+            }
+        },
+        unhighlight: function(element) {
+            var inputElement = $(element);
+            if (inputElement.hasClass('select2-hidden-accessible')) {
+                inputElement.next().find('.select2-selection__rendered').removeClass('is-invalid');
+            }
+            else {
+                inputElement.removeClass('is-invalid');
+            }
+        },
+        submitHandler: function(form) {
+            const app_module_id = $('#app-module-id').text();
+            const transaction = 'update app logo';
+            var formData = new FormData(form);
+            formData.append('app_module_id', app_module_id);
+            formData.append('transaction', transaction);
+        
+            $.ajax({
+                type: 'POST',
+                url: 'components/app-module/controller/app-module-controller.php',
+                data: formData,
+                processData: false,
+                contentType: false,
+                dataType: 'json',
+                beforeSend: function() {
+                    disableFormSubmitButton('submit-app-logo');
+                },
+                success: function (response) {
+                    if (response.success) {
+                        showNotification(response.title, response.message, response.messageType);
+                        displayDetails('get app module details');
+                        $('#app-logo-modal').modal('hide');
+                    }
+                    else {
+                        if (response.isInactive || response.notExist || response.userInactive || response.userLocked || response.sessionExpired) {
+                            setNotification(response.title, response.message, response.messageType);
+                            window.location = 'logout.php?logout';
+                        }
+                        else {
+                            showNotification(response.title, response.message, response.messageType);
+                        }
+                    }
+                },
+                error: function(xhr, status, error) {
+                    handleSystemError(xhr, status, error);
+                },
+                complete: function() {
+                    enableFormSubmitButton('submit-app-logo');
+                }
+            });
+        
+            return false;
+        }
+    });
+}
+
 function displayDetails(transaction){
     switch (transaction) {
         case 'get app module details':

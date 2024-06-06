@@ -281,7 +281,7 @@ function updateCompanyLogoForm(){
             });
         
             return false;
-0        }
+        }
     });
 }
 

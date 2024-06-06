@@ -408,7 +408,7 @@ class CompanyController {
                 $response = [
                     'success' => false,
                     'title' => 'Update Company Logo Error',
-                    'message' => 'Please choose the profile picture.',
+                    'message' => 'Please choose the company logo.',
                     'messageType' => 'error'
                 ];
                 
@@ -432,7 +432,7 @@ class CompanyController {
                 $response = [
                     'success' => false,
                     'title' => 'Update Company Logo Error',
-                    'message' => 'The document file exceeds the maximum allowed size of ' . number_format($maxFileSize) . ' kb.',
+                    'message' => 'The company logo exceeds the maximum allowed size of ' . number_format($maxFileSize) . ' kb.',
                     'messageType' => 'error'
                 ];
                 
@@ -554,7 +554,7 @@ class CompanyController {
                 if (!unlink($companyLogoPath)) {
                     $response = [
                         'success' => false,
-                        'title' => 'Update Company Logo Error',
+                        'title' => 'Delete Company Logo Error',
                         'message' => 'The company logo cannot be deleted due to an error.',
                         'messageType' => 'error'
                     ];
@@ -621,7 +621,7 @@ class CompanyController {
                         if (!unlink($companyLogoPath)) {
                             $response = [
                                 'success' => false,
-                                'title' => 'Update Company Logo Error',
+                                'title' => 'Delete Company Logo Error',
                                 'message' => 'The company logo cannot be deleted due to an error.',
                                 'messageType' => 'error'
                             ];

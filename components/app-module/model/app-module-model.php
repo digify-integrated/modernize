@@ -52,6 +52,7 @@ class AppModuleModel {
     #
     # Parameters:
     # - $p_app_module_name (string): The app module name.
+    # - $p_app_module_description (string): The app module description.
     # - $p_order_sequence (int): The order sequence of app module.
     # - $p_app_module_description (string): The app module description.
     # - $p_last_log_by (int): The last logged user.
@@ -59,7 +60,7 @@ class AppModuleModel {
     # Returns: String
     #
     # -------------------------------------------------------------
-    public function insertAppModule($p_app_module_name, $p_order_sequence, $p_last_log_by) {
+    public function insertAppModule($p_app_module_name, $p_app_module_description, $p_order_sequence, $p_last_log_by) {
         $stmt = $this->db->getConnection()->prepare('CALL insertAppModule(:p_app_module_name, :p_app_module_description, :p_order_sequence, :p_last_log_by, @p_app_module_id)');
         $stmt->bindValue(':p_app_module_name', $p_app_module_name, PDO::PARAM_STR);
         $stmt->bindValue(':p_app_module_description', $p_app_module_description, PDO::PARAM_STR);

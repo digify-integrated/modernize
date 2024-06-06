@@ -5,6 +5,7 @@ CREATE TABLE app_module (
     app_module_name VARCHAR(100) NOT NULL,
     app_module_description VARCHAR(500) NOT NULL,
     app_logo VARCHAR(500),
+    app_version VARCHAR(50) NOT NULL DEFAULT '1.0.0',
     order_sequence TINYINT(10) NOT NULL,
     last_log_by INT UNSIGNED NOT NULL,
     FOREIGN KEY (last_log_by) REFERENCES user_account(user_account_id)
