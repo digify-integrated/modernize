@@ -42,6 +42,27 @@ class AppModuleModel {
     # -------------------------------------------------------------
 
     # -------------------------------------------------------------
+    #
+    # Function: updateAppLogo
+    # Description: Updates the app logo.
+    #
+    # Parameters:
+    # - $p_app_module_id (int): The app ID.
+    # - $p_app_logo (string): The logo of the app.
+    # - $p_last_log_by (int): The last logged user.
+    #
+    # Returns: None
+    #
+    # -------------------------------------------------------------
+    public function updateAppLogo($p_app_module_id, $p_app_logo, $p_last_log_by) {
+        $stmt = $this->db->getConnection()->prepare('CALL updateAppLogo(:p_app_module_id, :p_app_logo, :p_last_log_by)');
+        $stmt->bindValue(':p_app_module_id', $p_app_module_id, PDO::PARAM_INT);
+        $stmt->bindValue(':p_app_logo', $p_app_logo, PDO::PARAM_STR);
+        $stmt->bindValue(':p_last_log_by', $p_last_log_by, PDO::PARAM_INT);
+        $stmt->execute();
+    }
+
+    # -------------------------------------------------------------
     #   Insert methods
     # -------------------------------------------------------------
 

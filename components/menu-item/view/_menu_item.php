@@ -33,7 +33,7 @@
                                         </div>
                                     </th>
                                     <th>Menu Item</th>
-                                    <th>Menu Group</th>
+                                    <th>App Module</th>
                                     <th>Order Sequence</th>
                                     <th>Actions</th>
                                 </tr>
@@ -54,8 +54,8 @@
     </div>
     <div class="offcanvas-body p-0">
         <div class="border-bottom rounded-0">
-            <h6 class="mt-4 mb-3 mx-4 fw-semibold">By Menu Group</h6>
-            <div class="pb-4 px-4" id="menu-group-filter"></div>
+            <h6 class="mt-4 mb-3 mx-4 fw-semibold">By App Module</h6>
+            <div class="pb-4 px-4" id="app-module-filter"></div>
         </div>
         <div class="p-4">
             <button type="button" class="btn btn-warning w-100" id="apply-filter">Apply Filter</button>

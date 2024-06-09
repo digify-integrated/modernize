@@ -2,7 +2,7 @@
     'use strict';
 
     $(function() {
-        generateDropdownOptions('menu group options');
+        generateDropdownOptions('app module options');
         generateDropdownOptions('menu item options');
 
         if($('#menu-item-form').length){
@@ -22,7 +22,7 @@ function menuItemForm(){
             menu_item_name: {
                 required: true
             },
-            menu_group: {
+            app_module: {
                 required: true
             },
             order_sequence: {
@@ -33,8 +33,8 @@ function menuItemForm(){
             menu_item_name: {
                 required: 'Please enter the display name'
             },
-            menu_group: {
-                required: 'Please choose the menu group'
+            app_module: {
+                required: 'Please choose the app module'
             },
             order_sequence: {
                 required: 'Please enter the order sequence'
@@ -107,17 +107,17 @@ function menuItemForm(){
 
 function generateDropdownOptions(type){
     switch (type) {
-        case 'menu group options':
+        case 'app module options':
             
             $.ajax({
-                url: 'components/menu-group/view/_menu_group_generation.php',
+                url: 'components/app-module/view/_app_module_generation.php',
                 method: 'POST',
                 dataType: 'json',
                 data: {
                     type : type
                 },
                 success: function(response) {
-                    $('#menu_group').select2({
+                    $('#app_module').select2({
                         data: response
                     }).on('change', function (e) {
                         $(this).valid()

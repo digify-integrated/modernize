@@ -71,7 +71,7 @@ function otpForm(){
                 },
                 success: function(response) {
                     if (response.success) {
-                        window.location.href = 'dashboard.php';
+                        window.location.href = 'apps.php';
                     } 
                     else {
                         if(response.otpMaxFailedAttempt || response.incorrectOTPCode || response.expiredOTP){

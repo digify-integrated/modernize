@@ -49,6 +49,14 @@ BEGIN
     COMMIT;
 END //
 
+CREATE PROCEDURE updateAppLogo(IN p_app_module_id INT, IN p_app_logo VARCHAR(500), IN p_last_log_by INT)
+BEGIN
+    UPDATE app_module
+    SET app_logo = p_app_logo,
+        last_log_by = p_last_log_by
+    WHERE app_module_id = p_app_module_id;
+END //
+
 /* ----------------------------------------------------------------------------------------------------------------------------- */
 
 /* Delete Stored Procedure */

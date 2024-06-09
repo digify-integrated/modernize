@@ -36,9 +36,9 @@
                     </div>
                     <div class="col-md-6">
                         <div class="form-group row">
-                            <label class="form-label col-md-5">Menu Group:</label>
+                            <label class="form-label col-md-5">App Module:</label>
                             <div class="col-md-7">
-                                <p class="form-control-static" id="menu_group_summary">--</p>
+                                <p class="form-control-static" id="app_module_summary">--</p>
                             </div>
                         </div>
                     </div>
@@ -162,9 +162,9 @@
                             </div>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label" for="menu_group">Menu Group <span class="text-danger">*</span></label>
+                            <label class="form-label" for="app_module_id">App Module <span class="text-danger">*</span></label>
                             <div class="mb-3">
-                                <select id="menu_group" name="menu_group" class="select2 form-control"></select>
+                                <select id="app_module_id" name="app_module_id" class="select2 form-control"></select>
                             </div>
                         </div>
                     </div>
@@ -187,12 +187,6 @@
                             <div class="mb-3">
                                 <label class="form-label" for="menu_item_url">URL</label>
                                 <input type="text" class="form-control maxlength" id="menu_item_url" name="menu_item_url" maxlength="50" autocomplete="off">
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label class="form-label" for="menu_item_icon">Menu Icon</label>
-                                <input type="text" class="form-control maxlength" id="menu_item_icon" name="menu_item_icon" maxlength="50" autocomplete="off">
                             </div>
                         </div>
                     </div>

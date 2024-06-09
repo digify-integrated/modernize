@@ -57,7 +57,7 @@ $(document).ready(function () {
                             window.location.href = 'otp-verification.php?id=' + response.encryptedUserID;
                         }
                         else {
-                            window.location.href = 'dashboard.php';
+                            window.location.href = 'appss.php';
                         }
                     } 
                     else {

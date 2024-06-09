@@ -32,9 +32,9 @@ if(isset($_POST['type']) && !empty($_POST['type'])){
         #
         # -------------------------------------------------------------
         case 'menu item table':
-            $filterByMenuGroup = isset($_POST['filter_by_menu_group']) ? htmlspecialchars($_POST['filter_by_menu_group'], ENT_QUOTES, 'UTF-8') : null;
-            $sql = $databaseModel->getConnection()->prepare('CALL generateMenuItemTable(:filterByMenuGroup)');
-            $sql->bindValue(':filterByMenuGroup', $filterByMenuGroup, PDO::PARAM_INT);
+            $filterByAppModule = isset($_POST['filter_by_app_module']) ? htmlspecialchars($_POST['filter_by_app_module'], ENT_QUOTES, 'UTF-8') : null;
+            $sql = $databaseModel->getConnection()->prepare('CALL generateMenuItemTable(:filterByAppModule)');
+            $sql->bindValue(':filterByAppModule', $filterByAppModule, PDO::PARAM_INT);
             $sql->execute();
             $options = $sql->fetchAll(PDO::FETCH_ASSOC);
             $sql->closeCursor();
@@ -44,7 +44,7 @@ if(isset($_POST['type']) && !empty($_POST['type'])){
             foreach ($options as $row) {
                 $menuItemID = $row['menu_item_id'];
                 $menuItemName = $row['menu_item_name'];
-                $menuGroupName = $row['menu_group_name'];
+                $appModuleName = $row['app_module_name'];
                 $orderSequence = $row['order_sequence'];
 
                 $menuItemIDEncrypted = $securityModel->encryptData($menuItemID);
@@ -59,7 +59,7 @@ if(isset($_POST['type']) && !empty($_POST['type'])){
                 $response[] = [
                     'CHECK_BOX' => '<input class="form-check-input datatable-checkbox-children" type="checkbox" value="'. $menuItemID .'">',
                     'MENU_ITEM_NAME' => $menuItemName,
-                    'MENU_GROUP_NAME' => $menuGroupName,
+                    'APP_MODULE_NAME' => $appModuleName,
                     'ORDER_SEQUENCE' => $orderSequence,
                     'ACTION' => '<div class="action-btn">
                                     <a href="'. $pageLink .'&id='. $menuItemIDEncrypted .'" class="text-info" title="View Details">

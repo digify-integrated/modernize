@@ -149,13 +149,13 @@ function menuItemTable(datatable_name, buttons = false, show_all = false){
     const page_id = $('#page-id').val();
     const page_link = document.getElementById('page-link').getAttribute('href');
 
-    var filter_by_menu_group = $('input[name="filter-menu-group"]:checked').val();
+    var filter_by_app_module = $('input[name="filter-app-module"]:checked').val();
     var settings;
 
     const column = [ 
         { 'data' : 'CHECK_BOX' },
         { 'data' : 'MENU_ITEM_NAME' },
-        { 'data' : 'MENU_GROUP_NAME' },
+        { 'data' : 'APP_MODULE_NAME' },
         { 'data' : 'ORDER_SEQUENCE' },
         { 'data' : 'ACTION' }
     ];
@@ -179,7 +179,7 @@ function menuItemTable(datatable_name, buttons = false, show_all = false){
                 'type' : type,
                 'page_id' : page_id,
                 'page_link' : page_link,
-                'filter_by_menu_group' : filter_by_menu_group
+                'filter_by_app_module' : filter_by_app_module
             },
             'dataSrc' : '',
             'error': function(xhr, status, error) {
@@ -220,14 +220,14 @@ function generateFilterOptions(type){
         case 'menu group radio filter':
             
             $.ajax({
-                url: 'components/menu-group/view/_menu_group_generation.php',
+                url: 'components/app-module/view/_app_module_generation.php',
                 method: 'POST',
                 dataType: 'json',
                 data: {
                     type : type
                 },
                 success: function(response) {
-                    document.getElementById('menu-group-filter').innerHTML = response[0].filterOptions;
+                    document.getElementById('app-module-filter').innerHTML = response[0].filterOptions;
                 },
                 error: function(xhr, status, error) {
                     var fullErrorMessage = `XHR status: ${status}, Error: ${error}`;
