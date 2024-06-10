@@ -191,7 +191,8 @@ class SystemModel {
             'menu logo' => DEFAULT_MENU_LOGO_IMAGE,
             'module icon' => DEFAULT_MODULE_ICON_IMAGE,
             'favicon' => DEFAULT_FAVICON_IMAGE,
-            'company logo' => DEFAULT_COMPANY_LOGO_IMAGE
+            'company logo' => DEFAULT_COMPANY_LOGO,
+            'app module logo' => DEFAULT_APP_MODULE_LOGO
         ];
     
         return $defaultImages[$type] ?? DEFAULT_PLACEHOLDER_IMAGE;

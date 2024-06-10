@@ -16,6 +16,7 @@ class AppModuleController {
     private $appModuleModel;
     private $authenticationModel;
     private $securityModel;
+    private $systemModel;
 
     # -------------------------------------------------------------
     #
@@ -28,14 +29,16 @@ class AppModuleController {
     # - @param AppModuleModel $appModuleModel     The AppModuleModel instance for app module related operations.
     # - @param AuthenticationModel $authenticationModel     The AuthenticationModel instance for user related operations.
     # - @param SecurityModel $securityModel   The SecurityModel instance for security related operations.
+    # - @param SystemModel $systemModel   The SystemModel instance for system related operations.
     #
     # Returns: None
     #
     # -------------------------------------------------------------
-    public function __construct(AppModuleModel $appModuleModel, AuthenticationModel $authenticationModel, SecurityModel $securityModel) {
+    public function __construct(AppModuleModel $appModuleModel, AuthenticationModel $authenticationModel, SecurityModel $securityModel, SystemModel $systemModel) {
         $this->appModuleModel = $appModuleModel;
         $this->authenticationModel = $authenticationModel;
         $this->securityModel = $securityModel;
+        $this->systemModel = $systemModel;
     }
     # -------------------------------------------------------------
 
@@ -638,12 +641,14 @@ class AppModuleController {
             }
     
             $appModuleDetails = $this->appModuleModel->getAppModule($appModuleID);
+            $appLogo = $this->systemModel->checkImage($appModuleDetails['app_logo'] ?? null, 'app module logo');
 
             $response = [
                 'success' => true,
                 'appModuleName' => $appModuleDetails['app_module_name'] ?? null,
                 'appModuleDescription' => $appModuleDetails['app_module_description'] ?? null,
-                'orderSequence' => $appModuleDetails['order_sequence'] ?? null
+                'orderSequence' => $appModuleDetails['order_sequence'] ?? null,
+                'appLogo' => $appLogo
             ];
 
             echo json_encode($response);
@@ -672,7 +677,7 @@ require_once '../../global/model/system-model.php';
 require_once '../../app-module/model/app-module-model.php';
 require_once '../../authentication/model/authentication-model.php';
 
-$controller = new AppModuleController(new AppModuleModel(new DatabaseModel), new AuthenticationModel(new DatabaseModel), new SecurityModel());
+$controller = new AppModuleController(new AppModuleModel(new DatabaseModel), new AuthenticationModel(new DatabaseModel), new SecurityModel(), new SystemModel());
 $controller->handleRequest();
 
 ?>

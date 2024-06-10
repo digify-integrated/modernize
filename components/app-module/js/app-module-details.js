@@ -289,6 +289,8 @@ function displayDetails(transaction){
                         $('#app_module_name').val(response.appModuleName);
                         $('#app_module_description').val(response.appModuleDescription);
                         $('#order_sequence').val(response.orderSequence);
+
+                        document.getElementById('app_module_logo').src = response.appLogo;
                         
                         $('#app_module_name_summary').text(response.appModuleName);
                         $('#app_module_description_summary').text(response.appModuleDescription);

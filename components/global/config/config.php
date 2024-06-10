@@ -78,7 +78,8 @@ define('DEFAULT_LOGIN_LOGO_IMAGE', './assets/images/default/default-logo-placeho
 define('DEFAULT_MENU_LOGO_IMAGE', './assets/images/default/default-menu-logo.png');
 define('DEFAULT_MODULE_ICON_IMAGE', './assets/images/default/default-module-icon.svg');
 define('DEFAULT_FAVICON_IMAGE', './assets/images/default/default-favicon.svg');
-define('DEFAULT_COMPANY_LOGO_IMAGE', './assets/images/default/default-company-logo.png');
+define('DEFAULT_COMPANY_LOGO', './assets/images/default/default-company-logo.png');
+define('DEFAULT_APP_MODULE_LOGO', './assets/images/default/app-module-logo.png');
 define('DEFAULT_PLACEHOLDER_IMAGE', './assets/images/default/default-image-placeholder.png');
 
 # -------------------------------------------------------------
